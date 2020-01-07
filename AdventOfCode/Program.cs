@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AdventOfCode
@@ -11,16 +13,12 @@ namespace AdventOfCode
 	{
 		private const string Url = "https://adventofcode.com/2019";
 
-		private static readonly IDictionary<string, Func<Task>> _challenges = new Dictionary<string, Func<Task>>()
-		{
-			{ "1a", () => new Challenge1a().RunAsync()  },
-			{ "1b", () => new Challenge1b().RunAsync()  },
-			{ "2a", () => new Challenge2a().RunAsync()  },
-			{ "2b", () => new Challenge2b().RunAsync()  },
-		};
+		private static IDictionary<string, IChallenge> _challenges;
 
 		async static Task Main(string[] args)
 		{
+			_challenges = LoadChallenges();
+
 			string input = null;
 			while (input == null || !_challenges.ContainsKey(input))
 			{
@@ -34,10 +32,17 @@ namespace AdventOfCode
 			}
 
 			Console.Clear();
-			await _challenges[input]();
+			await _challenges[input].RunAsync();
 
 			if (Debugger.IsAttached)
 				Console.ReadKey(false);
+		}
+
+		private static IDictionary<string, IChallenge> LoadChallenges()
+		{
+			var types = Assembly.GetExecutingAssembly().GetTypes().Where(e => !e.IsInterface && !e.IsAbstract && e.GetInterfaces().Contains(typeof(IChallenge))).ToList();
+
+			return types.Select(e => (IChallenge)Activator.CreateInstance(e)).ToDictionary(kv => kv.Id);
 		}
 	}
 }

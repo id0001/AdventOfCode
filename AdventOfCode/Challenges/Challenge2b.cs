@@ -18,8 +18,10 @@ namespace AdventOfCode.Challenges
 	/// <summary>
 	/// The Challenge2a class TODO: Describe class here
 	/// </summary>
-	internal class Challenge2b
+	internal class Challenge2b : IChallenge
 	{
+		public string Id => "2b";
+
 		public async Task RunAsync()
 		{
 			int[] program = (await File.ReadAllTextAsync("Assets/Challenge2.txt")).Split(',').Select(s => int.Parse(s)).ToArray();

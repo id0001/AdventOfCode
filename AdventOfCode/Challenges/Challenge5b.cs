@@ -1,8 +1,8 @@
 //-------------------------------------------------------------------------------------------------
 //
-// Challenge2a.cs -- The Challenge2a class.
+// Challenge5b.cs -- The Challenge5b class.
 //
-// Copyright (c) 2019 Marel. All rights reserved.
+// Copyright (c) 2020 Marel. All rights reserved.
 //
 //-------------------------------------------------------------------------------------------------
 
@@ -16,17 +16,15 @@ namespace AdventOfCode.Challenges
 {
 	//---------------------------------------------------------------------------------------------
 	/// <summary>
-	/// The Challenge2a class TODO: Describe class here
+	/// The Challenge5b class TODO: Describe class here
 	/// </summary>
-	internal class Challenge2a : IChallenge
+	internal class Challenge5b : IChallenge
 	{
-		public string Id => "2a";
+		public string Id => "5b";
 
 		public async Task RunAsync()
 		{
-			int[] program = (await File.ReadAllTextAsync("Assets/Challenge2.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
-			program[1] = 12;
-			program[2] = 2;
+			int[] program = (await File.ReadAllTextAsync("Assets/Challenge5.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
 
 			var computer = new IntCodeComputer();
 			computer.LoadProgram(program);

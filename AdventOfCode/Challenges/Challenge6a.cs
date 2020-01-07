@@ -1,29 +1,35 @@
 //-------------------------------------------------------------------------------------------------
 //
-// Challenge1a.cs -- The Challenge1a class.
+// Challenge6a.cs -- The Challenge6a class.
 //
-// Copyright (c) 2019 Marel. All rights reserved.
+// Copyright (c) 2020 Marel. All rights reserved.
 //
 //-------------------------------------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
 	//---------------------------------------------------------------------------------------------
 	/// <summary>
-	/// The Challenge1a class TODO: Describe class here
+	/// The Challenge6a class TODO: Describe class here
 	/// </summary>
-	internal class Challenge1a : IChallenge
+	internal class Challenge6a : IChallenge
 	{
-		public string Id => "1a";
+		public string Id => "6a";
 
-		public async Task RunAsync() => Console.Out.WriteLine((await File.ReadAllLinesAsync("Assets/Challenge1.txt"))
-			.Select(s => int.Parse(s))
-			.Aggregate(0, (a, b) => a + ((b / 3) - 2)));
+		public async Task RunAsync()
+		{
+			string[] lines = await File.ReadAllLinesAsync("Assets/Challenge6.txt");
+
+			var orbitalTree = new OrbitalTree(lines);
+
+			int sum = orbitalTree.Sum(e => e.Depth);
+
+			Console.WriteLine($"Sum: {sum}");
+		}
 	}
 }

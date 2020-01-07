@@ -18,8 +18,10 @@ namespace AdventOfCode.Challenges
 	/// <summary>
 	/// The Challenge1b class TODO: Describe class here
 	/// </summary>
-	internal class Challenge1b
+	internal class Challenge1b : IChallenge
 	{
+		public string Id => "1b";
+
 		public async Task RunAsync() => Console.WriteLine((await File.ReadAllLinesAsync("Assets/Challenge11.txt"))
 			.Select(s => int.Parse(s))
 			.Aggregate(0, (a, b) => a + CalculateFuelRequirement(b)));
