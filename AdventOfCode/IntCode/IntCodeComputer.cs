@@ -41,6 +41,24 @@ namespace AdventOfCode.IntCode
 			};
 		}
 
+		public bool SuspendOnInput { get; set; }
+
+		public Func<int> OnInput { get; set; } = () =>
+		{
+			int input;
+			do
+			{
+				Console.Write("Enter an integer> ");
+			}
+			while (!int.TryParse(Console.ReadLine(), out input));
+			return input;
+		};
+
+		public Action<int> OnPrint { get; set; } = (value) =>
+		{
+			Console.WriteLine($">>> {value}");
+		};
+
 		/// <summary>
 		/// Load a program into memory.
 		/// </summary>
@@ -70,6 +88,29 @@ namespace AdventOfCode.IntCode
 			return MemRead(0);
 		}
 
+		public int Resume()
+		{
+			OpCode opCode = NextInstruction(_instructions[opCode].Invoke());
+			while (opCode != OpCode.Halt)
+			{
+				opCode = NextInstruction(_instructions[opCode].Invoke());
+				if(opCode == OpCode.Input && SuspendOnInput)
+				{
+					return;
+				}
+			}
+		}
+
+		private void Loop()
+		{
+			OpCode opCode = NextInstruction(0);
+			while (opCode != OpCode.Halt)
+			{
+				opCode = NextInstruction(_instructions[opCode].Invoke());
+				return;
+			}
+		}
+
 		/// <summary>
 		/// Write a value to memory at the specified address.
 		/// </summary>
@@ -83,6 +124,12 @@ namespace AdventOfCode.IntCode
 		/// <param name="address">The address to read from</param>
 		/// <returns>The value at the specified memory location</returns>
 		public int MemRead(int address) => _memory[address];
+
+		protected void Suspend()
+		{
+
+		}
+
 
 		/// <summary>
 		/// Get a parameter value according to its mode.
@@ -166,14 +213,7 @@ namespace AdventOfCode.IntCode
 		{
 			int p1 = GetParameter(0, false);
 
-			int input;
-			do
-			{
-				Console.Write("Enter an integer> ");
-			}
-			while (!int.TryParse(Console.ReadLine(), out input));
-
-			MemWrite(p1, input);
+			MemWrite(p1, OnInput());
 
 			return 2;
 		}
@@ -185,7 +225,7 @@ namespace AdventOfCode.IntCode
 		private int ExecPrint()
 		{
 			int p1 = GetParameter(0);
-			Console.WriteLine($">>> {p1}");
+			OnPrint(p1);
 			return 2;
 		}
 
