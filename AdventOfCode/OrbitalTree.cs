@@ -1,11 +1,3 @@
-//-------------------------------------------------------------------------------------------------
-//
-// OrbitalTree.cs -- The OrbitalTree class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Linq;

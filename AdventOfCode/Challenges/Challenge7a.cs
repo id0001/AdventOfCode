@@ -1,12 +1,5 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge7a.cs -- The Challenge7a class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using AdventOfCode.IntCode;
+using AdventOfCode.IntCode.Devices;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,48 +16,35 @@ namespace AdventOfCode.Challenges
 	{
 		public string Id => "7a";
 
-		public async Task RunAsync()
+		public async Task<string> RunAsync()
 		{
 			int[] program = (await File.ReadAllTextAsync("Assets/Challenge7.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
 
 			var perms = new List<int[]>();
 			GeneratePermutations(perms, new int[] { 0, 1, 2, 3, 4 }, 0, 4);
 
-			var computer = new IntCodeComputer();
-
-			int output = 0;
-			Queue<int> inputs = new Queue<int>();
-
-			computer.OnInput = () =>
-			{
-				Console.WriteLine($">>>: {inputs.Peek()}");
-				return inputs.Dequeue();
-			};
-
-			computer.OnPrint = (v) =>
-			{
-				Console.WriteLine($"<<<: {v}");
-				output = v;
-			};
-
 			int highest = int.MinValue;
-			foreach (var permutation in perms)
+			int signal = 0;
+			foreach(var permutation in perms)
 			{
-				output = 0;
-				foreach (var signal in permutation)
+				foreach(var phase in permutation)
 				{
-					computer.LoadProgram(program);
-					inputs.Enqueue(signal);
-					inputs.Enqueue(output);
+					var computer = new SimpleRunner(program);
+					computer.QueueInput(phase);
+					computer.QueueInput(signal);
 					computer.Execute();
+					signal = computer.ReadOutput();
 				}
 
-				if (output > highest)
-					highest = output;
+				if(signal > highest)
+				{
+					highest = signal;
+				}
+
+				signal = 0;
 			}
 
-			Console.WriteLine();
-			Console.WriteLine($"Hightest: {highest}");
+			return highest.ToString();
 		}
 
 		private void GeneratePermutations(List<int[]> perms, int[] numbers, int start, int end)

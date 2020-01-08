@@ -9,6 +9,6 @@ namespace AdventOfCode.Challenges
 	{
 		string Id { get; }
 
-		Task RunAsync();
+		Task<string> RunAsync();
 	}
 }

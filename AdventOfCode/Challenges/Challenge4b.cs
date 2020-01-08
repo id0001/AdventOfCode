@@ -1,11 +1,3 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge4b.cs -- The Challenge4b class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +13,7 @@ namespace AdventOfCode.Challenges
 	{
 		public string Id => "4b";
 
-		public Task RunAsync()
+		public Task<string> RunAsync()
 		{
 			int min = 152517;
 			int max = 630395;
@@ -34,14 +26,11 @@ namespace AdventOfCode.Challenges
 			{
 				if (MatchAdjacent(pwd.ToString()) && MatchNeverDecrease(pwd.ToString()))
 				{
-					Console.WriteLine(pwd.ToString());
 					matches.Add(pwd);
 				}
 			}
 
-			Console.WriteLine($"The number of valid passwords: {matches.Count}");
-
-			return Task.CompletedTask;
+			return Task.FromResult(matches.Count.ToString());
 		}
 
 		// Two adjacent digits are the same but not 3 (like 22 in 122345).
@@ -49,7 +38,6 @@ namespace AdventOfCode.Challenges
 		{
 			int[] digits = input.Select(i => int.Parse(i.ToString())).ToArray();
 
-			bool anyGroups = false;
 			int last = digits[0];
 			for (int i = 1; i < digits.Length; i++)
 			{
