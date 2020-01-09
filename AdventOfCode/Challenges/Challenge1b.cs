@@ -1,11 +1,3 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge1b.cs -- The Challenge1b class.
-//
-// Copyright (c) 2019 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,9 +14,9 @@ namespace AdventOfCode.Challenges
 	{
 		public string Id => "1b";
 
-		public async Task RunAsync() => Console.WriteLine((await File.ReadAllLinesAsync("Assets/Challenge11.txt"))
+		public async Task<string> RunAsync() => (await File.ReadAllLinesAsync("Assets/Challenge1.txt"))
 			.Select(s => int.Parse(s))
-			.Aggregate(0, (a, b) => a + CalculateFuelRequirement(b)));
+			.Aggregate(0, (a, b) => a + CalculateFuelRequirement(b)).ToString();
 
 		private int CalculateFuelRequirement(int mass)
 		{

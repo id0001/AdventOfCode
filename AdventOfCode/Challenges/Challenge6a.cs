@@ -1,11 +1,3 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge6a.cs -- The Challenge6a class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +13,7 @@ namespace AdventOfCode.Challenges
 	{
 		public string Id => "6a";
 
-		public async Task RunAsync()
+		public async Task<string> RunAsync()
 		{
 			string[] lines = await File.ReadAllLinesAsync("Assets/Challenge6.txt");
 
@@ -29,7 +21,7 @@ namespace AdventOfCode.Challenges
 
 			int sum = orbitalTree.Sum(e => e.Depth);
 
-			Console.WriteLine($"Sum: {sum}");
+			return sum.ToString();
 		}
 	}
 }

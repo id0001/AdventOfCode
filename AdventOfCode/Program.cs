@@ -15,24 +15,50 @@ namespace AdventOfCode
 
 		private static IDictionary<string, IChallenge> _challenges;
 
+		private static IDictionary<string, string> _answers = new Dictionary<string, string>
+		{
+			{ "1a", "3394106" },
+			{ "1b", "5088280" },
+			{ "2a", "4138658" },
+			{ "2b", "7264" },
+			{ "3a", "273" },
+			{ "3b", "15622" },
+			{ "4a", "1729" },
+			{ "4b", "1172" },
+			{ "5a", "7988899" },
+			{ "5b", "13758663" },
+			{ "6a", "142915" },
+			{ "6b", "283" },
+			{ "7a", "422858" },
+			{ "7b", "14897241" }
+		};
+
 		async static Task Main(string[] args)
 		{
 			_challenges = LoadChallenges();
 
 			string input = null;
-			while (input == null || !_challenges.ContainsKey(input))
+			while (input == null || (!_challenges.ContainsKey(input) && input != "test"))
 			{
 				Console.Write("Enter challenge: ");
 				input = Console.ReadLine();
 
-				if (!_challenges.ContainsKey(input))
+				if (!_challenges.ContainsKey(input) && input != "test")
 				{
 					Console.WriteLine($"[ERROR] Challenge '{input}' does not exist.");
 				}
 			}
 
 			Console.Clear();
-			await _challenges[input].RunAsync();
+
+			if(input == "test")
+			{
+				await PerformTestAllAsync();
+			}
+			else
+			{
+				await _challenges[input].RunAsync();
+			}
 
 			if (Debugger.IsAttached)
 				Console.ReadKey(false);
@@ -43,6 +69,24 @@ namespace AdventOfCode
 			var types = Assembly.GetExecutingAssembly().GetTypes().Where(e => !e.IsInterface && !e.IsAbstract && e.GetInterfaces().Contains(typeof(IChallenge))).ToList();
 
 			return types.Select(e => (IChallenge)Activator.CreateInstance(e)).ToDictionary(kv => kv.Id);
+		}
+
+		private static async Task PerformTestAllAsync()
+		{
+			Console.WriteLine("Running tests...");
+			foreach (var challenge in _challenges.Keys)
+			{
+				Console.Write($"{challenge}... ");
+				string result = await _challenges[challenge].RunAsync();
+				if (result == _answers[challenge])
+				{
+					Console.WriteLine("OK.");
+				}
+				else
+				{
+					Console.WriteLine($"FAIL. Expected {_answers[challenge]}, got {result}.");
+				}
+			}
 		}
 	}
 }

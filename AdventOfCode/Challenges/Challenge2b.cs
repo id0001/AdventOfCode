@@ -1,12 +1,5 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge2a.cs -- The Challenge2a class.
-//
-// Copyright (c) 2019 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using AdventOfCode.IntCode;
+using AdventOfCode.IntCode.Devices;
 using System;
 using System.IO;
 using System.Linq;
@@ -22,11 +15,9 @@ namespace AdventOfCode.Challenges
 	{
 		public string Id => "2b";
 
-		public async Task RunAsync()
+		public async Task<string> RunAsync()
 		{
 			int[] program = (await File.ReadAllTextAsync("Assets/Challenge2.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
-
-			var computer = new IntCodeComputer();
 
 			for (int noun = 0; noun < 100; noun++)
 			{
@@ -34,15 +25,16 @@ namespace AdventOfCode.Challenges
 				{
 					program[1] = noun;
 					program[2] = verb;
-					computer.LoadProgram(program);
+					var computer = new SimpleRunner(program);
 					int result = computer.Execute();
 					if (result == 19690720)
 					{
-						Console.WriteLine($"noun: {noun}, verb: {verb}, result: {100 * noun + verb}");
-						return;
+						return (100 * noun + verb).ToString();
 					}
 				}
 			}
+
+			return string.Empty;
 		}
 	}
 }

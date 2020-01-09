@@ -1,11 +1,3 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge1a.cs -- The Challenge1a class.
-//
-// Copyright (c) 2019 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,8 +14,8 @@ namespace AdventOfCode.Challenges
 	{
 		public string Id => "1a";
 
-		public async Task RunAsync() => Console.Out.WriteLine((await File.ReadAllLinesAsync("Assets/Challenge1.txt"))
+		public async Task<string> RunAsync() => (await File.ReadAllLinesAsync("Assets/Challenge1.txt"))
 			.Select(s => int.Parse(s))
-			.Aggregate(0, (a, b) => a + ((b / 3) - 2)));
+			.Aggregate(0, (a, b) => a + ((b / 3) - 2)).ToString();
 	}
 }
