@@ -1,11 +1,3 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Point.cs -- The Point class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;

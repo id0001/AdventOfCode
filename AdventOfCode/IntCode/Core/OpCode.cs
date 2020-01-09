@@ -1,12 +1,4 @@
-//-------------------------------------------------------------------------------------------------
-//
-// OpCode.cs -- The OpCode enumeration.
-//
-// Copyright (c) 2019 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
-namespace AdventOfCode.IntCode
+namespace AdventOfCode.IntCode.Core
 {
 	//---------------------------------------------------------------------------------------------
 	/// <summary>
@@ -18,7 +10,7 @@ namespace AdventOfCode.IntCode
 		Add = 1,
 		Multiply = 2,
 		Input = 3,
-		Print = 4,
+		Output = 4,
 		JumpIfTrue = 5,
 		JumpIfFalse = 6,
 		LessThan = 7,

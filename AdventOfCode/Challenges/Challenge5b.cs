@@ -1,12 +1,5 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge5b.cs -- The Challenge5b class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using AdventOfCode.IntCode;
+using AdventOfCode.IntCode.Devices;
 using System;
 using System.IO;
 using System.Linq;
@@ -22,15 +15,15 @@ namespace AdventOfCode.Challenges
 	{
 		public string Id => "5b";
 
-		public async Task RunAsync()
+		public async Task<string> RunAsync()
 		{
 			int[] program = (await File.ReadAllTextAsync("Assets/Challenge5.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
 
-			var computer = new IntCodeComputer();
-			computer.LoadProgram(program);
-			int result = computer.Execute();
+			var computer = new SimpleRunner(program);
+			computer.In.Write(5);
+			computer.Execute();
 
-			Console.WriteLine(result);
+			return computer.Out.Read().ToString();
 		}
 	}
 }

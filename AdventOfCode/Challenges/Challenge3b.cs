@@ -1,11 +1,3 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge3b.cs -- The Challenge3b class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +15,7 @@ namespace AdventOfCode.Challenges
 	{
 		public string Id => "3b";
 
-		public async Task RunAsync()
+		public async Task<string> RunAsync()
 		{
 			var lines = await File.ReadAllLinesAsync("Assets/Challenge3.txt");
 
@@ -31,14 +23,7 @@ namespace AdventOfCode.Challenges
 			var wg2 = new WireGrid(lines[1]);
 
 			var intersections = WireGrid.FindIntersections(wg1, wg2).ToArray();
-			if (intersections.Length == 0)
-			{
-				Console.WriteLine("No intersections");
-			}
-			else
-			{
-				Console.WriteLine($"Min nr of steps: {intersections.Select(p => (wg1[p], wg2[p])).Min(e => e.Item1.Steps + e.Item2.Steps)}");
-			}
+			return intersections.Select(p => (wg1[p], wg2[p])).Min(e => e.Item1.Steps + e.Item2.Steps).ToString();
 		}
 
 		private class WireGrid
