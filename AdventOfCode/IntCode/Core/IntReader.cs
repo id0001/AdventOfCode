@@ -26,6 +26,14 @@ namespace AdventOfCode.IntCode.Core
 			}
 		}
 
+		public IEnumerable<int> ReadToEnd()
+		{
+			while (TryRead(out int output))
+			{
+				yield return output;
+			}
+		}
+
 		public bool TryRead(out int output)
 		{
 			lock (SyncRoot)
@@ -37,6 +45,14 @@ namespace AdventOfCode.IntCode.Core
 		public void Clear()
 		{
 			_readQueue.Clear();
+		}
+
+		public int[] Monitor()
+		{
+			lock (SyncRoot)
+			{
+				return _readQueue.ToArray();
+			}
 		}
 	}
 }

@@ -1,5 +1,6 @@
 using AdventOfCode.IntCode;
 using AdventOfCode.IntCode.Core;
+using AdventOfCode.IntCode.Devices;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,24 +21,52 @@ namespace AdventOfCode.Challenges
 		{
 			int[] program = (await File.ReadAllTextAsync("Assets/Challenge7.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
 
-			var perms = new List<int[]>() { new[] { 9, 8, 7, 6, 5 } };
-			//GeneratePermutations(perms, new int[] { 5, 6, 7, 8, 9 }, 0, 4);
+			var perms = new List<int[]>();
+			GeneratePermutations(perms, new int[] { 5, 6, 7, 8, 9 }, 0, 4);
 
-			//var ampA = new Amp('A', 9, program);
-			//var ampB = new Amp('B', 8, program);
-			//var ampC = new Amp('C', 7, program);
-			//var ampD = new Amp('D', 6, program);
-			//var ampE = new Amp('E', 5, program);
+			int highest = int.MinValue;
+			foreach (var permutation in perms)
+			{
+				var ampA = new Amp("A", program, permutation[0]);
+				var ampB = new Amp("B", program, permutation[1]);
+				var ampC = new Amp("C", program, permutation[2]);
+				var ampD = new Amp("D", program, permutation[3]);
+				var ampE = new Amp("E", program, permutation[4]);
 
-			//var ampArray = new Amp[5];
+				ampA.PipeTo(ampB);
+				ampB.PipeTo(ampC);
+				ampC.PipeTo(ampD);
+				ampD.PipeTo(ampE);
+				ampE.PipeTo(ampA);
 
-			//ampA.PipeTo(ampB)
-			//	.PipeTo(ampC)
-			//	.PipeTo(ampD)
-			//	.PipeTo(ampE)
-			//	.PipeTo(ampA);
+				ampA.Initialize();
+				ampB.Initialize();
+				ampC.Initialize();
+				ampD.Initialize();
+				ampE.Initialize();
 
-			return "faak";
+				ampA.In.Write(0);
+
+				Queue<Amp> executionQueue = new Queue<Amp>(new[] { ampA, ampB, ampC, ampD, ampE });
+				while (!ampE.IsHalted || executionQueue.Count > 0)
+				{
+					var amp = executionQueue.Dequeue();
+					amp.Execute();
+
+					if (!amp.IsHalted)
+					{
+						executionQueue.Enqueue(amp);
+					}
+				}
+
+				int result = ampE.Out.ReadToEnd().LastOrDefault();
+				if (result > highest)
+				{
+					highest = result;
+				}
+			}
+
+			return highest.ToString();
 		}
 
 		private void GeneratePermutations(List<int[]> perms, int[] numbers, int start, int end)

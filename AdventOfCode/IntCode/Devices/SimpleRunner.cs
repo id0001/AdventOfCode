@@ -1,6 +1,4 @@
 using AdventOfCode.IntCode.Core;
-using System;
-using System.Collections.Generic;
 
 
 namespace AdventOfCode.IntCode.Devices
@@ -16,30 +14,7 @@ namespace AdventOfCode.IntCode.Devices
 			LoadProgram(program);
 		}
 
-		public void QueueInput(int input)
-		{
-			InputWriter.Write(input);
-		}
-
-		public int ReadOutput()
-		{
-			return OutputReader.Read();
-		}
-
-		public bool TryReadOutput(out int output)
-		{
-			return OutputReader.TryRead(out output);
-		}
-
-		public IEnumerable<int> ReadToEnd()
-		{
-			while(OutputReader.TryRead(out int output))
-			{
-				yield return output;
-			}
-		}
-
-		public override int Execute()
+		public int Execute()
 		{
 			Cpu.Run();
 			while (!Cpu.IsHalted)

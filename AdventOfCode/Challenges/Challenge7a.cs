@@ -30,10 +30,10 @@ namespace AdventOfCode.Challenges
 				foreach(var phase in permutation)
 				{
 					var computer = new SimpleRunner(program);
-					computer.QueueInput(phase);
-					computer.QueueInput(signal);
+					computer.In.Write(phase);
+					computer.In.Write(signal);
 					computer.Execute();
-					signal = computer.ReadOutput();
+					signal = computer.Out.Read();
 				}
 
 				if(signal > highest)

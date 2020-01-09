@@ -30,7 +30,7 @@ namespace AdventOfCode
 			{ "6a", "142915" },
 			{ "6b", "283" },
 			{ "7a", "422858" },
-			{ "7b", "" }
+			{ "7b", "14897241" }
 		};
 
 		async static Task Main(string[] args)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace AdventOfCode.IntCode.Core
 {
@@ -10,8 +9,6 @@ namespace AdventOfCode.IntCode.Core
 	/// </summary>
 	internal partial class Cpu
 	{
-		private readonly Queue<int> _inputQueue = new Queue<int>();
-		private readonly Queue<int> _outputQueue = new Queue<int>();
 		private readonly IDictionary<OpCode, Func<int>> _instructions;
 		private readonly Memory _memory;
 		private int _ip;
@@ -20,8 +17,6 @@ namespace AdventOfCode.IntCode.Core
 		{
 			_memory = new Memory();
 			_instructions = InitInstructions();
-			In = new IntReader(_inputQueue);
-			Out = new IntWriter(_outputQueue);
 		}
 
 		public bool IsHalted => State == ExecutionState.Halted;
@@ -65,7 +60,7 @@ namespace AdventOfCode.IntCode.Core
 		public void Next()
 		{
 			var opCode = GetOpCode();
-			if(opCode == OpCode.Halt)
+			if (opCode == OpCode.Halt)
 			{
 				Halt();
 				return;
@@ -124,13 +119,5 @@ namespace AdventOfCode.IntCode.Core
 			{ OpCode.LessThan, LessThan },
 			{ OpCode.Equals, Equals }
 		};
-
-		private void EnsureNotHalted(string message = "The program is halted.")
-		{
-			if(State == ExecutionState.Halted)
-			{
-				throw new InvalidOperationException(message);
-			}
-		}
 	}
 }

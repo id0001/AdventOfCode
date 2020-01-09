@@ -20,10 +20,10 @@ namespace AdventOfCode.Challenges
 			int[] program = (await File.ReadAllTextAsync("Assets/Challenge5.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
 
 			var computer = new SimpleRunner(program);
-			computer.QueueInput(5);
+			computer.In.Write(5);
 			computer.Execute();
 
-			return computer.ReadOutput().ToString();
+			return computer.Out.Read().ToString();
 		}
 	}
 }

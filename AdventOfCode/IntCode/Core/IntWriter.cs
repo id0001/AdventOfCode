@@ -34,5 +34,13 @@ namespace AdventOfCode.IntCode.Core
 		{
 			_writeQueue.Clear();
 		}
+
+		public int[] Monitor()
+		{
+			lock (SyncRoot)
+			{
+				return _writeQueue.ToArray();
+			}
+		}
 	}
 }

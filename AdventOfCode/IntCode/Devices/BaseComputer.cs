@@ -1,5 +1,4 @@
 using AdventOfCode.IntCode.Core;
-using System;
 using System.Collections.Generic;
 
 
@@ -26,8 +25,8 @@ namespace AdventOfCode.IntCode.Devices
 			_inputReader = new IntReader(_inputQueue);
 			_outputWriter = new IntWriter(_outputQueue);
 
-			OutputReader = new IntReader(_outputQueue);
-			InputWriter = new IntWriter(_inputQueue);
+			Out = new IntReader(_outputQueue);
+			In = new IntWriter(_inputQueue);
 
 			Cpu.In = _inputReader;
 			Cpu.Out = _outputWriter;
@@ -35,24 +34,13 @@ namespace AdventOfCode.IntCode.Devices
 
 		protected Cpu Cpu { get; }
 
-		protected IntReader OutputReader { get; }
+		public IntReader Out { get; }
 
-		protected IntWriter InputWriter { get; }
+		public IntWriter In { get; }
 
 		public void LoadProgram(int[] program)
 		{
 			Cpu.LoadProgram(program);
-		}
-
-		public virtual int Execute()
-		{
-			Cpu.Run();
-			while (!Cpu.IsHalted)
-			{
-				Cpu.Next();
-			}
-
-			return Cpu.ExitCode;
 		}
 	}
 }
