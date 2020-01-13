@@ -9,12 +9,12 @@ namespace AdventOfCode.IntCode.Devices
 	/// </summary>
 	internal class SimpleRunner : BaseComputer
 	{
-		public SimpleRunner(int[] program) : base()
+		public SimpleRunner(long[] program) : base()
 		{
 			LoadProgram(program);
 		}
 
-		public int Execute()
+		public long Execute()
 		{
 			Cpu.Run();
 			while (!Cpu.IsHalted)

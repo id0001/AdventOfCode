@@ -9,36 +9,38 @@ namespace AdventOfCode.IntCode.Core
 	/// </summary>
 	internal class Memory
 	{
-		private int[] _memory;
+		private long[] _memory;
+		private readonly int _size;
 
-		public Memory()
+		public Memory(int size = 1000000)
 		{
+			_size = size;
 		}
 
 		public void Clear()
 		{
-			_memory = new int[0];
+			_memory = new long[_size];
 		}
 
-		public void Load(int[] memory)
+		public void Load(long[] memory)
 		{
-			_memory = new int[memory.Length];
-			Array.Copy(memory, 0, _memory, 0, _memory.Length);
+			_memory = new long[_size];
+			Array.Copy(memory, 0, _memory, 0, memory.Length);
 		}
 
-		public void Load(int[] block, int destinationIndex)
+		public void Load(long[] block, int destinationIndex)
 		{
-			if(destinationIndex < 0 || destinationIndex + block.Length > _memory.Length)
+			if (destinationIndex < 0 || destinationIndex + block.Length > _memory.Length)
 			{
 				throw new InvalidOperationException(@"Block does not fit on the specified location.");
 			}
 
-			Array.Copy(block, 0, _memory, destinationIndex, _memory.Length);
+			Array.Copy(block, 0, _memory, destinationIndex, block.Length);
 		}
 
-		public int Read(int address)
+		public long Read(long address)
 		{
-			if(address < 0 || address > _memory.Length)
+			if (address < 0 || address > _memory.Length)
 			{
 				throw new InvalidOperationException(@"Memory address out of range");
 			}
@@ -46,7 +48,7 @@ namespace AdventOfCode.IntCode.Core
 			return _memory[address];
 		}
 
-		public void Write(int address, int value)
+		public void Write(long address, long value)
 		{
 			if (address < 0 || address > _memory.Length)
 			{

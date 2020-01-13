@@ -12,7 +12,7 @@ namespace AdventOfCode.IntCode.Core
 		{
 			var a = GetParameter(0);
 			var b = GetParameter(1);
-			var dest = GetParameter(2, false);
+			var dest = GetParameter(2, true);
 
 			_memory.Write(dest, a + b);
 
@@ -23,7 +23,7 @@ namespace AdventOfCode.IntCode.Core
 		{
 			var a = GetParameter(0);
 			var b = GetParameter(1);
-			var dest = GetParameter(2, false);
+			var dest = GetParameter(2, true);
 
 			_memory.Write(dest, a * b);
 
@@ -32,9 +32,9 @@ namespace AdventOfCode.IntCode.Core
 
 		private int Input()
 		{
-			var dest = GetParameter(0, false);
+			var dest = GetParameter(0, true);
 
-			if (!In.TryRead(out int input))
+			if (!In.TryRead(out long input))
 			{
 				RequireAction();
 				return 0;
@@ -86,7 +86,7 @@ namespace AdventOfCode.IntCode.Core
 		{
 			var a = GetParameter(0);
 			var b = GetParameter(1);
-			var dest = GetParameter(2, false);
+			var dest = GetParameter(2, true);
 
 			_memory.Write(dest, a < b ? 1 : 0);
 
@@ -97,11 +97,18 @@ namespace AdventOfCode.IntCode.Core
 		{
 			var a = GetParameter(0);
 			var b = GetParameter(1);
-			var dest = GetParameter(2, false);
+			var dest = GetParameter(2, true);
 
 			_memory.Write(dest, a == b ? 1 : 0);
 
 			return 4;
+		}
+
+		private int AjustRelativeBase()
+		{
+			var a = GetParameter(0);
+			_relativeBase += a;
+			return 2;
 		}
 	}
 }

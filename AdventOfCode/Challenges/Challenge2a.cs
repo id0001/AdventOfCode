@@ -17,7 +17,7 @@ namespace AdventOfCode.Challenges
 
 		public async Task<string> RunAsync()
 		{
-			int[] program = (await File.ReadAllTextAsync("Assets/Challenge2.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
+			long[] program = (await File.ReadAllTextAsync("Assets/Challenge2.txt")).Split(',').Select(s => long.Parse(s)).ToArray();
 			program[1] = 12;
 			program[2] = 2;
 
