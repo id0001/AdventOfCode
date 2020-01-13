@@ -7,6 +7,7 @@ namespace AdventOfCode.IntCode.Core
 	internal enum ParameterMode : int
 	{
 		Positional = 0,
-		Immediate = 1
+		Immediate = 1,
+		Relative = 2
 	}
 }

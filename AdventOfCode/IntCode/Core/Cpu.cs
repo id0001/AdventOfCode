@@ -11,7 +11,8 @@ namespace AdventOfCode.IntCode.Core
 	{
 		private readonly IDictionary<OpCode, Func<int>> _instructions;
 		private readonly Memory _memory;
-		private int _ip;
+		private long _ip;
+		private long _relativeBase;
 
 		public Cpu()
 		{
@@ -27,9 +28,9 @@ namespace AdventOfCode.IntCode.Core
 
 		public IntWriter Out { get; set; }
 
-		public int ExitCode => _memory.Read(0);
+		public long ExitCode => _memory.Read(0);
 
-		public void LoadProgram(int[] program)
+		public void LoadProgram(long[] program)
 		{
 			if (State != ExecutionState.Halted)
 			{
@@ -48,6 +49,7 @@ namespace AdventOfCode.IntCode.Core
 			}
 
 			_ip = 0;
+			_relativeBase = 0;
 			In.Clear();
 			Out.Clear();
 		}
@@ -84,21 +86,22 @@ namespace AdventOfCode.IntCode.Core
 
 		private ParameterMode GetParameterMode(int offset)
 		{
-			int m = _memory.Read(_ip);
+			long m = _memory.Read(_ip);
 			m = (m - m % 100) / 100;
 
 			return (ParameterMode)(Math.Floor(m / Math.Pow(10, offset)) % 10);
 		}
 
-		private int GetParameter(int offset, bool useMode = true)
+		private long GetParameter(int offset, bool forWrite = false)
 		{
-			int parameter = _memory.Read(_ip + offset + 1);
-			ParameterMode mode = useMode ? GetParameterMode(offset) : ParameterMode.Immediate;
+			long parameter = _memory.Read(_ip + offset + 1);
+			ParameterMode mode = GetParameterMode(offset);
 
 			return mode switch
 			{
 				ParameterMode.Immediate => parameter,
-				_ => _memory.Read(parameter)
+				ParameterMode.Relative => forWrite ? parameter + _relativeBase : _memory.Read(parameter + _relativeBase),
+				_ => forWrite ? parameter : _memory.Read(parameter)
 			};
 		}
 
@@ -117,7 +120,8 @@ namespace AdventOfCode.IntCode.Core
 			{ OpCode.JumpIfTrue, JumpIfTrue },
 			{ OpCode.JumpIfFalse, JumpIfFalse },
 			{ OpCode.LessThan, LessThan },
-			{ OpCode.Equals, Equals }
+			{ OpCode.Equals, Equals },
+			{ OpCode.AjustRelativeBase, AjustRelativeBase }
 		};
 	}
 }

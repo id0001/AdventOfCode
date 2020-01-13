@@ -11,14 +11,14 @@ namespace AdventOfCode.IntCode.Core
 	internal class IntReader
 	{
 		private static readonly object SyncRoot = new object();
-		private readonly Queue<int> _readQueue;
+		private readonly Queue<long> _readQueue;
 
-		public IntReader(Queue<int> queue)
+		public IntReader(Queue<long> queue)
 		{
 			_readQueue = queue;
 		}
 
-		public int Read()
+		public long Read()
 		{
 			lock (SyncRoot)
 			{
@@ -26,15 +26,15 @@ namespace AdventOfCode.IntCode.Core
 			}
 		}
 
-		public IEnumerable<int> ReadToEnd()
+		public IEnumerable<long> ReadToEnd()
 		{
-			while (TryRead(out int output))
+			while (TryRead(out long output))
 			{
 				yield return output;
 			}
 		}
 
-		public bool TryRead(out int output)
+		public bool TryRead(out long output)
 		{
 			lock (SyncRoot)
 			{
@@ -47,7 +47,7 @@ namespace AdventOfCode.IntCode.Core
 			_readQueue.Clear();
 		}
 
-		public int[] Monitor()
+		public long[] Monitor()
 		{
 			lock (SyncRoot)
 			{

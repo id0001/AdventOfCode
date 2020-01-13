@@ -11,7 +11,7 @@ namespace AdventOfCode.IntCode.Devices
 		private readonly int _phase;
 		private Amp _pipeTo;
 
-		public Amp(string id, int[] program, int phase) : base()
+		public Amp(string id, long[] program, int phase) : base()
 		{
 			Id = id;
 			Cpu.LoadProgram(program);

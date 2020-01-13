@@ -11,16 +11,16 @@ namespace AdventOfCode.IntCode.Core
 	internal class IntWriter
 	{
 		private static readonly object SyncRoot = new object();
-		private readonly Queue<int> _writeQueue;
+		private readonly Queue<long> _writeQueue;
 
 		public event EventHandler Updated;
 
-		public IntWriter(Queue<int> queue)
+		public IntWriter(Queue<long> queue)
 		{
 			_writeQueue = queue;
 		}
 
-		public void Write(int value)
+		public void Write(long value)
 		{
 			lock (SyncRoot)
 			{
@@ -35,7 +35,7 @@ namespace AdventOfCode.IntCode.Core
 			_writeQueue.Clear();
 		}
 
-		public int[] Monitor()
+		public long[] Monitor()
 		{
 			lock (SyncRoot)
 			{

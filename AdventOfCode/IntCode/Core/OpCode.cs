@@ -15,6 +15,7 @@ namespace AdventOfCode.IntCode.Core
 		JumpIfFalse = 6,
 		LessThan = 7,
 		Equals = 8,
+		AjustRelativeBase = 9,
 		Halt = 99
 	}
 }

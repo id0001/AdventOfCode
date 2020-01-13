@@ -10,8 +10,8 @@ namespace AdventOfCode.IntCode.Devices
 	/// </summary>
 	internal abstract class BaseComputer
 	{
-		private readonly Queue<int> _inputQueue;
-		private readonly Queue<int> _outputQueue;
+		private readonly Queue<long> _inputQueue;
+		private readonly Queue<long> _outputQueue;
 		private readonly IntReader _inputReader;
 		private readonly IntWriter _outputWriter;
 
@@ -19,8 +19,8 @@ namespace AdventOfCode.IntCode.Devices
 		{
 			Cpu = new Cpu();
 
-			_inputQueue = new Queue<int>();
-			_outputQueue = new Queue<int>();
+			_inputQueue = new Queue<long>();
+			_outputQueue = new Queue<long>();
 
 			_inputReader = new IntReader(_inputQueue);
 			_outputWriter = new IntWriter(_outputQueue);
@@ -38,7 +38,7 @@ namespace AdventOfCode.IntCode.Devices
 
 		public IntWriter In { get; }
 
-		public void LoadProgram(int[] program)
+		public void LoadProgram(long[] program)
 		{
 			Cpu.LoadProgram(program);
 		}

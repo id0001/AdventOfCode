@@ -18,7 +18,7 @@ namespace AdventOfCode.Challenges
 
 		public async Task<string> RunAsync()
 		{
-			int[] program = (await File.ReadAllTextAsync("Assets/Challenge7.txt")).Split(',').Select(s => int.Parse(s)).ToArray();
+			long[] program = (await File.ReadAllTextAsync("Assets/Challenge7.txt")).Split(',').Select(s => long.Parse(s)).ToArray();
 
 			var perms = new List<int[]>();
 			GeneratePermutations(perms, new int[] { 0, 1, 2, 3, 4 }, 0, 4);
@@ -33,7 +33,7 @@ namespace AdventOfCode.Challenges
 					computer.In.Write(phase);
 					computer.In.Write(signal);
 					computer.Execute();
-					signal = computer.Out.Read();
+					signal = (int)computer.Out.Read();
 				}
 
 				if(signal > highest)
