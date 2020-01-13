@@ -30,7 +30,9 @@ namespace AdventOfCode
 			{ "6a", "142915" },
 			{ "6b", "283" },
 			{ "7a", "422858" },
-			{ "7b", "14897241" }
+			{ "7b", "14897241" },
+			{ "8a", "1677" },
+			{ "8b", "#  # ###  #  # #### ###  \r\n#  # #  # #  # #    #  # \r\n#  # ###  #  # ###  #  # \r\n#  # #  # #  # #    ###  \r\n#  # #  # #  # #    #    \r\n ##  ###   ##  #    #    \r\n"}
 		};
 
 		async static Task Main(string[] args)
@@ -51,7 +53,7 @@ namespace AdventOfCode
 
 			Console.Clear();
 
-			if(input == "test")
+			if (input == "test")
 			{
 				await PerformTestAllAsync();
 			}
