@@ -8,7 +8,7 @@ namespace AdventOfCode
 	/// <summary>
 	/// The Point class TODO: Describe class here
 	/// </summary>
-	[DebuggerDisplay("({X},{Y}) = {ManhattanDistance}")]
+	[DebuggerDisplay("({X},{Y})")]
 	internal struct Point : IEquatable<Point>
 	{
 		public static readonly Point Zero = new Point(0, 0);
@@ -19,9 +19,9 @@ namespace AdventOfCode
 			Y = y;
 		}
 
-		public int X { get; set; }
+		public int X;
 
-		public int Y { get; set; }
+		public int Y;
 
 		public int ManhattanDistance => Math.Abs(X) + Math.Abs(Y);
 
