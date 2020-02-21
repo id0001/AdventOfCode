@@ -89,17 +89,19 @@ namespace AdventOfCode.Challenges
 
 		private double GetAngle(double ax, double ay, double bx, double by, double ox, double oy)
 		{
-			double lax = ax - ox;
-			double lay = ay - oy;
-			double lbx = bx - ox;
-			double lby = by - oy;
-			double maga = Math.Sqrt((lax * lax) + (lay * lay));
-			double magb = Math.Sqrt((lbx * lbx) + (lby * lby));
+            double lax = ax - ox;
+            double lay = ay - oy;
+            double lbx = bx - ox;
+            double lby = by - oy;
+            double maga = Math.Sqrt((lax * lax) + (lay * lay));
+            double magb = Math.Sqrt((lbx * lbx) + (lby * lby));
 
-			double cross = (lax * lby) - (lay * lbx);
+            double cross = (lax * lby) - (lay * lbx);
 
-			double dot = ((lax * lbx) + (lay * lby)) / (maga * magb);
-			return Math.Acos(Math.Max(-1d, Math.Min(dot, 1d)));
-		}
+            double dot = ((lax * lbx) + (lay * lby)) / (maga * magb);
+            double angle = Math.Acos(Math.Max(-1d, Math.Min(dot, 1d)));
+            angle *= Math.Sign(cross != 0 ? cross : 1);
+            return angle < 0 ? 2 * Math.PI + angle : angle;
+        }
 	}
 }

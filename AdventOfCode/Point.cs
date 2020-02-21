@@ -41,6 +41,8 @@ namespace AdventOfCode
 			return HashCode.Combine(X, Y);
 		}
 
+		public override string ToString() => $"({X},{Y})";
+
 		public static bool operator ==(Point left, Point right)
 		{
 			return left.Equals(right);

@@ -13,37 +13,60 @@ namespace AdventOfCode.Challenges
 
 		public async Task<string> RunAsync()
 		{
-			string[] input = await File.ReadAllLinesAsync("Assets/TestInput.txt");
+			string[] input = await File.ReadAllLinesAsync("Assets/Challenge10.txt");
 
 			var asteroids = GetAsteroids(input);
-			var center = new Point(11, 13);
+			var center = new Point(20, 18);
 			asteroids.Remove(center);
 
-			var list = Calculate(asteroids, center);
+			var cmp = new AsteroidComparer();
 
-			var doubleComparer = new DoubleComparer();
+			var calc1 = Calculate(asteroids, center);
+			var calc2 = Calculate2(asteroids, center);
 
-			var sorted = new SortedDictionary<double, SortedList<double, Point>>(list.GroupBy(a => a.Angle, doubleComparer)
-				.ToDictionary(kv => kv.Key, kv => new SortedList<double, Point>(kv.ToDictionary(x => x.Length, x => x.Point, doubleComparer), doubleComparer)));
+			var filtered = calc1.Zip(calc2).Where(p => !(p.First.Point == p.Second.Point && p.First.Angle == p.Second.Angle && p.First.Length == p.Second.Length)).ToList();
 
-			var enumerated = EnumerateSortedAsteroids(sorted.Select(e=> e.Value).Select(e=>e.Values).ToList());
+			var l1 = calc1.GroupBy(e => e.Angle, cmp).ToDictionary(e => e.Key, e => e.ToList());
+			var l2 = calc2.GroupBy(e => e.Angle, cmp).ToDictionary(e => e.Key, e => e.ToList());
+
+			var list = Calculate(asteroids, center).GroupBy(e => e.Angle, cmp)
+				.OrderBy(e => e.Key)
+				.Select(e => new List<Point>(e.OrderBy(f => f.Length).Select(f => f.Point)))
+				.ToList();
+
+			var list2 = Calculate2(asteroids, center).GroupBy(e => e.Angle, cmp)
+				.OrderBy(e => e.Key)
+				.Select(e => new List<Point>(e.OrderBy(f => f.Length).Select(f => f.Point)))
+				.ToList();
+
+			var enumerated = EnumerateSortedAsteroids(list).ToList();
+			var enumerated2 = EnumerateSortedAsteroids(list2).ToList();
 			var p = enumerated.Skip(199).First();
+			var p2 = enumerated2.Skip(199).First();
 
+			Console.WriteLine($"{p} -> {(p.X * 100) + p.Y}");
+			Console.WriteLine($"{p2} -> {(p2.X * 100) + p2.Y}");
 			return string.Empty;
 		}
 
-		private IEnumerable<Point> EnumerateSortedAsteroids(IList<IList<Point>> list)
+		private IEnumerable<Point> EnumerateSortedAsteroids(List<List<Point>> list)
 		{
 			int length = list.Sum(x => x.Count);
+			int amount = length;
 			int[] indices = new int[list.Count];
-			for (int i = 0; i < length; i++)
-			{
-				int j = i % list.Count;
-				if (indices[j] >= list[j].Count)
-					continue;
 
-				yield return list[j][indices[j]];
-			};
+			int i = 0;
+			while (amount > 0)
+			{
+				if (indices[i] < list[i].Count)
+				{
+					var p = list[i][indices[i]];
+					amount--;
+					yield return p;
+				}
+
+				i = (i + 1) % list.Count;
+			}
 		}
 
 		private IList<Point> GetAsteroids(string[] input)
@@ -66,7 +89,7 @@ namespace AdventOfCode.Challenges
 		private IList<(Point Point, double Angle, double Length)> Calculate(IList<Point> asteroids, Point center)
 		{
 			var result = new List<(Point, double, double)>();
-			Point start = new Point(center.X, center.Y - 1);
+			Point start = new Point(center.X, 0);
 			foreach (var asteroid in asteroids)
 			{
 				double angle = GetAngle(start, asteroid, center);
@@ -77,9 +100,27 @@ namespace AdventOfCode.Challenges
 			return result;
 		}
 
+		private IList<(Point Point, double Angle, double Length)> Calculate2(IList<Point> asteroids, Point center)
+		{
+			var result = new List<(Point, double, double)>();
+			foreach (var asteroid in asteroids)
+			{
+				double angle = GetAngle2(asteroid, center);
+				double length = GetLength(asteroid, center);
+				result.Add((asteroid, angle, length));
+			}
+
+			return result;
+		}
+
 		private double GetAngle(Point a, Point b, Point origin)
 		{
 			return GetAngle(a.X, a.Y, b.X, b.Y, origin.X, origin.Y);
+		}
+
+		private double GetAngle2(Point b, Point origin)
+		{
+			return GetAngle2(b.X, b.Y, origin.X, origin.Y);
 		}
 
 		private double GetLength(Point a, Point origin)
@@ -104,16 +145,27 @@ namespace AdventOfCode.Challenges
 			double dot = ((lax * lbx) + (lay * lby)) / (maga * magb);
 			double angle = Math.Acos(Math.Max(-1d, Math.Min(dot, 1d)));
 			angle *= Math.Sign(cross != 0 ? cross : 1);
-			return angle < 0 ? 2 * Math.PI + angle : angle;
+			angle = angle < 0 ? 2 * Math.PI + angle : angle;
+
+			return angle;
 		}
 
-		private class DoubleComparer : IComparer<double>, IEqualityComparer<double>
+		private double GetAngle2(double bx, double by, double ox, double oy)
 		{
-			public int Compare([AllowNull] double x, [AllowNull] double y) => Equals(x, y) ? 0 : x < y ? -1 : 1;
+			var angle2 = Math.Atan2(by - oy, bx - ox);
+			angle2 += (Math.PI / 2d);
 
-			public bool Equals([AllowNull] double x, [AllowNull] double y) => Math.Abs(x - y) < 0.0001d;
+			if (angle2 < 0)
+				angle2 += Math.PI * 2;
 
-			public int GetHashCode([DisallowNull] double obj) => HashCode.Combine(obj);
+			return angle2;
+		}
+
+		private class AsteroidComparer : EqualityComparer<double>
+		{
+			public override bool Equals([AllowNull] double x, [AllowNull] double y) => Math.Abs(x - y) < 0.000001d;
+
+			public override int GetHashCode([DisallowNull] double obj) => obj.GetHashCode();
 		}
 	}
 }
