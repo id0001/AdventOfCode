@@ -8,6 +8,7 @@
 
 using ConsoleTableExt;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -20,9 +21,9 @@ namespace AdventOfCode.Challenges
 	/// <summary>
 	/// The Challenge12a class TODO: Describe class here
 	/// </summary>
-	internal class Challenge12a : IChallenge
+	internal class Challenge12b : IChallenge
 	{
-		public string Id => "12a";
+		public string Id => "12b";
 
 		public async Task<string> RunAsync()
 		{
@@ -41,9 +42,13 @@ namespace AdventOfCode.Challenges
 				new Moon("callisto", v3)
 			};
 
-			int steps = 1000;
-			for (int s = 0; s < steps; s++)
+			var prevPositions = new HashSet<(Vector3, Vector3, Vector3, Vector3)>();
+
+			int steps = 0;
+			do
 			{
+				prevPositions.Add((moons[0].Position, moons[1].Position, moons[2].Position, moons[3].Position));
+
 				for (int y = 0; y < 3; y++)
 				{
 					for (int x = y + 1; x < 4; x++)
@@ -52,19 +57,15 @@ namespace AdventOfCode.Challenges
 					}
 				}
 
-				Console.WriteLine($"Step {s}:");
 				foreach (var moon in moons)
 				{
 					moon.ApplyVelocity();
 				}
 
-				ConsoleTableBuilder.From(moons.ToList())
-					.ExportAndWriteLine();
+				steps++;
+			} while (!prevPositions.Contains((moons[0].Position, moons[1].Position, moons[2].Position, moons[3].Position)));
 
-				Console.WriteLine();
-			}
-
-			Console.WriteLine($"Total energy: {moons.Sum(m => m.TotalEnergy)}");
+			Console.WriteLine($"Total steps: {steps}");
 
 			return string.Empty;
 		}
