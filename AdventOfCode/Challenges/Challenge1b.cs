@@ -1,15 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Challenge1b class TODO: Describe class here
-	/// </summary>
 	internal class Challenge1b : IChallenge
 	{
 		public string Id => "1b";

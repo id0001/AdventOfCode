@@ -1,24 +1,10 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge9a.cs -- The Challenge9a class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
 using AdventOfCode.IntCode.Devices;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Challenge9a class TODO: Describe class here
-	/// </summary>
 	internal class Challenge9a : IChallenge
 	{
 		public string Id => "9a";

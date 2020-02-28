@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -6,10 +5,6 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Challenge4a class TODO: Describe class here
-	/// </summary>
 	internal class Challenge4a : IChallenge
 	{
 		private const string RepeatingRule = @"(\d)\1+";
