@@ -1,6 +1,5 @@
 ﻿using AdventOfCode.Challenges;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -36,7 +35,9 @@ namespace AdventOfCode
 			{ "9a", "3100786347" },
 			{ "9b", "87023" },
 			{ "10a", "280" },
-			{ "10b", "706" }
+			{ "10b", "706" },
+			{ "11a", "2883" },
+			{ "11b", ".#....####.###...##..###..#.....##..####...\r\n.#....#....#..#.#..#.#..#.#....#..#....#...\r\n.#....###..#..#.#....#..#.#....#......#....\r\n.#....#....###..#....###..#....#.##..#.....\r\n.#....#....#....#..#.#....#....#..#.#......\r\n.####.####.#.....##..#....####..###.####...\r\n" }
 		};
 
 		async static Task Main(string[] args)
