@@ -29,7 +29,7 @@ namespace AdventOfCode.IntCode.Devices
 
 		public void Initialize()
 		{
-			Cpu.Run();
+			Cpu.Start();
 			In.Write(_phase);
 		}
 

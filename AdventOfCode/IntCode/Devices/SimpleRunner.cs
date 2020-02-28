@@ -16,7 +16,7 @@ namespace AdventOfCode.IntCode.Devices
 
 		public long Execute()
 		{
-			Cpu.Run();
+			Cpu.Start();
 			while (!Cpu.IsHalted)
 			{
 				Cpu.Next();

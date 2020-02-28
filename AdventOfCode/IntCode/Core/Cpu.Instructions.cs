@@ -40,6 +40,7 @@ namespace AdventOfCode.IntCode.Core
 				return 0;
 			}
 
+			Run();
 			_memory.Write(dest, input);
 
 			return 2;

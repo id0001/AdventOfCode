@@ -3,10 +3,6 @@ using System.Collections.Generic;
 
 namespace AdventOfCode.IntCode.Core
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Cpu class TODO: Describe class here
-	/// </summary>
 	internal partial class Cpu
 	{
 		private readonly IDictionary<OpCode, Func<int>> _instructions;
@@ -54,9 +50,14 @@ namespace AdventOfCode.IntCode.Core
 			Out.Clear();
 		}
 
-		public void Run()
+		public void Start()
 		{
-			State = ExecutionState.Running;
+			if (State != ExecutionState.Halted)
+			{
+				throw new InvalidOperationException(@"Cannot start while executing.");
+			}
+
+			Run();
 		}
 
 		public void Next()
@@ -70,6 +71,11 @@ namespace AdventOfCode.IntCode.Core
 
 			int size = ExecuteInstruction(opCode);
 			_ip += size;
+		}
+
+		private void Run()
+		{
+			State = ExecutionState.Running;
 		}
 
 		public void Halt()
@@ -109,7 +115,6 @@ namespace AdventOfCode.IntCode.Core
 		{
 			return _instructions[opCode].Invoke();
 		}
-
 
 		private IDictionary<OpCode, Func<int>> InitInstructions() => new Dictionary<OpCode, Func<int>>
 		{
