@@ -34,7 +34,9 @@ namespace AdventOfCode
 			{ "8a", "1677" },
 			{ "8b", "#  # ###  #  # #### ###  \r\n#  # #  # #  # #    #  # \r\n#  # ###  #  # ###  #  # \r\n#  # #  # #  # #    ###  \r\n#  # #  # #  # #    #    \r\n ##  ###   ##  #    #    \r\n"},
 			{ "9a", "3100786347" },
-			{ "9b", "87023" }
+			{ "9b", "87023" },
+			{ "10a", "280" },
+			{ "10b", "706" }
 		};
 
 		async static Task Main(string[] args)
@@ -78,7 +80,7 @@ namespace AdventOfCode
 		private static async Task PerformTestAllAsync()
 		{
 			Console.WriteLine("Running tests...");
-			foreach (var challenge in _challenges.Keys)
+			foreach (var challenge in _answers.Keys)
 			{
 				Console.Write($"{challenge}... ");
 				string result = await _challenges[challenge].RunAsync();

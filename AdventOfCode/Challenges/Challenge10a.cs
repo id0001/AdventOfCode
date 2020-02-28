@@ -19,7 +19,6 @@ namespace AdventOfCode.Challenges
             var lineOfSight = CalculateLineOfSight(asteroids);
 
             var best = lineOfSight.OrderByDescending(e => e.Value.Count).First();
-            Console.WriteLine($"{best.Key}: {best.Value.Count}");
             return best.Value.Count.ToString();
         }
 
@@ -67,16 +66,42 @@ namespace AdventOfCode.Challenges
             {
                 if (p2 == p0 || p2 == p1) continue;
 
-                var a = p2 - p0;
-                var b = p1 - p0;
+				var angle = GetAngle(p1.X, p1.Y, p2.X, p2.Y, p0.X, p0.Y);
 
-                var v = Vector.Dot(a, b) / (a.Length() * b.Length());
-                var angle = v <= -1 ? Math.PI : v >= 1 ? 0 : Math.Acos(v);
-
-                if (Math.Abs(angle) < 0.001d && a.Length() < b.Length()) return false;
+                if (Math.Abs(angle) < 0.001d && GetLengthSquared(p2,p0) < GetLengthSquared(p1,p0)) return false;
             }
 
             return true;
         }
-    }
+
+		private double GetAngle(Point a, Point b, Point origin)
+		{
+			return GetAngle(a.X, a.Y, b.X, b.Y, origin.X, origin.Y);
+		}
+
+		private double GetLengthSquared(Vector a, Vector origin)
+		{
+			double x = a.X - origin.X;
+			double y = a.Y - origin.Y;
+
+			return (x * x) + (y * y);
+		}
+
+		private double GetAngle(double ax, double ay, double bx, double by, double ox, double oy)
+		{
+            double lax = ax - ox;
+            double lay = ay - oy;
+            double lbx = bx - ox;
+            double lby = by - oy;
+            double maga = Math.Sqrt((lax * lax) + (lay * lay));
+            double magb = Math.Sqrt((lbx * lbx) + (lby * lby));
+
+            double cross = (lax * lby) - (lay * lbx);
+
+            double dot = ((lax * lbx) + (lay * lby)) / (maga * magb);
+            double angle = Math.Acos(Math.Max(-1d, Math.Min(dot, 1d)));
+            angle *= Math.Sign(cross != 0 ? cross : 1);
+            return angle < 0 ? 2 * Math.PI + angle : angle;
+        }
+	}
 }
