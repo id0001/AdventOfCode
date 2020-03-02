@@ -5,10 +5,6 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Challenge6b class TODO: Describe class here
-	/// </summary>
 	internal class Challenge6b : IChallenge
 	{
 		public string Id => "6b";
