@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
@@ -22,16 +23,16 @@ namespace AdventOfCode.Challenges
             return best.Value.Count.ToString();
         }
 
-        private IList<Vector> GetAsteroids(string[] input)
+        private IList<Vector2> GetAsteroids(string[] input)
         {
-            var list = new List<Vector>();
+            var list = new List<Vector2>();
             for (int y = 0; y < input.Length; y++)
             {
                 for (int x = 0; x < input[y].Length; x++)
                 {
                     if (input[y][x] == '#')
                     {
-                        list.Add(new Vector(x, y));
+                        list.Add(new Vector2(x, y));
                     }
                 }
             }
@@ -39,13 +40,13 @@ namespace AdventOfCode.Challenges
             return list;
         }
 
-        private IDictionary<Vector, IList<Vector>> CalculateLineOfSight(IList<Vector> asteroids)
+        private IDictionary<Vector2, IList<Vector2>> CalculateLineOfSight(IList<Vector2> asteroids)
         {
-            var result = new Dictionary<Vector, IList<Vector>>();
+            var result = new Dictionary<Vector2, IList<Vector2>>();
 
             foreach (var p0 in asteroids)
             {
-                result.Add(p0, new List<Vector>());
+                result.Add(p0, new List<Vector2>());
                 foreach (var p1 in asteroids)
                 {
                     if (p0 == p1) continue;
@@ -60,7 +61,7 @@ namespace AdventOfCode.Challenges
             return result;
         }
 
-        private bool CanSee(IList<Vector> asteroids, Vector p0, Vector p1)
+        private bool CanSee(IList<Vector2> asteroids, Vector2 p0, Vector2 p1)
         {
             foreach (var p2 in asteroids)
             {
@@ -79,7 +80,7 @@ namespace AdventOfCode.Challenges
 			return GetAngle(a.X, a.Y, b.X, b.Y, origin.X, origin.Y);
 		}
 
-		private double GetLengthSquared(Vector a, Vector origin)
+		private double GetLengthSquared(Vector2 a, Vector2 origin)
 		{
 			double x = a.X - origin.X;
 			double y = a.Y - origin.Y;

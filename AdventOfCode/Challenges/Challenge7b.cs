@@ -1,5 +1,3 @@
-using AdventOfCode.IntCode;
-using AdventOfCode.IntCode.Core;
 using AdventOfCode.IntCode.Devices;
 using System;
 using System.Collections.Generic;
@@ -9,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Challenge7a class TODO: Describe class here
-	/// </summary>
 	internal class Challenge7b : IChallenge
 	{
 		public string Id => "7b";
