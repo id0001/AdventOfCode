@@ -1,14 +1,4 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge12a.cs -- The Challenge12a class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
-
-using ConsoleTableExt;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -17,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Challenge12a class TODO: Describe class here
-	/// </summary>
 	internal class Challenge12b : IChallenge
 	{
 		public string Id => "12b";
@@ -42,13 +28,15 @@ namespace AdventOfCode.Challenges
 				new Moon("callisto", v3)
 			};
 
-			var prevPositions = new HashSet<(Vector3, Vector3, Vector3, Vector3)>();
 
 			int steps = 0;
+
+			int xCycle = 0;
+			int yCycle = 0;
+			int zCycle = 0;
+
 			do
 			{
-				prevPositions.Add((moons[0].Position, moons[1].Position, moons[2].Position, moons[3].Position));
-
 				for (int y = 0; y < 3; y++)
 				{
 					for (int x = y + 1; x < 4; x++)
@@ -63,12 +51,36 @@ namespace AdventOfCode.Challenges
 				}
 
 				steps++;
-			} while (!prevPositions.Contains((moons[0].Position, moons[1].Position, moons[2].Position, moons[3].Position)));
 
-			Console.WriteLine($"Total steps: {steps}");
+				if (moons.All(m => m.IsInitialStateX) && xCycle == 0)
+				{
+					xCycle = steps;
+				}
 
-			return string.Empty;
+				if (moons.All(m => m.IsInitialStateY) && yCycle == 0)
+				{
+					yCycle = steps;
+				}
+
+				if (moons.All(m => m.IsInitialStateZ) && zCycle == 0)
+				{
+					zCycle = steps;
+				}
+
+			} while (!(xCycle > 0 && yCycle > 0 && zCycle > 0));
+
+			return Lcm(Lcm(zCycle, xCycle), yCycle).ToString();
 		}
+
+		private long Gcd(long a, long b)
+		{
+			if (b == 0)
+				return a;
+
+			return Gcd(b, a % b);
+		}
+
+		private long Lcm(long a, long b) => (a / Gcd(a, b)) * b;
 
 		private Vector3 ConvertLineToVector(string line)
 		{

@@ -18,7 +18,9 @@ namespace AdventOfCode
 	/// </summary>
 	internal class Moon
 	{
-		public Moon(string name, Vector3 position) => (Name, Position) = (name, position);
+		private Vector3 initialPosition;
+
+		public Moon(string name, Vector3 position) => (Name, Position, initialPosition) = (name, position, position);
 
 		public string Name { get; }
 
@@ -36,6 +38,14 @@ namespace AdventOfCode
 		{
 			Position += Velocity;
 		}
+
+		public bool IsInitialState => IsInitialStateX && IsInitialStateY && IsInitialStateZ;
+
+		public bool IsInitialStateX => FloatEquals(Position.X, initialPosition.X) && FloatEquals(Velocity.X, 0);
+
+		public bool IsInitialStateY => FloatEquals(Position.Y, initialPosition.Y) && FloatEquals(Velocity.Y, 0);
+
+		public bool IsInitialStateZ => FloatEquals(Position.Z, initialPosition.Z) && FloatEquals(Velocity.Z, 0);
 
 		public override string ToString() => $"{Name}:\t pos=<x={Position.X}, y={Position.Y}, z={Position.Z}> vel=<x={Velocity.X}, y={Velocity.Y}, z={Velocity.Z}>";
 

@@ -1,12 +1,4 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Challenge12a.cs -- The Challenge12a class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
 
-using ConsoleTableExt;
 using System;
 using System.IO;
 using System.Linq;
@@ -16,10 +8,6 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Challenge12a class TODO: Describe class here
-	/// </summary>
 	internal class Challenge12a : IChallenge
 	{
 		public string Id => "12a";
@@ -52,21 +40,13 @@ namespace AdventOfCode.Challenges
 					}
 				}
 
-				Console.WriteLine($"Step {s}:");
 				foreach (var moon in moons)
 				{
 					moon.ApplyVelocity();
 				}
-
-				ConsoleTableBuilder.From(moons.ToList())
-					.ExportAndWriteLine();
-
-				Console.WriteLine();
 			}
 
-			Console.WriteLine($"Total energy: {moons.Sum(m => m.TotalEnergy)}");
-
-			return string.Empty;
+			return moons.Sum(m => m.TotalEnergy).ToString();
 		}
 
 		private Vector3 ConvertLineToVector(string line)
