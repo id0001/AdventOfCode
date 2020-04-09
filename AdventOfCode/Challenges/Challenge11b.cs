@@ -1,4 +1,5 @@
 
+using AdventOfCode.DataStructures;
 using AdventOfCode.IntCode.Devices;
 using System.Collections.ObjectModel;
 using System.IO;

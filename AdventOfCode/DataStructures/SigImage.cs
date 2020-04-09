@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
-namespace AdventOfCode
+namespace AdventOfCode.DataStructures
 {
 	public class SigImage
 	{

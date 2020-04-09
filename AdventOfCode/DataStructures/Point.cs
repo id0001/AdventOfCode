@@ -2,12 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace AdventOfCode
+namespace AdventOfCode.DataStructures
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Point class TODO: Describe class here
-	/// </summary>
 	[DebuggerDisplay("({X},{Y})")]
 	internal struct Point : IEquatable<Point>
 	{

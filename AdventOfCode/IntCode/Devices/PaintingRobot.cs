@@ -6,6 +6,7 @@
 //
 //-------------------------------------------------------------------------------------------------
 
+using AdventOfCode.DataStructures;
 using AdventOfCode.IntCode.Core;
 using System;
 using System.Collections.Generic;
