@@ -1,3 +1,4 @@
+using AdventOfCode.DataStructures;
 using System;
 using System.IO;
 using System.Linq;
