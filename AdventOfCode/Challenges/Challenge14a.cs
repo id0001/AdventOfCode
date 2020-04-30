@@ -17,59 +17,63 @@ namespace AdventOfCode.Challenges
 
 		public async Task<string> RunAsync()
 		{
-			string[] lines = await File.ReadAllLinesAsync("Assets/TestInput.txt");
-			//string[] lines = await File.ReadAllLinesAsync("Assets/Challenge14.txt");
+			string[] lines = await File.ReadAllLinesAsync("Assets/Challenge14.txt");
 
 			var reactions = new Dictionary<string, ChemicalReaction>();
 
 			foreach (var line in lines)
 			{
 				var reaction = new ChemicalReaction(line);
-				reactions.Add(reaction.ElementProduced, reaction);
+				reactions.Add(reaction.Output.Key, reaction);
 			}
 
-			var dict = new Dictionary<string, int>();
-			var fuelReaction = reactions[Fuel];
-			int amount = PerformReaction(fuelReaction, 1,dict , reactions);
+			var chemStore = new ChemicalStore();
+			int oreUsed = ProduceChemical(Fuel, 1, reactions, chemStore);
 
-			return "";
+			return oreUsed.ToString();
 		}
 
-		private int PerformReaction(ChemicalReaction reaction, int amountNeeded, IDictionary<string, int> produced, IDictionary<string, ChemicalReaction> allReactions)
+		/// <summary>
+		/// Produce a chemical by traversing down the reaction path and produce every neccessary chemical.
+		/// </summary>
+		/// <param name="name">The chemical to produce</param>
+		/// <param name="amount">The amount needed</param>
+		/// <param name="reactions">All possible reactions</param>
+		/// <param name="chemStore">The chemical store</param>
+		/// <returns>The consumed ore amount</returns>
+		private int ProduceChemical(string name, int amount, IDictionary<string, ChemicalReaction> reactions, ChemicalStore chemStore)
 		{
-			if (produced.TryGetValue(reaction.ElementProduced, out int alreadyProduced))
+			int oreConsumed = 0;
+
+			// Ore is the only chemical without a reaction. So just produce it and return 0;
+			if (name == Ore)
 			{
-				int toReduce = Math.Min(amountNeeded, alreadyProduced);
-				amountNeeded -= toReduce;
-				produced[reaction.ElementProduced] -= toReduce;
+				chemStore.Modify(name, amount);
+				return 0;
 			}
 
-			int times = (int)Math.Ceiling((float)amountNeeded / reaction.AmountProduced);
-			int rest = amountNeeded % reaction.AmountProduced;
+			// Perform the reaction and produce the chemica.
+			var reaction = reactions[name];
 
-			int oreCost = 0;
-			foreach (var requiredChemicals in reaction.Requirements)
+			// Go over inputs
+			foreach (var input in reaction.Inputs)
 			{
-				int rcount = requiredChemicals.Value * times;
-
-				if (requiredChemicals.Key == Ore)
+				while (!chemStore.HasEnough(input.Key, input.Value))
 				{
-					oreCost += rcount;
+					oreConsumed += ProduceChemical(input.Key, input.Value, reactions, chemStore);
 				}
-				else
-				{
-					oreCost += PerformReaction(allReactions[requiredChemicals.Key], rcount, produced, allReactions);
-				}
+
+				// Consume input to produce output
+				chemStore.Modify(input.Key, -input.Value);
+
+				// if input is ORE. Add amount to consumed ore amount.
+				if (input.Key == Ore)
+					oreConsumed += input.Value;
 			}
 
-			if (!produced.ContainsKey(reaction.ElementProduced))
-			{
-				produced.Add(reaction.ElementProduced, 0);
-			}
-
-			produced[reaction.ElementProduced] += rest;
-
-			return oreCost;
+			// Add produced amount to the store.
+			chemStore.Modify(name, reaction.Output.Value);
+			return oreConsumed;
 		}
 	}
 }

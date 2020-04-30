@@ -20,27 +20,25 @@ namespace AdventOfCode.Chemistry
 
 			foreach (var item in inputs)
 			{
-				(int amount, string name) = ParsePart(item.Trim());
-				Requirements.Add(name, amount);
+				var kv = ParsePart(item.Trim());
+				Inputs.Add(kv);
 			}
 
-			(AmountProduced, ElementProduced) = ParsePart(io[1].Trim());
+			Output = ParsePart(io[1].Trim());
 		}
-
-		public IDictionary<string, int> Requirements = new Dictionary<string, int>();
 
 		public string InputString { get; }
 
-		public string ElementProduced { get; }
+		public IDictionary<string, int> Inputs { get; private set; } = new Dictionary<string, int>();
 
-		public int AmountProduced { get; }
+		public KeyValuePair<string, int> Output { get; private set; }
 
 		/// <summary>
 		/// Parse the amount and name of the element: '3 ABCD' -> {3} {ABCD}
 		/// </summary>
 		/// <param name="part">The part</param>
-		/// <returns>A tuple with the amount and the name of the element</returns>
-		private (int Amount, string Name) ParsePart(string part)
+		/// <returns>A keyvaluepair with the amount and the name of the element</returns>
+		private KeyValuePair<string, int> ParsePart(string part)
 		{
 			string[] split = part.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
@@ -50,7 +48,7 @@ namespace AdventOfCode.Chemistry
 			if (!int.TryParse(split[0].Trim(), out int amount))
 				throw new ArgumentException($"The input was not valid: {part}");
 
-			return (amount, split[1].Trim());
+			return new KeyValuePair<string, int>(split[1].Trim(), amount);
 		}
 	}
 }
