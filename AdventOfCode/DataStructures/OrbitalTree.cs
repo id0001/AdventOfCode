@@ -2,12 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AdventOfCode
+namespace AdventOfCode.DataStructures
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The OrbitalTree class TODO: Describe class here
-	/// </summary>
 	internal class OrbitalTree
 	{
 		public OrbitalTree(string[] data)

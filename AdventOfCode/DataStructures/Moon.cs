@@ -1,21 +1,9 @@
-//-------------------------------------------------------------------------------------------------
-//
-// Moon.cs -- The Moon class.
-//
-// Copyright (c) 2020 Marel. All rights reserved.
-//
-//-------------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 
-namespace AdventOfCode
+namespace AdventOfCode.DataStructures
 {
-	//---------------------------------------------------------------------------------------------
-	/// <summary>
-	/// The Moon class TODO: Describe class here
-	/// </summary>
 	internal class Moon
 	{
 		private Vector3 initialPosition;
