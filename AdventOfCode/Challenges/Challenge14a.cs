@@ -1,9 +1,7 @@
 
 using AdventOfCode.Chemistry;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
@@ -28,7 +26,7 @@ namespace AdventOfCode.Challenges
 			}
 
 			var chemStore = new ChemicalStore();
-			int oreUsed = ProduceChemical(Fuel, 1, reactions, chemStore);
+			int oreUsed = ProduceChemical(Fuel, reactions, chemStore);
 
 			return oreUsed.ToString();
 		}
@@ -37,20 +35,12 @@ namespace AdventOfCode.Challenges
 		/// Produce a chemical by traversing down the reaction path and produce every neccessary chemical.
 		/// </summary>
 		/// <param name="name">The chemical to produce</param>
-		/// <param name="amount">The amount needed</param>
 		/// <param name="reactions">All possible reactions</param>
 		/// <param name="chemStore">The chemical store</param>
 		/// <returns>The consumed ore amount</returns>
-		private int ProduceChemical(string name, int amount, IDictionary<string, ChemicalReaction> reactions, ChemicalStore chemStore)
+		private int ProduceChemical(string name, IDictionary<string, ChemicalReaction> reactions, ChemicalStore chemStore)
 		{
 			int oreConsumed = 0;
-
-			// Ore is the only chemical without a reaction. So just produce it and return 0;
-			if (name == Ore)
-			{
-				chemStore.Modify(name, amount);
-				return 0;
-			}
 
 			// Perform the reaction and produce the chemica.
 			var reaction = reactions[name];
@@ -58,17 +48,21 @@ namespace AdventOfCode.Challenges
 			// Go over inputs
 			foreach (var input in reaction.Inputs)
 			{
-				while (!chemStore.HasEnough(input.Key, input.Value))
+				if (input.Key == Ore)
 				{
-					oreConsumed += ProduceChemical(input.Key, input.Value, reactions, chemStore);
+					oreConsumed += input.Value;
+					continue;
+				}
+				else
+				{
+					while (!chemStore.HasEnough(input.Key, input.Value))
+					{
+						oreConsumed += ProduceChemical(input.Key, reactions, chemStore);
+					}
 				}
 
 				// Consume input to produce output
 				chemStore.Modify(input.Key, -input.Value);
-
-				// if input is ORE. Add amount to consumed ore amount.
-				if (input.Key == Ore)
-					oreConsumed += input.Value;
 			}
 
 			// Add produced amount to the store.

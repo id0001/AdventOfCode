@@ -6,14 +6,16 @@ namespace AdventOfCode.Chemistry
 {
 	public class ChemicalStore
 	{
-		private IDictionary<string, int> store;
+		private IDictionary<string, long> store;
 
 		public ChemicalStore()
 		{
-			store = new Dictionary<string, int>();
+			store = new Dictionary<string, long>();
 		}
 
-		public void Modify(string name, int amount)
+		public long this[string key] => store[key];
+
+		public void Modify(string name, long amount)
 		{
 			if (!store.ContainsKey(name))
 				store.Add(name, 0);
@@ -21,6 +23,6 @@ namespace AdventOfCode.Chemistry
 			store[name] += amount;
 		}
 
-		public bool HasEnough(string name, int desiredAmount) => store.ContainsKey(name) ? store[name] >= desiredAmount : false;
+		public bool HasEnough(string name, long desiredAmount) => store.ContainsKey(name) ? store[name] >= desiredAmount : false;
 	}
 }

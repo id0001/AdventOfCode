@@ -33,6 +33,8 @@ namespace AdventOfCode.Chemistry
 
 		public KeyValuePair<string, int> Output { get; private set; }
 
+		public double ExactOreRequirement { get; set; }
+
 		/// <summary>
 		/// Parse the amount and name of the element: '3 ABCD' -> {3} {ABCD}
 		/// </summary>
