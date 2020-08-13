@@ -1,5 +1,6 @@
 
 using AdventOfCode.Chemistry;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -25,49 +26,49 @@ namespace AdventOfCode.Challenges
 				reactions.Add(reaction.Output.Key, reaction);
 			}
 
-			var chemStore = new ChemicalStore();
-			int oreUsed = ProduceChemical(Fuel, reactions, chemStore);
+			int oreUsed = CalculateOreCost(reactions, 1);
 
 			return oreUsed.ToString();
 		}
 
-		/// <summary>
-		/// Produce a chemical by traversing down the reaction path and produce every neccessary chemical.
-		/// </summary>
-		/// <param name="name">The chemical to produce</param>
-		/// <param name="reactions">All possible reactions</param>
-		/// <param name="chemStore">The chemical store</param>
-		/// <returns>The consumed ore amount</returns>
-		private int ProduceChemical(string name, IDictionary<string, ChemicalReaction> reactions, ChemicalStore chemStore)
+		private int CalculateOreCost(IDictionary<string, ChemicalReaction> reactions, int amountOfFuel)
 		{
-			int oreConsumed = 0;
+			var supply = new Dictionary<string, int>();
 
-			// Perform the reaction and produce the chemica.
-			var reaction = reactions[name];
+			return Request(reactions, supply, Fuel, amountOfFuel);
+		}
 
-			// Go over inputs
-			foreach (var input in reaction.Inputs)
+		private int Request(IDictionary<string, ChemicalReaction> reactions, IDictionary<string, int> supply, string component, int amount)
+		{
+			int oreNeeded = 0;
+
+			if (!supply.ContainsKey(component))
+				supply.Add(component, 0);
+
+			if (component == Ore)
 			{
-				if (input.Key == Ore)
-				{
-					oreConsumed += input.Value;
-					continue;
-				}
-				else
-				{
-					while (!chemStore.HasEnough(input.Key, input.Value))
-					{
-						oreConsumed += ProduceChemical(input.Key, reactions, chemStore);
-					}
-				}
-
-				// Consume input to produce output
-				chemStore.Modify(input.Key, -input.Value);
+				return amount;
 			}
 
-			// Add produced amount to the store.
-			chemStore.Modify(name, reaction.Output.Value);
-			return oreConsumed;
+			if (amount <= supply[component])
+			{
+				supply[component] -= amount;
+			}
+			else
+			{
+				int needed = amount - supply[component];
+				var reaction = reactions[component];
+				int batches = (int)Math.Ceiling(needed / (double)reaction.Output.Value);
+				foreach (var ingredient in reaction.Inputs)
+				{
+					oreNeeded += Request(reactions, supply, ingredient.Key, ingredient.Value * batches);
+				}
+
+				int leftover = batches * reaction.Output.Value - needed;
+				supply[component] = leftover;
+			}
+
+			return oreNeeded;
 		}
 	}
 }

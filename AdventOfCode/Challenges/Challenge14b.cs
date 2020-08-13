@@ -2,7 +2,9 @@
 using AdventOfCode.Chemistry;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
@@ -17,7 +19,6 @@ namespace AdventOfCode.Challenges
 		public async Task<string> RunAsync()
 		{
 			string[] lines = await File.ReadAllLinesAsync("Assets/Challenge14.txt");
-			//string[] lines = await File.ReadAllLinesAsync("Assets/TestInput.txt");
 
 			var reactions = new Dictionary<string, ChemicalReaction>();
 
@@ -27,71 +28,69 @@ namespace AdventOfCode.Challenges
 				reactions.Add(reaction.Output.Key, reaction);
 			}
 
-			var exactOreRequirement = CalculateExactOreAmount(reactions[Fuel], 1d, reactions);
-			long amountNeeded = (long)(1000000000000L / exactOreRequirement);
+			long amount = CalculateFuelProduced(reactions);
 
-			int ore = ProduceChemical(Fuel, amountNeeded, reactions, new ChemicalStore());
-
-			return amountNeeded.ToString();
+			return amount.ToString();
 		}
 
-		private double CalculateExactOreAmount(ChemicalReaction reaction, double amountNeeded, IDictionary<string, ChemicalReaction> reactions)
+		private long CalculateFuelProduced(IDictionary<string, ChemicalReaction> reactions)
 		{
-			if (reaction.Inputs.ContainsKey(Ore))
+			long lo = 0L;
+			long hi = 1000000000000L;
+
+			long expected = 1000000000000L;
+
+			while(hi - lo > 1)
 			{
-				return ((double)reaction.Inputs[Ore] / reaction.Output.Value) * amountNeeded;
+				long mid = (long)Math.Floor((hi + lo) / 2d);
+				long cost = CalculateOreCost(reactions, mid);
+				if (cost > expected)
+					hi = mid;
+				else
+					lo = mid;
 			}
 
-			double oreNeeded = 0d;
+			return lo;
+		}
 
-			foreach (var input in reaction.Inputs)
+		private long CalculateOreCost(IDictionary<string, ChemicalReaction> reactions, long amountOfFuel)
+		{
+			var supply = new Dictionary<string, long>();
+
+			return Request(reactions, supply, Fuel, amountOfFuel);
+		}
+
+		private long Request(IDictionary<string, ChemicalReaction> reactions, IDictionary<string, long> supply, string component, long amount)
+		{
+			long oreNeeded = 0;
+
+			if (!supply.ContainsKey(component))
+				supply.Add(component, 0);
+
+			if (component == Ore)
 			{
-				var inputReaction = reactions[input.Key];
-				oreNeeded += CalculateExactOreAmount(inputReaction, input.Value * amountNeeded / reaction.Output.Value, reactions);
+				return amount;
+			}
+
+			if (amount <= supply[component])
+			{
+				supply[component] -= amount;
+			}
+			else
+			{
+				long needed = amount - supply[component];
+				var reaction = reactions[component];
+				long batches = (long)Math.Ceiling(needed / (double)reaction.Output.Value);
+				foreach (var ingredient in reaction.Inputs)
+				{
+					oreNeeded += Request(reactions, supply, ingredient.Key, ingredient.Value * batches);
+				}
+
+				long leftover = batches * reaction.Output.Value - needed;
+				supply[component] = leftover;
 			}
 
 			return oreNeeded;
-		}
-
-		/// <summary>
-		/// Produce a chemical by traversing down the reaction path and produce every neccessary chemical.
-		/// </summary>
-		/// <param name="name">The chemical to produce</param>
-		/// <param name="reactions">All possible reactions</param>
-		/// <param name="chemStore">The chemical store</param>
-		/// <returns>The consumed ore amount</returns>
-		private int ProduceChemical(string name, long amount, IDictionary<string, ChemicalReaction> reactions, ChemicalStore chemStore)
-		{
-			int oreConsumed = 0;
-
-			// Perform the reaction and produce the chemical.
-			var reaction = reactions[name];
-
-			var loopAmount = (long)Math.Ceiling((double)amount / reaction.Output.Value);
-
-			// Go over inputs
-			foreach (var input in reaction.Inputs)
-			{
-				if (input.Key == Ore)
-				{
-					oreConsumed += input.Value;
-					continue;
-				}
-				else
-				{
-					while (!chemStore.HasEnough(input.Key, input.Value * amount))
-					{
-						oreConsumed += ProduceChemical(input.Key, input.Value * amount, reactions, chemStore);
-					}
-				}
-
-				// Consume input to produce output
-				chemStore.Modify(input.Key, -input.Value);
-			}
-
-			// Add produced amount to the store.
-			chemStore.Modify(name, reaction.Output.Value);
-			return oreConsumed;
 		}
 	}
 }
