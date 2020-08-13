@@ -2,17 +2,19 @@
 using AdventOfCode.Chemistry;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Challenges
 {
-	internal class Challenge14a : IChallenge
+	internal class Challenge14b : IChallenge
 	{
 		private const string Ore = "ORE";
 		private const string Fuel = "FUEL";
 
-		public string Id => "14a";
+		public string Id => "14b";
 
 		public async Task<string> RunAsync()
 		{
@@ -26,21 +28,41 @@ namespace AdventOfCode.Challenges
 				reactions.Add(reaction.Output.Key, reaction);
 			}
 
-			int oreUsed = CalculateOreCost(reactions, 1);
+			long amount = CalculateFuelProduced(reactions);
 
-			return oreUsed.ToString();
+			return amount.ToString();
 		}
 
-		private int CalculateOreCost(IDictionary<string, ChemicalReaction> reactions, int amountOfFuel)
+		private long CalculateFuelProduced(IDictionary<string, ChemicalReaction> reactions)
 		{
-			var supply = new Dictionary<string, int>();
+			long lo = 0L;
+			long hi = 1000000000000L;
+
+			long expected = 1000000000000L;
+
+			while(hi - lo > 1)
+			{
+				long mid = (long)Math.Floor((hi + lo) / 2d);
+				long cost = CalculateOreCost(reactions, mid);
+				if (cost > expected)
+					hi = mid;
+				else
+					lo = mid;
+			}
+
+			return lo;
+		}
+
+		private long CalculateOreCost(IDictionary<string, ChemicalReaction> reactions, long amountOfFuel)
+		{
+			var supply = new Dictionary<string, long>();
 
 			return Request(reactions, supply, Fuel, amountOfFuel);
 		}
 
-		private int Request(IDictionary<string, ChemicalReaction> reactions, IDictionary<string, int> supply, string component, int amount)
+		private long Request(IDictionary<string, ChemicalReaction> reactions, IDictionary<string, long> supply, string component, long amount)
 		{
-			int oreNeeded = 0;
+			long oreNeeded = 0;
 
 			if (!supply.ContainsKey(component))
 				supply.Add(component, 0);
@@ -56,15 +78,15 @@ namespace AdventOfCode.Challenges
 			}
 			else
 			{
-				int needed = amount - supply[component];
+				long needed = amount - supply[component];
 				var reaction = reactions[component];
-				int batches = (int)Math.Ceiling(needed / (double)reaction.Output.Value);
+				long batches = (long)Math.Ceiling(needed / (double)reaction.Output.Value);
 				foreach (var ingredient in reaction.Inputs)
 				{
 					oreNeeded += Request(reactions, supply, ingredient.Key, ingredient.Value * batches);
 				}
 
-				int leftover = batches * reaction.Output.Value - needed;
+				long leftover = batches * reaction.Output.Value - needed;
 				supply[component] = leftover;
 			}
 
