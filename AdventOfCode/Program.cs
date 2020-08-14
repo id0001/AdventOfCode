@@ -44,7 +44,8 @@ namespace AdventOfCode
 			{ "13b", "15410" },
 			{ "14a", "1046184" },
 			{ "14b", "1639374" },
-			{ "15a", "248" }
+			{ "15a", "248" },
+			{ "15b", "382" }
 		};
 
 		async static Task Main(string[] args)
