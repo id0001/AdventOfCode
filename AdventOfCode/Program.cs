@@ -43,7 +43,9 @@ namespace AdventOfCode
 			{ "13a", "309" },
 			{ "13b", "15410" },
 			{ "14a", "1046184" },
-			{ "14b", "1639374" }
+			{ "14b", "1639374" },
+			{ "15a", "248" },
+			{ "15b", "382" }
 		};
 
 		async static Task Main(string[] args)
@@ -100,6 +102,8 @@ namespace AdventOfCode
 					Console.WriteLine($"FAIL. Expected {_answers[challenge]}, got {result}.");
 				}
 			}
+
+			Console.WriteLine("Done");
 		}
 	}
 }
