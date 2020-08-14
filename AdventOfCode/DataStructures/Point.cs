@@ -39,14 +39,20 @@ namespace AdventOfCode.DataStructures
 
 		public override string ToString() => $"({X},{Y})";
 
-		public static bool operator ==(Point left, Point right)
-		{
-			return left.Equals(right);
-		}
+		public static bool operator ==(Point left, Point right) => left.Equals(right);
 
-		public static bool operator !=(Point left, Point right)
+		public static bool operator !=(Point left, Point right) => !(left == right);
+
+		public static Point operator +(Point left, Point right) => new Point(left.X + right.X, left.Y + right.Y);
+
+		public static Point operator -(Point left, Point right) => new Point(left.X - right.X, left.Y - right.Y);
+
+		public static int DistanceSquared(Point a, Point b)
 		{
-			return !(left == right);
+			int x = Math.Abs(a.X - b.X);
+			int y = Math.Abs(a.Y - b.Y);
+
+			return (x * x) + (y * y);
 		}
 	}
 }
