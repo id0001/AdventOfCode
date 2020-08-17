@@ -12,12 +12,19 @@ namespace AdventOfCode.Pathfinding
 		{
 		}
 
-		public static Point[] Path(IDictionary<Point, bool> graph, Point start, Point finish)
+		/// <summary>
+		/// Calculate the shortest path from start to end.
+		/// </summary>
+		/// <param name="graph">The graph with known nodes</param>
+		/// <param name="start">The start node</param>
+		/// <param name="end">The target node</param>
+		/// <returns>An array containing the path to target. Excludes the start node. If not path was found, and empty array is returned.</returns>
+		public static Point[] Path(IDictionary<Point, bool> graph, Point start, Point end)
 		{
 			if (graph == null)
 				throw new ArgumentNullException(nameof(graph));
 
-			if (start == finish)
+			if (start == end)
 				throw new ArgumentException("Start cannot be the same as finish");
 
 			if (!graph.ContainsKey(start))
@@ -26,91 +33,111 @@ namespace AdventOfCode.Pathfinding
 			if (!graph[start])
 				throw new ArgumentException("Start location is not traversable");
 
-			if (!graph.ContainsKey(finish))
-				throw new ArgumentException("Finish location is not in the graph");
+			if (!graph.ContainsKey(end))
+				throw new ArgumentException("End location is not in the graph");
 
-			if (!graph[finish])
-				throw new ArgumentException("Finish location is not traversable");
+			if (!graph[end])
+				throw new ArgumentException("End location is not traversable");
 
-			List<Point> finalPath = new List<Point>();
+			var distances = new Dictionary<Point, int>();
+			var previous = new Dictionary<Point, Point>();
+			var openQueue = new PriorityQueue<Point>(new MinDistComparer(distances));
+			var visited = new HashSet<Point>();
 
-			ISet<Point> closedPoints = new HashSet<Point>();
-			PriorityQueue<Node> openQueue = new PriorityQueue<Node>(new PriorityComparer());
-
-			var startNode = new Node { Point = start, Score = 0 };
-			openQueue.Enqueue(startNode);
+			distances[start] = 0;
+			openQueue.Enqueue(start);
 
 			while (!openQueue.IsEmpty)
 			{
-				Node node = openQueue.Dequeue();
+				var node = openQueue.Dequeue();
 
-				if (node.Point == finish)
-				{
-					do
-					{
-						finalPath.Add(node.Point);
-						node = node.Parent;
-					}
-					while (node != null);
+				visited.Add(node);
+
+				if (node == end)
 					break;
-				}
 
-				closedPoints.Add(node.Point);
-				AddAdjacentNodes(graph, closedPoints, openQueue, node);
+				var neighbors = GetNeighbours(graph, node);
+				foreach (var neighbor in neighbors)
+				{
+					int dist = distances[node] + 1;
+					if (!distances.ContainsKey(neighbor) || dist < distances[neighbor])
+					{
+						distances[neighbor] = dist;
+						previous[neighbor] = node;
+
+						if (!visited.Contains(neighbor))
+							openQueue.Enqueue(neighbor);
+					}
+				}
 			}
 
-			return finalPath.Reverse<Point>().ToArray();
+			if (!visited.Contains(end))
+				return new Point[0];
+
+			var path = new List<Point>();
+			Point p = end;
+			while (p != start)
+			{
+				path.Insert(0, p);
+				p = previous[p];
+			}
+
+			return path.ToArray();
 		}
 
-		public static bool TryPath(IDictionary<Point, bool> graph, Point start, Point finish, out Point[] path)
+		/// <summary>
+		/// Calculate the shortest path from start to end.
+		/// </summary>
+		/// <param name="graph">The graph with known nodes</param>
+		/// <param name="start">The start node</param>
+		/// <param name="end">The target node</param>
+		/// <param name="path">An array containing the path to target. Excludes the start node.</param>
+		/// <returns>True if a path was found. False if not</returns>
+		public static bool TryPath(IDictionary<Point, bool> graph, Point start, Point end, out Point[] path)
 		{
-			path = Path(graph, start, finish);
+			path = Path(graph, start, end);
 			return path.Length != 0;
 		}
 
-		private static void AddAdjacentNodes(IDictionary<Point, bool> graph, ISet<Point> closedPoints, PriorityQueue<Node> openNodes, Node parent)
+		/// <summary>
+		/// Get the neighbour nodes.
+		/// </summary>
+		/// <param name="graph">The graph with known  nodes</param>
+		/// <param name="parent">The parent node.</param>
+		/// <returns>A list of neighbour nodes.</returns>
+		private static IEnumerable<Point> GetNeighbours(IDictionary<Point, bool> graph, Point parent)
 		{
-			Point location = parent.Point;
-			for (int y = location.Y - 1; y <= location.Y + 1; y++)
+			List<Point> neighbours = new List<Point>();
+			for (int y = parent.Y - 1; y <= parent.Y + 1; y++)
 			{
-				for (int x = location.X - 1; x <= location.X + 1; x++)
+				for (int x = parent.X - 1; x <= parent.X + 1; x++)
 				{
-					var p = new Point(x, y);
-
-					if (x == location.X ^ y == location.Y && !closedPoints.Contains(p) && graph.TryGetValue(p, out bool v) && v)
+					if (x == parent.X ^ y == parent.Y && graph.TryGetValue(parent, out bool v) && v)
 					{
-						int score = parent.Score + 1;
-						openNodes.Enqueue(new Node
-						{
-							Point = p,
-							Score = score,
-							Parent = parent,
-						});
+						var p = new Point(x, y);
+						neighbours.Add(p);
 					}
 				}
 			}
+
+			return neighbours;
 		}
 
-		private class Node : IEquatable<Node>
+		private class MinDistComparer : IComparer<Point>
 		{
-			public Point Point { get; set; }
+			private readonly IDictionary<Point, int> distances;
 
-			public int Score { get; set; }
-
-			public Node Parent { get; set; }
-
-			public override bool Equals(object obj) => obj is Node n && Equals(n);
-
-			public override int GetHashCode() => HashCode.Combine(Point, Score);
-
-			public bool Equals([AllowNull] Node other) => GetHashCode() == other.GetHashCode();
-		}
-
-		private class PriorityComparer : IComparer<Node>
-		{
-			public int Compare([AllowNull] Node x, [AllowNull] Node y)
+			public MinDistComparer(IDictionary<Point, int> distances)
 			{
-				return x.Score - y.Score;
+				this.distances = distances;
+			}
+
+			public int Compare([AllowNull] Point x, [AllowNull] Point y)
+			{
+				if (!distances.ContainsKey(x) || !distances.ContainsKey(y))
+					throw new InvalidOperationException("Unable to compare distance of unknown points.");
+
+				return distances[x] - distances[y];
 			}
 		}
 	}
