@@ -75,7 +75,7 @@ namespace AdventOfCode.IntCode.Devices
 							throw new InvalidOperationException("Could not find path.");
 						}
 
-						for (int i = 1; i < path.Length; i++)
+						for (int i = 0; i < path.Length; i++)
 						{
 							moves.Enqueue(path[i]);
 						}
@@ -102,7 +102,7 @@ namespace AdventOfCode.IntCode.Devices
 				throw new InvalidOperationException(@"No defect location found");
 
 			var path = Dijkstra.Path(ConvertSpaceForPathFinding(), Point.Zero, defectLocation);
-			return path.Length - 1;
+			return path.Length;
 		}
 
 		public void PrintSpace(bool printDroidLocation = false)
