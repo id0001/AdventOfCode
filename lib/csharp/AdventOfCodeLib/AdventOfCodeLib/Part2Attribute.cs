@@ -3,7 +3,7 @@
 namespace AdventOfCodeLib
 {
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-	public class Part2Attribute : Attribute
+	public sealed class Part2Attribute : Attribute
 	{
 	}
 }
