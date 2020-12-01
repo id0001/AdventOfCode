@@ -1,6 +1,5 @@
 ﻿using AdventOfCodeLib;
 using AdventOfCodeLib.IO;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,7 +10,7 @@ namespace AdventOfCode2020.Challenges
 	{
 		private readonly IChallengeInput challengeInput;
 
-		private ISet<int> input;
+		private int[] input;
 
 		public Challenge1(IChallengeInput challengeInput)
 		{
@@ -21,18 +20,23 @@ namespace AdventOfCode2020.Challenges
 		[Setup]
 		public async Task SetupAsync()
 		{
-			input = await challengeInput.ReadIntegersAsync(1).ToHashSetAsync();
+			input = await challengeInput.ReadIntegersAsync(1).ToArrayAsync();
 		}
 
 		[Part1]
 		public string Part1()
 		{
-			foreach (var n in input)
+			for(int y = 0; y < input.Length; y++)
 			{
-				int remaining = 2020 - n;
-				if (input.Contains(remaining))
+				for(int x = 0; x < input.Length; x++)
 				{
-					return (n * remaining).ToString();
+					if (x == y)
+						continue;
+
+					if(input[x] + input[y] == 2020)
+					{
+						return (input[x] * input[y]).ToString();
+					}
 				}
 			}
 
@@ -42,15 +46,19 @@ namespace AdventOfCode2020.Challenges
 		[Part2]
 		public string Part2()
 		{
-			int[] n = input.ToArray();
-			for (int y = 0; y < n.Length - 1; y++)
+			for (int y = 0; y < input.Length; y++)
 			{
-				for (int x = y + 1; x < n.Length; x++)
+				for (int x = 0; x < input.Length; x++)
 				{
-					int remaining = 2020 - n[y] - n[x];
-					if (input.Contains(remaining))
+					for(int z = 0; z < input.Length; z++)
 					{
-						return (n[y] * n[x] * remaining).ToString();
+						if (x == y || x == z || y == z)
+							continue;
+
+						if (input[x] + input[y] + input[z] == 2020)
+						{
+							return (input[x] * input[y] * input[z]).ToString();
+						}
 					}
 				}
 			}
