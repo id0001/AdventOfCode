@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace AdventOfCodeLib.DependencyInjection
+namespace AdventOfCodeLib.Extensions.DependencyInjection
 {
 	public static class ServiceCollectionExtensions
 	{
