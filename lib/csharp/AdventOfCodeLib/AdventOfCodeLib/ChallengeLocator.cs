@@ -3,37 +3,56 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace AdventOfCodeLib
 {
 	public class ChallengeLocator : IChallengeLocator
 	{
-		private readonly IDictionary<(int, Part), IChallenge> challengeCache;
+		private readonly IServiceProvider serviceProvider;
+		private readonly IDictionary<int, Type> challengeTypes;
 
-		public ChallengeLocator(IServiceProvider serviceProvider)
+		public ChallengeLocator(IServiceProvider serviceProvider, IDictionary<int, Type> challengeTypes)
 		{
-			var challenges = serviceProvider.GetServices<IChallenge>();
-			challengeCache = (from c in challenges
-							  select c).ToDictionary(kv => (kv.Day, kv.Part), kv => kv);
+			this.serviceProvider = serviceProvider;
+			this.challengeTypes = challengeTypes;
 		}
 
-		public IChallenge GetChallenge(int day, Part part)
+		public async Task<object> GetMostRecentChallengeAsync()
 		{
-			if (!challengeCache.TryGetValue((day, part), out var challenge))
-				throw new KeyNotFoundException("The challenge for the given day and part was not found.");
+			if (challengeTypes.Count == 0)
+				throw new InvalidOperationException("There are no challenges");
+
+			var key = challengeTypes.Keys.OrderBy(k => k).Last();
+			return await GetChallengeAsync(key);
+		}
+
+		public async Task<object> GetChallengeAsync(int day)
+		{
+			if (!challengeTypes.TryGetValue(day, out Type challengeType))
+				throw new KeyNotFoundException("Challenge not found");
+
+			var challenge = serviceProvider.GetRequiredService(challengeType);
+			await SetupChallengeAsync(challenge);
 
 			return challenge;
 		}
 
-		public IEnumerable<IChallenge> GetChallenges() => challengeCache.Values.AsEnumerable();
-
-		public IChallenge GetMostRecentChallenge()
+		private async Task SetupChallengeAsync(object challenge)
 		{
-			if (challengeCache.Count == 0)
-				throw new InvalidOperationException("There are no challenges");
+			Type type = challenge.GetType();
 
-			var key = challengeCache.Keys.OrderBy(k => k.Item1).ThenBy(k => k.Item2).Last();
-			return challengeCache[key];
+			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly);
+			var setupMethod = methods.FirstOrDefault(m => m.GetCustomAttribute<SetupAttribute>() != null);
+			if(setupMethod != null)
+			{
+				var result = setupMethod.Invoke(challenge, null);
+				if(result != null && result is Task t)
+				{
+					await t;
+				}
+			}
 		}
 	}
 }
