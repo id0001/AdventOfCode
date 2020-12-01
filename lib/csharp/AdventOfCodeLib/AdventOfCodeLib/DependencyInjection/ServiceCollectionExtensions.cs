@@ -1,4 +1,5 @@
 
+using AdventOfCodeLib.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -11,18 +12,26 @@ namespace AdventOfCodeLib.DependencyInjection
 	{
 		public static IServiceCollection AddChallenges(this IServiceCollection services)
 		{
-			var targetType = typeof(IChallenge);
-			var types = AppDomain.CurrentDomain.GetAssemblies()
-				.SelectMany(s => s.GetTypes())
-				.Where(p => targetType.IsAssignableFrom(p));
+			var types = (from a in AppDomain.CurrentDomain.GetAssemblies()
+						 from t in a.GetTypes()
+						 let c = t.GetCustomAttribute<ChallengeAttribute>()
+						 where c != null
+						 select (c, t)).ToDictionary(kv => kv.c.Day, kv => kv.t);
 
-			services.TryAddSingleton<IChallengeLocator, ChallengeLocator>();
-
-			foreach (var type in types)
+			foreach(var challengeType in types.Values)
 			{
-				services.TryAddTransient(typeof(IChallenge), type);
+				services.TryAddTransient(challengeType);
 			}
 
+			services.TryAddSingleton<IChallengeLocator>(sp => new ChallengeLocator(sp, types));
+
+			return services;
+		}
+
+		public static IServiceCollection AddChallengeInput(this IServiceCollection services, Action<ChallengeInputOptions> configure)
+		{
+			services.AddOptions<ChallengeInputOptions>().Configure(configure);
+			services.TryAddSingleton<IChallengeInput, ChallengeInput>();
 			return services;
 		}
 	}

@@ -1,7 +1,9 @@
 
 using AdventOfCodeLib;
+using AdventOfCodeLib.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AdventOfCode2020
@@ -10,19 +12,33 @@ namespace AdventOfCode2020
 	{
 		protected override void ConfigureServices(IServiceCollection services)
 		{
-			base.ConfigureServices(services);
+			services.AddChallengeInput(options =>
+			{
+				options.InputFolder = "Inputs";
+			});
 		}
 
 		public override async Task RunMostRecentChallengeAsync()
 		{
-			var challenge = ChallengeLocator.GetMostRecentChallenge();
+			var challenge = await ChallengeLocator.GetMostRecentChallengeAsync();
 
-			var result = await challenge.RunAsync();
+			var result1 = await RunPart1Async(challenge);
+			if (result1 != null)
+			{
+				Console.WriteLine();
+				Console.WriteLine(new string('=', 40));
+				Console.WriteLine("The solution for part 1 is:");
+				Console.WriteLine(result1);
+			}
 
-			Console.WriteLine();
-			Console.WriteLine(new string('=', 40));
-			Console.WriteLine("The solution is:");
-			Console.WriteLine(result);
+			var result2 = await RunPart2Async(challenge);
+			if (result2 != null)
+			{
+				Console.WriteLine();
+				Console.WriteLine(new string('=', 40));
+				Console.WriteLine("The solution for part 2 is:");
+				Console.WriteLine(result2);
+			}
 		}
 	}
 }

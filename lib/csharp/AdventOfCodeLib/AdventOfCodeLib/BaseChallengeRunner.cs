@@ -1,6 +1,8 @@
 using AdventOfCodeLib.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AdventOfCodeLib
@@ -12,7 +14,7 @@ namespace AdventOfCodeLib
 		public BaseChallengeRunner()
 		{
 			IServiceCollection services = new ServiceCollection();
-			ConfigureServices(services);
+			ConfigureServicesInternal(services);
 
 			ServiceProvider = services.BuildServiceProvider();
 		}
@@ -33,7 +35,52 @@ namespace AdventOfCodeLib
 
 		protected virtual void ConfigureServices(IServiceCollection services)
 		{
+		}
+
+		protected async Task<string> RunPart1Async(object challenge)
+		{
+			Type type = challenge.GetType();
+
+			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly);
+			var runMethod = methods.FirstOrDefault(m => m.GetCustomAttribute<Part1Attribute>() != null);
+			if (runMethod != null)
+			{
+				var result = runMethod.Invoke(challenge, null);
+				if (result != null && result is Task<string> t)
+				{
+					return await t;
+				}
+
+				return (string)result;
+			}
+
+			return null;
+		}
+
+		protected async Task<string> RunPart2Async(object challenge)
+		{
+			Type type = challenge.GetType();
+
+			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly);
+			var runMethod = methods.FirstOrDefault(m => m.GetCustomAttribute<Part2Attribute>() != null);
+			if (runMethod != null)
+			{
+				var result = runMethod.Invoke(challenge, null);
+				if (result != null && result is Task<string> t)
+				{
+					return await t;
+				}
+
+				return (string)result;
+			}
+
+			return null;
+		}
+
+		private void ConfigureServicesInternal(IServiceCollection services)
+		{
 			services.AddChallenges();
+			ConfigureServices(services);
 		}
 	}
 }

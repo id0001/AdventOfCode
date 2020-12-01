@@ -1,14 +1,12 @@
 
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AdventOfCodeLib
 {
 	public interface IChallengeLocator
 	{
-		IChallenge GetChallenge(int day, Part part);
+		Task<object> GetMostRecentChallengeAsync();
 
-		IChallenge GetMostRecentChallenge();
-
-		IEnumerable<IChallenge> GetChallenges();
+		Task<object> GetChallengeAsync(int day);
 	}
 }
