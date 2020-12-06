@@ -28,10 +28,10 @@ namespace AdventOfCodeLib.Extensions.DependencyInjection
 			return services;
 		}
 
-		public static IServiceCollection AddChallengeInput(this IServiceCollection services, Action<ChallengeInputOptions> configure)
+		public static IServiceCollection AddChallengeInput(this IServiceCollection services, Action<InputReaderOptions> configure)
 		{
-			services.AddOptions<ChallengeInputOptions>().Configure(configure);
-			services.TryAddSingleton<IChallengeInput, ChallengeInput>();
+			services.AddOptions<InputReaderOptions>().Configure(configure);
+			services.TryAddSingleton<IInputReader, InputReader>();
 			return services;
 		}
 	}

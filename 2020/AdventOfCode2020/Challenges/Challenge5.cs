@@ -11,18 +11,18 @@ namespace AdventOfCode2020.Challenges
     [Challenge(5)]
     public class Challenge5
     {
-        private readonly IChallengeInput challengeInput;
+        private readonly IInputReader inputReader;
         private string[] input;
 
-        public Challenge5(IChallengeInput challengeInput)
+        public Challenge5(IInputReader inputReader)
         {
-            this.challengeInput = challengeInput;
+            this.inputReader = inputReader;
         }
 
         [Setup]
         public async Task SetupAsync()
         {
-            input = await challengeInput.ReadLinesAsync(5).ToArrayAsync();
+            input = await inputReader.ReadLinesAsync(5).ToArrayAsync();
         }
 
         [Part1]

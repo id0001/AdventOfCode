@@ -10,18 +10,18 @@ namespace AdventOfCode2020.Challenges
     [Challenge(2)]
     public class Challenge2
     {
-        private readonly IChallengeInput challengeInput;
+        private readonly IInputReader inputReader;
         private InputLine[] input;
 
-        public Challenge2(IChallengeInput challengeInput)
+        public Challenge2(IInputReader inputReader)
         {
-            this.challengeInput = challengeInput;
+            this.inputReader = inputReader;
         }
 
         [Setup]
         public async Task SetupAsync()
         {
-            input = await challengeInput.ReadLinesAsync(2).Select(line =>
+            input = await inputReader.ReadLinesAsync(2).Select(line =>
             {
                 Match m = Regex.Match(line, @"^(\d+)-(\d+) (\w): (\w+)$");
                 if (!m.Success)
