@@ -14,18 +14,18 @@ namespace AdventOfCode2020.Challenges
 	{
 		private static readonly string[] EyeColors = new[] { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
 
-		private readonly IChallengeInput challengeInput;
+		private readonly IInputReader inputReader;
 		private List<IDictionary<string, string>> input;
 
-		public Challenge4(IChallengeInput challengeInput)
+		public Challenge4(IInputReader inputReader)
 		{
-			this.challengeInput = challengeInput;
+			this.inputReader = inputReader;
 		}
 
 		[Setup]
 		public async Task SetupAsync()
 		{
-			var lines = await challengeInput.ReadLinesAsync(4).ToArrayAsync();
+			var lines = await inputReader.ReadLinesAsync(4).ToArrayAsync();
 
 			input = new List<IDictionary<string, string>>();
 			List<KeyValuePair<string, string>> currentData = new List<KeyValuePair<string, string>>();

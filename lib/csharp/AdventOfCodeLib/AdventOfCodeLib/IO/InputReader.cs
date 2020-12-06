@@ -1,16 +1,15 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AdventOfCodeLib.IO
 {
-	public class ChallengeInput : IChallengeInput
+	public class InputReader : IInputReader
 	{
 		private readonly string basePath;
 
-		public ChallengeInput(IOptions<ChallengeInputOptions> options)
+		public InputReader(IOptions<InputReaderOptions> options)
 		{
 			basePath = options.Value.InputFolder;
 		}

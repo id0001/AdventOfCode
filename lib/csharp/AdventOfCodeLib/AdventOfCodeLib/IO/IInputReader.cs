@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AdventOfCodeLib.IO
 {
-	public interface IChallengeInput
+	public interface IInputReader
 	{
 		public Task<string> ReadAllTextAsync(int challenge);
 
