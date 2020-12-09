@@ -20,7 +20,7 @@ namespace AdventOfCode2020.Challenges
 		[Setup]
 		public async Task SetupAsync()
 		{
-			input = await inputReader.ReadIntegersAsync(1).ToArrayAsync();
+			input = await inputReader.ReadLinesAsync<int>(1).ToArrayAsync();
 		}
 
 		[Part1]
