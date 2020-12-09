@@ -11,6 +11,6 @@ namespace AdventOfCodeLib.IO
 
 		public IAsyncEnumerable<char> ReadCharactersAsync(int challenge);
 
-		public IAsyncEnumerable<int> ReadIntegersAsync(int challenge);
+		public IAsyncEnumerable<T> ReadLinesAsync<T>(int challenge);
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -44,14 +45,14 @@ namespace AdventOfCodeLib.IO
 			}
 		}
 
-		public async IAsyncEnumerable<int> ReadIntegersAsync(int challenge)
+		public async IAsyncEnumerable<T> ReadLinesAsync<T>(int challenge)
 		{
 			using var stream = File.OpenText(GetPath(challenge));
 
 			while (!stream.EndOfStream)
 			{
 				string line = await stream.ReadLineAsync();
-				yield return int.Parse(line);
+				yield return (T)Convert.ChangeType(line, typeof(T));
 			}
 		}
 	}
