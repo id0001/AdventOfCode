@@ -1,77 +1,50 @@
 ﻿using AdventOfCodeLib;
-using AdventOfCodeLib.IO;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode2020.Challenges
 {
 	[Challenge(15)]
 	public class Challenge15
 	{
-		private int[] startingNumbers = new int[] { 6, 13, 1, 15, 2, 0 };
-		public Challenge15()
-		{
-		}
+		private static readonly int[] StartingNumbers = new int[] { 6, 13, 1, 15, 2, 0 };
 
 		[Part1]
 		public string Part1()
 		{
-			var history = new List<int>(startingNumbers);
-			var lookup = new Dictionary<int, int>();
-
-			for (int i = 0; i < history.Count - 1; i++)
-				lookup.Add(history[i], i);
-
-			for (int i = startingNumbers.Length; i < 2020; i++)
-			{
-				int last = history[i - 1];
-
-				if (!lookup.ContainsKey(last))
-				{
-					history.Add(0);
-					lookup.Add(last, i - 1);
-				}
-				else
-				{
-					int diff = (i - 1) - lookup[last];
-					lookup[last] = i - 1;
-					history.Add(diff);
-				}
-			}
-
-			return history[history.Count - 1].ToString();
+			return RunGame(StartingNumbers, 2020).ToString();
 		}
 
 		[Part2]
 		public string Part2()
 		{
-			var history = new List<int>(startingNumbers);
+			return RunGame(StartingNumbers, 30000000).ToString();
+		}
+
+		private static int RunGame(int[] startingNumbers, int turns)
+		{
 			var lookup = new Dictionary<int, int>();
 
-			for (int i = 0; i < history.Count - 1; i++)
-				lookup.Add(history[i], i);
+			for (int i = 0; i < startingNumbers.Length - 1; i++)
+				lookup.Add(startingNumbers[i], i);
 
-			for (int i = startingNumbers.Length; i < 30000000; i++)
+			int last = 0;
+
+			for (int i = startingNumbers.Length; i < turns; i++)
 			{
-				int last = history[i - 1];
-
 				if (!lookup.ContainsKey(last))
 				{
-					history.Add(0);
 					lookup.Add(last, i - 1);
+					last = 0;
 				}
 				else
 				{
 					int diff = (i - 1) - lookup[last];
 					lookup[last] = i - 1;
-					history.Add(diff);
+					last = diff;
 				}
 			}
 
-			return history[history.Count - 1].ToString();
+			return last;
 		}
 	}
 }
