@@ -67,8 +67,8 @@ namespace AdventOfCode2020.Challenges
 		[Part2]
 		public async Task<string> Part2Async()
 		{
-			Point s = new Point(0, 0);
-			Point w = new Point(10, -1);
+			Point2 s = new Point2(0, 0);
+			Point2 w = new Point2(10, -1);
 
 			await foreach (string line in inputReader.ReadLinesAsync(12))
 			{
@@ -90,16 +90,16 @@ namespace AdventOfCode2020.Challenges
 						w.X -= value;
 						break;
 					case 'L':
-						w = Point.MoveOnCircle(w, s, -MathEx.ToRadians(value));
+						w = Point2.Turn(w, s, -MathEx.ToRadians(value));
 						break;
 					case 'R':
-						w = Point.MoveOnCircle(w, s, MathEx.ToRadians(value));
+						w = Point2.Turn(w, s, MathEx.ToRadians(value));
 						break;
 					case 'F':
 						double r = Math.Atan2(w.Y - s.Y, w.X - s.X);
-						double dist = Point.Distance(s, w);
+						double dist = Point2.Distance(s, w);
 
-						Point d = new Point((int)Math.Round(Math.Cos(r) * dist), (int)Math.Round(Math.Sin(r) * dist));
+						Point2 d = new Point2((int)Math.Round(Math.Cos(r) * dist), (int)Math.Round(Math.Sin(r) * dist));
 						s += d * value;
 						w += d * value;
 						break;

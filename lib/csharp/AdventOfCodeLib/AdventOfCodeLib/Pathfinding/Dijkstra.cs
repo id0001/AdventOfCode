@@ -15,7 +15,7 @@ namespace AdventOfCodeLib.Pathfinding
 		/// <param name="start">The start node</param>
 		/// <param name="end">The target node</param>
 		/// <returns>An array containing the path to target. Excludes the start node. If not path was found, and empty array is returned.</returns>
-		public static Point[] Path(IDictionary<Point, bool> graph, Point start, Point end)
+		public static Point2[] Path(IDictionary<Point2, bool> graph, Point2 start, Point2 end)
 		{
 			if (graph == null)
 				throw new ArgumentNullException(nameof(graph));
@@ -35,10 +35,10 @@ namespace AdventOfCodeLib.Pathfinding
 			if (!graph[end])
 				throw new ArgumentException("End location is not traversable");
 
-			var distances = new Dictionary<Point, int>();
-			var previous = new Dictionary<Point, Point>();
-			var openQueue = new PriorityQueue<Point>(new MinDistComparer(distances));
-			var visited = new HashSet<Point>();
+			var distances = new Dictionary<Point2, int>();
+			var previous = new Dictionary<Point2, Point2>();
+			var openQueue = new PriorityQueue<Point2>(new MinDistComparer(distances));
+			var visited = new HashSet<Point2>();
 
 			distances[start] = 0;
 			openQueue.Enqueue(start);
@@ -68,10 +68,10 @@ namespace AdventOfCodeLib.Pathfinding
 			}
 
 			if (!visited.Contains(end))
-				return new Point[0];
+				return new Point2[0];
 
-			var path = new List<Point>();
-			Point p = end;
+			var path = new List<Point2>();
+			Point2 p = end;
 			while (p != start)
 			{
 				path.Insert(0, p);
@@ -89,7 +89,7 @@ namespace AdventOfCodeLib.Pathfinding
 		/// <param name="end">The target node</param>
 		/// <param name="path">An array containing the path to target. Excludes the start node.</param>
 		/// <returns>True if a path was found. False if not</returns>
-		public static bool TryPath(IDictionary<Point, bool> graph, Point start, Point end, out Point[] path)
+		public static bool TryPath(IDictionary<Point2, bool> graph, Point2 start, Point2 end, out Point2[] path)
 		{
 			path = Path(graph, start, end);
 			return path.Length != 0;
@@ -101,16 +101,16 @@ namespace AdventOfCodeLib.Pathfinding
 		/// <param name="graph">The graph with known  nodes</param>
 		/// <param name="parent">The parent node.</param>
 		/// <returns>A list of neighbour nodes.</returns>
-		private static IEnumerable<Point> GetNeighbours(IDictionary<Point, bool> graph, Point parent)
+		private static IEnumerable<Point2> GetNeighbours(IDictionary<Point2, bool> graph, Point2 parent)
 		{
-			List<Point> neighbours = new List<Point>();
+			List<Point2> neighbours = new List<Point2>();
 			for (int y = parent.Y - 1; y <= parent.Y + 1; y++)
 			{
 				for (int x = parent.X - 1; x <= parent.X + 1; x++)
 				{
 					if (x == parent.X ^ y == parent.Y && graph.TryGetValue(parent, out bool v) && v)
 					{
-						var p = new Point(x, y);
+						var p = new Point2(x, y);
 						neighbours.Add(p);
 					}
 				}
@@ -119,16 +119,16 @@ namespace AdventOfCodeLib.Pathfinding
 			return neighbours;
 		}
 
-		private class MinDistComparer : IComparer<Point>
+		private class MinDistComparer : IComparer<Point2>
 		{
-			private readonly IDictionary<Point, int> distances;
+			private readonly IDictionary<Point2, int> distances;
 
-			public MinDistComparer(IDictionary<Point, int> distances)
+			public MinDistComparer(IDictionary<Point2, int> distances)
 			{
 				this.distances = distances;
 			}
 
-			public int Compare(Point x, Point y)
+			public int Compare(Point2 x, Point2 y)
 			{
 				if (!distances.ContainsKey(x) || !distances.ContainsKey(y))
 					throw new InvalidOperationException("Unable to compare distance of unknown points.");
