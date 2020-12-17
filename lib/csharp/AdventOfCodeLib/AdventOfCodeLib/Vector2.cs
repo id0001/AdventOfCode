@@ -57,11 +57,11 @@ namespace AdventOfCodeLib
 		/// <summary>
 		/// Rotates a vector around a pivot on a circle by the amount defined by angle
 		/// </summary>
-		/// <param name="v">The vecttor to move</param>
+		/// <param name="v">The vector to move</param>
 		/// <param name="pivot">The pivot to rotate around</param>
 		/// <param name="angle">The angle in radians to rotate by</param>
 		/// <returns>The new rotated vector</returns>
-		public static Vector2 MoveOnCircle(Vector2 v, Vector2 pivot, double angle)
+		public static Vector2 Turn(Vector2 v, Vector2 pivot, double angle)
 		{
 			double sin = Math.Sin(angle);
 			double cos = Math.Cos(angle);

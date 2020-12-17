@@ -31,7 +31,7 @@ namespace AdventOfCode2020.Challenges
             int highestSeatId = 0;
             foreach (string query in input)
             {
-                Point p = Search(8, 128, query);
+                Point2 p = Search(8, 128, query);
                 int id = (p.Y * 8) + p.X;
                 if (id > highestSeatId)
                     highestSeatId = id;
@@ -46,7 +46,7 @@ namespace AdventOfCode2020.Challenges
             HashSet<int> seatIds = new HashSet<int>();
             foreach(string query in input)
             {
-                Point p = Search(8, 128, query);
+                Point2 p = Search(8, 128, query);
                 int id = (p.Y * 8) + p.X;
                 seatIds.Add(id);
             }
@@ -55,7 +55,7 @@ namespace AdventOfCode2020.Challenges
             return mySeat.ToString();
         }
 
-        private Point Search(int width, int height, string query)
+        private Point2 Search(int width, int height, string query)
         {
             int xmin = 0, ymin = 0, xmax = width, ymax = height;
             foreach (char c in query)
@@ -77,7 +77,7 @@ namespace AdventOfCode2020.Challenges
                 }
             }
 
-            return new Point(xmin, ymin);
+            return new Point2(xmin, ymin);
         }
     }
 }
