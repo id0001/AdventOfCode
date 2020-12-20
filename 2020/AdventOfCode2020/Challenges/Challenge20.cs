@@ -4,6 +4,7 @@ using AdventOfCodeLib.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AdventOfCode2020.Challenges
@@ -45,6 +46,126 @@ namespace AdventOfCode2020.Challenges
 
         [Part1]
         public string Part1()
+        {
+            var map = StitchImage();
+
+            //for (int y = map.Bounds.GetMin(1); y < map.Bounds.GetMax(1); y++)
+            //{
+            //    var ids = new List<long>();
+            //    for (int x = map.Bounds.GetMin(0); x < map.Bounds.GetMax(0); x++)
+            //    {
+            //        if (!map.ContainsKey(new Point2(x, y)))
+            //            ids.Add(0);
+            //        else
+            //            ids.Add(map[new Point2(x, y)].Id);
+            //    }
+
+            //    Console.WriteLine(string.Join(",", ids));
+            //}
+
+            int l = map.Bounds.GetMin(0);
+            int r = map.Bounds.GetMax(0) - 1;
+            int t = map.Bounds.GetMin(1);
+            int b = map.Bounds.GetMax(1) - 1;
+
+            return (map[new Point2(l, t)].Id * map[new Point2(r, t)].Id * map[new Point2(l, b)].Id * map[new Point2(r, b)].Id).ToString();
+        }
+
+        [Part2]
+        public string Part2()
+        {
+            var map = StitchImage();
+
+            var lake = new List<string>();
+            lake.Add("Tile 0000:");
+            for (int mapY = map.Bounds.GetMin(1); mapY < map.Bounds.GetMax(1); mapY++)
+            {
+                for (int lineY = 1; lineY < 9; lineY++)
+                {
+                    var sb = new StringBuilder();
+                    for (int mapX = map.Bounds.GetMin(0); mapX < map.Bounds.GetMax(0); mapX++)
+                    {
+                        var p = new Point2(mapX, mapY);
+
+                        for (int lineX = 1; lineX < 9; lineX++)
+                        {
+                            sb.Append(map[p][lineY, lineX]);
+                        }
+                    }
+
+                    lake.Add(sb.ToString());
+                }
+            }
+
+            string[] monster = new[]
+            {
+                "                  # ",
+                "#    ##    ##    ###",
+                " #  #  #  #  #  #   "
+            };
+
+            var lakeImg = new Image(lake);
+
+            int monsterCount = 0;
+            foreach(var  orientation in Image.PossibleOrientations )
+            {
+                lakeImg.Orientation = orientation;
+                for (int y = 0; y < lakeImg.Height - 3; y++)
+                {
+                    for (int x = 0; x < lakeImg.Width - monster[0].Length; x++)
+                    {
+                        if (IsMonster(lakeImg, monster, x, y))
+                        {
+                            monsterCount++;
+                            MarkMonster(lakeImg, monster, x, y);
+                        }
+                    }
+                }
+
+                if (monsterCount > 0)
+                    break;
+            }
+
+            int foamCount = 0;
+            for(int y = 0; y < lakeImg.Height; y++)
+            {
+                for(int x = 0; x < lakeImg.Width; x++)
+                {
+                    if (lakeImg[y, x] == '#')
+                        foamCount++;
+                }
+            }
+
+            return foamCount.ToString();
+        }
+
+        private bool IsMonster(Image lake, string[] monster, int lx, int ly)
+        {
+            for (int my = 0; my < monster.Length; my++)
+            {
+                for (int mx = 0; mx < monster[my].Length; mx++)
+                {
+                    if (monster[my][mx] == '#' && lake[ly + my, lx + mx] != '#')
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void MarkMonster(Image lake, string[] monster, int lx, int ly)
+        {
+            for (int my = 0; my < monster.Length; my++)
+            {
+                for (int mx = 0; mx < monster[my].Length; mx++)
+                {
+                    if (monster[my][mx] == '#' && lake[ly + my, lx + mx] == '#')
+                        lake[ly + my, lx + mx] = 'O';
+                }
+            }
+        }
+
+        private SparseSpatialMap<Point2, Image> StitchImage()
         {
             var map = new SparseSpatialMap<Point2, Image>();
             var list = images.ToList();
@@ -106,26 +227,44 @@ namespace AdventOfCode2020.Challenges
                     list.Remove(item);
             }
 
+            return map;
+        }
+
+        private void PrintMap(SparseSpatialMap<Point2, Image> map)
+        {
+            var sb = new StringBuilder();
             for (int y = map.Bounds.GetMin(1); y < map.Bounds.GetMax(1); y++)
             {
-                var ids = new List<long>();
-                for (int x = map.Bounds.GetMin(0); x < map.Bounds.GetMax(0); x++)
+                for (int yline = 0; yline < 10; yline++)
                 {
-                    if (!map.ContainsKey(new Point2(x, y)))
-                        ids.Add(0);
-                    else
-                        ids.Add(map[new Point2(x, y)].Id);
+                    for (int x = map.Bounds.GetMin(0); x < map.Bounds.GetMax(0); x++)
+                    {
+                        var p = new Point2(x, y);
+
+                        for (int xline = 0; xline < 10; xline++)
+                        {
+                            if (map.ContainsKey(p))
+                            {
+                                sb.Append(map[p][yline, xline]);
+                            }
+                            else
+                            {
+                                sb.Append(" ");
+                            }
+                        }
+
+                        sb.Append(" ");
+                    }
+
+                    sb.AppendLine();
                 }
 
-                Console.WriteLine(string.Join(",", ids));
+                sb.AppendLine();
+
             }
 
-            int l = map.Bounds.GetMin(0);
-            int r = map.Bounds.GetMax(0) - 1;
-            int t = map.Bounds.GetMin(1);
-            int b = map.Bounds.GetMax(1) - 1;
-
-            return (map[new Point2(l, t)].Id * map[new Point2(r, t)].Id * map[new Point2(l, b)].Id * map[new Point2(r, b)].Id).ToString();
+            Console.WriteLine();
+            Console.WriteLine(sb);
         }
 
         private class Image
@@ -150,6 +289,8 @@ namespace AdventOfCode2020.Challenges
             public Image(IList<string> rawData)
             {
                 Id = long.Parse(rawData[0].Substring(5, 4));
+                Height = rawData.Count-1;
+                Width = rawData[1].Length;
 
                 int top = CalcSide(rawData[1]);
                 int bottom = CalcSide(string.Concat(rawData[10].Reverse()));
@@ -177,9 +318,9 @@ namespace AdventOfCode2020.Challenges
 
             public long Id { get; }
 
-            public int Width => 10;
+            public int Width { get; }
 
-            public int Height => 10;
+            public int Height { get; }
 
             public int[] Orientation { get; set; }
 
@@ -193,20 +334,51 @@ namespace AdventOfCode2020.Challenges
 
             public IDictionary<(int, int), int> Sides { get; } = new Dictionary<(int, int), int>();
 
-            //public char this[int y, int x]
-            //{
-            //    get
-            //    {
-            //        if(Orientation[0] == 0 && Orientation[1] == 1)
-            //        {
-            //            return data[y][x];
-            //        }
-            //        else if (Orientation[0] == 1 && Orientation[1] == 2)
-            //        {
-            //            return 
-            //        }
-            //    }
-            //}
+            public char this[int y, int x]
+            {
+                get
+                {
+                    if (PossibleOrientations.Take(4).Contains(Orientation)) // 0 1 2 3
+                    {
+                        (int px, int py) = Rotate(x, y, Orientation[0]);
+                        return data[py][px];
+                    }
+                    else // 3 2 1 0
+                    {
+                        y = Height - 1 - y;
+                        (int px, int py) = Rotate(x, y, Orientation[3]);
+                        return data[py][px];
+                    }
+                }
+
+                set
+                {
+                    int px, py;
+                    if (PossibleOrientations.Take(4).Contains(Orientation)) // 0 1 2 3
+                    {
+                        (px, py) = Rotate(x, y, Orientation[0]);
+                    }
+                    else // 3 2 1 0
+                    {
+                        y = Height - 1 - y;
+                        (px, py) = Rotate(x, y, Orientation[3]);
+                    }
+
+                    string s = data[py].Remove(px, 1);
+                    data[py] = s.Insert(px, value.ToString());
+                }
+            }
+
+            private (int, int) Rotate(int x, int y, int amount)
+            {
+                double cx = (Width - 1) / 2d;
+                double cy = (Height - 1) / 2d;
+                double angle = (amount * (Math.PI / 2d));
+
+                int px = (int)Math.Round(((x - cx) * Math.Cos(angle)) - ((y - cy) * Math.Sin(angle)) + cx);
+                int py = (int)Math.Round(((x - cx) * Math.Sin(angle)) + ((y - cy) * Math.Cos(angle)) + cy);
+                return (px, py);
+            }
 
             private static int CalcSide(string line, bool reverse = false)
             {
