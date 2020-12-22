@@ -20,24 +20,22 @@ namespace AdventOfCode2020
 
 		public override async Task RunMostRecentChallengeAsync()
 		{
-			var challenge = await ChallengeLocator.GetMostRecentChallengeAsync();
-
-			var result1 = await RunPart1Async(challenge);
+			var result1 = await RunPart1Async(await ChallengeLocator.GetMostRecentChallengeAsync());
 			if (result1 != null)
 			{
-				Console.WriteLine();
 				Console.WriteLine(new string('=', 40));
 				Console.WriteLine("The solution for part 1 is:");
 				Console.WriteLine(result1);
+				Console.WriteLine();
 			}
 
-			var result2 = await RunPart2Async(challenge);
+			var result2 = await RunPart2Async(await ChallengeLocator.GetMostRecentChallengeAsync());
 			if (result2 != null)
 			{
-				Console.WriteLine();
 				Console.WriteLine(new string('=', 40));
 				Console.WriteLine("The solution for part 2 is:");
 				Console.WriteLine(result2);
+				Console.WriteLine();
 			}
 		}
 	}
