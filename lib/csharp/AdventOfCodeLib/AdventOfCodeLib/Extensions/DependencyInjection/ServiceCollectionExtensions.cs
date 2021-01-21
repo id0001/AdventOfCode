@@ -10,20 +10,14 @@ namespace AdventOfCodeLib.Extensions.DependencyInjection
 {
 	public static class ServiceCollectionExtensions
 	{
-		public static IServiceCollection AddChallenges(this IServiceCollection services)
+		public static IServiceCollection AddChallenges(this IServiceCollection services, IChallengeTypeProvider challengeTypeProvider)
 		{
-			var types = (from a in AppDomain.CurrentDomain.GetAssemblies()
-						 from t in a.GetTypes()
-						 let c = t.GetCustomAttribute<ChallengeAttribute>()
-						 where c != null
-						 select (c, t)).ToDictionary(kv => kv.c.Day, kv => kv.t);
-
-			foreach(var challengeType in types.Values)
+			foreach (var challengeType in challengeTypeProvider.Values)
 			{
 				services.TryAddTransient(challengeType);
 			}
 
-			services.TryAddSingleton<IChallengeLocator>(sp => new ChallengeLocator(sp, types));
+			services.TryAddSingleton(challengeTypeProvider);
 
 			return services;
 		}
@@ -32,6 +26,13 @@ namespace AdventOfCodeLib.Extensions.DependencyInjection
 		{
 			services.AddOptions<InputReaderOptions>().Configure(configure);
 			services.TryAddSingleton<IInputReader, InputReader>();
+			return services;
+		}
+
+		public static IServiceCollection AddChallengeHost(this IServiceCollection services, IChallengeTypeProvider challengeTypeProvider)
+		{
+			services.AddHostedService<ChallengeHost>();
+			services.AddChallenges(challengeTypeProvider);
 			return services;
 		}
 	}

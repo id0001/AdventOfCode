@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace AdventOfCode2020.Challenges
 {
 	[Challenge(7)]
-	public class Challenge7
+	public class Challenge07
 	{
 		private readonly IInputReader inputReader;
 		private BidirectionalGraph<string, WeightedEdge> bagGraph;
 
-		public Challenge7(IInputReader inputReader)
+		public Challenge07(IInputReader inputReader)
 		{
 			this.inputReader = inputReader;
 		}

@@ -1,0 +1,13 @@
+Advent of Code
+
+Usage:
+  aoc -c <day> | --challenge <day>
+  aoc -l | --latest
+  aoc -a | --all
+  aoc -h | --help
+
+Options:
+  -h --help                    Show this screen.
+  -l --latest                  Run the most recent challenge day.
+  -a --all                     Run all days in order.
+  -c <day>, --challenge <day>  Run a specific day.

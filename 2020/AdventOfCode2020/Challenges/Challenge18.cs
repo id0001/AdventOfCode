@@ -18,13 +18,7 @@ namespace AdventOfCode2020.Challenges
 			this.inputReader = inputReader;
 		}
 
-		[Setup]
-		public async Task SetupAsync()
-		{
-
-		}
-
-		//[Part1]
+		[Part1]
 		public async Task<string> Part1Async()
 		{
 			long sum = 0;

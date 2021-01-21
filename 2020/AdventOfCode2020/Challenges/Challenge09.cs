@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 namespace AdventOfCode2020.Challenges
 {
 	[Challenge(9)]
-	public class Challenge9
+	public class Challenge09
 	{
 		private readonly IInputReader inputReader;
 
-		public Challenge9(IInputReader inputReader)
+		public Challenge09(IInputReader inputReader)
 		{
 			this.inputReader = inputReader;
 		}

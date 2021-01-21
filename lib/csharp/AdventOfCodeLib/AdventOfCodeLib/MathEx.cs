@@ -1,13 +1,31 @@
 ﻿using System;
+using System.Linq;
 
 namespace AdventOfCodeLib
 {
 	public static class MathEx
 	{
+		/// <summary>
+		/// Convert degrees to radians
+		/// </summary>
+		/// <param name="degrees">The degee value</param>
+		/// <returns>The radian value</returns>
 		public static double ToRadians(double degrees) => (Math.PI / 180d) * degrees;
 
+		/// <summary>
+		/// Convert radians to degrees
+		/// </summary>
+		/// <param name="radians">The radian value</param>
+		/// <returns>The degree value</returns>
 		public static double ToDegrees(double radians) => (180d / Math.PI) * radians;
 
+		//-----------------------------------------------------------------------------------------
+		/// <summary>
+		/// Returns the modulo of x and d.
+		/// </summary>
+		/// <param name="x">The value</param>
+		/// <param name="d">The divisor</param>
+		/// <returns>The modulo of x and d</returns>
 		public static int Mod(int x, int d) => (x % d + d) % d;
 
 		//-----------------------------------------------------------------------------------------
@@ -92,22 +110,18 @@ namespace AdventOfCodeLib
 			return x;
 		}
 
-		public static int Product(params int[] values)
-		{
-			int p = values[0];
-			for (int i = 1; i < values.Length; i++)
-				p *= values[i];
+		/// <summary>
+		/// Returns the product of the provided values.
+		/// </summary>
+		/// <param name="values">A list of values</param>
+		/// <returns>The product</returns>
+		public static int Product(params int[] values) => values.Aggregate(1, (a, b) => a * b);
 
-			return p;
-		}
-
-		public static long Product(params long[] values)
-		{
-			long p = values[0];
-			for (long i = 1; i < values.Length; i++)
-				p *= values[i];
-
-			return p;
-		}
+		/// <summary>
+		/// Returns the product of the provided values.
+		/// </summary>
+		/// <param name="values">A list of values</param>
+		/// <returns>The product</returns>
+		public static long Product(params long[] values) => values.Aggregate(1L, (a, b) => a * b);
 	}
 }

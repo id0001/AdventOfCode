@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 namespace AdventOfCode2020.Challenges
 {
 	[Challenge(1)]
-	public class Challenge1
+	public class Challenge01
 	{
 		private readonly IInputReader inputReader;
 
 		private int[] input;
 
-		public Challenge1(IInputReader inputReader)
+		public Challenge01(IInputReader inputReader)
 		{
 			this.inputReader = inputReader;
 		}
