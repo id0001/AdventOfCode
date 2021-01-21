@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(2)]
-    public class Challenge2
+    public class Challenge02
     {
         private readonly IInputReader inputReader;
         private InputLine[] input;
 
-        public Challenge2(IInputReader inputReader)
+        public Challenge02(IInputReader inputReader)
         {
             this.inputReader = inputReader;
         }

@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace AdventOfCode2020.Challenges
 {
     [Challenge(5)]
-    public class Challenge5
+    public class Challenge05
     {
         private readonly IInputReader inputReader;
         private string[] input;
 
-        public Challenge5(IInputReader inputReader)
+        public Challenge05(IInputReader inputReader)
         {
             this.inputReader = inputReader;
         }

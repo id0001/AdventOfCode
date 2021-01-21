@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 namespace AdventOfCode2020.Challenges
 {
 	[Challenge(4)]
-	public class Challenge4
+	public class Challenge04
 	{
 		private static readonly string[] EyeColors = new[] { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
 
 		private readonly IInputReader inputReader;
 		private List<IDictionary<string, string>> input;
 
-		public Challenge4(IInputReader inputReader)
+		public Challenge04(IInputReader inputReader)
 		{
 			this.inputReader = inputReader;
 		}
