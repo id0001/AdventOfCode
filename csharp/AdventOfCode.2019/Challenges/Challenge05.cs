@@ -30,7 +30,7 @@ namespace AdventOfCode2019.Challenges
 			var cpu = new Cpu();
 			cpu.RegisterOutput(o => result = o);
 			cpu.SetProgram(program);
-			await cpu.RunAsync(1);
+			await cpu.StartAsync(1);
 
 			return result.ToString();
 		}
@@ -42,7 +42,7 @@ namespace AdventOfCode2019.Challenges
 			var cpu = new Cpu();
 			cpu.RegisterOutput(o => result = o);
 			cpu.SetProgram(program);
-			await cpu.RunAsync(5);
+			await cpu.StartAsync(5);
 
 			return result.ToString();
 		}

@@ -31,7 +31,7 @@ namespace AdventOfCode2019.Challenges
 
 			var cpu = new Cpu();
 			cpu.SetProgram(program);
-			return (await cpu.RunAsync()).ToString();
+			return (await cpu.StartAsync()).ToString();
 		}
 
 		[Part2]
@@ -46,7 +46,7 @@ namespace AdventOfCode2019.Challenges
 
 					var cpu = new Cpu();
 					cpu.SetProgram(program);
-					int result = (int)await cpu.RunAsync();
+					int result = (int)await cpu.StartAsync();
 					if (result == 19690720)
 						return (100 * noun + verb).ToString();
 				}

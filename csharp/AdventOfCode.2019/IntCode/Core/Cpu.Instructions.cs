@@ -1,103 +1,101 @@
 ﻿namespace AdventOfCode2019.IntCode.Core
 {
-	public partial class Cpu
-	{
-		private bool Add()
-		{
-			var a = GetValue(0);
-			var b = GetValue(1);
-			var dest = GetAddress(2);
+    public partial class Cpu
+    {
+        private void Add()
+        {
+            var a = GetValue(0);
+            var b = GetValue(1);
+            var dest = GetAddress(2);
 
-			memory.Write(dest, a + b);
+            memory.Write(dest, a + b);
 
-			ip += 4;
-			return false;
-		}
+            ip += 4;
+        }
 
-		private bool Multiply()
-		{
-			var a = GetValue(0);
-			var b = GetValue(1);
-			var dest = GetAddress(2);
+        private void Multiply()
+        {
+            var a = GetValue(0);
+            var b = GetValue(1);
+            var dest = GetAddress(2);
 
-			memory.Write(dest, a * b);
+            memory.Write(dest, a * b);
 
-			ip += 4;
-			return false;
-		}
+            ip += 4;
+        }
 
-		private bool Input()
-		{
-			var dest = GetAddress(0);
-			if (!inputBuffer.TryDequeue(out long input))
-				return true;
+        private void Input()
+        {
+            waitingForInput = false;
 
-			memory.Write(dest, input);
+            var dest = GetAddress(0);
+            long input;
 
-			ip += 2;
-			return false;
-		}
+            if (!inputBuffer.TryDequeue(out input))
+            {
+                waitingForInput = true;
+                return;
+            }
 
-		private bool Output()
-		{
-			var value = GetValue(0);
-			outputCallback.Invoke(value);
+            memory.Write(dest, input);
 
-			ip += 2;
-			return false;
-		}
+            ip += 2;
+        }
 
-		private bool JumpIfTrue()
-		{
-			var a = GetValue(0);
-			var b = GetValue(1);
+        private void Output()
+        {
+            var value = GetValue(0);
+            outputCallback.Invoke(value);
 
-			ip = a != 0 ? b : ip + 3;
+            ip += 2;
+        }
 
-			return false;
-		}
+        private void JumpIfTrue()
+        {
+            var a = GetValue(0);
+            var b = GetValue(1);
 
-		private bool JumpIfFalse()
-		{
-			var a = GetValue(0);
-			var b = GetValue(1);
+            ip = a != 0 ? b : ip + 3;
 
-			ip = a == 0 ? b : ip + 3;
+        }
 
-			return false;
-		}
+        private void JumpIfFalse()
+        {
+            var a = GetValue(0);
+            var b = GetValue(1);
 
-		private bool LessThan()
-		{
-			var a = GetValue(0);
-			var b = GetValue(1);
-			var dest = GetAddress(2);
+            ip = a == 0 ? b : ip + 3;
 
-			memory.Write(dest, a < b ? 1 : 0);
+        }
 
-			ip += 4;
-			return false;
-		}
+        private void LessThan()
+        {
+            var a = GetValue(0);
+            var b = GetValue(1);
+            var dest = GetAddress(2);
 
-		private bool Equals()
-		{
-			var a = GetValue(0);
-			var b = GetValue(1);
-			var dest = GetAddress(2);
+            memory.Write(dest, a < b ? 1 : 0);
 
-			memory.Write(dest, a == b ? 1 : 0);
+            ip += 4;
+        }
 
-			ip += 4;
-			return false;
-		}
+        private void Equals()
+        {
+            var a = GetValue(0);
+            var b = GetValue(1);
+            var dest = GetAddress(2);
 
-		private bool AjustRelativeBase()
-		{
-			var a = GetValue(0);
-			relativeBase += a;
+            memory.Write(dest, a == b ? 1 : 0);
 
-			ip += 2;
-			return false;
-		}
-	}
+            ip += 4;
+        }
+
+        private void AjustRelativeBase()
+        {
+            var a = GetValue(0);
+            relativeBase += a;
+
+            ip += 2;
+        }
+    }
 }

@@ -2,7 +2,8 @@
 
 namespace AdventOfCode.Lib.Collections.Trees
 {
-	public interface IDFSPreOrderEnumerable<TNode, TKey, TValue> : IEnumerable<TNode> where TNode : ITreeNode<TKey, TValue>
-	{
-	}
+    public interface IDFSPreOrderEnumerable<TNode, TValue> where TNode : ITreeNode<TNode, TValue>
+    {
+        IEnumerable<TNode> EnumerateDFSPreOrder();
+    }
 }

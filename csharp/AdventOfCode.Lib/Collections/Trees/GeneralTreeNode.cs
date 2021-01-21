@@ -1,84 +1,58 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AdventOfCode.Lib.Collections.Trees
 {
-	public class GeneralTreeNode<TKey, TValue> :
-		ITreeNode<TKey, TValue>,
-		IGeneralTree<GeneralTreeNode<TKey, TValue>, TKey, TValue>,
-		IDFSPreOrderEnumerable<GeneralTreeNode<TKey, TValue>, TKey, TValue>
-	{
-		private readonly IDictionary<TKey, GeneralTreeNode<TKey, TValue>> children = new Dictionary<TKey, GeneralTreeNode<TKey, TValue>>();
+    public class GeneralTreeNode<TValue> :
+        IGeneralTreeNode<GeneralTreeNode<TValue>, TValue>,
+        ITreeNode<GeneralTreeNode<TValue>, TValue>,
+        IEquatable<GeneralTreeNode<TValue>>
+    {
+        private readonly HashSet<GeneralTreeNode<TValue>> children = new HashSet<GeneralTreeNode<TValue>>();
 
-		public GeneralTreeNode(TKey key, TValue value)
-		{
-			Key = key;
-			Value = value;
-		}
+        public GeneralTreeNode(TValue value)
+        {
+            Value = value;
+        }
 
-		public TKey Key { get; }
+        public TValue Value { get; }
 
-		public TValue Value { get; }
+        public GeneralTreeNode<TValue> Parent { get; private set; }
 
-		public GeneralTreeNode<TKey, TValue> Parent { get; private set; }
+        public int Depth => (Parent?.Depth + 1 ?? 0);
 
-		public IReadOnlySet<GeneralTreeNode<TKey, TValue>> Children => children.Values.ToHashSet();
+        public IReadOnlySet<GeneralTreeNode<TValue>> Children => children;
 
-		ITreeNode<TKey, TValue> ITreeNode<TKey, TValue>.Parent => Parent;
+        public bool AddChild(TValue value) => AddChild(new GeneralTreeNode<TValue>(value));
 
-		public int Depth { get; private set; }
+        public bool AddChild(GeneralTreeNode<TValue> node)
+        {
+            if (node.Parent == this)
+                return false;
 
-		public void AddChild(TKey key, TValue value) => AddChild(new GeneralTreeNode<TKey, TValue>(key, value));
+            if (node.Parent != null)
+                node.Parent.RemoveChild(node);
 
-		public void AddChild(GeneralTreeNode<TKey, TValue> node)
-		{
-			if (node.Parent != null)
-				throw new ArgumentException("Node is already part of a tree.");
+            node.Parent = this;
+            return children.Add(node);
+        }
 
-			node.Parent = this;
-			node.UpdateDepth();
-			children.Add(node.Key, node);
-		}
+        public bool RemoveChild(TValue value) => RemoveChild(new GeneralTreeNode<TValue>(value));
 
-		public void RemoveChild(TKey key)
-		{
-			if (children.ContainsKey(key))
-			{
-				var child = children[key];
-				children.Remove(key);
-				child.Parent = null;
-				child.UpdateDepth();
-			}
-		}
+        public bool RemoveChild(GeneralTreeNode<TValue> node)
+        {
+            if (node.Parent != this)
+                return false;
 
-		public IEnumerable<GeneralTreeNode<TKey, TValue>> EnumeratePreOrder()
-		{
-			yield return this;
+            node.Parent = null;
+            return children.Remove(node);
+        }
 
-			foreach (var child in Children)
-			{
-				foreach (var item in child.EnumeratePreOrder())
-				{
-					yield return item;
-				}
-			}
-		}
+        public bool Equals(GeneralTreeNode<TValue> other) => other != null && EqualityComparer<TValue>.Default.Equals(Value, other.Value);
 
-		public bool Equals(ITreeNode<TKey, TValue> other) => other != null && EqualityComparer<TKey>.Default.Equals(Key, other.Key);
+        public override bool Equals(object obj) => (obj is GeneralTreeNode<TValue>) && Equals((GeneralTreeNode<TValue>)obj);
 
-		private void UpdateDepth()
-		{
-			Depth = (Parent?.Depth ?? 0) + 1;
-			foreach (var child in Children)
-			{
-				child.UpdateDepth();
-			}
-		}
-
-		IEnumerator<GeneralTreeNode<TKey, TValue>> IEnumerable<GeneralTreeNode<TKey, TValue>>.GetEnumerator() => EnumeratePreOrder().GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => EnumeratePreOrder().GetEnumerator();
-	}
+        public override int GetHashCode() => Value.GetHashCode();
+    }
 }

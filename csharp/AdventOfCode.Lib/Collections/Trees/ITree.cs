@@ -1,8 +1,7 @@
-﻿
-namespace AdventOfCode.Lib.Collections.Trees
+﻿namespace AdventOfCode.Lib.Collections.Trees
 {
-	public interface ITree<TNode, TKey, TValue> where TNode : ITreeNode<TKey, TValue>
-	{
-		TNode Root { get; }
-	}
+    public interface ITree<TNode, TValue> where TNode : ITreeNode<TNode, TValue>
+    {
+        TNode Root { get; set; }
+    }
 }

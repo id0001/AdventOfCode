@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AdventOfCode.Lib.Collections.Trees
+﻿namespace AdventOfCode.Lib.Collections.Trees
 {
-	public interface ITreeNode<TKey, TValue> : IEquatable<ITreeNode<TKey, TValue>>
-	{
-		TKey Key { get; }
+    public interface ITreeNode<TNode, TValue> where TNode : ITreeNode<TNode, TValue>
+    {
+        TValue Value { get; }
 
-		TValue Value { get; }
+        TNode Parent { get; }
 
-		ITreeNode<TKey, TValue> Parent { get; }
-
-		int Depth { get; }
-	}
+        int Depth { get; }
+    }
 }
