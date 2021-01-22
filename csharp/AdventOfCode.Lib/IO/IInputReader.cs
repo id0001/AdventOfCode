@@ -7,7 +7,7 @@ namespace AdventOfCode.Lib.IO
 	{
 		Task<string> ReadAllTextAsync(int challenge);
 
-		IAsyncEnumerable<char> ReadCharactersAsync(int challenge);
+		IAsyncEnumerable<char> ReadLineAsync(int challenge);
 
 
 		IAsyncEnumerable<string> ReadLinesAsync(int challenge);

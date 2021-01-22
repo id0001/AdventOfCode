@@ -48,6 +48,7 @@ namespace AdventOfCode.Challenges
 					var p = list[i][indices[i]];
 					amount--;
 					yield return p;
+					indices[i]++;
 				}
 
 				i = (i + 1) % list.Count;

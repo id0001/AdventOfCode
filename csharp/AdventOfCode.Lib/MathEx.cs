@@ -17,7 +17,7 @@ namespace AdventOfCode.Lib
 		/// </summary>
 		/// <param name="radians">The radian value</param>
 		/// <returns>The degree value</returns>
-		public static double ToDegrees(double radians) => (180d / Math.PI) * radians;
+		public static double ToDegrees(double radians, int decimals = 0) => Math.Round((180d / Math.PI) * radians, decimals);
 
 		//-----------------------------------------------------------------------------------------
 		/// <summary>

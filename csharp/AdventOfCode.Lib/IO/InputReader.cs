@@ -20,7 +20,7 @@ namespace AdventOfCode.Lib.IO
 
 		public async Task<string> ReadAllTextAsync(int challenge) => await File.ReadAllTextAsync(GetPath(challenge));
 
-		public async IAsyncEnumerable<char> ReadCharactersAsync(int challenge)
+		public async IAsyncEnumerable<char> ReadLineAsync(int challenge)
 		{
 			using var stream = File.OpenText(GetPath(challenge));
 

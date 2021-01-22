@@ -37,6 +37,8 @@ namespace AdventOfCode.Lib
 
 		public int Dimensions => 2;
 
+		#region Operators
+
 		public static Point2 operator +(Point2 value1, Point2 value2) => new Point2(value1.X + value2.X, value1.Y + value2.Y);
 
 		public static Point2 operator -(Point2 value1, Point2 value2) => new Point2(value1.X - value2.X, value1.Y - value2.Y);
@@ -49,11 +51,22 @@ namespace AdventOfCode.Lib
 
 		public static bool operator !=(Point2 a, Point2 b) => !a.Equals(b);
 
+		#endregion
+
+		#region Static Methods
+
 		public static double Distance(Point2 a, Point2 b)
 		{
 			int dy = b.Y - a.Y;
 			int dx = b.X - a.X;
 			return Math.Sqrt((dx * dx) + (dy * dy));
+		}
+
+		public static double DistanceSquared(Point2 a, Point2 b)
+		{
+			int dy = b.Y - a.Y;
+			int dx = b.X - a.X;
+			return (dx * dx) + (dy * dy);
 		}
 
 		/// <summary>
@@ -74,6 +87,10 @@ namespace AdventOfCode.Lib
 			return new Point2(x, y);
 		}
 
+		#endregion
+
+		#region Overrides
+
 		public override bool Equals(object obj) => (obj is Point2) && Equals((Point2)obj);
 
 		public bool Equals(Point2 other) => (X == other.X) && (Y == other.Y);
@@ -81,6 +98,8 @@ namespace AdventOfCode.Lib
 		public override int GetHashCode() => HashCode.Combine(X, Y);
 
 		public override string ToString() => "{X: " + X + " Y: " + Y + "}";
+
+		#endregion
 
 		public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 
@@ -109,5 +128,7 @@ namespace AdventOfCode.Lib
 				}
 			}
 		}
+
+		public Vector2 ToVector2() => new Vector2(X, Y);
 	}
 }

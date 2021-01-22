@@ -7,6 +7,10 @@ namespace AdventOfCode.Lib
 	public struct Vector2 : IEquatable<Vector2>
 	{
 		private static readonly Vector2 zeroVector = new Vector2(0, 0);
+		private static readonly Vector2 rightVector = new Vector2(1, 0);
+		private static readonly Vector2 leftVector = new Vector2(-1, 0);
+		private static readonly Vector2 upVector = new Vector2(0, -1);
+		private static readonly Vector2 downVector = new Vector2(0, 1);
 
 		public double X;
 		public double Y;
@@ -27,6 +31,16 @@ namespace AdventOfCode.Lib
 
 		public static Vector2 Zero => zeroVector;
 
+		public static Vector2 Right => rightVector;
+
+		public static Vector2 Left => leftVector;
+
+		public static Vector2 Up => upVector;
+
+		public static Vector2 Down => downVector;
+
+		public double Length => Math.Sqrt(X * X + Y * Y);
+
 		#region Operators
 
 		public static Vector2 operator +(Vector2 value1, Vector2 value2) => new Vector2(value1.X + value2.X, value1.Y + value2.Y);
@@ -37,7 +51,9 @@ namespace AdventOfCode.Lib
 
 		public static Vector2 operator *(Vector2 value, int multiplier) => new Vector2(value.X * multiplier, value.Y * multiplier);
 
-		public static Vector2 operator /(Vector2 source, Vector2 divisor) => new Vector2(source.X / divisor.X, source.Y / divisor.Y);
+		public static Vector2 operator /(Vector2 value, double divisor) => new Vector2(value.X / divisor, value.Y / divisor);
+
+		public static Vector2 operator /(Vector2 value1, Vector2 value2) => new Vector2(value1.X / value2.X, value1.Y / value2.Y);
 
 		public static bool operator ==(Vector2 a, Vector2 b) => a.Equals(b);
 
@@ -72,7 +88,48 @@ namespace AdventOfCode.Lib
 			return new Vector2(x, y);
 		}
 
+		public static double Dot(Vector2 a, Vector2 b) => (a.X * b.X + a.Y * b.Y);
+
+		public static double Cross(Vector2 a, Vector2 b) => (a.X * b.Y) - (a.Y * b.X);
+
+		/// <summary>
+		/// Calculates the angle of the vector on a circle.
+		/// </summary>
+		/// <param name="v">The vector</param>
+		/// <param name="pivot">The center of the circle</param>
+		/// <returns>The angle</returns>
+		public static double AngleOnCircle(Vector2 v, Vector2 pivot)
+		{
+			//var unit = (v - pivot).Normalize();
+			//double angle = Angle(Right, unit);
+
+			//// Angle is always the smallest value so we need to expand this value when it would be greater than PI.
+			//double cross = Cross(Right, unit);
+			//angle *= Math.Sign(cross != 0 ? cross : 1);
+			//return angle < 0 ? 2 * Math.PI + angle : angle;
+
+			double angle = Math.Atan2(v.Y - pivot.Y, v.X - pivot.X);
+			if (angle < 0)
+				angle += Math.PI * 2;
+
+			return angle;
+		}
+
+		/// <summary>
+		/// Calculates the angle between 2 vectors.
+		/// </summary>
+		/// <param name="a">Vector 1</param>
+		/// <param name="b">Vector 2</param>
+		/// <returns>Angle between vectors</returns>
+		public static double Angle(Vector2 a, Vector2 b)
+		{
+			double dot = Dot(a, b);
+			return Math.Acos(dot / (a.Length * b.Length));
+		}
+
 		#endregion
+
+		#region Overrides 
 
 		public override bool Equals(object obj) => (obj is Vector2) && Equals((Vector2)obj);
 
@@ -82,8 +139,12 @@ namespace AdventOfCode.Lib
 
 		public override string ToString() => "{X: " + X + " Y: " + Y + "}";
 
+		#endregion
+
 		public void Deconstruct(out double x, out double y) => (x, y) = (X, Y);
 
 		public double Distance(Vector2 other) => Distance(this, other);
+
+		public Vector2 Normalize() => this / Length;
 	}
 }
