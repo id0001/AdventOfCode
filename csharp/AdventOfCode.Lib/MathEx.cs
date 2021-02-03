@@ -123,5 +123,27 @@ namespace AdventOfCode.Lib
 		/// <param name="values">A list of values</param>
 		/// <returns>The product</returns>
 		public static long Product(params long[] values) => values.Aggregate(1L, (a, b) => a * b);
+
+		/// <summary>
+		/// Returns the greatest common divisor.
+		/// </summary>
+		/// <param name="a">Value a</param>
+		/// <param name="b">Value b</param>
+		/// <returns>Greatest common divisor of a and b</returns>
+		public static long Gcd(long a, long b)
+		{
+			if (b == 0)
+				return a;
+
+			return Gcd(b, a % b);
+		}
+
+		/// <summary>
+		/// Returns the least common multiplier.
+		/// </summary>
+		/// <param name="a">Value a</param>
+		/// <param name="b">Value b</param>
+		/// <returns>Least common multiplier of a and b</returns>
+		public static long Lcm(long a, long b) => a / Gcd(a, b) * b;
 	}
 }

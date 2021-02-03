@@ -31,6 +31,9 @@
             var dest = GetAddress(0);
             long input;
 
+            if (inputBuffer.Count == 0)
+                inputCallback?.Invoke();
+
             if (!inputBuffer.TryDequeue(out input))
             {
                 waitingForInput = true;
@@ -45,7 +48,7 @@
         private void Output()
         {
             var value = GetValue(0);
-            outputCallback.Invoke(value);
+            outputCallback?.Invoke(value);
 
             ip += 2;
         }

@@ -100,14 +100,6 @@ namespace AdventOfCode.Lib
 		/// <returns>The angle</returns>
 		public static double AngleOnCircle(Vector2 v, Vector2 pivot)
 		{
-			//var unit = (v - pivot).Normalize();
-			//double angle = Angle(Right, unit);
-
-			//// Angle is always the smallest value so we need to expand this value when it would be greater than PI.
-			//double cross = Cross(Right, unit);
-			//angle *= Math.Sign(cross != 0 ? cross : 1);
-			//return angle < 0 ? 2 * Math.PI + angle : angle;
-
 			double angle = Math.Atan2(v.Y - pivot.Y, v.X - pivot.X);
 			if (angle < 0)
 				angle += Math.PI * 2;

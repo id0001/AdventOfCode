@@ -6,155 +6,161 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2019.IntCode.Core
 {
-    public partial class Cpu
-    {
-        private readonly IDictionary<OpCode, Action> instructions;
-        private readonly ConcurrentQueue<long> inputBuffer;
-        private readonly Memory memory;
+	public partial class Cpu
+	{
+		private readonly IDictionary<OpCode, Action> instructions;
+		private readonly ConcurrentQueue<long> inputBuffer;
+		private readonly Memory memory;
 
-        private long[] program;
-        private long ip = 0;
-        private long relativeBase = 0;
-        private bool isRunning;
-        private bool waitingForInput;
+		private long[] program;
+		private long ip = 0;
+		private long relativeBase = 0;
+		private bool isRunning;
+		private bool waitingForInput;
 
-        private Action<long> outputCallback;
+		private Action<long> outputCallback;
+		private Action inputCallback;
 
-        private TaskCompletionSource<long> taskCompletionSource;
+		private TaskCompletionSource<long> taskCompletionSource;
 
-        public Cpu()
-        {
-            memory = new Memory();
-            inputBuffer = new ConcurrentQueue<long>();
-            instructions = InitializeInstructions();
-        }
+		public Cpu()
+		{
+			memory = new Memory();
+			inputBuffer = new ConcurrentQueue<long>();
+			instructions = InitializeInstructions();
+		}
 
-        public void RegisterOutput(Action<long> callback)
-        {
-            outputCallback = callback;
-        }
+		public void RegisterOutput(Action<long> callback)
+		{
+			outputCallback = callback;
+		}
 
-        public void WriteInput(long value)
-        {
-            inputBuffer.Enqueue(value);
-            if (waitingForInput)
-            {
-                waitingForInput = false;
-                Task.Run(RunUntilHaltOrInput);
-            }
-        }
+		public void RegisterInput(Action callback)
+		{
+			inputCallback = callback;
+		}
 
-        public void SetProgram(long[] program)
-        {
-            if (isRunning)
-                throw new InvalidOperationException("Cannot load program while running.");
+		public void WriteInput(long value)
+		{
+			inputBuffer.Enqueue(value);
+			if (waitingForInput)
+			{
+				waitingForInput = false;
+				Task.Run(RunUntilHaltOrInput);
+			}
+		}
 
-            this.program = program;
-        }
+		public void SetProgram(long[] program)
+		{
+			if (isRunning)
+				throw new InvalidOperationException("Cannot load program while running.");
 
-        public Task<long> StartAsync(params long[] input) => StartAsync(input, CancellationToken.None);
+			this.program = program;
+		}
 
-        public Task<long> StartAsync(long[] input, CancellationToken cancellationToken)
-        {
-            if (isRunning)
-                throw new InvalidOperationException("Cpu is already running.");
+		public Task<long> StartAsync(params long[] input) => StartAsync(input, CancellationToken.None);
 
-            taskCompletionSource = new TaskCompletionSource<long>();
-            isRunning = true;
-            memory.LoadProgram(program);
-            relativeBase = 0;
-            ip = 0;
+		public Task<long> StartAsync(long[] input, CancellationToken cancellationToken)
+		{
+			if (isRunning)
+				throw new InvalidOperationException("Cpu is already running.");
 
-            foreach (var v in input)
-                inputBuffer.Enqueue(v);
+			taskCompletionSource = new TaskCompletionSource<long>();
+			isRunning = true;
+			memory.LoadProgram(program);
+			relativeBase = 0;
+			ip = 0;
 
-            Task.Run(RunUntilHaltOrInput);
-            return taskCompletionSource.Task;
-        }
+			foreach (var v in input)
+				inputBuffer.Enqueue(v);
 
-        private void RunUntilHaltOrInput()
-        {
-            while (isRunning)
-            {
-                var opCode = GetOpCode();
-                if (opCode == OpCode.Halt)
-                {
-                    inputBuffer.Clear();
-                    isRunning = false;
-                    taskCompletionSource.SetResult(memory.Read(0));
-                    break;
-                }
+			Task.Run(RunUntilHaltOrInput);
+			return taskCompletionSource.Task;
+		}
 
-                ExecuteInstruction(opCode);
+		private void RunUntilHaltOrInput()
+		{
+			while (isRunning)
+			{
+				var opCode = GetOpCode();
+				if (opCode == OpCode.Halt)
+				{
+					inputBuffer.Clear();
+					isRunning = false;
+					taskCompletionSource.SetResult(memory.Read(0));
+					break;
+				}
 
-                if (waitingForInput)
-                    return;
-            }
-        }
+				ExecuteInstruction(opCode);
 
-        private OpCode GetOpCode() => (OpCode)(memory.Read(ip) % 100);
+				if (waitingForInput)
+					return;
+			}
+		}
 
-        private ParameterMode GetParameterMode(int offset)
-        {
-            long m = memory.Read(ip);
-            m = (m - m % 100) / 100;
+		private OpCode GetOpCode() => (OpCode)(memory.Read(ip) % 100);
 
-            return (ParameterMode)(Math.Floor(m / Math.Pow(10, offset)) % 10);
-        }
+		private ParameterMode GetParameterMode(int offset)
+		{
+			long m = memory.Read(ip);
+			m = (m - m % 100) / 100;
 
-        //-----------------------------------------------------------------------------------------
-        /// <summary>
-        /// Get the parameter value at the given offset assuming it is an address.
-        /// </summary>
-        /// <param name="offset">The offset</param>
-        /// <returns>An address</returns>
-        private long GetAddress(int offset)
-        {
-            long parameter = memory.Read(ip + offset + 1);
-            ParameterMode mode = GetParameterMode(offset);
+			return (ParameterMode)(Math.Floor(m / Math.Pow(10, offset)) % 10);
+		}
 
-            return mode switch
-            {
-                ParameterMode.Immediate => parameter,
-                ParameterMode.Relative => parameter + relativeBase,
-                ParameterMode.Positional => parameter,
-                _ => throw new NotImplementedException(),
-            };
-        }
+		//-----------------------------------------------------------------------------------------
+		/// <summary>
+		/// Get the parameter value at the given offset assuming it is an address.
+		/// </summary>
+		/// <param name="offset">The offset</param>
+		/// <returns>An address</returns>
+		private long GetAddress(int offset)
+		{
+			long parameter = memory.Read(ip + offset + 1);
+			ParameterMode mode = GetParameterMode(offset);
 
-        /// <summary>
-        /// Get the parameter value at the given offset.
-        /// Read from memory if it's a pointer.
-        /// </summary>
-        /// <param name="offset">The offset</param>
-        /// <returns>A value</returns>
-        private long GetValue(int offset)
-        {
-            long parameter = memory.Read(ip + offset + 1);
-            ParameterMode mode = GetParameterMode(offset);
+			return mode switch
+			{
+				ParameterMode.Immediate => parameter,
+				ParameterMode.Relative => parameter + relativeBase,
+				ParameterMode.Positional => parameter,
+				_ => throw new NotImplementedException(),
+			};
+		}
 
-            return mode switch
-            {
-                ParameterMode.Immediate => parameter, // parameter is value
-                ParameterMode.Relative => memory.Read(parameter + relativeBase), // parameter is relative pointer
-                ParameterMode.Positional => memory.Read(parameter), // parameter is pointer
-                _ => throw new NotImplementedException()
-            };
-        }
+		/// <summary>
+		/// Get the parameter value at the given offset.
+		/// Read from memory if it's a pointer.
+		/// </summary>
+		/// <param name="offset">The offset</param>
+		/// <returns>A value</returns>
+		private long GetValue(int offset)
+		{
+			long parameter = memory.Read(ip + offset + 1);
+			ParameterMode mode = GetParameterMode(offset);
 
-        private void ExecuteInstruction(OpCode opCode) => instructions[opCode].Invoke();
+			return mode switch
+			{
+				ParameterMode.Immediate => parameter, // parameter is value
+				ParameterMode.Relative => memory.Read(parameter + relativeBase), // parameter is relative pointer
+				ParameterMode.Positional => memory.Read(parameter), // parameter is pointer
+				_ => throw new NotImplementedException()
+			};
+		}
 
-        private IDictionary<OpCode, Action> InitializeInstructions() => new Dictionary<OpCode, Action>
-        {
-            { OpCode.Add, Add  },
-            { OpCode.Multiply, Multiply },
-            { OpCode.Input, Input },
-            { OpCode.Output, Output },
-            { OpCode.JumpIfTrue, JumpIfTrue },
-            { OpCode.JumpIfFalse, JumpIfFalse },
-            { OpCode.LessThan, LessThan },
-            { OpCode.Equals, Equals },
-            { OpCode.AjustRelativeBase, AjustRelativeBase }
-        };
-    }
+		private void ExecuteInstruction(OpCode opCode) => instructions[opCode].Invoke();
+
+		private IDictionary<OpCode, Action> InitializeInstructions() => new Dictionary<OpCode, Action>
+		{
+			{ OpCode.Add, Add  },
+			{ OpCode.Multiply, Multiply },
+			{ OpCode.Input, Input },
+			{ OpCode.Output, Output },
+			{ OpCode.JumpIfTrue, JumpIfTrue },
+			{ OpCode.JumpIfFalse, JumpIfFalse },
+			{ OpCode.LessThan, LessThan },
+			{ OpCode.Equals, Equals },
+			{ OpCode.AjustRelativeBase, AjustRelativeBase }
+		};
+	}
 }
