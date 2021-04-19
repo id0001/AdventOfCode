@@ -11,13 +11,13 @@ namespace AdventOfCode.Lib.Collections
 		private List<TItem> heap;
 		private readonly IComparer<TItem> comparer;
 
-		public PriorityQueue(IComparer<TItem>? comparer)
+        public PriorityQueue(IComparer<TItem> comparer)
 		{
 			heap = new List<TItem>();
 			this.comparer = comparer;
 		}
 
-		public PriorityQueue(int capacity, IComparer<TItem>? comparer)
+		public PriorityQueue(int capacity, IComparer<TItem> comparer)
 		{
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException(nameof(capacity), capacity, "Capacity should be greater or equal to 0");
@@ -26,7 +26,7 @@ namespace AdventOfCode.Lib.Collections
 			this.comparer = comparer;
 		}
 
-		public PriorityQueue(IEnumerable<TItem> collection, IComparer<TItem>? comparer)
+		public PriorityQueue(IEnumerable<TItem> collection, IComparer<TItem> comparer)
 		{
 			if (collection == null)
 				throw new ArgumentNullException(nameof(collection));
@@ -98,7 +98,7 @@ namespace AdventOfCode.Lib.Collections
 
 		private void Swim(int a)
 		{
-			// Get parent index 
+			// Get parent index
 			int parent = (a - 1) / 2;
 
 			while (a > 0 && LessThan(a, parent))

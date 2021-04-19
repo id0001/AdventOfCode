@@ -58,9 +58,7 @@ namespace AdventOfCode2019.IntCode.Core
 			this.program = program;
 		}
 
-		public Task<long> StartAsync(params long[] input) => StartAsync(input, CancellationToken.None);
-
-		public Task<long> StartAsync(long[] input, CancellationToken cancellationToken)
+		public Task<long> StartAsync(params long[] input)
 		{
 			if (isRunning)
 				throw new InvalidOperationException("Cpu is already running.");
@@ -76,6 +74,12 @@ namespace AdventOfCode2019.IntCode.Core
 
 			Task.Run(RunUntilHaltOrInput);
 			return taskCompletionSource.Task;
+		}
+
+		public void Halt()
+        {
+			isRunning = false;
+			taskCompletionSource.SetResult(memory.Read(0));
 		}
 
 		private void RunUntilHaltOrInput()
