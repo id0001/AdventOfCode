@@ -116,10 +116,7 @@ namespace AdventOfCode.Lib.Graphs
 			if (target == null)
 				throw new ArgumentNullException(nameof(target));
 
-			if (!TryGetOutEdges(source, out var outEdges))
-				return false;
-
-			foreach (var outEdge in outEdges)
+			foreach (var outEdge in OutEdges(source))
 			{
 				if (outEdge.Target.Equals(target))
 					return true;
@@ -149,6 +146,9 @@ namespace AdventOfCode.Lib.Graphs
 			if (vertex == null)
 				throw new ArgumentNullException(nameof(vertex));
 
+			if (!vertexOutEdges.ContainsKey(vertex))
+				return Enumerable.Empty<TEdge>();
+
 			return vertexOutEdges[vertex];
 		}
 
@@ -164,21 +164,6 @@ namespace AdventOfCode.Lib.Graphs
 			}
 
 			edge = default;
-			return false;
-		}
-
-		public bool TryGetOutEdges(TVertex vertex, out IEnumerable<TEdge> edges)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			if (vertexOutEdges.TryGetValue(vertex, out var list))
-			{
-				edges = list;
-				return true;
-			}
-
-			edges = default;
 			return false;
 		}
 
@@ -203,6 +188,9 @@ namespace AdventOfCode.Lib.Graphs
 			if (vertex == null)
 				throw new ArgumentNullException(nameof(vertex));
 
+			if (!vertexOutEdges.ContainsKey(vertex))
+				return Enumerable.Empty<TEdge>();
+
 			return vertexInEdges[vertex];
 		}
 
@@ -218,21 +206,6 @@ namespace AdventOfCode.Lib.Graphs
 			}
 
 			edge = default;
-			return false;
-		}
-
-		public bool TryGetInEdges(TVertex vertex, out IEnumerable<TEdge> edges)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			if (vertexInEdges.TryGetValue(vertex, out var list))
-			{
-				edges = list;
-				return true;
-			}
-
-			edges = default;
 			return false;
 		}
 	}

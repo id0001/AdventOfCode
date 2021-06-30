@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" Version="16.10.26" />
   </ItemGroup>
 
   <ItemGroup>
