@@ -32,7 +32,7 @@ namespace AdventOfCode2019.Challenges
         {
             var space = await MapSpaceAsync();
             var target = space.Single(x => x.Value == 2).Key;
-            var path = Dijkstra.Path(ConvertSpaceForPathFinding(space), Point2.Zero, target);
+            var path = BasicDijkstra.Path(ConvertSpaceForPathFinding(space), Point2.Zero, target);
 
             return path.Length.ToString();
         }
@@ -139,7 +139,7 @@ namespace AdventOfCode2019.Challenges
                     nextLocation = nextMove.Target;
                     if (!NextTo(currentLocation, nextLocation))
                     {
-                        if (!Dijkstra.TryPath(ConvertSpaceForPathFinding(visited), currentLocation, nextMove.Source, out Point2[] path))
+                        if (!BasicDijkstra.TryPath(ConvertSpaceForPathFinding(visited), currentLocation, nextMove.Source, out Point2[] path))
                             throw new InvalidOperationException();
 
                         foreach (var p in path)

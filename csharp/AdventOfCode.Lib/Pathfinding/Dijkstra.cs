@@ -1,129 +1,95 @@
-
-using AdventOfCode.Lib.Collections;
-using Microsoft;
+﻿using AdventOfCode.Lib.Collections;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 
 namespace AdventOfCode.Lib.Pathfinding
 {
-    public class Dijkstra
+    public class Dijkstra<T>
     {
-        /// <summary>
-        /// Calculate the shortest path from start to end.
-        /// </summary>
-        /// <param name="graph">The graph with known nodes</param>
-        /// <param name="start">The start node</param>
-        /// <param name="end">The target node</param>
-        /// <returns>An array containing the path to target. Excludes the start node. If not path was found, and empty array is returned.</returns>
-        public static Point2[] Path(IDictionary<Point2, bool> graph, Point2 start, Point2 end)
+        private readonly Func<T, IEnumerable<Node>> getNeighbors;
+
+        public Dijkstra(Func<T, IEnumerable<Node>> getNeighbors)
         {
-            Requires.NotNull(graph, nameof(graph));
-            Requires.Argument(start != end, nameof(start), "Start cannot be the same as finish");
-            Requires.Argument(graph.ContainsKey(start), nameof(start), "Start location is not in the graph");
-            Requires.Argument(graph[start], nameof(start), "Start location is not traversable");
-            Requires.Argument(graph.ContainsKey(end), nameof(end), "End location is not in the graph");
-            Requires.Argument(graph[end], nameof(end), "End location is not traversable");
+            this.getNeighbors = getNeighbors;
+        }
 
-            var distances = new Dictionary<Point2, int>();
-            var previous = new Dictionary<Point2, Point2>();
-            var openQueue = new PriorityQueue<Point2>(new MinDistComparer(distances));
-            var visited = new HashSet<Point2>();
+        public bool TryPath(T start, T end, out T[] path)
+        {
+            var distances = new Dictionary<T, int>();
+            var openQueue = new PriorityQueue<Node>(new MinDistanceComparer(distances));
+            var visited = new HashSet<Node>();
+            var previous = new Dictionary<T, T>();
 
+            openQueue.Enqueue(new Node(start, 0));
             distances[start] = 0;
-            openQueue.Enqueue(start);
 
             while (!openQueue.IsEmpty)
             {
                 var node = openQueue.Dequeue();
-
                 visited.Add(node);
 
-                if (node == end)
+                if (node.Item.Equals(end))
                     break;
 
-                var neighbors = GetNeighbours(graph, node);
+                var neighbors = getNeighbors(node.Item);
                 foreach (var neighbor in neighbors)
                 {
-                    int dist = distances[node] + 1;
-                    if (!distances.ContainsKey(neighbor) || dist < distances[neighbor])
+                    int distance = distances[node.Item] + neighbor.Weight;
+                    if (!distances.ContainsKey(neighbor.Item) || distance < distances[neighbor.Item])
                     {
-                        distances[neighbor] = dist;
-                        previous[neighbor] = node;
+                        distances[neighbor.Item] = distance;
+                        previous[neighbor.Item] = node.Item;
 
                         if (!visited.Contains(neighbor))
                             openQueue.Enqueue(neighbor);
+
                     }
                 }
             }
 
-            if (!visited.Contains(end))
-                return new Point2[0];
-
-            var path = new List<Point2>();
-            Point2 p = end;
-            while (p != start)
+            if (!visited.Any(x => x.Item.Equals(end)))
             {
-                path.Insert(0, p);
+                path = Array.Empty<T>();
+                return false;
+            }
+
+            path = GetPath(previous, start, end);
+            return true;
+        }
+
+        private T[] GetPath(Dictionary<T, T> previous, T start, T end)
+        {
+            var path = new List<T>();
+            T p = end;
+            while (!p.Equals(start))
+            {
+                path.Add(p);
                 p = previous[p];
             }
 
-            return path.ToArray();
+            return path.Reverse<T>().ToArray();
         }
 
-        /// <summary>
-        /// Calculate the shortest path from start to end.
-        /// </summary>
-        /// <param name="graph">The graph with known nodes</param>
-        /// <param name="start">The start node</param>
-        /// <param name="end">The target node</param>
-        /// <param name="path">An array containing the path to target. Excludes the start node.</param>
-        /// <returns>True if a path was found. False if not</returns>
-        public static bool TryPath(IDictionary<Point2, bool> graph, Point2 start, Point2 end, out Point2[] path)
+        public record Node(T Item, int Weight);
+
+        private class MinDistanceComparer : IComparer<Node>
         {
-            path = Path(graph, start, end);
-            return path.Length != 0;
-        }
+            private readonly IDictionary<T, int> distances;
 
-        /// <summary>
-        /// Get the neighbour nodes.
-        /// </summary>
-        /// <param name="graph">The graph with known  nodes</param>
-        /// <param name="parent">The parent node.</param>
-        /// <returns>A list of neighbour nodes.</returns>
-        private static IEnumerable<Point2> GetNeighbours(IDictionary<Point2, bool> graph, Point2 parent)
-        {
-            List<Point2> neighbours = new List<Point2>();
-            for (int y = parent.Y - 1; y <= parent.Y + 1; y++)
-            {
-                for (int x = parent.X - 1; x <= parent.X + 1; x++)
-                {
-                    if (x == parent.X ^ y == parent.Y && graph.TryGetValue(parent, out bool v) && v)
-                    {
-                        var p = new Point2(x, y);
-                        neighbours.Add(p);
-                    }
-                }
-            }
-
-            return neighbours;
-        }
-
-        private class MinDistComparer : IComparer<Point2>
-        {
-            private readonly IDictionary<Point2, int> distances;
-
-            public MinDistComparer(IDictionary<Point2, int> distances)
+            public MinDistanceComparer(IDictionary<T, int> distances)
             {
                 this.distances = distances;
             }
 
-            public int Compare(Point2 x, Point2 y)
+            public int Compare(Node x, Node y)
             {
-                if (!distances.ContainsKey(x) || !distances.ContainsKey(y))
-                    throw new InvalidOperationException("Unable to compare distance of unknown points.");
+                if (!distances.ContainsKey(x.Item) || !distances.ContainsKey(y.Item))
+                {
+                    throw new InvalidOperationException("Unable to compare distance of unknown nodes.");
+                }
 
-                return distances[x] - distances[y];
+                return distances[x.Item] - distances[y.Item];
             }
         }
     }

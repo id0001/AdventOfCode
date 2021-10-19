@@ -1,5 +1,4 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Graphs;
 using AdventOfCode.Lib.IO;
 using AdventOfCode.Lib.Pathfinding;
 using System;
@@ -43,90 +42,109 @@ namespace AdventOfCode2019.Challenges
         [Part1]
         public string Part1()
         {
-            var startPos = GetStartPosition(map);
-            var keys = GetKeys(map).ToList();
-            keys.Add(new Key(startPos, '@'));
+            var startNode = FindStartPoint(map);
 
-            var doors = GetDoors(map).ToDictionary(kv => kv.Location, kv => char.ToLowerInvariant(kv.Name));
+            var allKeys = FindAllKeys(map);
+            int keyAmount = allKeys.Count;
 
-            var dsmap = GetDijkstraMap(map);
+            var ds = new Dijkstra<Point2>(GetNeighbors);
+            var edges = new List<Edge>();
 
-            var graph = new BidirectionalGraph<Vertex, Edge>();
-
-            for (int i = 0; i < keys.Count; i++)
+            foreach (var from in allKeys.Keys)
             {
-                graph.AddVertex(new Vertex(keys[i].Location, char.ToLowerInvariant(keys[i].Name)));
-            }
-
-            var verts = graph.Vertices.ToList();
-            for (int y = 0; y < verts.Count; y++)
-            {
-                for (int x = y + 1; x < verts.Count; x++)
+                foreach (var to in allKeys.Keys)
                 {
-                    var s = verts[y];
-                    var t = verts[x];
+                    if (to == '@' || from == to)
+                        continue;
 
-                    var path = Dijkstra.Path(dsmap, s.Location, t.Location);
-
-                    var keysRequired = new List<char>();
-                    for (int i = 1; i < path.Length - 1; i++)
+                    if (ds.TryPath(allKeys[from], allKeys[to], out Point2[] path))
                     {
-                        if (doors.TryGetValue(path[i], out char d))
+                        int keysNeeded = 0;
+                        foreach (var p in path)
                         {
-                            keysRequired.Add(d);
+                            char c = map[p.Y, p.X];
+                            if (c != '#' && c != '@' && c != '.' && char.IsUpper(c))
+                            {
+                                keysNeeded = AddKey(keysNeeded, char.ToLower(map[p.Y, p.X]));
+                            }
                         }
-                    }
 
-                    graph.AddEdge(new Edge(s, t, keysRequired.ToHashSet(), path.Length - 1));
+                        var edge = new Edge(from, to, keysNeeded, path.Length - 1);
+                        edges.Add(edge);
+                    }
                 }
             }
 
-            return null;
+            int target = 0;
+            foreach (var c in allKeys.Keys)
+            {
+                if (c == '@')
+                    continue;
+
+                target = AddKey(target, c);
+            }
+
+            var queue = new Queue<(char, int, int)>();
+            var visited = new Dictionary<(char, int), int>();
+
+            queue.Enqueue(('@', 0, 0));
+            visited[('@', 0)] = 0;
+
+            int min = int.MaxValue;
+            while (queue.Any())
+            {
+                var (c, keys, dist) = queue.Dequeue();
+
+
+
+                var neighbors = edges.Where(x => x.From == c && !HasKey(keys, x.To) && HasAllKeys(x.Keys, keys));
+
+                foreach (var neighbor in neighbors)
+                {
+                    int k = AddKey(keys, neighbor.To);
+                    if (k == target)
+                    {
+                        min = Math.Min(min, dist + neighbor.Distance);
+                        continue;
+                    }
+
+                    var n = (To: neighbor.To, Keys: k, Distance: dist + neighbor.Distance);
+
+                    if (visited.TryGetValue((n.To, n.Keys), out int d))
+                    {
+                        if (d < n.Distance)
+                            continue;
+                    }
+
+                    queue.Enqueue(n);
+                    visited[(n.To, n.Keys)] = n.Distance;
+                }
+            }
+
+            return min.ToString();
         }
+
+        private IEnumerable<Dijkstra<Point2>.Node> GetNeighbors(Point2 p)
+        {
+            for (int y = p.Y - 1; y <= p.Y + 1; y++)
+            {
+                for (int x = p.X - 1; x <= p.X + 1; x++)
+                {
+                    if (x >= 0 && x < map.GetLength(1) && y >= 0 && y < map.GetLength(0))
+                    {
+                        if (map[y, x] != '#')
+                            yield return new Dijkstra<Point2>.Node(new Point2(x, y), 1);
+                    }
+                }
+            }
+        }
+
+        private record Edge(char From, char To, int Keys, int Distance);
 
         [Part2]
         public string Part2()
         {
             return null;
-        }
-
-        private sealed record Node(Vertex Vertex, int Distance, char[] KeysFound)
-        {
-            public bool Equals(Node other) => Vertex == other.Vertex;
-
-            public override int GetHashCode() => Vertex.GetHashCode();
-        }
-
-        private static Node Bfs(BidirectionalGraph<Vertex, Edge> graph, char[] keysToFind)
-        {
-            var startVert = graph.Vertices.Single(e => e.Character == '@');
-            var root = new Node(startVert, 0, new char[0]);
-
-            var queue = new Queue<Node>();
-            var explored = new HashSet<Vertex>();
-            explored.Add(root);
-            queue.Enqueue(root);
-
-            while (queue.Count > 0)
-            {
-                var node = queue.Dequeue();
-
-                if (node.KeysFound.Length == keysToFind.Length)
-                {
-                    return node;
-                }
-
-                foreach(var edge in graph.OutEdges(node.Vertex))
-                {
-                    if (!explored.Contains(edge.Target))
-                    {
-
-                    }
-                }
-            }
-
-
-            throw new InvalidOperationException("No path found");
         }
 
         private void PrintMap()
@@ -153,86 +171,75 @@ namespace AdventOfCode2019.Challenges
             }
         }
 
-        private static Point2 GetStartPosition(char[,] map)
+        private Point2 FindStartPoint(char[,] map)
         {
             for (int y = 0; y < map.GetLength(0); y++)
             {
                 for (int x = 0; x < map.GetLength(1); x++)
                 {
                     if (map[y, x] == '@')
+                    {
                         return new Point2(x, y);
+                    }
                 }
             }
 
-            return Point2.Zero;
+            return default;
         }
 
-        private static IEnumerable<Key> GetKeys(char[,] map)
+        private Dictionary<char, Point2> FindAllKeys(char[,] map)
         {
+            var dict = new Dictionary<char, Point2>();
             for (int y = 0; y < map.GetLength(0); y++)
             {
                 for (int x = 0; x < map.GetLength(1); x++)
                 {
-                    if (map[y, x] != '@' && map[y, x] != '#' && map[y, x] != '.' && char.IsLower(map[y, x]))
-                        yield return new Key(new Point2(x, y), char.ToLower(map[y, x]));
-                }
-            }
-        }
-
-        private static IEnumerable<Door> GetDoors(char[,] map)
-        {
-            for (int y = 0; y < map.GetLength(0); y++)
-            {
-                for (int x = 0; x < map.GetLength(1); x++)
-                {
-                    if (map[y, x] != '@' && map[y, x] != '#' && map[y, x] != '.' && char.IsUpper(map[y, x]))
-                        yield return new Door(new Point2(x, y), char.ToLower(map[y, x]));
-                }
-            }
-        }
-
-        private IDictionary<Point2, bool> GetDijkstraMap(char[,] map)
-        {
-            var dict = new Dictionary<Point2, bool>();
-            for (int y = 0; y < 81; y++)
-            {
-                for (int x = 0; x < 81; x++)
-                {
-                    dict.Add(new Point2(x, y), map[y, x] != '#');
+                    if (map[y, x] != '#' && (map[y, x] == '@' || char.IsLower(map[y, x])))
+                    {
+                        dict.Add(map[y, x], new Point2(x, y));
+                    }
                 }
             }
 
             return dict;
         }
 
-        private record Key(Point2 Location, char Name);
-
-        private record Door(Point2 Location, char Name);
-
-        private class Vertex
+        private Dictionary<Point2, bool> GetDijkstraMap(char[,] map, ISet<char> obtainedKeys)
         {
-            public Vertex(Point2 location, char character)
+            Dictionary<Point2, bool> map2 = new Dictionary<Point2, bool>();
+            for (int y = 0; y < map.GetLength(0); y++)
             {
-                Location = location;
-                Character = character;
+                for (int x = 0; x < map.GetLength(1); x++)
+                {
+                    if (map[y, x] == '.' || map[y, x] == '@' || char.IsLower(map[y, x]) || (char.IsUpper(map[y, x]) && obtainedKeys.Contains(char.ToLower(map[y, x]))))
+                    {
+                        map2.Add(new Point2(x, y), true);
+                    }
+                    else
+                    {
+                        map2.Add(new Point2(x, y), false);
+                    }
+                }
             }
 
-            public Point2 Location { get; }
-
-            public char Character { get; }
+            return map2;
         }
 
-        private class Edge : Edge<Vertex>
+        private static int AddKey(int obtainedKeys, char key)
         {
-            public Edge(Vertex source, Vertex target, HashSet<char> keysRequired, int distance) : base(source, target)
-            {
-                KeysRequired = keysRequired;
-                Distance = distance;
-            }
+            int pos = key - 'a';
+            return obtainedKeys | 1 << pos;
+        }
 
-            public HashSet<char> KeysRequired { get; }
+        private bool HasKey(int obtainedKeys, char key)
+        {
+            int pos = key - 'a';
+            return (obtainedKeys & (1 << pos)) == (1 << pos);
+        }
 
-            public int Distance { get; }
+        private bool HasAllKeys(int keysNeeded, int obtainedKeys)
+        {
+            return (obtainedKeys & keysNeeded) == keysNeeded;
         }
     }
 }
