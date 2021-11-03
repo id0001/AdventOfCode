@@ -76,6 +76,7 @@ namespace AdventOfCode.Lib.Collections
             {
                 int newCapacity = (int)Math.Max((_array.LongLength * (long)GrowFactor), _array.Length + MinimumGrow);
                 SetCapacity(newCapacity);
+                insertIndex = IsEmpty ? _head : _head - 1;
             }
 
             _array[insertIndex] = item;
@@ -92,6 +93,7 @@ namespace AdventOfCode.Lib.Collections
             {
                 int newCapacity = (int)Math.Max((_array.LongLength * (long)GrowFactor), _array.Length + MinimumGrow);
                 SetCapacity(newCapacity);
+                insertIndex = IsEmpty ? _tail : _tail + 1;
             }
 
             _array[insertIndex] = item;
@@ -215,8 +217,8 @@ namespace AdventOfCode.Lib.Collections
             int ca = (int)((_tail + _head) / 2f);
             int cb = (int)(newCapacity / 2f);
 
-            int newHead = cb - (ca - _head);
-            int newTail = newHead + _size;
+            int newHead = cb - ca;
+            int newTail = IsEmpty ? newHead : newHead + _size - 1;
 
             Array.Copy(oldArray, _head, _array, newHead, _size);
 

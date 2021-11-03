@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AdventOfCode.Lib
 {
-	public static class ConsoleEx
+    public static class ConsoleEx
 	{
 		public static void PrintMatrix(int[,] matrix)
 		{
