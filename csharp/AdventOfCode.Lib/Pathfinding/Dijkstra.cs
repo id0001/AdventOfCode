@@ -5,91 +5,98 @@ using System.Linq;
 
 namespace AdventOfCode.Lib.Pathfinding
 {
-    public class Dijkstra<T>
+    public class Dijkstra<T> : IPathFinder<T>
     {
-        private readonly Func<T, IEnumerable<Node>> getNeighbors;
+        public delegate IEnumerable<(T Item, int Weight)> GetAdjacentNodesFunc(T from);
 
-        public Dijkstra(Func<T, IEnumerable<Node>> getNeighbors)
+        private readonly GetAdjacentNodesFunc getAdjacentNodes;
+
+        public Dijkstra(GetAdjacentNodesFunc getAdjacentNodes)
         {
-            this.getNeighbors = getNeighbors;
+            this.getAdjacentNodes = getAdjacentNodes;
         }
+
+        public bool IncludeStart { get; set; }
 
         public bool TryPath(T start, T end, out T[] path)
         {
-            var distances = new Dictionary<T, int>();
-            var openQueue = new PriorityQueue<Node>(new MinDistanceComparer(distances));
-            var visited = new HashSet<Node>();
-            var previous = new Dictionary<T, T>();
+            var nodes = new Dictionary<T, Node>();
+            var pq = new PriorityQueue<Node>(new NodeComparer());
 
-            openQueue.Enqueue(new Node(start, 0));
-            distances[start] = 0;
+            var root = new Node(start, 0);
+            nodes.Add(start, root);
+            pq.Enqueue(root);
 
-            while (!openQueue.IsEmpty)
+            while (!pq.IsEmpty)
             {
-                var node = openQueue.Dequeue();
-                visited.Add(node);
-
-                if (node.Item.Equals(end))
+                var currentNode = pq.Dequeue();
+                if (currentNode.Item.Equals(end))
                     break;
 
-                var neighbors = getNeighbors(node.Item);
-                foreach (var neighbor in neighbors)
+                foreach (var adjacent in getAdjacentNodes(currentNode.Item))
                 {
-                    int distance = distances[node.Item] + neighbor.Weight;
-                    if (!distances.ContainsKey(neighbor.Item) || distance < distances[neighbor.Item])
+                    Node childNode;
+                    if (!nodes.TryGetValue(adjacent.Item, out childNode))
                     {
-                        distances[neighbor.Item] = distance;
-                        previous[neighbor.Item] = node.Item;
+                        childNode = new Node(adjacent.Item, int.MaxValue);
+                        nodes[adjacent.Item] = childNode;
+                    }
 
-                        if (!visited.Contains(neighbor))
-                            openQueue.Enqueue(neighbor);
-
+                    if (childNode.Weight > currentNode.Weight + adjacent.Weight)
+                    {
+                        childNode.Weight = currentNode.Weight + adjacent.Weight;
+                        childNode.Parent = currentNode;
+                        pq.Enqueue(childNode);
                     }
                 }
             }
 
-            if (!visited.Any(x => x.Item.Equals(end)))
+            if (nodes.ContainsKey(end))
             {
-                path = Array.Empty<T>();
-                return false;
+                path = GetPath(nodes[end]);
+                return true;
             }
 
-            path = GetPath(previous, start, end);
-            return true;
+            path = Array.Empty<T>();
+            return false;
         }
 
-        private T[] GetPath(Dictionary<T, T> previous, T start, T end)
+        private T[] GetPath(Node node)
         {
-            var path = new List<T>();
-            T p = end;
-            while (!p.Equals(start))
+            List<T> path = new List<T>();
+            Node current = node;
+            while (current != null)
             {
-                path.Add(p);
-                p = previous[p];
+                path.Add(current.Item);
+                current = current.Parent;
             }
 
-            return path.Reverse<T>().ToArray();
+            path.Reverse();
+            return IncludeStart
+                ? path.ToArray()
+                : path.Skip(1).ToArray();
         }
 
-        public record Node(T Item, int Weight);
-
-        private class MinDistanceComparer : IComparer<Node>
+        private class Node
         {
-            private readonly IDictionary<T, int> distances;
-
-            public MinDistanceComparer(IDictionary<T, int> distances)
+            public Node(T item, int weight)
             {
-                this.distances = distances;
+                Item = item;
+                Weight = weight;
             }
 
+            public T Item { get; }
+
+            public int Weight { get; set; }
+
+            public Node Parent { get; set; }
+        }
+
+        private class NodeComparer : IComparer<Node>
+        {
             public int Compare(Node x, Node y)
             {
-                if (!distances.ContainsKey(x.Item) || !distances.ContainsKey(y.Item))
-                {
-                    throw new InvalidOperationException("Unable to compare distance of unknown nodes.");
-                }
-
-                return distances[x.Item] - distances[y.Item];
+                return x.Weight - y.Weight;
             }
         }
     }

@@ -124,7 +124,7 @@ namespace AdventOfCode2019.Challenges
             return min.ToString();
         }
 
-        private IEnumerable<Dijkstra<Point2>.Node> GetNeighbors(Point2 p)
+        private IEnumerable<(Point2, int)> GetNeighbors(Point2 p)
         {
             for (int y = p.Y - 1; y <= p.Y + 1; y++)
             {
@@ -133,7 +133,7 @@ namespace AdventOfCode2019.Challenges
                     if (x >= 0 && x < map.GetLength(1) && y >= 0 && y < map.GetLength(0))
                     {
                         if (map[y, x] != '#')
-                            yield return new Dijkstra<Point2>.Node(new Point2(x, y), 1);
+                            yield return (new Point2(x, y), 1);
                     }
                 }
             }

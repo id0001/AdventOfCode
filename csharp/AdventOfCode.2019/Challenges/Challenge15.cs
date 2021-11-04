@@ -32,9 +32,14 @@ namespace AdventOfCode2019.Challenges
         {
             var space = await MapSpaceAsync();
             var target = space.Single(x => x.Value == 2).Key;
-            var path = BasicDijkstra.Path(ConvertSpaceForPathFinding(space), Point2.Zero, target);
 
-            return path.Length.ToString();
+            var dijkstra = new Dijkstra<Point2>(x => GetNeighbors(space,x));
+            if(dijkstra.TryPath(Point2.Zero, target, out Point2[] path))
+            {
+                return path.Length.ToString();
+            }
+
+            return "-1";
         }
 
         [Part2]
@@ -55,7 +60,7 @@ namespace AdventOfCode2019.Challenges
                 bool filledASpace = false;
                 var points = fillMap.ToHashSet();
 
-                foreach(var point in points)
+                foreach (var point in points)
                 {
                     fillMap.Remove(point);
                     lockedMap.Add(point);
@@ -89,11 +94,21 @@ namespace AdventOfCode2019.Challenges
             return minutes.ToString();
         }
 
+        private IEnumerable<(Point2, int)> GetNeighbors(IDictionary<Point2, int> visited, Point2 p)
+        {
+            foreach (var neighbor in p.GetNeighbors())
+            {
+                if (visited[neighbor] != 0)
+                    yield return (neighbor, 1);
+            }
+        }
+
         private async Task<IDictionary<Point2, int>> MapSpaceAsync()
         {
             var visited = new Dictionary<Point2, int>();
             Point2 currentLocation = Point2.Zero;
             Point2 nextLocation = Point2.Zero;
+            var dijkstra = new Dijkstra<Point2>(x => GetNeighbors(visited, x));
 
             visited.Add(currentLocation, 1);
 
@@ -139,7 +154,7 @@ namespace AdventOfCode2019.Challenges
                     nextLocation = nextMove.Target;
                     if (!NextTo(currentLocation, nextLocation))
                     {
-                        if (!BasicDijkstra.TryPath(ConvertSpaceForPathFinding(visited), currentLocation, nextMove.Source, out Point2[] path))
+                        if (!dijkstra.TryPath(currentLocation, nextMove.Source, out Point2[] path))
                             throw new InvalidOperationException();
 
                         foreach (var p in path)
