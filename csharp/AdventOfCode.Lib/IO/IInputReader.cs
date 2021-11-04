@@ -3,11 +3,12 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Lib.IO
 {
-	public interface IInputReader
+    public interface IInputReader
 	{
 		Task<string> ReadAllTextAsync(int challenge);
 
 		IAsyncEnumerable<char> ReadLineAsync(int challenge);
+		Task<char[,]> ReadGridAsync(int challenge);
 
 
 		IAsyncEnumerable<string> ReadLinesAsync(int challenge);

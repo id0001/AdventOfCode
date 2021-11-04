@@ -1,12 +1,13 @@
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 
 namespace AdventOfCode.Lib.Collections
 {
-	public class PriorityQueue<TItem>
+    public class PriorityQueue<TItem> : IReadOnlyList<TItem>
 	{
 		private List<TItem> heap;
 		private readonly IComparer<TItem> comparer;
@@ -46,7 +47,9 @@ namespace AdventOfCode.Lib.Collections
 
 		public bool IsEmpty => Count == 0;
 
-		public void Clear() => heap.Clear();
+        public TItem this[int index] => heap[index];
+
+        public void Clear() => heap.Clear();
 
 		public void Enqueue(TItem item)
 		{
@@ -75,6 +78,16 @@ namespace AdventOfCode.Lib.Collections
 
 			return heap[0];
 		}
+
+		public bool Remove(TItem item)
+        {
+			int index = heap.IndexOf(item);
+			if (index < 0)
+				return false;
+
+			RemoveAt(index);
+			return true;
+        }
 
 		private void Sink(int a)
 		{
@@ -147,5 +160,9 @@ namespace AdventOfCode.Lib.Collections
 		private void Swap(int a, int b) => (heap[a], heap[b]) = (heap[b], heap[a]);
 
 		private bool LessThan(int a, int b) => Comparer.Compare(heap[a], heap[b]) <= 0;
-	}
+
+		public IEnumerator<TItem> GetEnumerator() => heap.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 }
