@@ -12,7 +12,7 @@ namespace AdventOfCode2019.Challenges
     public class Challenge18
     {
         private readonly IInputReader inputReader;
-        private char[,] map;
+        private char[,] maze;
 
 
         public Challenge18(IInputReader inputReader)
@@ -23,129 +23,125 @@ namespace AdventOfCode2019.Challenges
         [Setup]
         public async Task SetupAsync()
         {
-            var stringList = new List<string>();
-            await foreach (var line in inputReader.ReadLinesAsync(0))
-            {
-                stringList.Add(line);
-            }
-
-            map = new char[stringList.Count, stringList[0].Length];
-            for (int y = 0; y < map.GetLength(0); y++)
-            {
-                for (int x = 0; x < map.GetLength(1); x++)
-                {
-                    map[y, x] = stringList[y][x];
-                }
-            }
+            maze = await inputReader.ReadGridAsync(18);
         }
 
         [Part1]
         public string Part1()
         {
-            var startNode = FindStartPoint(map);
+            var startNode = FindStartPoint(maze);
 
-            var allKeys = FindAllKeys(map);
-            int keyAmount = allKeys.Count;
+            var allKeys = FindAllKeys(maze);
+            int keyTotal = allKeys.Keys.Sum(c => 1 << (c - 'a'));
 
-            var ds = new Dijkstra<Point2>(GetNeighbors);
-            var edges = new List<Edge>();
+            var start = new State(startNode, 0);
 
-            foreach (var from in allKeys.Keys)
-            {
-                foreach (var to in allKeys.Keys)
-                {
-                    if (to == '@' || from == to)
-                        continue;
+            var bfs = new BreadthFirstSearch<State>(GetNeighbors);
+            if (bfs.TryPath(start, s => s.ObtainedKeys == keyTotal, out State[] path))
+                return path.Length.ToString();
 
-                    if (ds.TryPath(allKeys[from], allKeys[to], out Point2[] path))
-                    {
-                        int keysNeeded = 0;
-                        foreach (var p in path)
-                        {
-                            char c = map[p.Y, p.X];
-                            if (c != '#' && c != '@' && c != '.' && char.IsUpper(c))
-                            {
-                                keysNeeded = AddKey(keysNeeded, char.ToLower(map[p.Y, p.X]));
-                            }
-                        }
-
-                        var edge = new Edge(from, to, keysNeeded, path.Length - 1);
-                        edges.Add(edge);
-                    }
-                }
-            }
-
-            int target = 0;
-            foreach (var c in allKeys.Keys)
-            {
-                if (c == '@')
-                    continue;
-
-                target = AddKey(target, c);
-            }
-
-            var queue = new Queue<(char, int, int)>();
-            var visited = new Dictionary<(char, int), int>();
-
-            queue.Enqueue(('@', 0, 0));
-            visited[('@', 0)] = 0;
-
-            int min = int.MaxValue;
-            while (queue.Any())
-            {
-                var (c, keys, dist) = queue.Dequeue();
-
-
-
-                var neighbors = edges.Where(x => x.From == c && !HasKey(keys, x.To) && HasAllKeys(x.Keys, keys));
-
-                foreach (var neighbor in neighbors)
-                {
-                    int k = AddKey(keys, neighbor.To);
-                    if (k == target)
-                    {
-                        min = Math.Min(min, dist + neighbor.Distance);
-                        continue;
-                    }
-
-                    var n = (To: neighbor.To, Keys: k, Distance: dist + neighbor.Distance);
-
-                    if (visited.TryGetValue((n.To, n.Keys), out int d))
-                    {
-                        if (d < n.Distance)
-                            continue;
-                    }
-
-                    queue.Enqueue(n);
-                    visited[(n.To, n.Keys)] = n.Distance;
-                }
-            }
-
-            return min.ToString();
+            return null;
         }
 
-        private IEnumerable<(Point2, int)> GetNeighbors(Point2 p)
+        private IEnumerable<State> GetNeighbors(State state)
         {
-            for (int y = p.Y - 1; y <= p.Y + 1; y++)
+            foreach (var neighbor in state.Location.GetNeighbors().Where(p => p.X == state.Location.X || p.Y == state.Location.Y))
             {
-                for (int x = p.X - 1; x <= p.X + 1; x++)
+                char c = maze[neighbor.Y, neighbor.X];
+                int keys = state.ObtainedKeys;
+
+                if (char.IsLower(c) && !HasKey(keys, c))
+                    keys = AddKey(keys, c);
+
+                if (c == '.'
+                    || c == '@'
+                    || (char.IsLower(c))
+                    || (char.IsUpper(c) && HasKey(keys, char.ToLower(c))))
                 {
-                    if (x >= 0 && x < map.GetLength(1) && y >= 0 && y < map.GetLength(0))
-                    {
-                        if (map[y, x] != '#')
-                            yield return (new Point2(x, y), 1);
-                    }
+                    yield return new State(neighbor, keys);
                 }
             }
         }
 
-        private record Edge(char From, char To, int Keys, int Distance);
+        private record State(Point2 Location, int ObtainedKeys);
+
+        //private class State : IEquatable<State>
+        //{
+        //    public State(Point2 location, int obtainedKeys)
+        //    {
+        //        Location = location;
+        //        ObtainedKeys = obtainedKeys;
+        //    }
+
+        //    public Point2 Location { get; set; }
+
+        //    public int ObtainedKeys { get; set; }
+
+        //    public override bool Equals(object obj) => obj is State state && Equals(state);
+
+        //    public bool Equals(State other)
+        //    {
+        //        if (other is null)
+        //            return false;
+
+        //        return other.Location == Location && other.ObtainedKeys == ObtainedKeys;
+        //    }
+
+        //    public override int GetHashCode() => HashCode.Combine(Location, ObtainedKeys);
+        //}
 
         [Part2]
         public string Part2()
         {
+            // This is shit.
+            var startNode = FindStartPoint(maze);
+            UpdateMazeForPart2(startNode);
+
+            Point2 p0 = startNode - new Point2(-1, -1);
+            Point2 p1 = startNode - new Point2(1, -1);
+            Point2 p2 = startNode - new Point2(-1, 1);
+            Point2 p3 = startNode - new Point2(1, 1);
+
+            var allKeys = FindAllKeys(maze);
+            int keyTotal = allKeys.Keys.Sum(c => 1 << (c - 'a'));
+
+            var start = new State2(new[] { p0, p1, p2, p3 }, 0);
+
+            var bfs = new BreadthFirstSearch<State2>(GetNeighbors2);
+            if (bfs.TryPath(start, s => s.ObtainedKeys == keyTotal, out State2[] path))
+                return path.Length.ToString();
+
             return null;
         }
+
+        private IEnumerable<State2> GetNeighbors2(State2 state)
+        {
+            for (int i = 0; i < state.Locations.Length; i++)
+            {
+                Point2 location = state.Locations[i];
+                foreach (var neighbor in location.GetNeighbors().Where(p => p.X == location.X || p.Y == location.Y))
+                {
+                    char c = maze[neighbor.Y, neighbor.X];
+                    int keys = state.ObtainedKeys;
+
+                    if (char.IsLower(c) && !HasKey(keys, c))
+                        keys = AddKey(keys, c);
+
+                    if (c == '.'
+                        || c == '@'
+                        || (char.IsLower(c))
+                        || (char.IsUpper(c) && HasKey(keys, char.ToLower(c))))
+                    {
+                        Point2[] newLocs = new Point2[4];
+                        Array.Copy(state.Locations, newLocs, 4);
+                        newLocs[i] = neighbor;
+                        yield return new State2(newLocs, keys);
+                    }
+                }
+            }
+        }
+
+        private record State2(Point2[] Locations, int ObtainedKeys);
 
         private void PrintMap()
         {
@@ -153,7 +149,7 @@ namespace AdventOfCode2019.Challenges
             {
                 for (int x = 0; x < 81; x++)
                 {
-                    char c = map[y, x];
+                    char c = maze[y, x];
 
                     Console.ResetColor();
                     if (c != '#' && c != '.' && c != ',')
@@ -187,6 +183,24 @@ namespace AdventOfCode2019.Challenges
             return default;
         }
 
+        private void UpdateMazeForPart2(Point2 p)
+        {
+            for (int y = p.Y - 1; y <= p.Y + 1; y++)
+            {
+                for (int x = p.X - 1; x <= p.X + 1; x++)
+                {
+                    if (x == p.X || y == p.Y)
+                    {
+                        maze[y, x] = '#';
+                    }
+                    else
+                    {
+                        maze[y, x] = '@';
+                    }
+                }
+            }
+        }
+
         private Dictionary<char, Point2> FindAllKeys(char[,] map)
         {
             var dict = new Dictionary<char, Point2>();
@@ -194,7 +208,7 @@ namespace AdventOfCode2019.Challenges
             {
                 for (int x = 0; x < map.GetLength(1); x++)
                 {
-                    if (map[y, x] != '#' && (map[y, x] == '@' || char.IsLower(map[y, x])))
+                    if (char.IsLower(map[y, x]))
                     {
                         dict.Add(map[y, x], new Point2(x, y));
                     }
@@ -202,27 +216,6 @@ namespace AdventOfCode2019.Challenges
             }
 
             return dict;
-        }
-
-        private Dictionary<Point2, bool> GetDijkstraMap(char[,] map, ISet<char> obtainedKeys)
-        {
-            Dictionary<Point2, bool> map2 = new Dictionary<Point2, bool>();
-            for (int y = 0; y < map.GetLength(0); y++)
-            {
-                for (int x = 0; x < map.GetLength(1); x++)
-                {
-                    if (map[y, x] == '.' || map[y, x] == '@' || char.IsLower(map[y, x]) || (char.IsUpper(map[y, x]) && obtainedKeys.Contains(char.ToLower(map[y, x]))))
-                    {
-                        map2.Add(new Point2(x, y), true);
-                    }
-                    else
-                    {
-                        map2.Add(new Point2(x, y), false);
-                    }
-                }
-            }
-
-            return map2;
         }
 
         private static int AddKey(int obtainedKeys, char key)
@@ -237,9 +230,19 @@ namespace AdventOfCode2019.Challenges
             return (obtainedKeys & (1 << pos)) == (1 << pos);
         }
 
-        private bool HasAllKeys(int keysNeeded, int obtainedKeys)
+        private static string AddKey(string obtainedKeys, char key)
         {
-            return (obtainedKeys & keysNeeded) == keysNeeded;
+            return obtainedKeys + key;
+        }
+
+        private bool HasKey(string obtainedKeys, char key)
+        {
+            return obtainedKeys.Contains(key);
+        }
+
+        private bool HasAll(string obtainedKeys, ISet<char> keys)
+        {
+            return !keys.Except(obtainedKeys).Any();
         }
     }
 }
