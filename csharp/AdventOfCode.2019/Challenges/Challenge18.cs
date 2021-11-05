@@ -65,51 +65,22 @@ namespace AdventOfCode2019.Challenges
 
         private record State(Point2 Location, int ObtainedKeys);
 
-        //private class State : IEquatable<State>
-        //{
-        //    public State(Point2 location, int obtainedKeys)
-        //    {
-        //        Location = location;
-        //        ObtainedKeys = obtainedKeys;
-        //    }
-
-        //    public Point2 Location { get; set; }
-
-        //    public int ObtainedKeys { get; set; }
-
-        //    public override bool Equals(object obj) => obj is State state && Equals(state);
-
-        //    public bool Equals(State other)
-        //    {
-        //        if (other is null)
-        //            return false;
-
-        //        return other.Location == Location && other.ObtainedKeys == ObtainedKeys;
-        //    }
-
-        //    public override int GetHashCode() => HashCode.Combine(Location, ObtainedKeys);
-        //}
-
         [Part2]
         public string Part2()
         {
-            // This is shit.
             var startNode = FindStartPoint(maze);
             UpdateMazeForPart2(startNode);
+            PrintMaze();
+
+            var allKeys = FindAllKeys(maze);
+            int keyTotal = allKeys.Keys.Sum(c => 1 << (c - 'a'));
 
             Point2 p0 = startNode - new Point2(-1, -1);
             Point2 p1 = startNode - new Point2(1, -1);
             Point2 p2 = startNode - new Point2(-1, 1);
             Point2 p3 = startNode - new Point2(1, 1);
 
-            var allKeys = FindAllKeys(maze);
-            int keyTotal = allKeys.Keys.Sum(c => 1 << (c - 'a'));
 
-            var start = new State2(new[] { p0, p1, p2, p3 }, 0);
-
-            var bfs = new BreadthFirstSearch<State2>(GetNeighbors2);
-            if (bfs.TryPath(start, s => s.ObtainedKeys == keyTotal, out State2[] path))
-                return path.Length.ToString();
 
             return null;
         }
@@ -143,7 +114,7 @@ namespace AdventOfCode2019.Challenges
 
         private record State2(Point2[] Locations, int ObtainedKeys);
 
-        private void PrintMap()
+        private void PrintMaze()
         {
             for (int y = 0; y < 81; y++)
             {
@@ -152,13 +123,15 @@ namespace AdventOfCode2019.Challenges
                     char c = maze[y, x];
 
                     Console.ResetColor();
-                    if (c != '#' && c != '.' && c != ',')
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                    }
 
-                    if (c == ',')
-                        Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = c switch
+                    {
+                        '#' => ConsoleColor.DarkYellow,
+                        '@' => ConsoleColor.Cyan,
+                        _ when char.IsLower(c) => ConsoleColor.Green,
+                        _ when char.IsUpper(c) => ConsoleColor.Red,
+                        _ => Console.ForegroundColor
+                    };
 
                     Console.Write(c);
                 }
@@ -228,21 +201,6 @@ namespace AdventOfCode2019.Challenges
         {
             int pos = key - 'a';
             return (obtainedKeys & (1 << pos)) == (1 << pos);
-        }
-
-        private static string AddKey(string obtainedKeys, char key)
-        {
-            return obtainedKeys + key;
-        }
-
-        private bool HasKey(string obtainedKeys, char key)
-        {
-            return obtainedKeys.Contains(key);
-        }
-
-        private bool HasAll(string obtainedKeys, ISet<char> keys)
-        {
-            return !keys.Except(obtainedKeys).Any();
         }
     }
 }
