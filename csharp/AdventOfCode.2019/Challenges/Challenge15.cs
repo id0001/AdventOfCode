@@ -33,10 +33,10 @@ namespace AdventOfCode2019.Challenges
             var space = await MapSpaceAsync();
             var target = space.Single(x => x.Value == 2).Key;
 
-            var dijkstra = new Dijkstra<Point2>(x => GetNeighbors(space,x));
-            if(dijkstra.TryPath(Point2.Zero, target, out Point2[] path))
+            var dijkstra = new Dijkstra<Point2>(x => GetNeighbors(space, x));
+            if (dijkstra.TryPath(Point2.Zero, target, out Point2[] path, out int length))
             {
-                return path.Length.ToString();
+                return length.ToString();
             }
 
             return "-1";
@@ -154,7 +154,7 @@ namespace AdventOfCode2019.Challenges
                     nextLocation = nextMove.Target;
                     if (!NextTo(currentLocation, nextLocation))
                     {
-                        if (!dijkstra.TryPath(currentLocation, nextMove.Source, out Point2[] path))
+                        if (!dijkstra.TryPath(currentLocation, nextMove.Source, out Point2[] path, out int _))
                             throw new InvalidOperationException();
 
                         foreach (var p in path)
