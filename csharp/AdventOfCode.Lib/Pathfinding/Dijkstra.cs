@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdventOfCode.Lib.Pathfinding
 {
-    public class Dijkstra<T> : IPathFinder<T>
+    public class Dijkstra<T>
     {
         public delegate IEnumerable<(T Item, int Weight)> GetAdjacentNodesFunc(T from);
 
@@ -18,53 +18,53 @@ namespace AdventOfCode.Lib.Pathfinding
 
         public bool IncludeStart { get; set; }
 
-        public bool TryPath(T start, T end, out T[] path)
+        public bool TryPath(T start, T end, out T[] path, out int shortestPathLength) => TryPath(start, n => n.Equals(end), out path, out shortestPathLength);
+
+        public bool TryPath(T start, Func<T, bool> goalReached, out T[] path, out int shortestPathLength)
         {
-            var nodes = new Dictionary<T, Node>();
-            var pq = new PriorityQueue<Node>(new NodeComparer());
+            var queue = new PriorityQueue<ItemDistancePair>(new ItemWeightPairComparer());
+            var distanceMap = new Dictionary<T, int>();
+            var parentToChildMap = new Dictionary<T, T>();
 
-            var root = new Node(start, 0);
-            nodes.Add(start, root);
-            pq.Enqueue(root);
+            var root = new ItemDistancePair(start, 0);
+            distanceMap.Add(start, 0);
+            queue.Enqueue(root);
 
-            while (!pq.IsEmpty)
+            while (!queue.IsEmpty)
             {
-                var currentNode = pq.Dequeue();
-                if (currentNode.Item.Equals(end))
-                    break;
-
-                foreach (var adjacent in getAdjacentNodes(currentNode.Item))
+                var current = queue.Dequeue();
+                if (goalReached(current.Item))
                 {
-                    Node childNode;
-                    if (!nodes.TryGetValue(adjacent.Item, out childNode))
+                    path = GetPath(current);
+                    shortestPathLength = current.Distance;
+                    return true;
+                }
+
+                foreach (var adjacent in getAdjacentNodes(current.Item))
+                {
+                    if (!distanceMap.TryGetValue(adjacent.Item, out var distance))
                     {
-                        childNode = new Node(adjacent.Item, int.MaxValue);
-                        nodes[adjacent.Item] = childNode;
+                        distance = int.MaxValue;
                     }
 
-                    if (childNode.Weight > currentNode.Weight + adjacent.Weight)
+                    if (distance > current.Distance + adjacent.Weight)
                     {
-                        childNode.Weight = currentNode.Weight + adjacent.Weight;
-                        childNode.Parent = currentNode;
-                        pq.Enqueue(childNode);
+                        distanceMap[adjacent.Item] = current.Distance + adjacent.Weight;
+                        parentToChildMap[adjacent.Item] = current.Item;
+                        queue.Enqueue(new ItemDistancePair(adjacent.Item, current.Distance + adjacent.Weight));
                     }
                 }
             }
 
-            if (nodes.ContainsKey(end))
-            {
-                path = GetPath(nodes[end]);
-                return true;
-            }
-
             path = Array.Empty<T>();
+            shortestPathLength = 0;
             return false;
         }
 
-        private T[] GetPath(Node node)
+        private T[] GetPath(ItemDistancePair node)
         {
             List<T> path = new List<T>();
-            Node current = node;
+            ItemDistancePair current = node;
             while (current != null)
             {
                 path.Add(current.Item);
@@ -77,26 +77,26 @@ namespace AdventOfCode.Lib.Pathfinding
                 : path.Skip(1).ToArray();
         }
 
-        private class Node
+        private class ItemDistancePair
         {
-            public Node(T item, int weight)
+            public ItemDistancePair(T item, int weight)
             {
                 Item = item;
-                Weight = weight;
+                Distance = weight;
             }
 
             public T Item { get; }
 
-            public int Weight { get; set; }
+            public int Distance { get; set; }
 
-            public Node Parent { get; set; }
+            public ItemDistancePair Parent { get; set; }
         }
 
-        private class NodeComparer : IComparer<Node>
+        private class ItemWeightPairComparer : IComparer<ItemDistancePair>
         {
-            public int Compare(Node x, Node y)
+            public int Compare(ItemDistancePair x, ItemDistancePair y)
             {
-                return x.Weight - y.Weight;
+                return x.Distance - y.Distance;
             }
         }
     }
