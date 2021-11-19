@@ -37,4 +37,10 @@
     <Resource Include="Resources\Docopt.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Scripts\CreateInputs.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
