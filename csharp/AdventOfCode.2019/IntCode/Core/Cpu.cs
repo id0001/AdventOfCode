@@ -16,11 +16,14 @@ namespace AdventOfCode2019.IntCode.Core
         private long relativeBase = 0;
         private bool isRunning;
         private bool waitingForInput;
+        private bool manualMode = false;
 
         private Action<long> outputCallback;
         private Action inputCallback;
 
         private TaskCompletionSource<long> taskCompletionSource;
+
+        public long Result { get; private set; }
 
         public Cpu()
         {
@@ -62,6 +65,7 @@ namespace AdventOfCode2019.IntCode.Core
             if (isRunning)
                 throw new InvalidOperationException("Cpu is already running.");
 
+            manualMode = false;
             taskCompletionSource = new TaskCompletionSource<long>();
             isRunning = true;
             memory.LoadProgram(program);
@@ -75,10 +79,44 @@ namespace AdventOfCode2019.IntCode.Core
             return taskCompletionSource.Task;
         }
 
+        public void Start(params long[] input)
+        {
+            if (isRunning)
+                throw new InvalidOperationException("Cpu is already running.");
+
+            manualMode = true;
+            isRunning = true;
+            memory.LoadProgram(program);
+            relativeBase = 0;
+            ip = 0;
+
+            foreach (var v in input)
+                inputBuffer.Enqueue(v);
+        }
+
+        public bool Next()
+        {
+            if (!isRunning)
+                return false;
+
+            var opCode = GetOpCode();
+            if (opCode == OpCode.Halt)
+            {
+                inputBuffer.Clear();
+                isRunning = false;
+                return false;
+            }
+
+            ExecuteInstruction(opCode);
+            return true;
+        }
+
         public void Halt()
         {
             isRunning = false;
-            taskCompletionSource.SetResult(memory.Read(0));
+            Result = memory.Read(0);
+            if (!manualMode)
+                taskCompletionSource.SetResult(memory.Read(0));
         }
 
         private void RunUntilHaltOrInput()
