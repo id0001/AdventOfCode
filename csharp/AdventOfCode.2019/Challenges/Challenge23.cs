@@ -50,7 +50,6 @@ namespace AdventOfCode2019.Challenges
                         int dest = (int)outputBuffers[id].Dequeue();
                         long x = outputBuffers[id].Dequeue();
                         long y = outputBuffers[id].Dequeue();
-                        Console.WriteLine($"{id} -> {dest}: ({x},{y})");
 
                         if (dest == 255)
                         {
@@ -70,7 +69,6 @@ namespace AdventOfCode2019.Challenges
                 {
                     if (packetQueues[id].Count > 0)
                     {
-                        Console.WriteLine($"{id} <-- {packetQueues[id].Peek()}");
                         cpus[id].WriteInput(packetQueues[id].Dequeue());
                     }
                     else
@@ -122,7 +120,6 @@ namespace AdventOfCode2019.Challenges
                         int dest = (int)outputBuffers[id].Dequeue();
                         long x = outputBuffers[id].Dequeue();
                         long y = outputBuffers[id].Dequeue();
-                        Console.WriteLine($"{id} -> {dest}: ({x},{y})");
 
                         if (dest == 255)
                         {
@@ -141,7 +138,6 @@ namespace AdventOfCode2019.Challenges
                 {
                     if (packetQueues[id].Count > 0)
                     {
-                        Console.WriteLine($"{id} <-- {packetQueues[id].Peek()}");
                         cpus[id].WriteInput(packetQueues[id].Dequeue());
                         readIdle[id] = false;
                     }
