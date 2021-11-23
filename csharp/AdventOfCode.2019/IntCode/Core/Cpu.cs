@@ -48,7 +48,8 @@ namespace AdventOfCode2019.IntCode.Core
             if (waitingForInput)
             {
                 waitingForInput = false;
-                Task.Run(RunUntilHaltOrInput);
+                if (!manualMode)
+                    Task.Run(RunUntilHaltOrInput);
             }
         }
 
