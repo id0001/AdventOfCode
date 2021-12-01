@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2020.Challenges
 {
-	[Challenge(12)]
+    [Challenge(12)]
 	public class Challenge12
 	{
 		private readonly IInputReader inputReader;
@@ -13,12 +13,6 @@ namespace AdventOfCode2020.Challenges
 		public Challenge12(IInputReader inputReader)
 		{
 			this.inputReader = inputReader;
-		}
-
-		[Setup]
-		private async Task SetupAsync()
-		{
-
 		}
 
 		[Part1]
