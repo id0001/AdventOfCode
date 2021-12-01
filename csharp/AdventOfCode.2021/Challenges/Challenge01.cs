@@ -23,35 +23,10 @@ namespace AdventOfCode2021.Challenges
         }
 
         [Part1]
-        public string Part1()
-        {
-            int count = 0;
-            int last = input[0];
-            for(int i = 1; i < input.Length;i++)
-            {
-                count += input[i] > last ? 1 : 0;
-                last = input[i];
-            }
+        public string Part1() => Enumerable.Range(1, input.Length - 1).Aggregate(0, (a, i) => a += input[i] > input[i - 1] ? 1 : 0).ToString();
 
-            return count.ToString();
-        }
 
         [Part2]
-        public string Part2()
-        {
-            int count = 0;
-            int last = input[0] + input[1] + input[2];
-            for(int i = 1; i < input.Length; i++)
-            {
-                if (i + 2 >= input.Length)
-                    continue;
-
-                int sum = input[i] + input[i + 1] + input[i + 2];
-                count += sum > last ? 1 : 0;
-                last = sum;
-            }
-
-            return count.ToString();
-        }
+        public string Part2() => Enumerable.Range(1, input.Length - 3).Aggregate(0, (a, i) => a += input[i] + input[i + 1] + input[i + 2] > input[i - 1] + input[i] + input[i + 1] ? 1 : 0).ToString();
     }
 }
