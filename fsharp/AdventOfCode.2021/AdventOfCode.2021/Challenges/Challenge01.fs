@@ -1,21 +1,23 @@
-﻿module Challenge01
+﻿namespace Challenges
 
-open Utils.IO
+module Challenge01 =
 
-let cmp pair = fst pair < snd pair
+    open Utils.IO
 
-let part1 =
-    readLines<int> 1
-        |> Seq.pairwise
-        |> Seq.filter cmp
-        |> Seq.length
-        |> string
+    let cmp pair = fst pair < snd pair
 
-let part2 =
-    readLines<int> 1
-        |> Seq.windowed 3
-        |> Seq.map Array.sum
-        |> Seq.pairwise
-        |> Seq.filter cmp
-        |> Seq.length
-        |> string
+    let part1 =
+        readLines<int> 1
+            |> Seq.pairwise
+            |> Seq.filter cmp
+            |> Seq.length
+            |> string
+
+    let part2 =
+        readLines<int> 1
+            |> Seq.windowed 3
+            |> Seq.map Array.sum
+            |> Seq.pairwise
+            |> Seq.filter cmp
+            |> Seq.length
+            |> string
