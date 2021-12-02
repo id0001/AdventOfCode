@@ -9,7 +9,11 @@
 
   <ItemGroup>
     <Compile Include="Utils\IO.fs" />
+    <Compile Include="Challenges\Challenge02.fs" />
     <Compile Include="Challenges\Challenge01.fs" />
+    <Content Include="Inputs\02.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Inputs\01.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
