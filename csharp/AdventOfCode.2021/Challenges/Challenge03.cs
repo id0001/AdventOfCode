@@ -27,22 +27,25 @@ namespace AdventOfCode2021.Challenges
         [Part1]
         public string Part1()
         {
-            uint gamma = 0;
-            for (int x = 0; x < data[0].Length; x++)
-            {
-                int c0 = 0;
-                int c1 = 0;
-                for (int y = 0; y < data.Length; y++)
-                {
-                    if (data[y][x] == '0') c0++;
-                    if (data[y][x] == '1') c1++;
-                }
+            int len = data[0].Length;
+            var counts = Enumerable.Range(0, len)
+                .Select(i => data
+                                .Select(x => x[i])
+                                .GroupBy(x => x)
+                                .OrderBy(x => x.Key)
+                                .Select(x => x.Count())
+                                .ToArray())
+                .ToList();
 
-                if (c1 > c0)
-                    gamma += 1u << (data[0].Length - 1) - x;
+            int gamma = 0;
+
+            for(int i = 0; i < counts.Count; i++)
+            {
+                if (counts[i][1] > counts[i][0])
+                    gamma += 1 << (len - 1) - i;
             }
 
-            uint epsilon = ~gamma & 0xFFF;
+            int epsilon = ~gamma & 0xFFF;
 
             return (gamma * epsilon).ToString();
         }
@@ -50,32 +53,24 @@ namespace AdventOfCode2021.Challenges
         [Part2]
         public string Part2()
         {
-
             List<string> oxygenList = data.ToList();
-            char common = GetMostCommon(oxygenList, 0);
-
-            for (int i = 0; i < oxygenList[0].Length; i++)
-            {
-                oxygenList = oxygenList.Where(x => x[i] == common).ToList();
-                if (oxygenList.Count == 1)
-                    break;
-
-                common = GetMostCommon(oxygenList, i + 1);
-            }
-
-
             List<string> co2List = data.ToList();
-            common = GetMostCommon(co2List, 0);
 
-            for (int i = 0; i < co2List[0].Length; i++)
+            int len = data[0].Length;
+            for (int i = 0; i < len; i++)
             {
-                co2List = co2List.Where(x => x[i] != common).ToList();
-                if (co2List.Count == 1)
+                if (oxygenList.Count == 1 && co2List.Count == 1)
                     break;
 
-                common = GetMostCommon(co2List, i + 1);
-            }
+                char commonOxy = GetMostCommon(oxygenList, i);
+                char commonCo2 = GetMostCommon(co2List, i);
 
+                if (oxygenList.Count > 1)
+                    oxygenList = oxygenList.Where(x => x[i] == commonOxy).ToList();
+
+                if(co2List.Count > 1)
+                    co2List = co2List.Where(x => x[i] != commonCo2).ToList();
+            }
 
             int o = Convert.ToInt32(oxygenList[0], 2);
             int c = Convert.ToInt32(co2List[0], 2);
@@ -83,17 +78,12 @@ namespace AdventOfCode2021.Challenges
             return (o * c).ToString();
         }
 
-        private static char GetMostCommon(IList<string> list, int position)
-        {
-            int c0 = 0;
-            int c1 = 0;
-            for (int y = 0; y < list.Count; y++)
-            {
-                if (list[y][position] == '0') c0++;
-                if (list[y][position] == '1') c1++;
-            }
-
-            return c1 >= c0 ? '1' : '0';
-        }
+        private static char GetMostCommon(IList<string> list, int position) => list
+            .Select(x => x[position])
+            .GroupBy(x => x)
+            .OrderByDescending(x => x.Count())
+            .ThenByDescending( x => x.Key)
+            .Select(x => x.Key)
+            .First();
     }
 }
