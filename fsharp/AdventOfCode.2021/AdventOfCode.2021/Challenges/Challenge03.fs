@@ -3,11 +3,6 @@
 open Utils.IO
 open System
 
-let zip seq = seq
-            |> Seq.collect(fun s -> s |> Seq.mapi(fun i e -> (i,e)))
-            |> Seq.groupBy fst
-            |> Seq.map (fun (_,s) -> s |> Seq.map snd)
-
 let getMostCommon seq i =
     seq
     |> Seq.map (fun s -> Seq.item i s)
@@ -35,19 +30,30 @@ let findCode data cmp =
     |> Seq.head
 
 let part1 =
-    readLines<string> 3
-    |> zip
-    |> Seq.map (fun s -> Seq.toArray s
-                        |> Array.groupBy (fun x -> x)
-                        |> Array.sortBy fst
-                        |> Array.map (fun (_,x) -> Array.length x))
-    |> Seq.mapi (fun i e -> (i,e))
-    |> Seq.fold
-        (fun acc (i,c) ->
-            if c.[1] > c.[0] then acc + (1 <<< (11-i)) else acc
-        ) 0
-    |> fun x -> x * (~~~x &&& 0xFFF)
-    |> string
+    let lines =readLines<string> 3
+    let len = Seq.length (Seq.head lines)
+    let counts = seq {
+        for i in 0..len-1 do
+            lines
+            |> Seq.groupBy (fun x -> Seq.item i x)
+            |> Seq.sortBy fst
+            |> Seq.map (fun (k,v) -> Seq.length v)
+            |> Seq.toArray
+        }
+
+    let gamma =
+        seq {0..len-1}
+            |> Seq.fold
+                (fun a i ->
+                    let count = Seq.item i counts
+                    if count.[1] > count.[0] then
+                        a + (1 <<< (len-1-i))
+                    else
+                        a
+                ) 0
+
+    let epsilon = ~~~gamma &&& 0xFFF
+    gamma*epsilon |> string
 
 let part2 =
     let data = readLines<string> 3
