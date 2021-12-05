@@ -17,7 +17,7 @@ namespace AdventOfCode.Lib.Extensions
                 source[key] = value;
         }
 
-        public static void Update<T, K>(this IDictionary<T, K> source, T key, Func<K, K> update, K defaultValue = default)
+        public static void AddOrUpdate<T, K>(this IDictionary<T, K> source, T key, Func<K, K> update, K defaultValue = default)
         {
             Requires.NotNull(source, nameof(source));
             Requires.NotNull(update, nameof(update));

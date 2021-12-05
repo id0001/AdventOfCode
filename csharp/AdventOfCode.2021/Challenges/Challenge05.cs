@@ -51,17 +51,6 @@ namespace AdventOfCode2021.Challenges
             return overlapCount.ToString();
         }
 
-        private static void UpdateOverlapFromSegment(Dictionary<Point2, int> overlapDict, Segment segment)
-        {
-            int dy = Math.Sign(segment.End.Y - segment.Start.Y);
-            int dx = Math.Sign(segment.End.X - segment.Start.X);
-
-            for (int x = segment.Start.X, y = segment.Start.Y; x != segment.End.X + dx || y != segment.End.Y + dy; x += dx, y += dy)
-            {
-                overlapDict.Update(new Point2(x, y), v => v + 1);
-            }
-        }
-
         [Part2]
         public string Part2()
         {
@@ -77,6 +66,16 @@ namespace AdventOfCode2021.Challenges
             return overlapCount.ToString();
         }
 
+        private static void UpdateOverlapFromSegment(Dictionary<Point2, int> overlapDict, Segment segment)
+        {
+            int dy = Math.Sign(segment.End.Y - segment.Start.Y);
+            int dx = Math.Sign(segment.End.X - segment.Start.X);
+
+            for (int x = segment.Start.X, y = segment.Start.Y; x != segment.End.X + dx || y != segment.End.Y + dy; x += dx, y += dy)
+            {
+                overlapDict.AddOrUpdate(new Point2(x, y), v => v + 1);
+            }
+        }
 
         private record Segment(Point2 Start, Point2 End);
     }
