@@ -34,8 +34,7 @@ let line p0 p1 =
 let part1 =
     getSegments
     |> Seq.filter (fun s -> s.Start.X = s.End.X || s.Start.Y = s.End.Y)
-    |> Seq.map (fun s -> line s.Start s.End)
-    |> Seq.concat
+    |> Seq.collect (fun s -> line s.Start s.End)
     |> Seq.groupBy (fun s -> s)
     |> Seq.filter (fun x -> (Seq.length (snd x)) >= 2)
     |> Seq.length
@@ -43,8 +42,7 @@ let part1 =
 
 let part2 =
     getSegments
-    |> Seq.map (fun s -> line s.Start s.End)
-    |> Seq.concat
+    |> Seq.collect (fun s -> line s.Start s.End)
     |> Seq.groupBy (fun s -> s)
     |> Seq.filter (fun x -> (Seq.length (snd x)) >= 2)
     |> Seq.length
