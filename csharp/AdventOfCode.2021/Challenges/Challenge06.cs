@@ -27,50 +27,31 @@ namespace AdventOfCode2021.Challenges
         [Part1]
         public string Part1()
         {
-            for (int d = 0; d < 80; d++)
-            {
-                int len = data.Count;
-                for (int i = 0; i < len; i++)
-                {
-                    data[i]--;
-                    if (data[i] < 0)
-                    {
-                        data[i] = 6;
-                        data.Add(8);
-                    }
-                }
-            }
+            ulong[] groups = new ulong[9];
+            foreach (int i in data)
+                groups[i]++;
 
-            return data.Count.ToString();
+            return CalculateFishies(80, groups).ToString();
         }
 
         [Part2]
         public string Part2()
         {
-            var map = data.GroupBy(x => x).Select(x => new FishGroup(x.Key, (ulong)x.Count())).ToList();
+            ulong[] groups = new ulong[9];
+            foreach (int i in data)
+                groups[i]++;
 
-            for (int d = 0; d < 256; d++)
-            {
-                int len = map.Count;
-                for (int i = 0; i < len; i++)
-                {
-                    (int sexyTime, _) = map[i];
-                    sexyTime--;
-                    if (sexyTime < 0)
-                    {
-                        sexyTime = 6;
-                        map.Add(new FishGroup(8, map[i].Amount));
-                    }
-
-                    map[i] = new FishGroup(sexyTime, map[i].Amount);
-                }
-
-                map = map.GroupBy(x => x.SexyTime).Select(x => new FishGroup(x.Key, x.Sum(y => y.Amount))).ToList();
-            }
-
-            return map.Sum(x => x.Amount).ToString();
+            return CalculateFishies(256, groups).ToString();
         }
 
-        private record FishGroup(int SexyTime, ulong Amount);
+        private ulong CalculateFishies(int totalDays, ulong[] groups) => Breed(0, totalDays, groups).Sum(x => x);
+
+        private ulong[] Breed(int dayFrom, int totalDays, ulong[] groups)
+        {
+            if (dayFrom == totalDays)
+                return groups;
+
+            return Breed(dayFrom + 1, totalDays, new ulong[] { groups[1], groups[2], groups[3], groups[4], groups[5], groups[6], groups[0] + groups[7], groups[8], groups[0] });
+        }
     }
 }

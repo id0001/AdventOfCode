@@ -2,45 +2,39 @@
 
 open Utils.IO
 
-type FishGroup = {
-    SexyTime:int;
-    Amount:int64
-    }
+let groupFish (data:int64 list) =
+    let grouped = data
+                |> List.groupBy (fun x -> x)
+                |> List.map (fun (a,b) -> (int a,b))
+                |> Map.ofList
 
-let groupFish data =
-    data
-    |> List.groupBy (fun x -> x)
-    |> List.map (fun (k,v) -> {SexyTime = int k; Amount = int64 (List.length v) })
+    [|for i in 0..8 -> int64 i|]
+    |> Array.mapi (
+        fun i _ ->
+            match Map.tryFind i grouped with
+            | Some v -> int64 (List.length v)
+            | None -> int64 0
+        )
 
-let breed groups =
-    groups
-    |> List.collect (
-        fun group ->
-            match group.SexyTime with
-            | 0 -> [{group with SexyTime = 6}; {group with SexyTime = 8}]
-            | x -> [{group with SexyTime = x-1;}]
-                )
-    |> List.groupBy (fun x -> x.SexyTime)
-    |> List.map (fun (k,v) -> {SexyTime = k; Amount = v |> List.sumBy (fun x -> x.Amount)})
+let rec breed dayFrom totalDays groups =
+    match dayFrom with
+    | d when d = totalDays -> groups
+    | d -> breed (d+1) totalDays [| groups.[1]; groups.[2]; groups.[3]; groups.[4]; groups.[5]; groups.[6] ; groups.[7] + groups.[0]; groups.[8]; groups.[0] |]
 
-let rec cycle day cycleAmount groups =
-    if day = cycleAmount then
-        groups
-    else
-        cycle (day+1) cycleAmount (breed groups)
+let calculateFishies totalDays groups =
+    breed 0 totalDays groups
+    |> Array.sum
 
 let part1 =
     readLine<int64> 6 ','
     |> Seq.toList
     |> groupFish
-    |> cycle 0 80
-    |> List.sumBy (fun x -> x.Amount)
+    |> calculateFishies 80
     |> string
 
 let part2 =
     readLine<int64> 6 ','
     |> Seq.toList
     |> groupFish
-    |> cycle 0 256
-    |> List.sumBy (fun x -> x.Amount)
+    |> calculateFishies 256
     |> string
