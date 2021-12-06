@@ -14,7 +14,7 @@ let getSegments =
     readLines<string> 5
     |> Seq.map (
         fun line -> Regex.Match(line, @"^(\d+),(\d+) -> (\d+),(\d+)$")
-                    |> fun m -> createSegment (createPoint (m.Groups[1].Value |> int) (m.Groups[2].Value |> int)) (createPoint (m.Groups[3].Value |> int) (m.Groups[4].Value |> int))
+                    |> fun m -> createSegment (createPoint (m.Groups.[1].Value |> int) (m.Groups.[2].Value |> int)) (createPoint (m.Groups.[3].Value |> int) (m.Groups.[4].Value |> int))
                 )
 
 let line p0 p1 =

@@ -6,6 +6,15 @@ namespace AdventOfCode.Lib.Extensions
 {
     public static class EnumerableExtensions
     {
+        public static ulong Sum<T>(this IEnumerable<T> source, Func<T, ulong> selector)
+        {
+            ulong sum = 0;
+            foreach (var item in source)
+                sum += selector(item);
+
+            return sum;
+        }
+
         public static IEnumerable<T[]> Permutations<T>(this IEnumerable<T> source, int start, int end)
         {
             if (end < start)
@@ -26,14 +35,13 @@ namespace AdventOfCode.Lib.Extensions
             }
             else
             {
-                for(int i = start; i <= end; i++)
+                for (int i = start; i <= end; i++)
                 {
                     (source[start], source[i]) = (source[i], source[start]);
                     GeneratePermutationsInternal(perms, source, start + 1, end);
                     (source[start], source[i]) = (source[i], source[start]);
                 }
             }
-
         }
     }
 }
