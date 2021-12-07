@@ -208,5 +208,13 @@ namespace AdventOfCode.Lib
         /// <param name="b">Value b</param>
         /// <returns>Least common multiplier of a and b</returns>
         public static long Lcm(long a, long b) => a / Gcd(a, b) * b;
+
+        /// <summary>
+        /// Calculates the triangular number of the given number.
+        /// https://en.wikipedia.org/wiki/Triangular_number
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static int TriangularNumber(int number) => (number * (number + 1)) / 2;
     }
 }
