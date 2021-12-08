@@ -1,5 +1,5 @@
 ﻿open System
-open Challenges.Challenge07
+open Challenges.Challenge08
 
 let executePart part fn =
     printfn "Part %d: %s" part fn
