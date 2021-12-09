@@ -3,43 +3,42 @@
 open Utils.IO
 open System
 
-let getMostCommon seq i =
-    seq
-    |> Seq.map (fun s -> Seq.item i s)
-    |> Seq.groupBy (fun s -> s)
-    |> Seq.sortWith
+let getMostCommon (arr:string array) i =
+    arr
+    |> Array.map (fun s -> Seq.item i s)
+    |> Array.groupBy (fun s -> s)
+    |> Array.sortWith
         (fun a b ->
             if Seq.length (snd a) = Seq.length (snd b) then
                 int (fst b) - int (fst a)
             else
                 (Seq.length (snd b) ) - (Seq.length (snd a))
         )
-    |> Seq.map fst
-    |> Seq.head
+    |> Array.head
+    |> fst
 
-let findCode data cmp =
-    seq { 0 .. 12 }
-    |> Seq.fold
+let findCode (data:string array) cmp =
+    [| 0 .. 12  |]
+    |> Array.fold
         (fun acc i ->
-            if Seq.length acc = 1 then
-                acc
-            else
+            match Array.length acc with
+            | 1 -> acc
+            | _ ->
                 let mc = getMostCommon acc i
-                Seq.filter (fun s -> cmp (Seq.item i s) mc) acc
-        ) data
-    |> Seq.head
+                Array.filter (fun s -> cmp (Seq.item i s) mc) acc) data
+    |> Array.head
 
-let part1 =
-    let lines =readLines<string> 3
-    let len = Seq.length (Seq.head lines)
-    let counts = seq {
+let setup =
+    readLines<string> 3
+
+let part1 (input:string array) =
+    let len = Seq.length input.[0]
+    let counts = [|
         for i in 0..len-1 do
-            lines
-            |> Seq.groupBy (fun x -> Seq.item i x)
-            |> Seq.sortBy fst
-            |> Seq.map (fun (k,v) -> Seq.length v)
-            |> Seq.toArray
-        }
+            input
+            |> Array.groupBy (fun x -> Seq.item i x)
+            |> Array.sortBy fst
+            |> Array.map (fun (k,v) -> Seq.length v) |]
 
     let gamma =
         seq {0..len-1}
@@ -55,8 +54,7 @@ let part1 =
     let epsilon = ~~~gamma &&& 0xFFF
     gamma*epsilon |> string
 
-let part2 =
-    let data = readLines<string> 3
-    let oxygen = findCode data (fun a b -> a = b)
-    let co2 = findCode data (fun a b -> a <> b)
+let part2 input =
+    let oxygen = findCode input (fun a b -> a = b)
+    let co2 = findCode input (fun a b -> a <> b)
     Convert.ToInt32(string oxygen, 2) * Convert.ToInt32(string co2, 2) |> string

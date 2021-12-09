@@ -5,22 +5,23 @@ open System
 
 let triangularNumber n = (n*(n+1))/2
 
-let part1 =
-    let input = readLine<int> 7 ','
-    let min = Seq.min input
-    let max = Seq.max input
+let setup =
+    readLine<int> 7 ','
 
-    seq{min..max-1}
+let part1 input =
+    let min = Array.min input
+    let max = Array.max input
+
+    [|min..max-1|]
     |> Seq.map (fun i -> input |> Seq.map (fun n -> Math.Abs (n-i)) |> Seq.sum)
     |> Seq.min
     |> string
 
-let part2 =
-    let input = readLine<int> 7 ','
+let part2 input =
     let min = Seq.min input
     let max = Seq.max input
 
-    seq{min..max-1}
-    |> Seq.map (fun i -> input |> Seq.map (fun n -> (n-i) |> (Math.Abs >> triangularNumber)) |> Seq.sum)
+    [| min..max-1 |]
+    |> Seq.map (fun i -> input |> Array.map (fun n -> (n-i) |> (Math.Abs >> triangularNumber)) |> Seq.sum)
     |> Seq.min
     |> string

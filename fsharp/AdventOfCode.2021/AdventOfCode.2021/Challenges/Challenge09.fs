@@ -3,55 +3,50 @@
 open Utils
 open Utils.IO
 
-let gridPoints rangeY rangeX =
-    seq {for y in rangeY do for x in rangeX -> {X=x;Y=y}}
+let isOutOfBounds (grid:int[][]) x y =
+    x < 0 || y < 0 || x >= (Array.length grid.[0]) || y >= (Array.length grid)
 
-let isOutOfBounds x y (grid:int array array) =
-    x < 0 || y < 0 || x >= (Array.length grid.[0]) || y >= Array.length grid
-
-let isLowestPoint (p:Point2) (grid:int array array) =
-    p.Neighbors4()
-    |> Seq.forall
+let isLocalMinima (grid:int[][]) x y =
+    Point2.neighbors4 x y
+    |> Array.forall
         (fun n ->
             match n.X, n.Y with
-            | x, y when isOutOfBounds x y grid -> true
-            | x, y when grid.[p.Y].[p.X] < grid.[y].[x] -> true
-            | _ -> false)
+            | nx, ny when isOutOfBounds grid nx ny -> true
+            | nx, ny when grid.[ny].[nx] > grid.[y].[x] -> true
+            | _, _ -> false)
 
-let lowestPoints grid =
-    gridPoints {0..(Array.length grid)-1} {0..(Array.length grid.[0])-1}
-    |> Seq.filter
-        (fun p -> isLowestPoint p grid)
-
-let calculateRiskFactor grid =
-    grid
-    |> lowestPoints
-    |> Seq.map (fun p -> grid.[p.Y].[p.X] + 1)
-    |> Seq.sum
-
-let rec floodFill (p:Point2) filled (grid:int array array) =
+let rec floodFill (p:Point2) (filled:Point2 Set) (grid:int[][]) =
     match p.X, p.Y with
-    | x, y when isOutOfBounds x y grid -> filled
-    | x, y when grid.[y].[x] = 9 -> filled
-    | _ when Seq.contains p filled -> filled
-    | _ ->
+    | x,y when isOutOfBounds grid x y -> filled
+    | x,y when grid.[y].[x] = 9 -> filled
+    | _,_ when Set.contains p filled -> filled
+    | _,_ ->
         p.Neighbors4()
-        |> Seq.fold
-            (fun accFilled n ->
-                floodFill n accFilled grid) (Seq.append filled (Seq.singleton p))
+        |> Array.fold
+            (fun filledAcc n ->
+                floodFill n filledAcc grid) (Set.add p filled)
 
-let part1 =
+let setup =
     readGrid<int> 9
-    |> calculateRiskFactor
+
+let part1 input =
+    let rows = Array.length input
+    let cols = Array.length (input.[0])
+    [| for y in 0..rows-1 do
+        for x in 0..cols-1 do
+            if isLocalMinima input x y then
+                input.[y].[x] + 1 |]
+    |> Array.sum
     |> string
 
-let part2 =
-    let grid = readGrid<int> 9
-    grid
-    |> lowestPoints
-    |> Seq.map (fun p -> floodFill p Seq.empty grid)
-    |> Seq.sortByDescending (fun basin -> Seq.length basin)
-    |> Seq.take 3
-    |> Seq.map Seq.length
-    |> Seq.reduce (*)
+let part2 input =
+    let rows = Array.length input
+    let cols = Array.length (input.[0])
+    [| for y in 0..rows-1 do
+        for x in 0..cols-1 do
+            if isLocalMinima input x y then
+                (floodFill {X = x; Y = y} Set.empty input) |> Set.count |]
+    |> Array.sortByDescending (fun x -> x)
+    |> Array.take 3
+    |> Array.reduce (*)
     |> string

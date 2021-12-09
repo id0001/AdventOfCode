@@ -1,18 +1,18 @@
 ﻿using AdventOfCode.Lib.Properties;
 using DocoptNet;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AdventOfCode.Lib
 {
-	internal static class ChallengeHelper
+    internal static class ChallengeHelper
 	{
 		public static async Task SetupAsync(object challenge)
 		{
@@ -169,14 +169,14 @@ namespace AdventOfCode.Lib
 			sw.Stop();
 
 			if (!string.IsNullOrEmpty(part1))
-				Console.WriteLine($"- Part 1 ({sw.Elapsed.TotalSeconds:F3}ms): {part1}");
+				Console.WriteLine($"- Part 1 ({sw.Elapsed.TotalMilliseconds:F3}ms): {part1}");
 
 			sw.Restart();
 			string part2 = await ExecutePart2(challengeType);
 			sw.Stop();
 
 			if (!string.IsNullOrEmpty(part2))
-				Console.WriteLine($"- Part 2 ({sw.Elapsed.TotalSeconds:F3}ms): {part2}");
+				Console.WriteLine($"- Part 2 ({sw.Elapsed.TotalMilliseconds:F3}ms): {part2}");
 
 			Console.WriteLine();
 		}
