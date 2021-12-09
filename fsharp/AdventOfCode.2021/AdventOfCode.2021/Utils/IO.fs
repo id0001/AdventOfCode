@@ -18,3 +18,14 @@ let readLine<'T> (challenge:int) (separator:char) =
     File.ReadAllText (filename)
     |> (fun line -> line.Split(separator))
     |> Seq.map (fun s -> Convert.ChangeType(s, typeof<'T>) :?> 'T)
+
+let readGrid<'T> (challenge:int) =
+    let filename = challenge2Filename challenge
+    File.ReadAllLines(filename)
+    |> Array.map
+        (fun line ->
+            line
+            |> Array.ofSeq
+            |> Array.map
+                (fun c ->
+                    Convert.ChangeType(string c, typeof<'T>) :?> 'T))
