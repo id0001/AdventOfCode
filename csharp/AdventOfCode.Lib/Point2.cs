@@ -114,6 +114,20 @@ namespace AdventOfCode.Lib
             };
         }
 
+        public IEnumerable<Point2> GetNeighbors4()
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                for (int x = -1; x <= 1; x++)
+                {
+                    if (!(x == 0 ^ y == 0))
+                        continue;
+
+                    yield return new Point2(X + x, Y + y);
+                }
+            }
+        }
+
         public IEnumerable<Point2> GetNeighbors()
         {
             for (int y = -1; y <= 1; y++)

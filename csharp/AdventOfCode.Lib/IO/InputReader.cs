@@ -133,6 +133,29 @@ namespace AdventOfCode.Lib.IO
             return map;
         }
 
+        public async Task<T[,]> ReadGridAsync<T>(int challenge)
+        {
+            var lines = new List<string>();
+            using var stream = File.OpenText(GetPath(challenge));
+
+            while (!stream.EndOfStream)
+            {
+                string line = await stream.ReadLineAsync();
+                lines.Add(line);
+            }
+
+            var map = new T[lines.Count, lines[0].Length];
+            for (int y = 0; y < map.GetLength(0); y++)
+            {
+                for (int x = 0; x < map.GetLength(1); x++)
+                {
+                    map[y, x] = (T)Convert.ChangeType(lines[y][x].ToString(), typeof(T));
+                }
+            }
+
+            return map;
+        }
+
         private string GetPath(int challenge)
         {
             if (!useFixed2DigitFiles)
