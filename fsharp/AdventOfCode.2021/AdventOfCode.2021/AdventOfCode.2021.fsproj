@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Utils\Point2.fs" />
     <Compile Include="Utils\IO.fs" />
+    <Compile Include="Challenges\Challenge09.fs" />
     <Compile Include="Challenges\Challenge08.fs" />
     <Compile Include="Challenges\Challenge07.fs" />
     <Compile Include="Challenges\Challenge06.fs" />
@@ -17,6 +19,9 @@
     <Compile Include="Challenges\Challenge03.fs" />
     <Compile Include="Challenges\Challenge02.fs" />
     <Compile Include="Challenges\Challenge01.fs" />
+    <Content Include="Inputs\09.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Inputs\08.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
