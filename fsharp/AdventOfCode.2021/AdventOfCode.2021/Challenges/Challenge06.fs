@@ -2,17 +2,17 @@
 
 open Utils.IO
 
-let groupFish (data:int64 list) =
+let groupFish (data:int64 array) =
     let grouped = data
-                |> List.groupBy (fun x -> x)
-                |> List.map (fun (a,b) -> (int a,b))
-                |> Map.ofList
+                |> Array.groupBy (fun x -> x)
+                |> Array.map (fun (a,b) -> (int a,b))
+                |> Map.ofArray
 
     [|for i in 0..8 -> int64 i|]
     |> Array.mapi (
         fun i _ ->
             match Map.tryFind i grouped with
-            | Some v -> int64 (List.length v)
+            | Some v -> int64 (Array.length v)
             | None -> int64 0
         )
 
@@ -25,16 +25,17 @@ let calculateFishies totalDays groups =
     breed 0 totalDays groups
     |> Array.sum
 
-let part1 =
+let setup =
     readLine<int64> 6 ','
-    |> Seq.toList
+
+let part1 input =
+    input
     |> groupFish
     |> calculateFishies 80
     |> string
 
-let part2 =
-    readLine<int64> 6 ','
-    |> Seq.toList
+let part2 input =
+    input
     |> groupFish
     |> calculateFishies 256
     |> string

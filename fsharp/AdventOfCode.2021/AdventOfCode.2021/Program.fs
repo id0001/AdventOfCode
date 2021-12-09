@@ -1,13 +1,10 @@
 ﻿open System
+open Utils
 open Challenges.Challenge09
-
-let executePart part fn =
-    printfn "Part %d: %s" part fn
 
 [<EntryPoint>]
 let main argv =
-    executePart 1 part1
-    executePart 2 part2
+    Day.executeAndPrint setup part1 part2
 
     printfn ""
     printfn "Press any key to continue..."

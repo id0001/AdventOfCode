@@ -11,13 +11,13 @@ let private challenge2Filename challenge =
 let readLines<'T> (challenge:int) =
     let filename = challenge2Filename challenge
     File.ReadAllLines(filename)
-        |> Seq.map (fun x -> Convert.ChangeType(x, typeof<'T>) :?> 'T)
+        |> Array.map (fun x -> Convert.ChangeType(x, typeof<'T>) :?> 'T)
 
 let readLine<'T> (challenge:int) (separator:char) =
     let filename = challenge2Filename challenge
     File.ReadAllText (filename)
     |> (fun line -> line.Split(separator))
-    |> Seq.map (fun s -> Convert.ChangeType(s, typeof<'T>) :?> 'T)
+    |> Array.map (fun s -> Convert.ChangeType(s, typeof<'T>) :?> 'T)
 
 let readGrid<'T> (challenge:int) =
     let filename = challenge2Filename challenge

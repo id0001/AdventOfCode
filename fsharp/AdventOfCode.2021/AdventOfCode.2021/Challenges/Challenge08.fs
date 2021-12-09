@@ -12,10 +12,6 @@ let toIOPair (line:string) =
     line.Split ('|', StringSplitOptions.TrimEntries)
     |> (fun s -> { IOPair.Inputs = s.[0].Split(' '); IOPair.Outputs = s.[1].Split(' ')})
 
-let readInput =
-    readLines<string> 8
-    |> Seq.map toIOPair
-
 let numberByLength len seq =
     Seq.find(fun x -> (String.length x) = len) seq
 
@@ -47,9 +43,13 @@ let numberFromIOPair pair =
         |> Seq.mapi (fun i s -> mapped.Item (Set.ofSeq s) * (intPow 10 (len-1-i)))
         |> Seq.sum
 
-let part1 =
+let setup =
+    readLines<string> 8
+    |> Seq.map toIOPair
+
+let part1 input =
     let simpleNums = [|2;4;3;7|]
-    readInput
+    input
     |> Seq.map
         (fun io ->
             io.Outputs
@@ -58,8 +58,8 @@ let part1 =
     |> Seq.sum
     |> string
 
-let part2 =
-    readInput
+let part2 input =
+    input
         |> Seq.map numberFromIOPair
         |> Seq.sum
         |> string

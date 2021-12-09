@@ -13,9 +13,9 @@ let createSegment p0 p1 = {Segment.Start = p0; Segment.End = p1}
 let getSegments =
     readLines<string> 5
     |> Seq.map (
-        fun line -> Regex.Match(line, @"^(\d+),(\d+) -> (\d+),(\d+)$")
-                    |> fun m -> createSegment (createPoint (m.Groups.[1].Value |> int) (m.Groups.[2].Value |> int)) (createPoint (m.Groups.[3].Value |> int) (m.Groups.[4].Value |> int))
-                )
+        fun line ->
+            Regex.Match(line, @"^(\d+),(\d+) -> (\d+),(\d+)$")
+            |> fun m -> createSegment (createPoint (m.Groups.[1].Value |> int) (m.Groups.[2].Value |> int)) (createPoint (m.Groups.[3].Value |> int) (m.Groups.[4].Value |> int)))
 
 let line p0 p1 =
     let dx = Math.Sign(p1.X - p0.X)
@@ -31,8 +31,15 @@ let line p0 p1 =
         | _ -> seq { for y in p0.Y..dy..p1.Y -> y })
     |> Seq.map (fun (x,y) -> createPoint x y)
 
-let part1 =
-    getSegments
+let setup =
+    readLines<string> 5
+    |> Array.map (
+        fun line -> Regex.Match(line, @"^(\d+),(\d+) -> (\d+),(\d+)$")
+                    |> fun m -> createSegment (createPoint (m.Groups.[1].Value |> int) (m.Groups.[2].Value |> int)) (createPoint (m.Groups.[3].Value |> int) (m.Groups.[4].Value |> int))
+                )
+
+let part1 input =
+    input
     |> Seq.filter (fun s -> s.Start.X = s.End.X || s.Start.Y = s.End.Y)
     |> Seq.collect (fun s -> line s.Start s.End)
     |> Seq.groupBy (fun s -> s)
@@ -40,8 +47,8 @@ let part1 =
     |> Seq.length
     |> string
 
-let part2 =
-    getSegments
+let part2 input =
+    input
     |> Seq.collect (fun s -> line s.Start s.End)
     |> Seq.groupBy (fun s -> s)
     |> Seq.filter (fun x -> (Seq.length (snd x)) >= 2)

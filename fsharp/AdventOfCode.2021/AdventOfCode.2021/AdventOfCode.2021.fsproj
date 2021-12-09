@@ -7,7 +7,13 @@
     <WarnOn>3390;$(WarnOn)</WarnOn>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
+    <Tailcalls>true</Tailcalls>
+  </PropertyGroup>
+
   <ItemGroup>
+    <Compile Include="Utils\Day.fs" />
     <Compile Include="Utils\Point2.fs" />
     <Compile Include="Utils\IO.fs" />
     <Compile Include="Challenges\Challenge09.fs" />
