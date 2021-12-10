@@ -15,7 +15,7 @@ let matchingPair c =
     | '<' | '>' -> ('<','>')
     | _ -> failwith "Unsupported character"
 
-let validateChar c (stack:char list) =
+let addChar c (stack:char list) =
     match c with
     | '(' | '[' | '{' | '<' -> Success(c::stack)
     | ')' | ']' | '}' | '>' -> matchingPair c |> (fun (l,r) -> if List.head stack = l then Success(List.tail stack) else Fail(r))
@@ -26,7 +26,7 @@ let validate list =
         match list with
         | [] -> Success(stack)
         | c::tail ->
-            match validateChar c stack with
+            match addChar c stack with
             | Fail(x) -> Fail(x)
             | Success(s) -> recFun tail s
 
