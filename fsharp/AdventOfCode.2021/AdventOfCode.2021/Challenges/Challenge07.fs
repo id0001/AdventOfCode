@@ -5,8 +5,7 @@ open System
 
 let triangularNumber n = (n*(n+1))/2
 
-let setup =
-    readLine<int> 7 ','
+let setup = fun () -> readLine<int> 7 ','
 
 let part1 input =
     let min = Array.min input

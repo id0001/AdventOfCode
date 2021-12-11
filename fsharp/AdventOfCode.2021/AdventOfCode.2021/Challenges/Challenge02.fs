@@ -14,14 +14,16 @@ let parseInput (line:string) =
     | _ -> failwithf "Unsupported input command: %s" line
 
 let setup =
-    readLines 2
-    |> Array.map
-        (fun (line:string) ->
-            match line.Split (' ') with
-            | [| "forward"; v |] -> Horizontal (int v)
-            | [| "up"; v |] -> Vertical (-int v)
-            | [| "down"; v |] -> Vertical (int v)
-            | _ -> failwithf "Unsupported input command: %s" line)
+    let lines = readLines 2
+    fun () ->
+        lines
+        |> Array.map
+            (fun (line:string) ->
+                match line.Split (' ') with
+                | [| "forward"; v |] -> Horizontal (int v)
+                | [| "up"; v |] -> Vertical (-int v)
+                | [| "down"; v |] -> Vertical (int v)
+                | _ -> failwithf "Unsupported input command: %s" line)
 
 let part1 input =
     input

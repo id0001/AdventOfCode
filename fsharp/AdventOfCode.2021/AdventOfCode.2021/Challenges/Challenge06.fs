@@ -25,8 +25,7 @@ let calculateFishies totalDays groups =
     breed 0 totalDays groups
     |> Array.sum
 
-let setup =
-    readLine<int64> 6 ','
+let setup = fun () -> readLine<int64> 6 ','
 
 let part1 input =
     input

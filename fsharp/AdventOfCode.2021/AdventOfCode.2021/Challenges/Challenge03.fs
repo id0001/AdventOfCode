@@ -28,8 +28,7 @@ let findCode (data:string array) cmp =
                 Array.filter (fun s -> cmp (Seq.item i s) mc) acc) data
     |> Array.head
 
-let setup =
-    readLines<string> 3
+let setup = fun () -> readLines<string> 3
 
 let part1 (input:string array) =
     let len = Seq.length input.[0]
