@@ -43,9 +43,11 @@ let numberFromIOPair pair =
         |> Seq.mapi (fun i s -> mapped.Item (Set.ofSeq s) * (intPow 10 (len-1-i)))
         |> Seq.sum
 
-let setup =
-    readLines<string> 8
-    |> Seq.map toIOPair
+let setup = 
+    let lines = readLines<string> 8
+    fun () -> 
+        lines
+        |> Seq.map toIOPair
 
 let part1 input =
     let simpleNums = [|2;4;3;7|]

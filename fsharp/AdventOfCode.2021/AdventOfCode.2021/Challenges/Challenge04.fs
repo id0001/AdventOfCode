@@ -64,7 +64,8 @@ let calculateScore board numbers =
 
 let setup =
     let lines = readLines<string> 4
-    (readNumbersFromInput lines, readBoardsFromInput lines)
+    fun () -> 
+        (readNumbersFromInput lines, readBoardsFromInput lines)
 
 let part1 (numbers, boards) =
     let (board, numberHistory) = findWinningBoard boards numbers

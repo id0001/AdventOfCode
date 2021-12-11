@@ -4,8 +4,7 @@ open Utils.IO
 
 let cmp pair = fst pair < snd pair
 
-let setup =
-    readLines<int> 1
+let setup = fun () -> readLines<int> 1
 
 let part1 input =
     input

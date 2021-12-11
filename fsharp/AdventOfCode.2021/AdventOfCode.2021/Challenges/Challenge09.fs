@@ -26,8 +26,7 @@ let rec floodFill (p:Point2) (filled:Point2 Set) (grid:int[][]) =
             (fun filledAcc n ->
                 floodFill n filledAcc grid) (Set.add p filled)
 
-let setup =
-    readGrid<int> 9
+let setup = fun () -> readGrid<int> 9
 
 let part1 input =
     let rows = Array.length input

@@ -1,6 +1,5 @@
 ﻿module Challenges.Challenge10
 
-open System
 open Utils.IO
 
 type ValidationResult =
@@ -51,8 +50,7 @@ let score2 list =
             | '<' -> (score * 5L) + 4L
             | _ -> failwith "Unsupported character") 0L
 
-let setup =
-    readLines<string> 10
+let setup = fun () -> readLines<string> 10
 
 let part1 input =
     input
