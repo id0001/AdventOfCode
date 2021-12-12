@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdventOfCode.Lib.Extensions;
+using System.Collections.Immutable;
 
 namespace AdventOfCode2021.Challenges
 {
@@ -46,79 +47,37 @@ namespace AdventOfCode2021.Challenges
         [Part1]
         public string Part1()
         {
-            var paths = new List<string[]>();
-            var queue = new Queue<string[]>();
-
-            queue.Enqueue(new string[] { "start" });
-
-            while (queue.Count > 0)
-            {
-                var path = queue.Dequeue();
-                string last = path[^1];
-                if (last == "end")
-                {
-                    paths.Add(path.ToArray());
-                    continue;
-                }
-
-                if (!edges.ContainsKey(last))
-                    continue; // Dead end
-
-                foreach (var neighbor in edges[last])
-                {
-                    if (neighbor.All(char.IsUpper) || !path.Contains(neighbor))
-                    {
-                        string[] newPath = path.Concat(new[] { neighbor }).ToArray();
-                        queue.Enqueue(newPath);
-                    }
-                }
-            }
-
-            return paths.Count.ToString();
+            return CountPaths("start", ImmutableHashSet<string>.Empty, false).ToString();
         }
 
         [Part2]
         public string Part2()
         {
-            var paths = new List<string[]>();
-            var queue = new Queue<string[]>();
+            return CountPaths("start", ImmutableHashSet<string>.Empty, true).ToString();
+        }
 
-            queue.Enqueue(new string[] { "start" });
+        private int CountPaths(string currentNode, IImmutableSet<string> visited, bool canVisitTwice)
+        {
+            if (currentNode == "end")
+                return 1;
 
-            while (queue.Count > 0)
+            if (currentNode == "start" && visited.Contains(currentNode)) // Can never visit start twice
+                return 0;
+
+            if (visited.Contains(currentNode) && !canVisitTwice)
+                return 0;
+
+            IImmutableSet<string> newVisited = null;
+            if (currentNode.All(char.IsLower))
             {
-                var path = queue.Dequeue();
-                string last = path[^1];
-
-                if (last.EndsWith("'"))
-                    last = last.Substring(0, last.Length - 1);
-
-                if (last == "end")
-                {
-                    paths.Add(path);
-                    continue;
-                }
-
-                if (!edges.ContainsKey(last))
-                    continue; // Dead end
-
-                foreach (var neighbor in edges[last])
-                {
-                    if (neighbor.All(char.IsUpper) || !path.Contains(neighbor))
-                    {
-                        string[] newPath = path.Concat(new[] { neighbor }).ToArray();
-                        queue.Enqueue(newPath);
-                    }
-                    else if (!path.Any(x => x.Contains("'")) && neighbor != "start")
-                    {
-                        // Can only visit 1 lowercase room twice
-                        string[] newPath = path.Concat(new[] { neighbor + "'" }).ToArray();
-                        queue.Enqueue(newPath);
-                    }
-                }
+                newVisited = visited.Add(currentNode);
+            }
+            else
+            {
+                newVisited = visited;
             }
 
-            return paths.Count.ToString();
+            return edges[currentNode].Sum(neighbor => CountPaths(neighbor, newVisited, canVisitTwice && !visited.Contains(currentNode)));
         }
     }
 }
