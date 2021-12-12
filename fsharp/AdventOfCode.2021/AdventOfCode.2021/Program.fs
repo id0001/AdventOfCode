@@ -1,6 +1,6 @@
 ﻿open System
 open Utils
-open Challenges.Challenge11
+open Challenges.Challenge12
 
 [<EntryPoint>]
 let main argv =

@@ -17,9 +17,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Utils\String.fs" />
     <Compile Include="Utils\Day.fs" />
     <Compile Include="Utils\Point2.fs" />
     <Compile Include="Utils\IO.fs" />
+    <Compile Include="Challenges\Challenge12.fs" />
     <Compile Include="Challenges\Challenge11.fs" />
     <Compile Include="Challenges\Challenge10.fs" />
     <Compile Include="Challenges\Challenge09.fs" />
@@ -31,6 +33,9 @@
     <Compile Include="Challenges\Challenge03.fs" />
     <Compile Include="Challenges\Challenge02.fs" />
     <Compile Include="Challenges\Challenge01.fs" />
+    <Content Include="Inputs\12.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Inputs\11.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
