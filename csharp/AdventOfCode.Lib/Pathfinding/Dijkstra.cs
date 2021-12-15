@@ -35,7 +35,7 @@ namespace AdventOfCode.Lib.Pathfinding
                 var current = queue.Dequeue();
                 if (goalReached(current.Item))
                 {
-                    path = GetPath(current);
+                    path = GetPath(current.Item, parentToChildMap);
                     shortestPathLength = current.Distance;
                     return true;
                 }
@@ -61,15 +61,14 @@ namespace AdventOfCode.Lib.Pathfinding
             return false;
         }
 
-        private T[] GetPath(ItemDistancePair node)
+        private T[] GetPath(T node, IDictionary<T, T> parentToChildMap)
         {
             List<T> path = new List<T>();
-            ItemDistancePair current = node;
-            while (current != null)
+            T current = node;
+            do
             {
-                path.Add(current.Item);
-                current = current.Parent;
-            }
+                path.Add(current);
+            } while (parentToChildMap.TryGetValue(current, out current));
 
             path.Reverse();
             return IncludeStart
@@ -88,8 +87,6 @@ namespace AdventOfCode.Lib.Pathfinding
             public T Item { get; }
 
             public int Distance { get; set; }
-
-            public ItemDistancePair Parent { get; set; }
         }
 
         private class ItemWeightPairComparer : IComparer<ItemDistancePair>
