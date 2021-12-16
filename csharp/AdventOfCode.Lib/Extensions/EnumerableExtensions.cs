@@ -17,7 +17,12 @@ namespace AdventOfCode.Lib.Extensions
 
         public static int Product<T>(this IEnumerable<T> source, Func<T, int> selector) => MathEx.Product(source.Select(selector).ToArray());
 
+        public static long Product<T>(this IEnumerable<T> source, Func<T, long> selector) => MathEx.Product(source.Select(selector).ToArray());
+
         public static int Product(this IEnumerable<int> source) => MathEx.Product(source.ToArray());
+
+        public static long Product(this IEnumerable<long> source) => MathEx.Product(source.ToArray());
+
 
         public static IEnumerable<T[]> Permutations<T>(this IEnumerable<T> source, int start, int end)
         {
