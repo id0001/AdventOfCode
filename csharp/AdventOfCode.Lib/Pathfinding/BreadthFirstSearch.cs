@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AdventOfCode.Lib.Pathfinding
 {
-    public class BreadthFirstSearch<T> : IPathFinder<T>
+    public class BreadthFirstSearch<T>
     {
         private readonly Queue<Node> queue = new Queue<Node>();
         private readonly HashSet<T> visited = new HashSet<T>();
