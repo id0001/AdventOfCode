@@ -1,100 +1,36 @@
-﻿using AdventOfCode.Lib.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AdventOfCode.Lib.Pathfinding
 {
     public class Dijkstra<T>
     {
-        public delegate IEnumerable<(T Item, int Weight)> GetAdjacentNodesFunc(T from);
-
-        private readonly GetAdjacentNodesFunc getAdjacentNodes;
-
-        public Dijkstra(GetAdjacentNodesFunc getAdjacentNodes)
+        private readonly AStar<T> astar;
+        public Dijkstra(Func<T, IEnumerable<(T, int)>> getAdjacentFunc)
         {
-            this.getAdjacentNodes = getAdjacentNodes;
+            astar = new AStar<T>(getAdjacentFunc);
         }
 
-        public bool IncludeStart { get; set; }
+        public Func<T, IEnumerable<(T, int)>> GetAdjecentFunc => astar.GetAdjecentFunc;
 
-        public bool TryPath(T start, T end, out T[] path, out int shortestPathLength) => TryPath(start, n => n.Equals(end), out path, out shortestPathLength);
-
-        public bool TryPath(T start, Func<T, bool> goalReached, out T[] path, out int shortestPathLength)
+        public bool IncludeStartInPath
         {
-            var queue = new PriorityQueue<ItemDistancePair>(new ItemWeightPairComparer());
-            var distanceMap = new Dictionary<T, int>();
-            var parentToChildMap = new Dictionary<T, T>();
-
-            var root = new ItemDistancePair(start, 0);
-            distanceMap.Add(start, 0);
-            queue.Enqueue(root);
-
-            while (!queue.IsEmpty)
-            {
-                var current = queue.Dequeue();
-                if (goalReached(current.Item))
-                {
-                    path = GetPath(current.Item, parentToChildMap);
-                    shortestPathLength = current.Distance;
-                    return true;
-                }
-
-                foreach (var adjacent in getAdjacentNodes(current.Item))
-                {
-                    if (!distanceMap.TryGetValue(adjacent.Item, out var distance))
-                    {
-                        distance = int.MaxValue;
-                    }
-
-                    if (distance > current.Distance + adjacent.Weight)
-                    {
-                        distanceMap[adjacent.Item] = current.Distance + adjacent.Weight;
-                        parentToChildMap[adjacent.Item] = current.Item;
-                        queue.Enqueue(new ItemDistancePair(adjacent.Item, current.Distance + adjacent.Weight));
-                    }
-                }
-            }
-
-            path = Array.Empty<T>();
-            shortestPathLength = 0;
-            return false;
+            get => astar.IncludeStartInPath;
+            set => astar.IncludeStartInPath = value;
         }
 
-        private T[] GetPath(T node, IDictionary<T, T> parentToChildMap)
-        {
-            List<T> path = new List<T>();
-            T current = node;
-            do
-            {
-                path.Add(current);
-            } while (parentToChildMap.TryGetValue(current, out current));
+        public bool TryPath(T start, T end, out DijkstraResult<T> result) => TryPath(start, n => n.Equals(end), out result);
 
-            path.Reverse();
-            return IncludeStart
-                ? path.ToArray()
-                : path.Skip(1).ToArray();
+        public bool TryPath(T start, Func<T, bool> goalReachedPredicate, out DijkstraResult<T> result)
+        {
+            bool success = astar.TryPath(start, goalReachedPredicate, _ => 0, out AStarResult<T> astarResult);
+            result = GetResult(astarResult);
+            return success;
         }
 
-        private class ItemDistancePair
-        {
-            public ItemDistancePair(T item, int weight)
-            {
-                Item = item;
-                Distance = weight;
-            }
-
-            public T Item { get; }
-
-            public int Distance { get; set; }
-        }
-
-        private class ItemWeightPairComparer : IComparer<ItemDistancePair>
-        {
-            public int Compare(ItemDistancePair x, ItemDistancePair y)
-            {
-                return x.Distance - y.Distance;
-            }
-        }
+        private DijkstraResult<T> GetResult(AStarResult<T> result)
+            => new DijkstraResult<T>(result.Path, result.Cost);
     }
+
+    public record DijkstraResult<T>(T[] Path, int Cost);
 }

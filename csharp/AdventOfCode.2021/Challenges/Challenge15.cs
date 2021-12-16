@@ -27,9 +27,9 @@ namespace AdventOfCode2021.Challenges
         public string Part1()
         {
             var dijkstra = new Dijkstra<Point2>(GetAdjecentNodes);
-            if (dijkstra.TryPath(new Point2(0, 0), new Point2(grid.GetLength(0) - 1, grid.GetLength(1) - 1), out Point2[] path, out int shortest))
+            if (dijkstra.TryPath(new Point2(0, 0), new Point2(grid.GetLength(0) - 1, grid.GetLength(1) - 1), out DijkstraResult<Point2> result))
             {
-                return shortest.ToString();
+                return result.Cost.ToString();
             }
 
             return null;
@@ -38,10 +38,13 @@ namespace AdventOfCode2021.Challenges
         [Part2]
         public string Part2()
         {
+            Point2 start = Point2.Zero;
+            Point2 end = new Point2((grid.GetLength(0) * 5) - 1, (grid.GetLength(1) * 5) - 1);
+
             var dijkstra = new Dijkstra<Point2>(GetAdjecentNodes2);
-            if (dijkstra.TryPath(new Point2(0, 0), new Point2((grid.GetLength(0) * 5) - 1, (grid.GetLength(1) * 5) - 1), out Point2[] path, out int shortest))
+            if (dijkstra.TryPath(start, end, out DijkstraResult<Point2> result))
             {
-                return shortest.ToString();
+                return result.Cost.ToString();
             }
 
             return null;

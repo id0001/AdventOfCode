@@ -60,9 +60,9 @@ namespace AdventOfCode2019.Challenges
 
             var start = new DroneState(new Point2[] { p0, p1, p2, p3 }, 0);
             var bfs = new Dijkstra<DroneState>(s => GetNeighborsPart2(vertices, edges, s));
-            if (bfs.TryPath(start, s => s.ObtainedKeys == keyTotal, out DroneState[] path, out int length))
+            if (bfs.TryPath(start, s => s.ObtainedKeys == keyTotal, out DijkstraResult<DroneState> result))
             {
-                return length.ToString();
+                return result.Cost.ToString();
             }
 
             return null;

@@ -8,161 +8,161 @@ using System.Linq;
 namespace AdventOfCode.Lib.Collections
 {
     public class PriorityQueue<TItem> : IReadOnlyList<TItem>
-	{
-		private List<TItem> heap;
-		private readonly IComparer<TItem> comparer;
+    {
+        private List<TItem> heap;
+        private readonly IComparer<TItem> comparer;
 
         public PriorityQueue(IComparer<TItem> comparer)
-		{
-			heap = new List<TItem>();
-			this.comparer = comparer;
-		}
+        {
+            heap = new List<TItem>();
+            this.comparer = comparer;
+        }
 
-		public PriorityQueue(int capacity, IComparer<TItem> comparer)
-		{
-			if (capacity < 0)
-				throw new ArgumentOutOfRangeException(nameof(capacity), capacity, "Capacity should be greater or equal to 0");
+        public PriorityQueue(int capacity, IComparer<TItem> comparer)
+        {
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), capacity, "Capacity should be greater or equal to 0");
 
-			heap = new List<TItem>(capacity);
-			this.comparer = comparer;
-		}
+            heap = new List<TItem>(capacity);
+            this.comparer = comparer;
+        }
 
-		public PriorityQueue(IEnumerable<TItem> collection, IComparer<TItem> comparer)
-		{
-			if (collection == null)
-				throw new ArgumentNullException(nameof(collection));
+        public PriorityQueue(IEnumerable<TItem> collection, IComparer<TItem> comparer)
+        {
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
 
-			heap = collection.ToList();
+            heap = collection.ToList();
 
-			this.comparer = comparer;
+            this.comparer = comparer;
 
-			// Heapify process, O(n)
-			for (int i = Math.Max(0, (heap.Count / 2) - 1); i >= 0; i--)
-				Sink(i);
-		}
+            // Heapify process, O(n)
+            for (int i = Math.Max(0, (heap.Count / 2) - 1); i >= 0; i--)
+                Sink(i);
+        }
 
-		public IComparer<TItem> Comparer => comparer ?? Comparer<TItem>.Default;
+        public IComparer<TItem> Comparer => comparer ?? Comparer<TItem>.Default;
 
-		public int Count => heap.Count;
+        public int Count => heap.Count;
 
-		public bool IsEmpty => Count == 0;
+        public bool IsEmpty => Count == 0;
 
         public TItem this[int index] => heap[index];
 
         public void Clear() => heap.Clear();
 
-		public void Enqueue(TItem item)
-		{
-			if (item == null)
-				throw new ArgumentNullException(nameof(item));
-
-			heap.Add(item);
-
-			// Heapify
-			int indexOfLastItem = heap.Count - 1;
-			Swim(indexOfLastItem);
-		}
-
-		public TItem Dequeue()
-		{
-			if (IsEmpty)
-				throw new InvalidOperationException("The heap is empty");
-
-			return RemoveAt(0);
-		}
-
-		public TItem Peek()
-		{
-			if (IsEmpty)
-				throw new InvalidOperationException("The heap is empty");
-
-			return heap[0];
-		}
-
-		public bool Remove(TItem item)
+        public void Enqueue(TItem item)
         {
-			int index = heap.IndexOf(item);
-			if (index < 0)
-				return false;
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
 
-			RemoveAt(index);
-			return true;
+            heap.Add(item);
+
+            // Heapify
+            int indexOfLastItem = heap.Count - 1;
+            Swim(indexOfLastItem);
         }
 
-		private void Sink(int a)
-		{
-			while (true)
-			{
-				int left = 2 * a + 1; // Left node: 2i + 1 where i == parent index.
-				int right = 2 * a + 2; // Right node: 2i + 2 where i == parent index.
-				int smallest = left; // Assume left is smallest first.
+        public TItem Dequeue()
+        {
+            if (IsEmpty)
+                throw new InvalidOperationException("The heap is empty");
 
-				// Find the smallest child.
-				if (right < Count && LessThan(right, left)) smallest = right;
+            return RemoveAt(0);
+        }
 
-				// Stop if we're outside the bounds of the tre or stop early if we cannot sink a anymore.
-				if (left >= Count || LessThan(a, smallest)) break;
+        public TItem Peek()
+        {
+            if (IsEmpty)
+                throw new InvalidOperationException("The heap is empty");
 
-				// Swap the nodes
-				Swap(smallest, a);
-				a = smallest;
-			}
-		}
+            return heap[0];
+        }
 
-		private void Swim(int a)
-		{
-			// Get parent index
-			int parent = (a - 1) / 2;
+        public bool Remove(TItem item)
+        {
+            int index = heap.IndexOf(item);
+            if (index < 0)
+                return false;
 
-			while (a > 0 && LessThan(a, parent))
-			{
-				// Swap value of a with parent
-				Swap(parent, a);
+            RemoveAt(index);
+            return true;
+        }
 
-				// a becomes parent
-				a = parent;
+        private void Sink(int a)
+        {
+            while (true)
+            {
+                int left = 2 * a + 1; // Left node: 2i + 1 where i == parent index.
+                int right = 2 * a + 2; // Right node: 2i + 2 where i == parent index.
+                int smallest = left; // Assume left is smallest first.
 
-				// Grab parent of a
-				parent = (a - 1) / 2;
-			}
-		}
+                // Find the smallest child.
+                if (right < Count && LessThan(right, left)) smallest = right;
 
-		private TItem RemoveAt(int i)
-		{
-			if (IsEmpty)
-				return default;
+                // Stop if we're outside the bounds of the tre or stop early if we cannot sink a anymore.
+                if (left >= Count || LessThan(a, smallest)) break;
 
-			int indexOfLastItem = Count - 1;
-			TItem removed = heap[i];
+                // Swap the nodes
+                Swap(smallest, a);
+                a = smallest;
+            }
+        }
 
-			// Swap item at i with last item
-			Swap(i, indexOfLastItem);
+        private void Swim(int a)
+        {
+            // Get parent index
+            int parent = (a - 1) / 2;
 
-			// Remove the last item
-			heap.RemoveAt(indexOfLastItem);
+            while (a > 0 && LessThan(a, parent))
+            {
+                // Swap value of a with parent
+                Swap(parent, a);
 
-			// Check if last item was removed.
-			if (i == indexOfLastItem)
-				return removed;
+                // a becomes parent
+                a = parent;
 
-			TItem item = heap[i];
+                // Grab parent of a
+                parent = (a - 1) / 2;
+            }
+        }
 
-			// Try sinking item
-			Sink(i);
+        private TItem RemoveAt(int i)
+        {
+            if (IsEmpty)
+                return default;
 
-			// If sinking didn't work try swimming.
-			if (heap[i].Equals(item))
-				Swim(i);
+            int indexOfLastItem = Count - 1;
+            TItem removed = heap[i];
 
-			return removed;
-		}
+            // Swap item at i with last item
+            Swap(i, indexOfLastItem);
 
-		private void Swap(int a, int b) => (heap[a], heap[b]) = (heap[b], heap[a]);
+            // Remove the last item
+            heap.RemoveAt(indexOfLastItem);
 
-		private bool LessThan(int a, int b) => Comparer.Compare(heap[a], heap[b]) <= 0;
+            // Check if last item was removed.
+            if (i == indexOfLastItem)
+                return removed;
 
-		public IEnumerator<TItem> GetEnumerator() => heap.GetEnumerator();
+            TItem item = heap[i];
 
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+            // Try sinking item
+            Sink(i);
+
+            // If sinking didn't work try swimming.
+            if (heap[i].Equals(item))
+                Swim(i);
+
+            return removed;
+        }
+
+        private void Swap(int a, int b) => (heap[a], heap[b]) = (heap[b], heap[a]);
+
+        private bool LessThan(int a, int b) => Comparer.Compare(heap[a], heap[b]) <= 0;
+
+        public IEnumerator<TItem> GetEnumerator() => heap.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
