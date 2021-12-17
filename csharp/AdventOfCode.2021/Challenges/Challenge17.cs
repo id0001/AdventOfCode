@@ -23,9 +23,8 @@ namespace AdventOfCode2021.Challenges
         [Part1]
         public string Part1()
         {
-            // Only calculate first half of the arc
             int vy = (-targetYMax) - 1;
-            return Enumerable.Range(0, vy).Select(x => vy - x).Sum().ToString();
+            return MathEx.TriangularNumber(vy).ToString();
         }
 
         private int[] FindAllXVelocities(int lowerBound, int upperBound)
