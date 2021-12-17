@@ -1,8 +1,6 @@
 ﻿using AdventOfCode.Lib;
 using AdventOfCode.Lib.IO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AdventOfCode2021.Challenges
 {
@@ -10,6 +8,10 @@ namespace AdventOfCode2021.Challenges
     public class Challenge17
     {
         private readonly IInputReader inputReader;
+        //private int targetXMin = 128;
+        //private int targetXMax = 160;
+        //private int targetYMin = -88;
+        //private int targetYMax = -142;
         private int targetXMin = 192;
         private int targetXMax = 251;
         private int targetYMin = -59;
@@ -27,41 +29,20 @@ namespace AdventOfCode2021.Challenges
             return MathEx.TriangularNumber(vy).ToString();
         }
 
-        private int[] FindAllXVelocities(int lowerBound, int upperBound)
-        {
-            List<int> velocities = new List<int>();
-            for (int ivx = upperBound; ivx > 0; ivx--)
-            {
-                int x = 0;
-                int vx = ivx;
-                while (x < upperBound && vx != 0)
-                {
-                    x += vx;
-                    if (x >= lowerBound && x <= upperBound)
-                    {
-                        velocities.Add(ivx);
-                        break;
-                    }
-
-                    vx -= Math.Sign(vx);
-                }
-            }
-
-            return velocities.ToArray();
-        }
-
         [Part2]
         public string Part2()
         {
-            var xVelocities = FindAllXVelocities(targetXMin, targetXMax);
-            var yVelocities = Enumerable.Range(targetYMax, (-targetYMax)-targetYMax+1).ToArray();
+            int left = MathEx.InverseTriangleNumber(targetXMin);
+            int right = targetXMax;
+            int bottom = targetYMax;
+            int top = -targetYMax - 1;
 
             int count = 0;
-            foreach (var vy in yVelocities)
+            for (int y = bottom; y <= top; y++)
             {
-                foreach (var vx in xVelocities)
+                for (int x = left; x <= right; x++)
                 {
-                    if (Simulate(vx, vy, targetXMin, targetXMax, targetYMin, targetYMax))
+                    if (Simulate(x, y, targetXMin, targetXMax, targetYMin, targetYMax))
                         count++;
                 }
             }
