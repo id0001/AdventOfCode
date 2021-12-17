@@ -216,5 +216,7 @@ namespace AdventOfCode.Lib
         /// <param name="number"></param>
         /// <returns></returns>
         public static int TriangularNumber(int number) => (number * (number + 1)) / 2;
+
+        public static int InverseTriangleNumber(int number) => (int)Math.Sqrt(number * 2);
     }
 }
