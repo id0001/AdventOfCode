@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace AdventOfCode.Lib
 {
-    [DebuggerDisplay("{DebugDisplayString, nq}")]
+    //[DebuggerDisplay("{DebugDisplayString, nq}")]
     public struct Point3 : IEquatable<Point3>, IPoint
     {
         private static readonly Point3 zeroPoint = new Point3(0, 0, 0);
