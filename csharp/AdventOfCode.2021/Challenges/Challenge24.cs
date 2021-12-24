@@ -2,7 +2,6 @@
 using AdventOfCode.Lib.IO;
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace AdventOfCode2021.Challenges
 {
@@ -58,66 +57,61 @@ namespace AdventOfCode2021.Challenges
             listOfAValues = new[] { 1, 1, 1, 26, 1, 26, 1, 26, 1, 1, 26, 26, 26, 26 };
         }
 
-        private int[] FindBiggestNumber(Func<int, int, int>[] funcs, int[] blist, int[] alist, int funci, int z, ImmutableArray<int> result)
+        private ImmutableArray<int> FindBiggestNumber(Func<int, int, int>[] funcs, int[] blist, int[] alist, int funci, int z, ImmutableArray<int> result)
         {
             if (result.Length == 14)
-                return result.ToArray();
+                return result;
 
+            var recResult = ImmutableArray<int>.Empty;
             for (int w = 9; w > 0; w--)
             {
                 if (alist[funci] == 1 || z % 26 == w - blist[funci])
                 {
                     int nz = funcs[funci](w, z);
                     var newResult = result.Add(w);
-                    var find = FindBiggestNumber(funcs, blist, alist, funci + 1, nz, newResult);
-                    if (find.Length != 14)
-                        continue;
-
-                    return find;
+                    recResult = FindBiggestNumber(funcs, blist, alist, funci + 1, nz, newResult);
+                    if (recResult.Length == 14)
+                        break;
                 }
             }
 
-            return Array.Empty<int>();
+            return recResult;
         }
 
-        private int[] FindSmallestNumber(Func<int, int, int>[] funcs, int[] blist, int[] alist, int funci, int z, ImmutableArray<int> result)
+        private ImmutableArray<int> FindSmallestNumber(Func<int, int, int>[] funcs, int[] blist, int[] alist, int funci, int z, ImmutableArray<int> result)
         {
             if (result.Length == 14)
-                return result.ToArray();
+                return result;
 
+            var recResult = ImmutableArray<int>.Empty;
             for (int w = 1; w <= 9; w++)
             {
                 if (alist[funci] == 1 || z % 26 == w - blist[funci])
                 {
                     int nz = funcs[funci](w, z);
                     var newResult = result.Add(w);
-                    var find = FindSmallestNumber(funcs, blist, alist, funci + 1, nz, newResult);
-                    if (find.Length != 14)
-                        continue;
-
-                    return find;
+                    recResult = FindSmallestNumber(funcs, blist, alist, funci + 1, nz, newResult);
+                    if (recResult.Length == 14)
+                        break;
                 }
             }
 
-            return Array.Empty<int>();
+            return recResult;
         }
 
 
         [Part1]
         public string Part1()
         {
-            int[] num = FindBiggestNumber(funcsInOrder, listOfBValues, listOfAValues, 0, 0, ImmutableArray.Create<int>());
-            string s = new string(num.Select(x => x.ToString()[0]).ToArray());
-
-            return s;
+            var numbers = FindBiggestNumber(funcsInOrder, listOfBValues, listOfAValues, 0, 0, ImmutableArray.Create<int>());
+            return string.Join(string.Empty, numbers);
         }
 
         [Part2]
         public string Part2()
         {
-            int[] num = FindSmallestNumber(funcsInOrder, listOfBValues, listOfAValues, 0, 0, ImmutableArray.Create<int>());
-            string s = new string(num.Select(x => x.ToString()[0]).ToArray());
-            return s;
+            var numbers = FindSmallestNumber(funcsInOrder, listOfBValues, listOfAValues, 0, 0, ImmutableArray.Create<int>());
+            return string.Join(string.Empty, numbers);
         }
 
         private int Calculate(int a, int b, int c, int w, int z)
