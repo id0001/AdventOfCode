@@ -7,7 +7,7 @@ namespace AdventOfCode.Lib
     [DebuggerDisplay("{DebugDisplayString, nq}")]
     public struct Cube : IEquatable<Cube>
     {
-        private static readonly Cube emptyCube = new Cube();
+        private static readonly Cube EmptyCube = new Cube();
 
         public int X;
 
@@ -41,7 +41,7 @@ namespace AdventOfCode.Lib
             Depth = size.Z;
         }
 
-        public static Cube Empty => emptyCube;
+        public static Cube Empty => EmptyCube;
 
         internal string DebugDisplayString => $"{X}, {Y}, {Z}, {Width}, {Height}, {Depth}";
 
@@ -89,6 +89,21 @@ namespace AdventOfCode.Lib
                 }
             }
         }
+        
+        public int AreaDepthWidth => Depth * Width;
+        public int AreaWidthHeight => Width * Height;
+        public int AreaDepthHeight => Depth * Height;
+
+        public int SmallestArea => MathEx.Min(AreaDepthHeight, AreaWidthHeight, AreaDepthWidth);
+
+        public int SmallestPerimeter
+        {
+            get
+            {
+                var ordered = new[] { Depth, Width, Height }.OrderBy(_ => _).ToArray();
+                return ordered[0] + ordered[0] + ordered[1] + ordered[1];
+            }
+        }
 
         public bool IntersectsWith(Cube other) => Intersects(this, other);
 
@@ -131,6 +146,16 @@ namespace AdventOfCode.Lib
             int backSide = Math.Min(a.Back, b.Back);
             int frontSide = Math.Max(a.Front, b.Front);
             return new Cube(leftSide, topSide, frontSide, rightSide - leftSide, bottomSide - topSide, backSide - frontSide);
+        }
+
+        public static bool operator ==(Cube left, Cube right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Cube left, Cube right)
+        {
+            return !(left == right);
         }
     }
 }
