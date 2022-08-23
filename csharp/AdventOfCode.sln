@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Lib", "AdventOfCode.Lib\AdventOfCode.Lib.csproj", "{F381B33E-0719-43F8-8741-BB050939C604}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Old.Lib", "AdventOfCode.Old.Lib\AdventOfCode.Old.Lib.csproj", "{F381B33E-0719-43F8-8741-BB050939C604}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.2020", "AdventOfCode.2020\AdventOfCode.2020.csproj", "{7A073636-1A05-4C27-9DE5-1EB784D421F6}"
 EndProject
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Core", "Advent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.2015", "AdventOfCode.2015\AdventOfCode.2015.csproj", "{B18DBC37-B1B3-41E6-B930-2E89CE89E06E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Lib2", "AdventOfCode.Lib2\AdventOfCode.Lib2.csproj", "{BC837F8B-13BC-4024-9830-25DA178E30FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Lib", "AdventOfCode.Lib\AdventOfCode.Lib.csproj", "{BC837F8B-13BC-4024-9830-25DA178E30FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

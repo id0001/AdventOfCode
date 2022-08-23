@@ -1,35 +1,22 @@
-﻿using Microsoft;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace AdventOfCode.Lib;
 
-namespace AdventOfCode.Lib.Extensions
+public static class DictionaryExtensions
 {
-    public static class DictionaryExtensions
+    public static void AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> source, TKey key, TValue value) where TKey : notnull
     {
-        public static void AddOrUpdate<T, K>(this IDictionary<T, K> source, T key, K value)
+        if (!source.TryAdd(key, value))
+            source[key] = value;
+    }
+    
+    public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue?> source, TKey key, Func<TValue?, TValue> update, TValue? defaultValue = default)
+    {
+        if (!source.TryGetValue(key, out TValue? oldValue))
         {
-            Requires.NotNull(source, nameof(source));
-
-            if (!source.TryAdd(key, value))
-                source[key] = value;
+            source.Add(key, update(defaultValue));
         }
-
-        public static void AddOrUpdate<T, K>(this IDictionary<T, K> source, T key, Func<K, K> update, K defaultValue = default)
+        else
         {
-            Requires.NotNull(source, nameof(source));
-            Requires.NotNull(update, nameof(update));
-
-            if (!source.TryGetValue(key, out K oldValue))
-            {
-                source.Add(key, update(defaultValue));
-            }
-            else
-            {
-                source[key] = update(oldValue);
-            }
+            source[key] = update(oldValue);
         }
     }
 }

@@ -1,15 +1,14 @@
-﻿
-using System.Collections;
-using System.Collections.Generic;
+﻿namespace AdventOfCode.Lib;
 
-namespace AdventOfCode.Lib
+public interface IPoint
 {
-	public interface IPoint
-	{
-		int Dimensions { get; }
+    int this[int index] { get; }
 
-		int GetValue(int dimension);
+    int Dimensions { get; }
+}
 
-		IEnumerable<IPoint> GetNeighbors();
-	}
+public interface IPoint<out T> : IPoint
+    where T : struct, IPoint<T>
+{
+    IEnumerable<T> GetNeighbors();
 }

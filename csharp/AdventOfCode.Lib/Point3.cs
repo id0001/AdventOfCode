@@ -1,89 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace AdventOfCode.Lib;
 
-namespace AdventOfCode.Lib
+public readonly struct Point3 : IPoint<Point3>, IEquatable<Point3>
 {
-    //[DebuggerDisplay("{DebugDisplayString, nq}")]
-    public struct Point3 : IEquatable<Point3>, IPoint
+    private static Point3 EmptyPoint => new Point3();
+    
+    public Point3(int x, int y, int z) => (X, Y, Z) = (x, y, z);
+    
+    public int X { get; }
+
+    public int Y { get; }
+
+    public int Z { get; }
+
+    public int this[int index] => index switch
     {
-        private static readonly Point3 zeroPoint = new Point3(0, 0, 0);
+        0 => X,
+        1 => Y,
+        2 => Z,
+        _ => throw new NotSupportedException()
+    };
 
-        public int X;
-        public int Y;
-        public int Z;
+    public int Dimensions => 3;
 
-        public Point3(int value)
-            : this(value, value, value)
-        {
-        }
+    public static Point3 Empty => EmptyPoint;
+    
+    public IEnumerable<Point3> GetNeighbors()
+    {
+        throw new NotImplementedException();
+    }
 
-        public Point3(int x, int y, int z)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-        }
+    public bool Equals(Point3 other)
+    {
+        return X == other.X && Y == other.Y && Z == other.Z;
+    }
 
-        internal string DebugDisplayString => $"{X}, {Y}, {Z}";
+    public override bool Equals(object? obj)
+    {
+        return obj is Point3 other && Equals(other);
+    }
 
-        public static Point3 Zero => zeroPoint;
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(X, Y, Z);
+    }
 
-        public int Dimensions => 3;
+    public static bool operator ==(Point3 left, Point3 right)
+    {
+        return left.Equals(right);
+    }
 
-        public static Point3 operator +(Point3 value1, Point3 value2) => new Point3(value1.X + value2.X, value1.Y + value2.Y, value1.Z + value2.Z);
-
-        public static Point3 operator -(Point3 value1, Point3 value2) => new Point3(value1.X - value2.X, value1.Y - value2.Y, value1.Z - value2.Z);
-
-        public static Point3 operator *(Point3 value1, Point3 value2) => new Point3(value1.X * value2.X, value1.Y * value2.Y, value1.Z * value2.Z);
-
-        public static Point3 operator *(Point3 value, int multiplier) => new Point3(value.X * multiplier, value.Y * multiplier, value.Z * multiplier);
-
-        public static bool operator ==(Point3 a, Point3 b) => a.Equals(b);
-
-        public static bool operator !=(Point3 a, Point3 b) => !a.Equals(b);
-
-        public bool Equals(Point3 other) => X == other.X && Y == other.Y && Z == other.Z;
-
-        public override bool Equals(object obj) => (obj is Point3) && Equals((Point3)obj);
-
-        public override int GetHashCode() => HashCode.Combine(X, Y, Z);
-
-        public override string ToString() => $"{{X: {X}, Y: {Y}, Z: {Z}}}";
-
-        public void Deconstruct(out int x, out int y, out int z) => (x, y, z) = (X, Y, Z);
-
-        public int GetValue(int dimension)
-        {
-            return dimension switch
-            {
-                0 => X,
-                1 => Y,
-                2 => Z,
-                _ => throw new IndexOutOfRangeException()
-            };
-        }
-
-        public IEnumerable<Point3> GetNeighbors()
-        {
-            for (int z = -1; z <= 1; z++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    for (int x = -1; x <= 1; x++)
-                    {
-                        if (x == 0 && y == 0 && z == 0)
-                            continue;
-
-                        yield return new Point3(X + x, Y + y, Z + z);
-                    }
-                }
-            }
-        }
-
-        IEnumerable<IPoint> IPoint.GetNeighbors()
-        {
-            foreach (var neighbor in GetNeighbors())
-                yield return neighbor;
-        }
+    public static bool operator !=(Point3 left, Point3 right)
+    {
+        return !(left == right);
     }
 }
