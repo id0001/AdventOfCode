@@ -2,7 +2,7 @@
 
 public static class DictionaryExtensions
 {
-    public static void AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> source, TKey key, TValue value) where TKey : notnull
+    public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key, TValue value) where TKey : notnull
     {
         if (!source.TryAdd(key, value))
             source[key] = value;

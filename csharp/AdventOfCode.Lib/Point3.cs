@@ -1,16 +1,14 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly struct Point3 : IPoint<Point3>, IEquatable<Point3>
+public readonly struct Point3 : IPoint, IEquatable<Point3>
 {
-    private static Point3 EmptyPoint => new Point3();
-    
     public Point3(int x, int y, int z) => (X, Y, Z) = (x, y, z);
-    
-    public int X { get; }
 
-    public int Y { get; }
+    public int X { get; init; }
 
-    public int Z { get; }
+    public int Y { get; init; }
+
+    public int Z { get; init; }
 
     public int this[int index] => index switch
     {
@@ -22,35 +20,48 @@ public readonly struct Point3 : IPoint<Point3>, IEquatable<Point3>
 
     public int Dimensions => 3;
 
-    public static Point3 Empty => EmptyPoint;
-    
-    public IEnumerable<Point3> GetNeighbors()
+    public static Point3 Empty { get; } = new();
+
+    public IEnumerable<Point3> GetNeighbors(bool includeDiagonal = false)
     {
-        throw new NotImplementedException();
+        for (var z = -1; z <= 1; z++)
+        for (var y = -1; y <= 1; y++)
+        for (var x = -1; x <= 1; x++)
+        {
+            if (!includeDiagonal && !((x == 0) ^ (y == 0) ^ (z == 0)))
+                continue;
+
+            if (x == 0 && y == 0 && z == 0)
+                continue;
+
+            yield return new Point3(X + x, Y + y, Z + z);
+        }
     }
 
-    public bool Equals(Point3 other)
+    public void Deconstruct(out int x, out int y, out int z) => (x, y, z) = (X, Y, Z);
+
+    public bool Equals(Point3 other) => X == other.X && Y == other.Y && Z == other.Z;
+
+    public bool Equals(IPoint? other)
     {
-        return X == other.X && Y == other.Y && Z == other.Z;
+        if (other is null)
+            return false;
+
+        if (other.Dimensions != Dimensions)
+            return false;
+
+        for (var d = 0; d < Dimensions; d++)
+            if (this[d] != other[d])
+                return false;
+
+        return true;
     }
 
-    public override bool Equals(object? obj)
-    {
-        return obj is Point3 other && Equals(other);
-    }
+    public override bool Equals(object? obj) => obj is Point3 other && Equals(other);
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(X, Y, Z);
-    }
+    public override int GetHashCode() => HashCode.Combine(X, Y, Z);
 
-    public static bool operator ==(Point3 left, Point3 right)
-    {
-        return left.Equals(right);
-    }
+    public static bool operator ==(Point3 left, Point3 right) => left.Equals(right);
 
-    public static bool operator !=(Point3 left, Point3 right)
-    {
-        return !(left == right);
-    }
+    public static bool operator !=(Point3 left, Point3 right) => !(left == right);
 }

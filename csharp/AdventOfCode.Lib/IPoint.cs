@@ -1,14 +1,8 @@
 ﻿namespace AdventOfCode.Lib;
 
-public interface IPoint
+public interface IPoint : IEquatable<IPoint>
 {
     int this[int index] { get; }
 
     int Dimensions { get; }
-}
-
-public interface IPoint<out T> : IPoint
-    where T : struct, IPoint<T>
-{
-    IEnumerable<T> GetNeighbors();
 }
