@@ -1,22 +1,24 @@
 ﻿namespace AdventOfCode.Lib.PathFinding;
 
-public class Dijkstra<T> where T : notnull
+public class AStar<T> where T : notnull
 {
     private readonly Func<T, IEnumerable<T>> _getAdjacent;
     private readonly Func<T, T, int> _weight;
 
-    public Dijkstra(Func<T, IEnumerable<T>> getAdjacent, Func<T, T, int> weight)
+    public AStar(Func<T, IEnumerable<T>> getAdjacent, Func<T, T, int> weight)
     {
         _getAdjacent = getAdjacent;
         _weight = weight;
     }
 
+    public Func<T, int> Heuristic { get; } = _ => 0;
+
     public bool TryPath(T start, Func<T, bool> isFinished, out IEnumerable<T> path,
         out int totalDistance)
-        => TryPath(start, _getAdjacent, _weight, isFinished, out path, out totalDistance);
+        => TryPath(start, _getAdjacent, _weight, Heuristic, isFinished, out path, out totalDistance);
 
     private static bool TryPath(T start, Func<T, IEnumerable<T>> getAdjacent, Func<T, T, int> weight,
-        Func<T, bool> isFinished, out IEnumerable<T> path, out int totalDistance)
+        Func<T, int> heuristic, Func<T, bool> isFinished, out IEnumerable<T> path, out int totalDistance)
     {
         var queue = new PriorityQueue<T, int>();
         var previous = new Dictionary<T, T>();
@@ -45,7 +47,7 @@ public class Dijkstra<T> where T : notnull
 
                 distances.AddOrUpdate(adjacent, newDistance);
                 previous.AddOrUpdate(adjacent, currentNode);
-                queue.Enqueue(adjacent, newDistance);
+                queue.Enqueue(adjacent, newDistance + heuristic(adjacent));
             }
         }
 
