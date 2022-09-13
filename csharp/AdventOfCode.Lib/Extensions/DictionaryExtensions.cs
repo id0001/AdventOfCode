@@ -2,15 +2,17 @@
 
 public static class DictionaryExtensions
 {
-    public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key, TValue value) where TKey : notnull
+    public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key, TValue value) 
+        where TKey : notnull
     {
         if (!source.TryAdd(key, value))
             source[key] = value;
     }
     
     public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue?> source, TKey key, Func<TValue?, TValue> update, TValue? defaultValue = default)
+        where TKey : notnull
     {
-        if (!source.TryGetValue(key, out TValue? oldValue))
+        if (!source.TryGetValue(key, out var oldValue))
         {
             source.Add(key, update(defaultValue));
         }
