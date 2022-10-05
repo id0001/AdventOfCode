@@ -22,12 +22,12 @@ public class Challenge14
     public async Task<string?> Part1Async() => await _inputReader.ParseLinesAsync(14, ParseLine).Select(r => r.DistanceTraveledAfter(2503)).MaxAsync().ToStringAsync();
 
     [Part2]
-    public async Task<string?> Part2Async()
+    public async Task<string> Part2Async()
     {
         var reindeer = await _inputReader.ParseLinesAsync(14, ParseLine).ToListAsync();
 
-        var score = reindeer.ToDictionary(kv => kv, kv => 0);
-        var distanceTraveled = reindeer.ToDictionary(kv => kv, kv => 0);
+        var score = reindeer.ToDictionary(kv => kv, _ => 0);
+        var distanceTraveled = reindeer.ToDictionary(kv => kv, _ => 0);
         for (var s = 1; s <= 2503; s++)
         {
             foreach (var deer in reindeer)
@@ -50,14 +50,13 @@ public class Challenge14
         // Vixen can fly 8 km/s for 8 seconds, but then must rest for 53 seconds.
         var match = Pattern.Match(line);
 
-        var name = match.Groups[1].Value;
         var sps = int.Parse(match.Groups[2].Value);
         var sbr = int.Parse(match.Groups[3].Value);
         var rest = int.Parse(match.Groups[4].Value);
-        return new Reindeer(name, sps, sbr, rest);
+        return new Reindeer(sps, sbr, rest);
     }
 
-    private record Reindeer(string Name, int SpeedPerSecond, int SecondsBeforeRest, int Rest)
+    private record Reindeer(int SpeedPerSecond, int SecondsBeforeRest, int Rest)
     {
         public int DistanceTraveledAfter(int seconds)
         {

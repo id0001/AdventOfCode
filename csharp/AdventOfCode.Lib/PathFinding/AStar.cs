@@ -62,7 +62,7 @@ public class AStar<T> where T : notnull
         var current = end;
         do
         {
-            stack.Push(current!);
+            stack.Push(current);
         } while (previous.TryGetValue(current, out current));
 
         return stack;

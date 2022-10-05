@@ -12,37 +12,27 @@ public class InputReader : IInputReader
     {
         using var stream = File.OpenText(GetPath(challenge));
 
-        char[] buffer = new char[1024];
+        var buffer = new char[1024];
         while (!stream.EndOfStream)
         {
-            int readCount = await stream.ReadAsync(buffer, 0, buffer.Length);
-            for (int i = 0; i < readCount; i++)
-            {
+            var readCount = await stream.ReadAsync(buffer, 0, buffer.Length);
+            for (var i = 0; i < readCount; i++)
                 yield return buffer[i];
-            }
         }
     }
 
     public async IAsyncEnumerable<string> ReadLinesAsync(int challenge)
     {
         using var stream = File.OpenText(GetPath(challenge));
-
         while (!stream.EndOfStream)
-        {
-            string line = await stream.ReadLineAsync();
-            yield return line;
-        }
+            yield return (await stream.ReadLineAsync())!;
     }
 
     public async IAsyncEnumerable<T> ReadLinesAsync<T>(int challenge)
     {
         using var stream = File.OpenText(GetPath(challenge));
-
         while (!stream.EndOfStream)
-        {
-            string line = await stream.ReadLineAsync();
-            yield return (T)Convert.ChangeType(line, typeof(T));
-        }
+            yield return (T)Convert.ChangeType((await stream.ReadLineAsync())!, typeof(T));
     }
 
     public async IAsyncEnumerable<string> ReadLineAsync(int challenge, char separator)
@@ -53,8 +43,8 @@ public class InputReader : IInputReader
         StringBuilder sb = new StringBuilder();
         while (!stream.EndOfStream)
         {
-            int readCount = await stream.ReadAsync(buffer, 0, buffer.Length);
-            for (int i = 0; i < readCount; i++)
+            var readCount = await stream.ReadAsync(buffer, 0, buffer.Length);
+            for (var i = 0; i < readCount; i++)
             {
                 if (buffer[i] == separator)
                 {
@@ -75,13 +65,12 @@ public class InputReader : IInputReader
     {
         using var stream = File.OpenText(GetPath(challenge));
 
-        char[] buffer = new char[1024];
-        StringBuilder sb = new StringBuilder();
+        var buffer = new char[1024];
+        var sb = new StringBuilder();
         while (!stream.EndOfStream)
         {
-            int readCount = await stream.ReadAsync(buffer, 0, buffer.Length);
-
-            for (int i = 0; i < readCount; i++)
+            var readCount = await stream.ReadAsync(buffer, 0, buffer.Length);
+            for (var i = 0; i < readCount; i++)
             {
                 if (buffer[i] == separator)
                 {
@@ -104,19 +93,12 @@ public class InputReader : IInputReader
         using var stream = File.OpenText(GetPath(challenge));
 
         while (!stream.EndOfStream)
-        {
-            string line = await stream.ReadLineAsync();
-            lines.Add(line);
-        }
+            lines.Add((await stream.ReadLineAsync())!);
 
         var map = new char[lines.Count, lines[0].Length];
-        for (int y = 0; y < map.GetLength(0); y++)
-        {
-            for (int x = 0; x < map.GetLength(1); x++)
-            {
-                map[y, x] = lines[y][x];
-            }
-        }
+        for (var y = 0; y < map.GetLength(0); y++)
+        for (var x = 0; x < map.GetLength(1); x++)
+            map[y, x] = lines[y][x];
 
         return map;
     }
@@ -127,19 +109,12 @@ public class InputReader : IInputReader
         using var stream = File.OpenText(GetPath(challenge));
 
         while (!stream.EndOfStream)
-        {
-            string line = await stream.ReadLineAsync();
-            lines.Add(line);
-        }
+            lines.Add((await stream.ReadLineAsync())!);
 
         var map = new T[lines.Count, lines[0].Length];
-        for (int y = 0; y < map.GetLength(0); y++)
-        {
-            for (int x = 0; x < map.GetLength(1); x++)
-            {
-                map[y, x] = (T)Convert.ChangeType(lines[y][x].ToString(), typeof(T));
-            }
-        }
+        for (var y = 0; y < map.GetLength(0); y++)
+        for (var x = 0; x < map.GetLength(1); x++)
+            map[y, x] = (T)Convert.ChangeType(lines[y][x].ToString(), typeof(T));
 
         return map;
     }
@@ -149,12 +124,8 @@ public class InputReader : IInputReader
         using var reader = File.OpenText(GetPath(challenge));
 
         while (!reader.EndOfStream)
-        {
-            var line = await reader.ReadLineAsync();
-            if(line is not null)
-                yield return parser.Invoke(line);
-        }
+            yield return parser.Invoke((await reader.ReadLineAsync())!);
     }
 
-    private string GetPath(int challenge) => Path.Combine(BasePath, $"{challenge:D2}.txt");
+    private static string GetPath(int challenge) => Path.Combine(BasePath, $"{challenge:D2}.txt");
 }

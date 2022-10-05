@@ -20,7 +20,7 @@ public class CommandLineParser
 
     public void Parse(string[] args)
     {
-        var arguments = new Docopt().Apply(_usage, args, true, "1.0", true, false);
+        var arguments = new Docopt().Apply(_usage, args, true, "1.0", true);
         if (arguments is null)
             return;
         

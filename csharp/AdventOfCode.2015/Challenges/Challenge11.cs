@@ -9,7 +9,7 @@ public class Challenge11
     private const string OriginalInput = "hepxcrrq";
 
     [Part1]
-    public string? Part1()
+    public string Part1()
     {
         var input = OriginalInput;
         do
@@ -21,9 +21,9 @@ public class Challenge11
     }
     
     [Part2]
-    public string? Part2()
+    public string Part2()
     {
-        var input = Part1()!;
+        var input = Part1();
         do
         {
             input = Increase(input);

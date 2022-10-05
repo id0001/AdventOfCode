@@ -10,14 +10,14 @@ public class Challenge04
     private const string Input = "ckczppom";
 
     [Part1]
-    public string? Part1() => FindHashStartingWith("00000").ToString();
+    public string Part1() => FindHashStartingWith("00000").ToString();
 
     [Part2]
-    public string? Part2() => FindHashStartingWith("000000").ToString();
+    public string Part2() => FindHashStartingWith("000000").ToString();
 
     private static int FindHashStartingWith(string startsWith)
     {
-        for(int i = 0; ; i++)
+        for(var i = 0; ; i++)
         {
             using var md5 = MD5.Create();
             var input = Encoding.ASCII.GetBytes($"{Input}{i}");

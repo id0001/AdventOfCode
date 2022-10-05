@@ -36,5 +36,5 @@ public class Challenge02
 
     private static int TotalPaperNeeded(Cube cube) => cube.TotalSurfaceArea + cube.SmallestArea;
 
-    private static int TotalRibbonNeeded(Cube cube) => cube.SmallestPerimeter + (int)cube.Volume;
+    private static int TotalRibbonNeeded(Cube cube) => cube.SmallestPerimeter + cube.Volume;
 }

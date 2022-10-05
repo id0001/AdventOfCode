@@ -1,7 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft;
-
-namespace AdventOfCode.Lib;
+﻿namespace AdventOfCode.Lib;
 
 public static class EnumerableExtensions
 {

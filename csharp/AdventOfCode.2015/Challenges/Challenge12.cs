@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 
@@ -17,13 +15,13 @@ public class Challenge12
     }
 
     [Part1]
-    public async Task<string?> Part1Async()
+    public async Task<string> Part1Async()
     {
         var json = await _inputReader.ReadAllTextAsync(12);
         var doc = JsonDocument.Parse(json);
 
         var sum = 0;
-        var stack = new Stack<JsonElement>(new[] { doc.RootElement }!);
+        var stack = new Stack<JsonElement>(new[] { doc.RootElement });
         while (stack.Count > 0)
         {
             var current = stack.Pop();

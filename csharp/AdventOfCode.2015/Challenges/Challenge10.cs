@@ -9,7 +9,7 @@ public class Challenge10
     private const string OriginalInput = "1113222113";
 
     [Part1]
-    public string? Part1()
+    public string Part1()
     {
         var input = OriginalInput;
         for (var i = 0; i < 40; i++) 
@@ -19,7 +19,7 @@ public class Challenge10
     }
     
     [Part2]
-    public string? Part2()
+    public string Part2()
     {
         var input = OriginalInput;
         for (var i = 0; i < 50; i++) 

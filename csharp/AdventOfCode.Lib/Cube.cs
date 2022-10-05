@@ -37,7 +37,7 @@ public readonly struct Cube : IEquatable<Cube>
 
     public int Volume => Size.X * Size.Y * Size.Z;
 
-    public long LongVolume => (long)Size.X * (long)Size.Y * (long)Size.Z;
+    public long LongVolume => Size.X * Size.Y * Size.Z;
 
     public int SmallestArea => MathEx.Min(AreaFrontBack, AreaLeftRight, AreaTopBottom);
 
