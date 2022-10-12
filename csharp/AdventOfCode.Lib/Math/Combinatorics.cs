@@ -2,6 +2,9 @@
 
 namespace AdventOfCode.Lib.Math;
 
+/// <summary>
+/// Partly derived from MathNet: https://github.com/mathnet/mathnet-numerics/blob/master/src/Numerics/Combinatorics.cs
+/// </summary>
 public static class Combinatorics
 {
     public static double Variations(int n, int k)
