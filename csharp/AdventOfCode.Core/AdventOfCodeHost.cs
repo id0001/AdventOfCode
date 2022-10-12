@@ -30,9 +30,10 @@ public class AdventOfCodeHost : IHostedService
         
         _challengeTypeMap = ScanAssemblyForChallengeTypes();
         _commandLineParser.RunLatest += OnRunLatestAsync;
+        _commandLineParser.RunChallenge += OnRunChallengeAsync;
         _hostApplicationLifetime.ApplicationStarted.Register(OnApplicationStarted);
     }
-    
+
     public static IHost Create(string[] args, Action<SimpleInjectorAddOptions> configureServices)
     {
         var container = new Container();
@@ -101,9 +102,45 @@ public class AdventOfCodeHost : IHostedService
     private async void OnRunLatestAsync(object? sender, EventArgs e)
     {
         if (_challengeTypeMap.Count == 0)
+        {
+            Console.WriteLine("finished.");
+            _hostApplicationLifetime.StopApplication();
             return;
+        }
 
         var (day, type) = _challengeTypeMap.MaxBy(x => x.Key);
+        
+        var executor = new ChallengeExecutor(_container, type);
+        Console.WriteLine($"Day {day}:");
+
+        try
+        {
+            // Run part 1
+            await RunPart1(executor);
+
+            // Run part 2
+            await RunPart2(executor);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "help");
+        }
+
+        Console.WriteLine("finished.");
+        _hostApplicationLifetime.StopApplication();
+    }
+    
+    private async void OnRunChallengeAsync(object? sender, int day)
+    {
+        if (_challengeTypeMap.Count == 0)
+        {
+            Console.WriteLine("finished.");
+            _hostApplicationLifetime.StopApplication();
+            return;
+        }
+
+        if (!_challengeTypeMap.TryGetValue(day, out var type))
+            throw new InvalidOperationException($"Day not found: {day}");
         
         var executor = new ChallengeExecutor(_container, type);
         Console.WriteLine($"Day {day}:");

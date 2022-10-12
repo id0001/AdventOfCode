@@ -25,7 +25,7 @@ public class Challenge13
         var people = map.Select(x => x.Key.From).ToHashSet();
 
         var mostGained = 0;
-        foreach (var permutation in people.QuickPerm())
+        foreach (var permutation in people.Permutations())
         {
             var gained = 0;
             foreach (var (curr, next) in permutation.CurrentAndNext(true))
@@ -51,7 +51,7 @@ public class Challenge13
         people.Add("Me");
 
         var mostGained = 0;
-        foreach (var permutation in people.QuickPerm())
+        foreach (var permutation in people.Permutations())
         {
             var gained = 0;
             foreach (var (curr, next) in permutation.CurrentAndNext(true))

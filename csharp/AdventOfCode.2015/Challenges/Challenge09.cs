@@ -26,7 +26,7 @@ public class Challenge09
         }
 
         var cities = lookup.Keys.Select(ab => ab.Item1).Distinct().ToArray();
-        var min = cities.QuickPerm().Min(p => CalcDistance(lookup, p));
+        var min = cities.Permutations().Min(p => CalcDistance(lookup, p));
 
         return min.ToString();
     }
@@ -43,7 +43,7 @@ public class Challenge09
         }
 
         var cities = lookup.Keys.Select(ab => ab.Item1).Distinct().ToArray();
-        var max = cities.QuickPerm().Max(p => CalcDistance(lookup, p));
+        var max = cities.Permutations().Max(p => CalcDistance(lookup, p));
 
         return max.ToString();
     }

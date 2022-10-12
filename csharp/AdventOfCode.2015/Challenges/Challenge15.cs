@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
-using AdventOfCode.Lib;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2015.Challenges;
 
@@ -23,7 +23,7 @@ public class Challenge15
         var list = await _inputReader.ParseLinesAsync(15, ParseLine).ToListAsync();
 
         var score = 0;
-        foreach (var distribution in EnumerableEx.Partition(100, list.Count))
+        foreach (var distribution in Combinatorics.GenerateAllPartitions(100, list.Count))
         {
             var zip = list.Zip(distribution).ToList();
             var cap = Math.Max(0, zip.Sum(x => x.First.Capacity * x.Second));
@@ -42,7 +42,7 @@ public class Challenge15
         var list = await _inputReader.ParseLinesAsync(15, ParseLine).ToListAsync();
 
         var score = 0;
-        foreach (var distribution in EnumerableEx.Partition(100, list.Count))
+        foreach (var distribution in Combinatorics.GenerateAllPartitions(100, list.Count))
         {
             var zip = list.Zip(distribution).ToList();
             var cap = Math.Max(0, zip.Sum(x => x.First.Capacity * x.Second));
