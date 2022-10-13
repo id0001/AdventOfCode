@@ -8,9 +8,9 @@
             var b = GetValue(1);
             var dest = GetAddress(2);
 
-            memory.Write(dest, a + b);
+            _memory.Write(dest, a + b);
 
-            ip += 4;
+            _ip += 4;
         }
 
         private void Multiply()
@@ -19,38 +19,38 @@
             var b = GetValue(1);
             var dest = GetAddress(2);
 
-            memory.Write(dest, a * b);
+            _memory.Write(dest, a * b);
 
-            ip += 4;
+            _ip += 4;
         }
 
         private void Input()
         {
-            waitingForInput = false;
+            _waitingForInput = false;
 
             var dest = GetAddress(0);
             long input;
 
-            if (inputBuffer.Count == 0)
-                inputCallback?.Invoke();
+            if (_inputBuffer.IsEmpty)
+                _inputCallback?.Invoke();
 
-            if (!inputBuffer.TryDequeue(out input))
+            if (!_inputBuffer.TryDequeue(out input))
             {
-                waitingForInput = true;
+                _waitingForInput = true;
                 return;
             }
 
-            memory.Write(dest, input);
+            _memory.Write(dest, input);
 
-            ip += 2;
+            _ip += 2;
         }
 
         private void Output()
         {
             var value = GetValue(0);
-            outputCallback?.Invoke(value);
+            _outputCallback?.Invoke(value);
 
-            ip += 2;
+            _ip += 2;
         }
 
         private void JumpIfTrue()
@@ -58,7 +58,7 @@
             var a = GetValue(0);
             var b = GetValue(1);
 
-            ip = a != 0 ? b : ip + 3;
+            _ip = a != 0 ? b : _ip + 3;
 
         }
 
@@ -67,7 +67,7 @@
             var a = GetValue(0);
             var b = GetValue(1);
 
-            ip = a == 0 ? b : ip + 3;
+            _ip = a == 0 ? b : _ip + 3;
 
         }
 
@@ -77,9 +77,9 @@
             var b = GetValue(1);
             var dest = GetAddress(2);
 
-            memory.Write(dest, a < b ? 1 : 0);
+            _memory.Write(dest, a < b ? 1 : 0);
 
-            ip += 4;
+            _ip += 4;
         }
 
         private void Equals()
@@ -88,17 +88,17 @@
             var b = GetValue(1);
             var dest = GetAddress(2);
 
-            memory.Write(dest, a == b ? 1 : 0);
+            _memory.Write(dest, a == b ? 1 : 0);
 
-            ip += 4;
+            _ip += 4;
         }
 
         private void AjustRelativeBase()
         {
             var a = GetValue(0);
-            relativeBase += a;
+            _relativeBase += a;
 
-            ip += 2;
+            _ip += 2;
         }
     }
 }

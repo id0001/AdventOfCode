@@ -1,38 +1,31 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Extensions;
-using AdventOfCode.Lib.IO;
 using AdventOfCode2019.IntCode.Core;
-using System.Linq;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2019.Challenges
 {
     [Challenge(7)]
     public class Challenge07
     {
-        private readonly IInputReader inputReader;
-        private long[] program;
+        private readonly IInputReader _inputReader;
 
         public Challenge07(IInputReader inputReader)
         {
-            this.inputReader = inputReader;
-        }
-
-        [Setup]
-        public async Task SetupAsync()
-        {
-            program = await inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+            _inputReader = inputReader;
         }
 
         [Part1]
         public async Task<string> Part1Async()
         {
-            var perms = Enumerable.Range(0, 5).Permutations(0, 4);
+            var program = await _inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+            var perms = Combinatorics.GenerateAllPermutations(5);
 
-            int highest = int.MinValue;
+            var highest = int.MinValue;
             foreach (var permutation in perms)
             {
-                int signal = 0;
+                var signal = 0;
                 foreach (var phase in permutation)
                 {
                     var cpu = new Cpu();
@@ -51,16 +44,17 @@ namespace AdventOfCode2019.Challenges
         [Part2]
         public async Task<string> Part2Async()
         {
-            var perms = Enumerable.Range(5, 9).Permutations(0, 4);
+            var program = await _inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+            var perms = Enumerable.Range(5, 5).Permutations();
 
-            int highest = int.MinValue;
+            var highest = int.MinValue;
             foreach (var permutation in perms)
             {
-                var ampA = new Amp("A", program, permutation[0]);
-                var ampB = new Amp("B", program, permutation[1]);
-                var ampC = new Amp("C", program, permutation[2]);
-                var ampD = new Amp("D", program, permutation[3]);
-                var ampE = new Amp("E", program, permutation[4]);
+                var ampA = new Amp(program, permutation[0]);
+                var ampB = new Amp(program, permutation[1]);
+                var ampC = new Amp(program, permutation[2]);
+                var ampD = new Amp(program, permutation[3]);
+                var ampE = new Amp(program, permutation[4]);
 
                 ampA.PipeTo(ampB);
                 ampB.PipeTo(ampC);
@@ -70,7 +64,7 @@ namespace AdventOfCode2019.Challenges
 
                 await Task.WhenAll(ampA.RunAsync(0), ampB.RunAsync(), ampC.RunAsync(), ampD.RunAsync(), ampE.RunAsync());
 
-                int result = ampE.LastSignal;
+                var result = ampE.LastSignal;
                 
                 if (result > highest)
                     highest = result;
@@ -81,33 +75,29 @@ namespace AdventOfCode2019.Challenges
 
         private class Amp
         {
-            private Amp pipeTo;
+            private readonly Cpu _cpu;
+            private Amp? _pipeTo;
 
-            public Amp(string id, long[] input, int phase)
+            public Amp(long[] input, int phase)
             {
-                Id = id;
-                Cpu = new Cpu();
-                Cpu.SetProgram(input);
-                Cpu.WriteInput(phase);
+                _cpu = new Cpu();
+                _cpu.SetProgram(input);
+                _cpu.WriteInput(phase);
             }
-
-            public string Id { get; set; }
-
-            public Cpu Cpu { get; }
-
+            
             public int LastSignal { get; private set; }
 
-            public void PipeTo(Amp amp) => pipeTo = amp;
+            public void PipeTo(Amp amp) => _pipeTo = amp;
 
             public Task RunAsync(params long[] input)
             {
-                Cpu.RegisterOutput(o =>
+                _cpu.RegisterOutput(o =>
                 {
                     LastSignal = (int)o;
-                    pipeTo.Cpu.WriteInput(o);
+                    _pipeTo?._cpu.WriteInput(o);
                 });
 
-                return Cpu.StartAsync(input);
+                return _cpu.StartAsync(input);
             }
         }
     }

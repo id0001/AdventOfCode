@@ -1,33 +1,30 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2019.Challenges
 {
     [Challenge(24)]
     public class Challenge24
     {
-        private readonly IInputReader inputReader;
-        private char[] data;
+        private readonly IInputReader _inputReader;
+        private readonly char[] _data = new char[5 * 5];
 
         public Challenge24(IInputReader inputReader)
         {
-            this.inputReader = inputReader;
+            _inputReader = inputReader;
         }
 
         [Setup]
         public async Task SetupAsync()
         {
-            data = new char[5 * 5];
-            int i = 0;
-            await foreach (string line in inputReader.ReadLinesAsync(24))
+            var i = 0;
+            await foreach (var line in _inputReader.ReadLinesAsync(24))
             {
                 foreach (var c in line)
                 {
-                    data[i++] = c;
+                    _data[i++] = c;
                 }
             }
         }
@@ -35,29 +32,26 @@ namespace AdventOfCode2019.Challenges
         [Part1]
         public string Part1()
         {
-            char[][] automata = new char[2][];
-            automata[0] = data;
+            var automata = new char[2][];
+            automata[0] = _data;
             automata[1] = new char[5 * 5];
 
-            int current = 0; // current index
-            int next = 1; // next index
-            int gen = 0;
+            var current = 0; // current index
+            var next = 1; // next index
 
-            //PrintGrid(gen, automata[current]);
-
-            HashSet<string> history = new HashSet<string>();
-            string dataString = new string(automata[current]);
+            var history = new HashSet<string>();
+            var dataString = new string(automata[current]);
             while (!history.Contains(dataString))
             {
                 history.Add(dataString);
 
-                for (int y = 0; y < 5; y++)
+                for (var y = 0; y < 5; y++)
                 {
-                    for (int x = 0; x < 5; x++)
+                    for (var x = 0; x < 5; x++)
                     {
                         var p = new Point2(x, y); // current point
-                        int i = (y * 5) + x;
-                        int bugCount = 0;
+                        var i = (y * 5) + x;
+                        var bugCount = 0;
 
                         foreach (var neighbor in p.GetNeighbors())
                         {
@@ -67,32 +61,24 @@ namespace AdventOfCode2019.Challenges
                             if (!(neighbor.X == x ^ neighbor.Y == y))
                                 continue;
 
-                            int ni = (neighbor.Y * 5) + neighbor.X;
+                            var ni = (neighbor.Y * 5) + neighbor.X;
 
                             if (automata[current][ni] == '#')
                                 bugCount++;
                         }
 
-                        if (automata[current][i] == '#' && bugCount != 1)
+                        automata[next][i] = automata[current][i] switch
                         {
-                            automata[next][i] = '.';
-                        }
-                        else if (automata[current][i] == '.' && bugCount >= 1 && bugCount <= 2)
-                        {
-                            automata[next][i] = '#';
-                        }
-                        else
-                        {
-                            automata[next][i] = automata[current][i];
-                        }
+                            '#' when bugCount != 1 => '.',
+                            '.' when bugCount is >= 1 and <= 2 => '#',
+                            _ => automata[current][i]
+                        };
                     }
                 }
 
                 current = next;
-                next = MathEx.Mod(next + 1, 2);
+                next = Euclid.Modulus(next + 1, 2);
                 dataString = new string(automata[current]);
-                gen++;
-                //PrintGrid(gen, automata[current]);
             }
 
             return GetBiodiversity(automata[current]).ToString();
@@ -101,39 +87,39 @@ namespace AdventOfCode2019.Challenges
         [Part2]
         public string Part2()
         {
-            int totalGen = 200;
-            int upperBound = 1;
-            int lowerBound = -1;
+            const int totalGen = 200;
+            var upperBound = 1;
+            var lowerBound = -1;
 
-            IDictionary<int, char[]> current = new Dictionary<int, char[]>();
-            current.Add(0, data);
-            current.Add(-1, EmptyGrid());
-            current.Add(1, EmptyGrid());
-
-            string emptyGridString = new string(EmptyGrid());
-
-            //PrintGrid(0, current, current);
-
-            for (int gen = 0; gen < totalGen; gen++)
+            var current = new Dictionary<int, char[]>
             {
-                IDictionary<int, char[]> next = new Dictionary<int, char[]>();
+                { 0, _data },
+                { -1, EmptyGrid() },
+                { 1, EmptyGrid() }
+            };
 
-                for (int level = lowerBound; level <= upperBound; level++)
+            var emptyGridString = new string(EmptyGrid());
+
+            for (var gen = 0; gen < totalGen; gen++)
+            {
+                var next = new Dictionary<int, char[]>();
+
+                for (var level = lowerBound; level <= upperBound; level++)
                 {
                     if (!next.ContainsKey(level))
                         next.Add(level, EmptyGrid());
 
-                    for (int y = 0; y < 5; y++)
+                    for (var y = 0; y < 5; y++)
                     {
-                        for (int x = 0; x < 5; x++)
+                        for (var x = 0; x < 5; x++)
                         {
                             if (x == 2 && y == 2)
                                 continue;
 
-                            Point3 currentPoint = new Point3(x, y, level);
-                            int bugCount = 0;
+                            var currentPoint = new Point3(x, y, level);
+                            var bugCount = 0;
 
-                            foreach (var neighbor in GetAdjecent(currentPoint))
+                            foreach (var neighbor in GetAdjacent(currentPoint))
                             {
                                 if (!current.ContainsKey(neighbor.Z))
                                     current.Add(neighbor.Z, EmptyGrid());
@@ -142,18 +128,12 @@ namespace AdventOfCode2019.Challenges
                                     bugCount++;
                             }
 
-                            if (current[level][y * 5 + x] == '#' && bugCount != 1)
+                            next[level][y * 5 + x] = current[level][y * 5 + x] switch
                             {
-                                next[level][y * 5 + x] = '.';
-                            }
-                            else if (current[level][y * 5 + x] == '.' && bugCount >= 1 && bugCount <= 2)
-                            {
-                                next[level][y * 5 + x] = '#';
-                            }
-                            else
-                            {
-                                next[level][y * 5 + x] = current[level][y * 5 + x];
-                            }
+                                '#' when bugCount != 1 => '.',
+                                '.' when bugCount is >= 1 and <= 2 => '#',
+                                _ => current[level][y * 5 + x]
+                            };
                         }
                     }
                 }
@@ -174,20 +154,14 @@ namespace AdventOfCode2019.Challenges
                     upperBound--;
                 }
 
-                //PrintGrid(gen+1, current, next);
                 current = next;
             }
 
-            int bc = 0;
-            foreach (var kv in current)
-            {
-                bc += kv.Value.Count(x => x == '#');
-            }
-
+            var bc = current.Sum(kv => kv.Value.Count(x => x == '#'));
             return bc.ToString();
         }
 
-        private IEnumerable<Point3> GetAdjecent(Point3 p)
+        private static IEnumerable<Point3> GetAdjacent(Point3 p)
         {
             var p2 = new Point2(p.X, p.Y);
             foreach (var neighbor in p2.GetNeighbors())
@@ -216,22 +190,22 @@ namespace AdventOfCode2019.Challenges
                 {
                     if (p.X == 1)
                     {
-                        for (int y = 0; y < 5; y++)
+                        for (var y = 0; y < 5; y++)
                             yield return new Point3(0, y, p.Z + 1);
                     }
                     else if (p.X == 3)
                     {
-                        for (int y = 0; y < 5; y++)
+                        for (var y = 0; y < 5; y++)
                             yield return new Point3(4, y, p.Z + 1);
                     }
                     else if (p.Y == 1)
                     {
-                        for (int x = 0; x < 5; x++)
+                        for (var x = 0; x < 5; x++)
                             yield return new Point3(x, 0, p.Z + 1);
                     }
                     else if (p.Y == 3)
                     {
-                        for (int x = 0; x < 5; x++)
+                        for (var x = 0; x < 5; x++)
                             yield return new Point3(x, 4, p.Z + 1);
                     }
                 }
@@ -242,10 +216,10 @@ namespace AdventOfCode2019.Challenges
             }
         }
 
-        private int GetBiodiversity(char[] data)
+        private static int GetBiodiversity(IReadOnlyList<char> data)
         {
-            int diversity = 0;
-            for (int i = 0; i < data.Length; i++)
+            var diversity = 0;
+            for (var i = 0; i < data.Count; i++)
             {
                 if (data[i] == '#')
                     diversity += (int)Math.Pow(2, i);
@@ -254,76 +228,9 @@ namespace AdventOfCode2019.Challenges
             return diversity;
         }
 
-        private void PrintGrid(int gen, char[] data)
+        private static char[] EmptyGrid()
         {
-            Console.WriteLine($"Gen: {gen}");
-            for (int y = 0; y < 5; y++)
-            {
-                for (int x = 0; x < 5; x++)
-                {
-                    Console.Write(data[y * 5 + x]);
-                }
-
-                Console.WriteLine();
-            }
-
-            Console.WriteLine();
-            Console.WriteLine();
-        }
-
-        private void PrintGrid(int gen, IDictionary<int, char[]> current, IDictionary<int, char[]> next)
-        {
-            Console.WriteLine($"Gen: {gen}");
-            Console.WriteLine();
-
-            foreach(var kv in next.OrderBy(kv => kv.Key))
-            {
-                string s = $"L: {kv.Key}".PadRight(7);
-                Console.Write(s);
-            }
-
-            Console.WriteLine();
-
-            for(int y = 0; y < 5; y++)
-            {
-                foreach (var kv in next.OrderBy(kv => kv.Key))
-                {
-                    for(int x = 0; x <5; x++)
-                    {
-
-                        char nc = kv.Value[y * 5 + x];
-                        char cc = current[kv.Key][y * 5 + x];
-
-                        if(cc == '#' && nc == '.')
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                        }
-                        else if(cc == '.' && nc == '#')
-                        {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                        }
-                        else
-                        {
-                            Console.ResetColor();
-                        }
-
-                        Console.Write(kv.Value[y * 5 + x]);
-                    }
-
-                    Console.Write("  ");
-                }
-
-                Console.WriteLine();
-            }
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.ResetColor();
-        }
-
-        private char[] EmptyGrid()
-        {
-            char[] grid = new char[5 * 5];
+            var grid = new char[5 * 5];
             Array.Fill(grid, '.');
             return grid;
         }

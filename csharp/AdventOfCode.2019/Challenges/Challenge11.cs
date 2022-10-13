@@ -1,39 +1,32 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
 using AdventOfCode2019.IntCode.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2019.Challenges
 {
 	[Challenge(11)]
 	public class Challenge11
 	{
-		private readonly IInputReader inputReader;
-		private long[] program;
+		private readonly IInputReader _inputReader;
 
 		public Challenge11(IInputReader inputReader)
 		{
-			this.inputReader = inputReader;
-		}
-
-		[Setup]
-		public async Task SetupAsync()
-		{
-			program = await inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
+			_inputReader = inputReader;
 		}
 
 		[Part1]
 		public async Task<string> Part1Async()
 		{
+			var program = await _inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
+
 			var locationHistory = new Dictionary<Point2, long>();
 			var currentLocation = new Point2();
 			locationHistory.Add(currentLocation, 0);
-			int direction = 0;
-			int action = 0;
+			var direction = 0;
+			var action = 0;
 
 			var cpu = new Cpu();
 			cpu.SetProgram(program);
@@ -45,7 +38,7 @@ namespace AdventOfCode2019.Challenges
 						locationHistory[currentLocation] = o;
 						break;
 					case 1: // Change direction and move
-						direction = o == 0 ? MathEx.Mod(direction - 1, 4) : MathEx.Mod(direction + 1, 4);
+						direction = o == 0 ? Euclid.Modulus(direction - 1, 4) : Euclid.Modulus(direction + 1, 4);
 						currentLocation = NextLocation(currentLocation, direction);
 						break;
 					default:
@@ -69,11 +62,13 @@ namespace AdventOfCode2019.Challenges
 		[Part2]
 		public async Task<string> Part2Async()
 		{
+			var program = await _inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
+
 			var locationHistory = new Dictionary<Point2, long>();
 			var currentLocation = new Point2();
 			locationHistory.Add(currentLocation, 1);
-			int direction = 0;
-			int action = 0;
+			var direction = 0;
+			var action = 0;
 
 			var cpu = new Cpu();
 			cpu.SetProgram(program);
@@ -85,7 +80,7 @@ namespace AdventOfCode2019.Challenges
 						locationHistory[currentLocation] = o;
 						break;
 					case 1: // Change direction and move
-						direction = o == 0 ? MathEx.Mod(direction - 1, 4) : MathEx.Mod(direction + 1, 4);
+						direction = o == 0 ? Euclid.Modulus(direction - 1, 4) : Euclid.Modulus(direction + 1, 4);
 						currentLocation = NextLocation(currentLocation, direction);
 						break;
 					default:
@@ -108,7 +103,7 @@ namespace AdventOfCode2019.Challenges
 			return DrawHull(locationHistory);
 		}
 
-		private Point2 NextLocation(Point2 currentLocation, int direction)
+		private static Point2 NextLocation(Point2 currentLocation, int direction)
 		{
 			return currentLocation + direction switch
 			{
@@ -134,11 +129,11 @@ namespace AdventOfCode2019.Challenges
 
 			var sb = new StringBuilder();
 			sb.AppendLine();
-			for (int y = 0; y < rows; y++)
+			for (var y = 0; y < rows; y++)
 			{
-				for (int x = 0; x < cols; x++)
+				for (var x = 0; x < cols; x++)
 				{
-					if (locations.TryGetValue(new Point2(x + leftMost, y + topMost), out long pvalue))
+					if (locations.TryGetValue(new Point2(x + leftMost, y + topMost), out var pvalue))
 					{
 						sb.Append(pvalue == 1 ? '#' : '.');
 					}

@@ -1,37 +1,29 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using AdventOfCode2019.IntCode.Core;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AdventOfCode2019.IntCode.Core;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
 namespace AdventOfCode2019.Challenges
 {
 	[Challenge(13)]
 	public class Challenge13
 	{
-		private readonly IInputReader inputReader;
-		private long[] program;
+		private readonly IInputReader _inputReader;
 
 		public Challenge13(IInputReader inputReader)
 		{
-			this.inputReader = inputReader;
-		}
-
-		[Setup]
-		public async Task SetupAsync()
-		{
-			program = await inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
+			_inputReader = inputReader;
 		}
 
 		[Part1]
 		public async Task<string> Part1Async()
 		{
-			int[,] screenBuffer = new int[64, 64];
+			var program = await _inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
+			
+			var screenBuffer = new int[64, 64];
 			var outputBuffer = new Queue<int>();
 
-			int ballX = 0;
-			int paddleX = 0;
+			var ballX = 0;
+			var paddleX = 0;
 
 			var cpu = new Cpu();
 			cpu.SetProgram(program);
@@ -40,27 +32,30 @@ namespace AdventOfCode2019.Challenges
 			{
 				outputBuffer.Enqueue((int)o);
 
-				if (outputBuffer.Count == 3)
+				if (outputBuffer.Count != 3) return;
+				
+				var x = outputBuffer.Dequeue();
+				var y = outputBuffer.Dequeue();
+				var id = outputBuffer.Dequeue();
+
+				if (x == -1 && y == 0)
 				{
-					int x = outputBuffer.Dequeue();
-					int y = outputBuffer.Dequeue();
-					int id = outputBuffer.Dequeue();
+					// Draw score
+					screenBuffer[0, 0] = id;
+				}
+				else
+				{
+					// Draw tile
+					screenBuffer[y + 2, x] = id;
 
-					if (x == -1 && y == 0)
+					switch (id)
 					{
-						// Draw score
-						screenBuffer[0, 0] = id;
-					}
-					else
-					{
-						// Draw tile
-						screenBuffer[y + 2, x] = id;
-
-						if (id == 4)
+						case 4:
 							ballX = x;
-
-						if (id == 3)
+							break;
+						case 3:
 							paddleX = x;
+							break;
 					}
 				}
 			});
@@ -83,11 +78,13 @@ namespace AdventOfCode2019.Challenges
 		[Part2]
 		public async Task<string> Part2Async()
 		{
-			int[,] screenBuffer = new int[64, 64];
+			var program = await _inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
+
+			var screenBuffer = new int[64, 64];
 			var outputBuffer = new Queue<int>();
 
-			int ballX = 0;
-			int paddleX = 0;
+			var ballX = 0;
+			var paddleX = 0;
 
 			var cpu = new Cpu();
 			program[0] = 2;
@@ -97,27 +94,30 @@ namespace AdventOfCode2019.Challenges
 			{
 				outputBuffer.Enqueue((int)o);
 
-				if (outputBuffer.Count == 3)
+				if (outputBuffer.Count != 3) return;
+				
+				var x = outputBuffer.Dequeue();
+				var y = outputBuffer.Dequeue();
+				var id = outputBuffer.Dequeue();
+
+				if (x == -1 && y == 0)
 				{
-					int x = outputBuffer.Dequeue();
-					int y = outputBuffer.Dequeue();
-					int id = outputBuffer.Dequeue();
+					// Draw score
+					screenBuffer[0, 0] = id;
+				}
+				else
+				{
+					// Draw tile
+					screenBuffer[y + 2, x] = id;
 
-					if (x == -1 && y == 0)
+					switch (id)
 					{
-						// Draw score
-						screenBuffer[0, 0] = id;
-					}
-					else
-					{
-						// Draw tile
-						screenBuffer[y + 2, x] = id;
-
-						if (id == 4)
+						case 4:
 							ballX = x;
-
-						if (id == 3)
+							break;
+						case 3:
 							paddleX = x;
+							break;
 					}
 				}
 			});

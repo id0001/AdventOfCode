@@ -1,31 +1,24 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using AdventOfCode2019.IntCode.Core;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AdventOfCode2019.IntCode.Core;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
 namespace AdventOfCode2019.Challenges
 {
 	[Challenge(5)]
 	public class Challenge05
 	{
-		private readonly IInputReader inputReader;
-		private long[] program;
+		private readonly IInputReader _inputReader;
 
 		public Challenge05(IInputReader inputReader)
 		{
-			this.inputReader = inputReader;
-		}
-
-		[Setup]
-		public async Task SetupAsync()
-		{
-			program = await inputReader.ReadLineAsync<long>(5, ',').ToArrayAsync();
+			_inputReader = inputReader;
 		}
 
 		[Part1]
 		public async Task<string> Part1Async()
 		{
+			var program = await _inputReader.ReadLineAsync<long>(5, ',').ToArrayAsync();
+			
 			long result = -1;
 			var cpu = new Cpu();
 			cpu.RegisterOutput(o => result = o);
@@ -38,6 +31,8 @@ namespace AdventOfCode2019.Challenges
 		[Part2]
 		public async Task<string> Part2Async()
 		{
+			var program = await _inputReader.ReadLineAsync<long>(5, ',').ToArrayAsync();
+
 			long result = -1;
 			var cpu = new Cpu();
 			cpu.RegisterOutput(o => result = o);

@@ -1,30 +1,19 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using AdventOfCode.Lib.Pathfinding;
 using AdventOfCode2019.IntCode.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode2019.Challenges
 {
     [Challenge(15)]
     public class Challenge15
     {
-        private readonly IInputReader inputReader;
-        private long[] program;
+        private readonly IInputReader _inputReader;
 
         public Challenge15(IInputReader inputReader)
         {
-            this.inputReader = inputReader;
-        }
-
-        [Setup]
-        public async Task SetupAsync()
-        {
-            program = await inputReader.ReadLineAsync<long>(15, ',').ToArrayAsync();
-
+            _inputReader = inputReader;
         }
 
         [Part1]
@@ -33,13 +22,8 @@ namespace AdventOfCode2019.Challenges
             var space = await MapSpaceAsync();
             var target = space.Single(x => x.Value == 2).Key;
 
-            var dijkstra = new Dijkstra<Point2>(x => GetNeighbors(space, x));
-            if (dijkstra.TryPath(Point2.Zero, target, out DijkstraResult<Point2> result))
-            {
-                return result.Cost.ToString();
-            }
-
-            return "-1";
+            var astar = new AStar<Point2>(x => GetNeighbors(space, x), (_,_) => 1);
+            return astar.TryPath(Point2.Zero, p => p == target, out _, out var distance) ? distance.ToString() : "-1";
         }
 
         [Part2]
@@ -54,10 +38,10 @@ namespace AdventOfCode2019.Challenges
             fillMap.Add(target);
             space[target] = 3;
 
-            int minutes = 0;
+            var minutes = 0;
             while (fillMap.Any())
             {
-                bool filledASpace = false;
+                var filledASpace = false;
                 var points = fillMap.ToHashSet();
 
                 foreach (var point in points)
@@ -65,24 +49,20 @@ namespace AdventOfCode2019.Challenges
                     fillMap.Remove(point);
                     lockedMap.Add(point);
 
-                    for (int y = point.Y - 1; y <= point.Y + 1; y++)
+                    for (var y = point.Y - 1; y <= point.Y + 1; y++)
                     {
-                        for (int x = point.X - 1; x <= point.X + 1; x++)
+                        for (var x = point.X - 1; x <= point.X + 1; x++)
                         {
-                            if (x == point.X ^ y == point.Y)
-                            {
-                                Point2 neighbor = new Point2(x, y);
+                            if (!(x == point.X ^ y == point.Y)) continue;
+                            var neighbor = new Point2(x, y);
 
-                                if (!space.ContainsKey(neighbor) || space[neighbor] == 0)
-                                    continue;
+                            if (!space.ContainsKey(neighbor) || space[neighbor] == 0)
+                                continue;
 
-                                if (!points.Contains(neighbor) && !lockedMap.Contains(neighbor))
-                                {
-                                    fillMap.Add(neighbor);
-                                    space[neighbor] = 3;
-                                    filledASpace = true;
-                                }
-                            }
+                            if (points.Contains(neighbor) || lockedMap.Contains(neighbor)) continue;
+                            fillMap.Add(neighbor);
+                            space[neighbor] = 3;
+                            filledASpace = true;
                         }
                     }
                 }
@@ -94,21 +74,20 @@ namespace AdventOfCode2019.Challenges
             return minutes.ToString();
         }
 
-        private IEnumerable<(Point2, int)> GetNeighbors(IDictionary<Point2, int> visited, Point2 p)
+        private static IEnumerable<Point2> GetNeighbors(IDictionary<Point2, int> visited, Point2 p)
         {
-            foreach (var neighbor in p.GetNeighbors())
-            {
-                if (visited[neighbor] != 0)
-                    yield return (neighbor, 1);
-            }
+            return p.GetNeighbors().Where(neighbor => visited[neighbor] != 0);
         }
 
         private async Task<IDictionary<Point2, int>> MapSpaceAsync()
         {
+            var program = await _inputReader.ReadLineAsync<long>(15, ',').ToArrayAsync();
+
             var visited = new Dictionary<Point2, int>();
-            Point2 currentLocation = Point2.Zero;
-            Point2 nextLocation = Point2.Zero;
-            var dijkstra = new Dijkstra<Point2>(x => GetNeighbors(visited, x));
+            var currentLocation = Point2.Zero;
+            var nextLocation = Point2.Zero;
+            
+            var astar = new AStar<Point2>(x => GetNeighbors(visited, x), (_,_) => 1);
 
             visited.Add(currentLocation, 1);
 
@@ -154,10 +133,10 @@ namespace AdventOfCode2019.Challenges
                     nextLocation = nextMove.Target;
                     if (!NextTo(currentLocation, nextLocation))
                     {
-                        if (!dijkstra.TryPath(currentLocation, nextMove.Source, out DijkstraResult<Point2> result))
+                        if (!astar.TryPath(currentLocation, t => t == nextMove.Source, out var path, out _))
                             throw new InvalidOperationException();
 
-                        foreach (var p in result.Path)
+                        foreach (var p in path.Skip(1))
                             moves.Enqueue(p);
 
                         nextLocation = moves.Dequeue();
@@ -168,7 +147,7 @@ namespace AdventOfCode2019.Challenges
                     }
                 }
 
-                int dir = Direction(currentLocation, nextLocation);
+                var dir = Direction(currentLocation, nextLocation);
                 cpu.WriteInput(dir);
             });
 
@@ -192,23 +171,21 @@ namespace AdventOfCode2019.Challenges
 
         private static bool NextTo(Point2 a, Point2 b)
         {
-            int y = Math.Abs(a.Y - b.Y);
-            int x = Math.Abs(a.X - b.X);
+            var y = Math.Abs(a.Y - b.Y);
+            var x = Math.Abs(a.X - b.X);
             return (x == 1 && y == 0) || (x == 0 && y == 1);
         }
 
-        private static void ExpandDiscovery(Stack<Move> discovery, Dictionary<Point2, int> visited, Point2 source)
+        private static void ExpandDiscovery(Stack<Move> discovery, IReadOnlyDictionary<Point2, int> visited, Point2 source)
         {
-            Point2[] moves = new[] { new Point2(source.X, source.Y - 1), new Point2(source.X, source.Y + 1), new Point2(source.X - 1, source.Y), new Point2(source.X + 1, source.Y) };
+            var moves = new[] { new Point2(source.X, source.Y - 1), new Point2(source.X, source.Y + 1), new Point2(source.X - 1, source.Y), new Point2(source.X + 1, source.Y) };
 
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 if (!visited.ContainsKey(moves[i]))
                     discovery.Push(new Move(source, moves[i]));
             }
         }
-
-        private static IDictionary<Point2, bool> ConvertSpaceForPathFinding(IDictionary<Point2, int> visited) => visited.Select(x => new KeyValuePair<Point2, bool>(x.Key, x.Value != 0)).ToDictionary(kv => kv.Key, kv => kv.Value);
 
         private record Move(Point2 Source, Point2 Target);
     }

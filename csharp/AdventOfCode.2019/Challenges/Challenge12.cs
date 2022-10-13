@@ -1,35 +1,33 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Comparers;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2019.Challenges
 {
 	[Challenge(12)]
 	public class Challenge12
 	{
-		private readonly IInputReader inputReader;
-		private Point3 io;
-		private Point3 europe;
-		private Point3 ganymede;
-		private Point3 callisto;
+		private readonly IInputReader _inputReader;
+		private Point3 _io;
+		private Point3 _europe;
+		private Point3 _ganymede;
+		private Point3 _callisto;
 
 		public Challenge12(IInputReader inputReader)
 		{
-			this.inputReader = inputReader;
+			_inputReader = inputReader;
 		}
 
 		[Setup]
 		public async Task SetupAsync()
 		{
-			var lines = await inputReader.ReadLinesAsync(12).ToArrayAsync();
-			io = ConvertLineToVector(lines[0]);
-			europe = ConvertLineToVector(lines[1]);
-			ganymede = ConvertLineToVector(lines[2]);
-			callisto = ConvertLineToVector(lines[3]);
+			var lines = await _inputReader.ReadLinesAsync(12).ToArrayAsync();
+			_io = ConvertLineToVector(lines[0]);
+			_europe = ConvertLineToVector(lines[1]);
+			_ganymede = ConvertLineToVector(lines[2]);
+			_callisto = ConvertLineToVector(lines[3]);
 		}
 
 		[Part1]
@@ -37,17 +35,17 @@ namespace AdventOfCode2019.Challenges
 		{
 			var moons = new[]
 			{
-				new Moon(io),
-				new Moon(europe),
-				new Moon(ganymede),
-				new Moon(callisto)
+				new Moon(_io),
+				new Moon(_europe),
+				new Moon(_ganymede),
+				new Moon(_callisto)
 			};
 
-			for (int step = 0; step < 1000; step++)
+			for (var step = 0; step < 1000; step++)
 			{
-				for (int m1 = 0; m1 < 3; m1++)
+				for (var m1 = 0; m1 < 3; m1++)
 				{
-					for (int m2 = m1; m2 < 4; m2++)
+					for (var m2 = m1; m2 < 4; m2++)
 					{
 						Moon.ApplyGravity(moons[m1], moons[m2]);
 					}
@@ -65,22 +63,22 @@ namespace AdventOfCode2019.Challenges
 		{
 			var moons = new[]
 			{
-				new Moon(io),
-				new Moon(europe),
-				new Moon(ganymede),
-				new Moon(callisto)
+				new Moon(_io),
+				new Moon(_europe),
+				new Moon(_ganymede),
+				new Moon(_callisto)
 			};
 
-			int steps = 0;
-			int xCycle = 0;
-			int yCycle = 0;
-			int zCycle = 0;
+			var steps = 0;
+			var xCycle = 0;
+			var yCycle = 0;
+			var zCycle = 0;
 
 			do
 			{
-				for (int m1 = 0; m1 < 3; m1++)
+				for (var m1 = 0; m1 < 3; m1++)
 				{
-					for (int m2 = m1 + 1; m2 < 4; m2++)
+					for (var m2 = m1 + 1; m2 < 4; m2++)
 					{
 						Moon.ApplyGravity(moons[m1], moons[m2]);
 					}
@@ -106,12 +104,12 @@ namespace AdventOfCode2019.Challenges
 			while (xCycle == 0 || yCycle == 0 || zCycle == 0);
 
 			// Find the least common multiplier between xCycle, yCycle and zCycle.
-			long lcm = MathEx.Lcm(MathEx.Lcm(zCycle, xCycle), yCycle);
+			var lcm = Euclid.LeastCommonMultiple(zCycle, xCycle, yCycle);
 
 			return lcm.ToString();
 		}
 
-		private Point3 ConvertLineToVector(string line)
+		private static Point3 ConvertLineToVector(string line)
 		{
 			var pattern = new Regex(@"^<x=(-?\d+), y=(-?\d+), z=(-?\d+)>$");
 
@@ -119,9 +117,9 @@ namespace AdventOfCode2019.Challenges
 			if (!match.Success)
 				throw new InvalidOperationException("Unable to read line.");
 
-			int x = int.Parse(match.Groups[1].Value);
-			int y = int.Parse(match.Groups[2].Value);
-			int z = int.Parse(match.Groups[3].Value);
+			var x = int.Parse(match.Groups[1].Value);
+			var y = int.Parse(match.Groups[2].Value);
+			var z = int.Parse(match.Groups[3].Value);
 
 			return new Point3(x, y, z);
 		}
@@ -153,28 +151,49 @@ namespace AdventOfCode2019.Challenges
 
 			public static void ApplyGravity(Moon a, Moon b)
 			{
-				Point3 va = a.Velocity;
-				Point3 vb = b.Velocity;
+				var va = a.Velocity;
+				var vb = b.Velocity;
 
 				if (a.Position.X != b.Position.X)
 				{
-					(va.X, vb.X) = a.Position.X < b.Position.X
-						? (va.X + 1, vb.X - 1)
-						: (va.X - 1, vb.X + 1);
+					if (a.Position.X < b.Position.X)
+					{
+						va = va with { X = va.X + 1 };
+						vb = vb with { X = vb.X - 1 };
+					}
+					else
+					{
+						va = va with { X = va.X - 1 };
+						vb = vb with { X = vb.X + 1 };
+					}
 				}
 
 				if (a.Position.Y != b.Position.Y)
 				{
-					(va.Y, vb.Y) = a.Position.Y < b.Position.Y
-						? (va.Y + 1, vb.Y - 1)
-						: (va.Y - 1, vb.Y + 1);
+					if (a.Position.Y < b.Position.Y)
+					{
+						va = va with { Y = va.Y + 1 };
+						vb = vb with { Y = vb.Y - 1 };
+					}
+					else
+					{
+						va = va with { Y = va.Y - 1 };
+						vb = vb with { Y = vb.Y + 1 };
+					}
 				}
 
 				if (a.Position.Z != b.Position.Z)
 				{
-					(va.Z, vb.Z) = a.Position.Z < b.Position.Z
-						? (va.Z + 1, vb.Z - 1)
-						: (va.Z - 1, vb.Z + 1);
+					if (a.Position.Z < b.Position.Z)
+					{
+						va = va with { Z = va.Z + 1 };
+						vb = vb with { Z = vb.Z - 1 };
+					}
+					else
+					{
+						va = va with { Z = va.Z - 1 };
+						vb = vb with { Z = vb.Z + 1 };
+					}
 				}
 
 				a.Velocity = va;

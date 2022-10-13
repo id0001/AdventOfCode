@@ -1,6 +1,4 @@
-﻿using AdventOfCode.Lib.Math;
-
-namespace AdventOfCode.Lib;
+﻿namespace AdventOfCode.Lib;
 
 public readonly struct Cube : IEquatable<Cube>
 {
@@ -9,9 +7,9 @@ public readonly struct Cube : IEquatable<Cube>
 
     public Cube(int width, int height, int depth) => Size = new Point3(width, height, depth);
 
-    public Point3 Position { get; } = Point3.Empty;
+    public Point3 Position { get; } = Point3.Zero;
 
-    public Point3 Size { get; } = Point3.Empty;
+    public Point3 Size { get; } = Point3.Zero;
 
     public static Cube Empty { get; } = new();
 
@@ -33,13 +31,13 @@ public readonly struct Cube : IEquatable<Cube>
 
     public int AreaTopBottom => Size.X * Size.Z;
 
-    public bool IsEmpty => Size == Point3.Empty;
+    public bool IsEmpty => Size == Point3.Zero;
 
     public int Volume => Size.X * Size.Y * Size.Z;
 
     public long LongVolume => Size.X * Size.Y * Size.Z;
 
-    public int SmallestArea => MathEx.Min(AreaFrontBack, AreaLeftRight, AreaTopBottom);
+    public int SmallestArea => new[] {AreaFrontBack, AreaLeftRight, AreaTopBottom}.Min();
 
     public int SmallestPerimeter
     {

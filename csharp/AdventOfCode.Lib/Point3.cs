@@ -20,7 +20,7 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
 
     public int Dimensions => 3;
 
-    public static Point3 Empty { get; } = new();
+    public static Point3 Zero { get; } = new();
 
     public IEnumerable<Point3> GetNeighbors(bool includeDiagonal = false)
     {
@@ -37,6 +37,12 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
             yield return new Point3(X + x, Y + y, Z + z);
         }
     }
+
+    public Point2 ToPoint2() => new(X, Y);
+    
+    public static Point3 Subtract(Point3 left, Point3 right) => new(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+
+    public static Point3 Add(Point3 left, Point3 right) => new(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 
     public void Deconstruct(out int x, out int y, out int z) => (x, y, z) = (X, Y, Z);
 
@@ -64,4 +70,8 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
     public static bool operator ==(Point3 left, Point3 right) => left.Equals(right);
 
     public static bool operator !=(Point3 left, Point3 right) => !(left == right);
+    
+    public static Point3 operator +(Point3 left, Point3 right) => Add(left, right);
+    
+    public static Point3 operator -(Point3 left, Point3 right) => Subtract(left, right);
 }

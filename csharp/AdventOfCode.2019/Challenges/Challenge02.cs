@@ -1,31 +1,23 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using AdventOfCode2019.IntCode.Core;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AdventOfCode2019.IntCode.Core;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
 namespace AdventOfCode2019.Challenges
 {
 	[Challenge(2)]
 	public class Challenge02
 	{
-		private readonly IInputReader inputReader;
-		private long[] program;
+		private readonly IInputReader _inputReader;
 
 		public Challenge02(IInputReader inputReader)
 		{
-			this.inputReader = inputReader;
-		}
-
-		[Setup]
-		public async Task SetupAsync()
-		{
-			program = await inputReader.ReadLineAsync<long>(2, ',').ToArrayAsync();
+			_inputReader = inputReader;
 		}
 
 		[Part1]
 		public async Task<string> Part1Async()
 		{
+			var program = await _inputReader.ReadLineAsync<long>(2, ',').ToArrayAsync();
 			program[1] = 12;
 			program[2] = 2;
 
@@ -37,16 +29,18 @@ namespace AdventOfCode2019.Challenges
 		[Part2]
 		public async Task<string> Part2Async()
 		{
-			for (int noun = 0; noun < 100; noun++)
+			var program = await _inputReader.ReadLineAsync<long>(2, ',').ToArrayAsync();
+
+			for (var noun = 0; noun < 100; noun++)
 			{
-				for (int verb = 0; verb < 100; verb++)
+				for (var verb = 0; verb < 100; verb++)
 				{
 					program[1] = noun;
 					program[2] = verb;
 
 					var cpu = new Cpu();
 					cpu.SetProgram(program);
-					int result = (int)await cpu.StartAsync();
+					var result = (int)await cpu.StartAsync();
 					if (result == 19690720)
 						return (100 * noun + verb).ToString();
 				}

@@ -17,7 +17,7 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
 
     public int Dimensions => 2;
 
-    public static Point2 Empty { get; } = new();
+    public static Point2 Zero { get; } = new();
 
     public IEnumerable<Point2> GetNeighbors(bool includeDiagonal = false)
     {
@@ -61,9 +61,22 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
 
     public static Point2 Subtract(Point2 left, Point2 right) => new(left.X - right.X, left.Y - right.Y);
 
+    public static Point2 Add(Point2 left, Point2 right) => new(left.X + right.X, left.Y + right.Y);
+
+    public static int DistanceSquared(Point2 left, Point2 right)
+    {
+        var dy = right.Y - left.Y;
+        var dx = right.X - left.X;
+        return (dx * dx) + (dy * dy);
+    }
+
     public static bool operator ==(Point2 left, Point2 right) => left.Equals(right);
 
     public static bool operator !=(Point2 left, Point2 right) => !(left == right);
 
+    public static Point2 operator +(Point2 left, Point2 right) => Add(left, right);
+    
     public static Point2 operator -(Point2 left, Point2 right) => Subtract(left, right);
+
+    public static implicit operator Vector2(Point2 value) => new Vector2(value.X, value.Y);
 }

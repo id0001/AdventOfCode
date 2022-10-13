@@ -1,9 +1,5 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
+using AdventOfCode.Core;
 
 namespace AdventOfCode2019.Challenges
 {
@@ -15,11 +11,11 @@ namespace AdventOfCode2019.Challenges
 		[Part1]
 		public string Part1()
 		{
-			int min = 153517;
-			int max = 630395;
+			const int min = 153517;
+			const int max = 630395;
 
-			List<int> matches = new List<int>();
-			for(int pwd = min; pwd < max; pwd++)
+			var matches = new List<int>();
+			for(var pwd = min; pwd < max; pwd++)
 			{
 				if (MatchAdjacent(pwd.ToString()) && MatchNeverDecrease(pwd.ToString()))
 				{
@@ -33,11 +29,11 @@ namespace AdventOfCode2019.Challenges
 		[Part2]
 		public string Part2()
 		{
-			int min = 153517;
-			int max = 630395;
+			const int min = 153517;
+			const int max = 630395;
 
-			List<int> matches = new List<int>();
-			for (int pwd = min; pwd < max; pwd++)
+			var matches = new List<int>();
+			for (var pwd = min; pwd < max; pwd++)
 			{
 				if (MatchAdjacent2(pwd.ToString()) && MatchNeverDecrease(pwd.ToString()))
 				{
@@ -49,18 +45,15 @@ namespace AdventOfCode2019.Challenges
 		}
 
 		// Two adjacent digits are the same (like 22 in 122345).
-		private bool MatchAdjacent(string input)
-		{
-			return Regex.IsMatch(input, RepeatingRule);
-		}
+		private static bool MatchAdjacent(string input) => Regex.IsMatch(input, RepeatingRule);
 
 		// Two adjacent digits are the same but not 3 (like 22 in 122345).
-		private bool MatchAdjacent2(string input)
+		private static bool MatchAdjacent2(string input)
 		{
-			int[] digits = input.Select(i => int.Parse(i.ToString())).ToArray();
+			var digits = input.Select(i => int.Parse(i.ToString())).ToArray();
 
-			int last = digits[0];
-			for (int i = 1; i < digits.Length; i++)
+			var last = digits[0];
+			for (var i = 1; i < digits.Length; i++)
 			{
 				if (digits[i] == last)
 				{
@@ -69,7 +62,7 @@ namespace AdventOfCode2019.Challenges
 						if (digits[i + 1] != last)
 							return true;
 					}
-					else if (i + 1 == digits.Length) /// back
+					else if (i + 1 == digits.Length) // back
 					{
 						if (digits[i - 2] != last)
 							return true;
@@ -88,15 +81,14 @@ namespace AdventOfCode2019.Challenges
 		}
 
 		// Going from left to right, the digits never decrease; they only ever increase or stay the same (like 111123 or 135679).
-		private bool MatchNeverDecrease(string input)
+		private static bool MatchNeverDecrease(string input)
 		{
-			int[] digits = input.Select(i => int.Parse(i.ToString())).ToArray();
+			var digits = input.Select(i => int.Parse(i.ToString())).ToArray();
 
-			int a = digits[0];
-			int b = digits[1];
-			for (int i = 1; i < digits.Length; i++)
+			var a = digits[0];
+			for (var i = 1; i < digits.Length; i++)
 			{
-				b = digits[i];
+				var b = digits[i];
 				if (b < a) return false;
 				a = b;
 			}

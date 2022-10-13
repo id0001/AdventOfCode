@@ -21,16 +21,17 @@ public class AdventOfCodeHost : IHostedService
         ILogger<AdventOfCodeHost> logger,
         IHostApplicationLifetime hostApplicationLifetime,
         CommandLineParser commandLineParser
-        )
+    )
     {
         _container = container;
         _logger = logger;
         _hostApplicationLifetime = hostApplicationLifetime;
         _commandLineParser = commandLineParser;
-        
+
         _challengeTypeMap = ScanAssemblyForChallengeTypes();
         _commandLineParser.RunLatest += OnRunLatestAsync;
         _commandLineParser.RunChallenge += OnRunChallengeAsync;
+        _commandLineParser.RunAll += OnRunAllAsync;
         _hostApplicationLifetime.ApplicationStarted.Register(OnApplicationStarted);
     }
 
@@ -45,9 +46,9 @@ public class AdventOfCodeHost : IHostedService
                 {
                     options.AddHostedService<AdventOfCodeHost>();
                     options.AddLogging();
-                    
+
                     options.Container.RegisterSingleton<CommandLineParser>();
-                    
+
                     // Add challenges.
                     var challenges = ScanAssemblyForChallengeTypes();
                     foreach (var type in challenges.Values)
@@ -61,7 +62,7 @@ public class AdventOfCodeHost : IHostedService
             .Build()
             .UseSimpleInjector(container);
     }
-    
+
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Application has started");
@@ -73,7 +74,7 @@ public class AdventOfCodeHost : IHostedService
         _logger.LogInformation("Application is stopping");
         return Task.CompletedTask;
     }
-    
+
     private void OnApplicationStarted()
     {
         try
@@ -98,7 +99,7 @@ public class AdventOfCodeHost : IHostedService
             _hostApplicationLifetime.StopApplication();
         }
     }
-    
+
     private async void OnRunLatestAsync(object? sender, EventArgs e)
     {
         if (_challengeTypeMap.Count == 0)
@@ -109,7 +110,7 @@ public class AdventOfCodeHost : IHostedService
         }
 
         var (day, type) = _challengeTypeMap.MaxBy(x => x.Key);
-        
+
         var executor = new ChallengeExecutor(_container, type);
         Console.WriteLine($"Day {day}:");
 
@@ -129,7 +130,7 @@ public class AdventOfCodeHost : IHostedService
         Console.WriteLine("finished.");
         _hostApplicationLifetime.StopApplication();
     }
-    
+
     private async void OnRunChallengeAsync(object? sender, int day)
     {
         if (_challengeTypeMap.Count == 0)
@@ -141,7 +142,7 @@ public class AdventOfCodeHost : IHostedService
 
         if (!_challengeTypeMap.TryGetValue(day, out var type))
             throw new InvalidOperationException($"Day not found: {day}");
-        
+
         var executor = new ChallengeExecutor(_container, type);
         Console.WriteLine($"Day {day}:");
 
@@ -161,7 +162,39 @@ public class AdventOfCodeHost : IHostedService
         Console.WriteLine("finished.");
         _hostApplicationLifetime.StopApplication();
     }
-    
+
+    private async void OnRunAllAsync(object? sender, EventArgs e)
+    {
+        if (_challengeTypeMap.Count == 0)
+        {
+            Console.WriteLine("finished.");
+            _hostApplicationLifetime.StopApplication();
+            return;
+        }
+
+        try
+        {
+            foreach (var (day, type) in _challengeTypeMap.OrderBy(kv => kv.Key).Select(kv => (kv.Key, kv.Value)))
+            {
+                var executor = new ChallengeExecutor(_container, type);
+                Console.WriteLine($"Day {day}:");
+
+                // Run part 1
+                await RunPart1(executor);
+
+                // Run part 2
+                await RunPart2(executor);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "help");
+        }
+
+        Console.WriteLine("finished.");
+        _hostApplicationLifetime.StopApplication();
+    }
+
     private static async Task RunPart2(ChallengeExecutor executor)
     {
         var result = await executor.ExecutePart2Async();
@@ -175,7 +208,7 @@ public class AdventOfCodeHost : IHostedService
         if (!result.IsEmpty)
             Console.WriteLine($"- Part 1 ({result.Duration.TotalMilliseconds:F6}ms): {result.Result}");
     }
-    
+
     private static Dictionary<int, Type> ScanAssemblyForChallengeTypes()
     {
         var challengeTypeMap = (from a in AppDomain.CurrentDomain.GetAssemblies()

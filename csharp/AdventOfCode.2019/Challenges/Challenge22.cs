@@ -1,42 +1,39 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Threading.Tasks;
+﻿using System.Numerics;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2019.Challenges
 {
     [Challenge(22)]
     public class Challenge22
     {
-        private readonly IInputReader inputReader;
-        private List<ShuffleType> shuffleList;
+        private readonly IInputReader _inputReader;
+        private readonly List<ShuffleType> _shuffleList = new();
 
         public Challenge22(IInputReader inputReader)
         {
-            this.inputReader = inputReader;
+            _inputReader = inputReader;
         }
 
         [Setup]
         public async Task SetupAsync()
         {
-            shuffleList = new List<ShuffleType>();
-            await foreach (string line in inputReader.ReadLinesAsync(22))
+            await foreach (var line in _inputReader.ReadLinesAsync(22))
             {
                 if (line == "deal into new stack")
                 {
-                    shuffleList.Add(new ShuffleType(0, 0));
+                    _shuffleList.Add(new ShuffleType(0, 0));
                 }
                 else if (line.StartsWith("cut"))
                 {
-                    int num = int.Parse(line.Substring(4));
-                    shuffleList.Add(new ShuffleType(1, num));
+                    var num = int.Parse(line.Substring(4));
+                    _shuffleList.Add(new ShuffleType(1, num));
                 }
                 else if (line.StartsWith("deal with increment"))
                 {
-                    int num = int.Parse(line.Substring(20));
-                    shuffleList.Add(new ShuffleType(2, num));
+                    var num = int.Parse(line.Substring(20));
+                    _shuffleList.Add(new ShuffleType(2, num));
                 }
             }
         }
@@ -44,9 +41,9 @@ namespace AdventOfCode2019.Challenges
         [Part1]
         public string Part1()
         {
-            int position = 2019;
+            var position = 2019;
 
-            foreach (var action in shuffleList)
+            foreach (var action in _shuffleList)
             {
                 position = action.Type switch
                 {
@@ -69,9 +66,9 @@ namespace AdventOfCode2019.Challenges
 
             // Combine all the shuffle operations into 1 formula.
             BigInteger a = BigInteger.One, b = BigInteger.Zero;
-            foreach (var action in shuffleList)
+            foreach (var action in _shuffleList)
             {
-                BigInteger la = BigInteger.Zero, lb = BigInteger.Zero;
+                BigInteger la, lb;
                 switch (action.Type)
                 {
                     case 0:
@@ -87,8 +84,8 @@ namespace AdventOfCode2019.Challenges
                         throw new NotImplementedException();
                 }
 
-                a = MathEx.Mod(la * a, deckSize);
-                b = MathEx.Mod(la * b + lb, deckSize);
+                a = Euclid.Modulus(la * a, deckSize);
+                b = Euclid.Modulus(la * b + lb, deckSize);
             }
 
             // This operation now needs to be applied M times.
@@ -101,18 +98,18 @@ namespace AdventOfCode2019.Challenges
             // b => (a**(M-1)b)+(a**(M-2)b)+...+(a**(M-M)b) => b * ((a**(M-1))+(a**(M-2))+...+(a**(M-M))) => ((b * ((a**M)-1)) / (a-1)) % N
 
             var ma = BigInteger.ModPow(a, times, deckSize); // ma = (a**M) % N
-            var mb = MathEx.Mod(b * (ma - 1) * MathEx.ModInverse(a - 1, deckSize), deckSize); // mb = ((b * ((a**M)-1)) / (a-1)) % N
+            var mb = Euclid.Modulus(b * (ma - 1) * Euclid.ModInverse(a - 1, deckSize), deckSize); // mb = ((b * ((a**M)-1)) / (a-1)) % N
 
-            var r = MathEx.Mod((target - mb) * MathEx.ModInverse(ma, deckSize), deckSize); // (x-b)/a % N
+            var r = Euclid.Modulus((target - mb) * Euclid.ModInverse(ma, deckSize), deckSize); // (x-b)/a % N
 
             return r.ToString();
         }
 
-        private static int PositionAfterReverse(int deckSize, int position) => MathEx.Mod(-position - 1, deckSize);
+        private static int PositionAfterReverse(int deckSize, int position) => Euclid.Modulus(-position - 1, deckSize);
 
-        private static int PositionAfterCut(int deckSize, int position, int n) => MathEx.Mod(position - n, deckSize);
+        private static int PositionAfterCut(int deckSize, int position, int n) => Euclid.Modulus(position - n, deckSize);
 
-        private static int PositionAfterIncrement(int deckSize, int position, int n) => MathEx.Mod(position * n, deckSize);
+        private static int PositionAfterIncrement(int deckSize, int position, int n) => Euclid.Modulus(position * n, deckSize);
 
         private record ShuffleType(int Type, int Number);
 
