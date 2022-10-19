@@ -19,6 +19,8 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
 
     public static Point2 Zero { get; } = new();
 
+    IEnumerable<IPoint> IPoint.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint>();
+
     public IEnumerable<Point2> GetNeighbors(bool includeDiagonal = false)
     {
         for (var y = -1; y <= 1; y++)
@@ -26,10 +28,10 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
         {
             if (!includeDiagonal && !((x == 0) ^ (y == 0)))
                 continue;
-
+    
             if (x == 0 && y == 0)
                 continue;
-
+    
             yield return new Point2(X + x, Y + y);
         }
     }
@@ -63,11 +65,35 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
 
     public static Point2 Add(Point2 left, Point2 right) => new(left.X + right.X, left.Y + right.Y);
 
+    public static Point2 Multiply(Point2 point, int multiplier) => new(point.X * multiplier, point.Y * multiplier);
+    
+    public static Point2 Multiply(Point2 left, Point2 right) => new(left.X * right.X, left.Y * right.Y);
+
     public static int DistanceSquared(Point2 left, Point2 right)
     {
         var dy = right.Y - left.Y;
         var dx = right.X - left.X;
-        return (dx * dx) + (dy * dy);
+        return dx * dx + dy * dy;
+    }
+
+    public static double Distance(Point2 left, Point2 right) => System.Math.Sqrt(DistanceSquared(left, right));
+    
+    /// <summary>
+    /// Rotates a point around a pivot on a circle by the amount defined by angle
+    /// </summary>
+    /// <param name="point">The point to move</param>
+    /// <param name="pivot">The pivot to rotate around</param>
+    /// <param name="angle">The angle in radians to rotate by</param>
+    /// <returns>The new rotated point</returns>
+    public static Point2 Turn(Point2 point, Point2 pivot, double angle)
+    {
+        var sin = System.Math.Sin(angle);
+        var cos = System.Math.Cos(angle);
+        var (dx, dy) = point - pivot;
+
+        var x = pivot.X + (int)System.Math.Round(cos * dx - sin * dy);
+        var y = pivot.Y + (int)System.Math.Round(sin * dx + cos * dy);
+        return new Point2(x, y);
     }
 
     public static bool operator ==(Point2 left, Point2 right) => left.Equals(right);
@@ -77,6 +103,10 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
     public static Point2 operator +(Point2 left, Point2 right) => Add(left, right);
     
     public static Point2 operator -(Point2 left, Point2 right) => Subtract(left, right);
+
+    public static Point2 operator *(Point2 left, int multiplier) => Multiply(left, multiplier);
+    
+    public static Point2 operator *(Point2 left, Point2 right) => Multiply(left, right);
 
     public static implicit operator Vector2(Point2 value) => new Vector2(value.X, value.Y);
 }

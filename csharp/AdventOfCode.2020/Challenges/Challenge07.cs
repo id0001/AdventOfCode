@@ -1,109 +1,81 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Graphs;
-using AdventOfCode.Lib.IO;
-using System.Collections.Generic;
+﻿using AdventOfCode.Lib.Graphs;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2020.Challenges
+namespace AdventOfCode2020.Challenges;
+
+[Challenge(7)]
+public class Challenge07
 {
-	[Challenge(7)]
-	public class Challenge07
-	{
-		private readonly IInputReader inputReader;
-		private BidirectionalGraph<string, WeightedEdge> bagGraph;
+    private readonly IInputReader _inputReader;
+    private readonly DirectedGraph<string, int> _bagGraph = new();
 
-		public Challenge07(IInputReader inputReader)
-		{
-			this.inputReader = inputReader;
-		}
+    public Challenge07(IInputReader inputReader)
+    {
+        _inputReader = inputReader;
+    }
 
-		[Setup]
-		public async Task SetupAsync()
-		{
-			bagGraph = new BidirectionalGraph<string, WeightedEdge>();
+    [Setup]
+    public async Task SetupAsync()
+    {
+        await foreach (var line in _inputReader.ReadLinesAsync(7))
+        {
+            var split = line.Split("contain");
+            var m = Regex.Match(split[0].Trim(), @"([a-z]+ [a-z]+) bags");
 
-			await foreach (string line in inputReader.ReadLinesAsync(7))
-			{
-				Match m;
-				string[] split = line.Split("contain");
-				m = Regex.Match(split[0].Trim(), @"([a-z]+ [a-z]+) bags");
+            var parentBag = m.Groups[1].Value;
+            _bagGraph.AddVertex(parentBag);
 
-				string parentBag = m.Groups[1].Value;
-				bagGraph.AddVertex(parentBag);
+            var contents = split[1].Split(",");
+            foreach (var content in contents)
+            {
+                m = Regex.Match(content, @"(\d+) ([a-z]+ [a-z]+) bags?");
+                if (!m.Success) continue;
 
-				string[] contents = split[1].Split(",");
-				foreach (var content in contents)
-				{
-					m = Regex.Match(content, @"(\d+) ([a-z]+ [a-z]+) bags?");
-					if (m.Success)
-					{
-						int amount = int.Parse(m.Groups[1].Value);
-						string childBag = m.Groups[2].Value;
+                var amount = int.Parse(m.Groups[1].Value);
+                var childBag = m.Groups[2].Value;
 
-						bagGraph.AddVertex(childBag);
-						bagGraph.AddEdge(new WeightedEdge(parentBag, childBag, amount));
-					}
-				}
-			}
-		}
+                _bagGraph.AddVertex(childBag);
+                _bagGraph.AddEdge(parentBag, childBag, amount);
+            }
+        }
+    }
 
-		[Part1]
-		public string Part1()
-		{
-			int count = 0;
-			ISet<string> closedSet = new HashSet<string>();
-			Stack<WeightedEdge> openSet = new Stack<WeightedEdge>(bagGraph.InEdges("shiny gold"));
+    [Part1]
+    public string Part1()
+    {
+        var count = 0;
+        var closedSet = new HashSet<string>();
+        var openSet = new Stack<string>(_bagGraph.InEdges("shiny gold").Keys);
 
-			while (openSet.Count > 0)
-			{
-				WeightedEdge edge = openSet.Pop();
+        while (openSet.Count > 0)
+        {
+            var source = openSet.Pop();
 
-				if (!closedSet.Contains(edge.Source))
-				{
-					closedSet.Add(edge.Source);
-					count++;
+            if (closedSet.Contains(source)) continue;
 
-					foreach (var child in bagGraph.InEdges(edge.Source))
-					{
-						if (!closedSet.Contains(child.Source))
-							openSet.Push(child);
-					}
-				}
-			}
+            closedSet.Add(source);
+            count++;
 
-			return count.ToString();
-		}
+            foreach (var target in _bagGraph.InEdges(source).Keys)
+                if (!closedSet.Contains(target))
+                    openSet.Push(target);
+        }
 
-		[Part2]
-		public string Part2()
-		{
-			int count = CountBags("shiny gold");
-			return count.ToString();
-		}
+        return count.ToString();
+    }
 
-		private int CountBags(string vertex)
-		{
-			int count = 0;
+    [Part2]
+    public string Part2()
+    {
+        var count = CountBags("shiny gold");
+        return count.ToString();
+    }
 
-			var outEdges = bagGraph.OutEdges(vertex);
-			foreach(var edge in outEdges)
-			{
-				count += edge.Amount + (edge.Amount * CountBags(edge.Target));
-			}
-
-			return count;
-		}
-
-		private class WeightedEdge : Edge<string>
-		{
-			public WeightedEdge(string source, string target, int amount)
-				: base(source, target)
-			{
-				Amount = amount;
-			}
-
-			public int Amount { get; }
-		}
-	}
+    private int CountBags(string vertex)
+    {
+        var outEdges = _bagGraph.OutEdges(vertex);
+        return outEdges.Sum(edge => edge.Value + edge.Value * CountBags(edge.Key));
+    }
 }

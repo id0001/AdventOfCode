@@ -1,127 +1,116 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2020.Challenges
+namespace AdventOfCode2020.Challenges;
+
+[Challenge(8)]
+public class Challenge08
 {
-	[Challenge(8)]
-	public class Challenge08
-	{
-		private readonly IInputReader inputReader;
-		private IList<Instruction> input;
+    private readonly IInputReader _inputReader;
 
-		public Challenge08(IInputReader inputReader)
-		{
-			this.inputReader = inputReader;
-		}
+    public Challenge08(IInputReader inputReader)
+    {
+        _inputReader = inputReader;
+    }
 
-		[Setup]
-		public async Task SetupAsync()
-		{
-			input = await inputReader.ReadLinesAsync(8)
-				.Select(line => new Instruction(line.Substring(0, 3), int.Parse(line.Substring(4)))).ToListAsync();
-		}
+    [Part1]
+    public async Task<string?> Part1Async()
+    {
+        var input = await _inputReader.ReadLinesAsync(8)
+            .Select(line => new Instruction(line[..3], int.Parse(line[4..]))).ToListAsync();
 
-		[Part1]
-		public string Part1()
-		{
-			int ip = 0;
-			int acc = 0;
+        ISet<int> history = new HashSet<int>();
 
-			ISet<int> history = new HashSet<int>();
+        var acc = 0;
+        for (var ip = 0; ip < input.Count; ip++)
+        {
+            if (history.Contains(ip))
+                return acc.ToString();
 
-			for (ip = 0; ip < input.Count; ip++)
-			{
-				if (history.Contains(ip))
-					return acc.ToString();
+            history.Add(ip);
 
-				history.Add(ip);
+            var instruction = input[ip];
 
-				var instruction = input[ip];
+            switch (instruction.Opcode)
+            {
+                case "acc":
+                    acc += instruction.Value;
+                    break;
+                case "jmp":
+                    ip += instruction.Value - 1; // -1 because the for loop always increases the ip by 1
+                    break;
+                case "nop":
+                    break;
+            }
+        }
 
-				switch (instruction.Opcode)
-				{
-					case "acc":
-						acc += instruction.Value;
-						break;
-					case "jmp":
-						ip += instruction.Value - 1; // -1 because the for loop always increases the ip by 1
-						break;
-					case "nop":
-						break;
-				}
-			}
+        return null;
+    }
 
-			return null;
-		}
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var input = await _inputReader.ReadLinesAsync(8)
+            .Select(line => new Instruction(line[..3], int.Parse(line[4..]))).ToListAsync();
 
-		[Part2]
-		public string Part2()
-		{
-			ISet<int> closedList = new HashSet<int>();
+        var closedList = new HashSet<int>();
 
-			bool hasError;
-			int acc;
-			do
-			{
-				// Reset the computer
-				hasError = false;
-				ISet<int> history = new HashSet<int>();
-				int ip = 0;
-				acc = 0;
-				bool changedInstruction = false;
+        bool hasError;
+        int acc;
+        do
+        {
+            // Reset the computer
+            hasError = false;
+            var history = new HashSet<int>();
+            var changedInstruction = false;
+            acc = 0;
 
-				for (ip = 0; ip < input.Count; ip++)
-				{
-					if (history.Contains(ip))
-					{
-						hasError = true;
-						break;
-					}
+            for (var ip = 0; ip < input.Count; ip++)
+            {
+                if (history.Contains(ip))
+                {
+                    hasError = true;
+                    break;
+                }
 
-					history.Add(ip);
+                history.Add(ip);
+                var instruction = input[ip];
+                if (!changedInstruction)
+                {
+                    switch (instruction.Opcode)
+                    {
+                        case "nop" when instruction.Value != 0 && !closedList.Contains(ip) &&
+                                        ip - instruction.Value > 0 && ip + instruction.Value <= input.Count:
+                            // change to jmp if instruction falls within boundaries and not on trylist or causes infinite loop
+                            instruction = new Instruction("jmp", instruction.Value);
+                            closedList.Add(ip);
+                            changedInstruction = true;
+                            break;
+                        case "jmp" when !closedList.Contains(ip):
+                            // change to nop if not in trylist
+                            instruction = new Instruction("nop", instruction.Value);
+                            closedList.Add(ip);
+                            changedInstruction = true;
+                            break;
+                    }
+                }
 
-					var instruction = input[ip];
+                switch (instruction.Opcode)
+                {
+                    case "acc":
+                        acc += instruction.Value;
+                        break;
+                    case "jmp":
+                        ip += instruction.Value - 1; // -1 because the for loop always increases the ip by 1
+                        break;
+                    case "nop":
+                        break;
+                }
+            }
+        } while (hasError);
 
-					if (!changedInstruction)
-					{
-						if (instruction.Opcode == "nop" && instruction.Value != 0 && !closedList.Contains(ip) && ip - instruction.Value > 0 && ip + instruction.Value <= input.Count)
-						{
-							// change to jmp if instruction falls within boundaries and not on trylist or causes infinite loop
-							instruction = new Instruction("jmp", instruction.Value);
-							closedList.Add(ip);
-							changedInstruction = true;
+        return acc.ToString();
+    }
 
-						}
-						else if (instruction.Opcode == "jmp" && !closedList.Contains(ip))
-						{
-							// change to nop if not in trylist
-							instruction = new Instruction("nop", instruction.Value);
-							closedList.Add(ip);
-							changedInstruction = true;
-						}
-					}
-
-					switch (instruction.Opcode)
-					{
-						case "acc":
-							acc += instruction.Value;
-							break;
-						case "jmp":
-							ip += instruction.Value - 1; // -1 because the for loop always increases the ip by 1
-							break;
-						case "nop":
-							break;
-					}
-				}
-			}
-			while (hasError);
-
-			return acc.ToString();
-		}
-
-		private record Instruction(string Opcode, int Value);
-	}
+    private record Instruction(string Opcode, int Value);
 }

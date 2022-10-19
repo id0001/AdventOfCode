@@ -33,7 +33,7 @@ public class Challenge18
     public async Task<string?> Part2Async()
     {
         var maze = await _inputReader.ReadGridAsync(18);
-        
+
         var data = AnalyzeMaze(maze);
         var keyTotal = KeysToInt(data.Keys.Keys);
 
@@ -49,7 +49,7 @@ public class Challenge18
         var edges = GetEdges(maze, data, vertices.Values).ToLookup(k => k.From);
 
         var start = new DroneState(new[] { p0, p1, p2, p3 }, 0, 0);
-        var astar = new AStar<DroneState>(s => GetNeighborsPart2(vertices, edges, s), (_,b) => b.Distance);
+        var astar = new AStar<DroneState>(s => GetNeighborsPart2(vertices, edges, s), (_, b) => b.Distance);
         return astar.TryPath(start, s => s.ObtainedKeys == keyTotal, out _, out var cost) ? cost.ToString() : null;
     }
 
@@ -138,9 +138,9 @@ public class Challenge18
             if (v1.Key == '@')
                 continue;
 
-            if (!bfs.TryPath(v0.Location, t => t == v1.Location, out var path)) 
+            if (!bfs.TryPath(v0.Location, t => t == v1.Location, out var path))
                 continue;
-            
+
             var list = path.ToList();
             var doors = KeysToInt(list.Where(p => pointToDoor.ContainsKey(p))
                 .Select(p => char.ToLower(pointToDoor[p])));
@@ -217,7 +217,7 @@ public class Challenge18
             ObtainedKeys = obtainedKeys;
             Distance = distance;
         }
-        
+
         public int Distance { get; }
 
         public Point2[] Locations { get; }

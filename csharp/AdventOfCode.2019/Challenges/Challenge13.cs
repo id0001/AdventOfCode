@@ -2,139 +2,138 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2019.Challenges
+namespace AdventOfCode2019.Challenges;
+
+[Challenge(13)]
+public class Challenge13
 {
-	[Challenge(13)]
-	public class Challenge13
-	{
-		private readonly IInputReader _inputReader;
+    private readonly IInputReader _inputReader;
 
-		public Challenge13(IInputReader inputReader)
-		{
-			_inputReader = inputReader;
-		}
+    public Challenge13(IInputReader inputReader)
+    {
+        _inputReader = inputReader;
+    }
 
-		[Part1]
-		public async Task<string> Part1Async()
-		{
-			var program = await _inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
-			
-			var screenBuffer = new int[64, 64];
-			var outputBuffer = new Queue<int>();
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        var program = await _inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
 
-			var ballX = 0;
-			var paddleX = 0;
+        var screenBuffer = new int[64, 64];
+        var outputBuffer = new Queue<int>();
 
-			var cpu = new Cpu();
-			cpu.SetProgram(program);
+        var ballX = 0;
+        var paddleX = 0;
 
-			cpu.RegisterOutput(o =>
-			{
-				outputBuffer.Enqueue((int)o);
+        var cpu = new Cpu();
+        cpu.SetProgram(program);
 
-				if (outputBuffer.Count != 3) return;
-				
-				var x = outputBuffer.Dequeue();
-				var y = outputBuffer.Dequeue();
-				var id = outputBuffer.Dequeue();
+        cpu.RegisterOutput(o =>
+        {
+            outputBuffer.Enqueue((int)o);
 
-				if (x == -1 && y == 0)
-				{
-					// Draw score
-					screenBuffer[0, 0] = id;
-				}
-				else
-				{
-					// Draw tile
-					screenBuffer[y + 2, x] = id;
+            if (outputBuffer.Count != 3) return;
 
-					switch (id)
-					{
-						case 4:
-							ballX = x;
-							break;
-						case 3:
-							paddleX = x;
-							break;
-					}
-				}
-			});
+            var x = outputBuffer.Dequeue();
+            var y = outputBuffer.Dequeue();
+            var id = outputBuffer.Dequeue();
 
-			cpu.RegisterInput(() =>
-			{
-				if (ballX == paddleX)
-					cpu.WriteInput(0);
-				else if (ballX < paddleX)
-					cpu.WriteInput(-1);
-				else
-					cpu.WriteInput(1);
-			});
+            if (x == -1 && y == 0)
+            {
+                // Draw score
+                screenBuffer[0, 0] = id;
+            }
+            else
+            {
+                // Draw tile
+                screenBuffer[y + 2, x] = id;
 
-			await cpu.StartAsync();
+                switch (id)
+                {
+                    case 4:
+                        ballX = x;
+                        break;
+                    case 3:
+                        paddleX = x;
+                        break;
+                }
+            }
+        });
 
-			return screenBuffer.OfType<int>().Count(x => x == 2).ToString();
-		}
+        cpu.RegisterInput(() =>
+        {
+            if (ballX == paddleX)
+                cpu.WriteInput(0);
+            else if (ballX < paddleX)
+                cpu.WriteInput(-1);
+            else
+                cpu.WriteInput(1);
+        });
 
-		[Part2]
-		public async Task<string> Part2Async()
-		{
-			var program = await _inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
+        await cpu.StartAsync();
 
-			var screenBuffer = new int[64, 64];
-			var outputBuffer = new Queue<int>();
+        return screenBuffer.OfType<int>().Count(x => x == 2).ToString();
+    }
 
-			var ballX = 0;
-			var paddleX = 0;
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var program = await _inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
 
-			var cpu = new Cpu();
-			program[0] = 2;
-			cpu.SetProgram(program);
+        var screenBuffer = new int[64, 64];
+        var outputBuffer = new Queue<int>();
 
-			cpu.RegisterOutput(o =>
-			{
-				outputBuffer.Enqueue((int)o);
+        var ballX = 0;
+        var paddleX = 0;
 
-				if (outputBuffer.Count != 3) return;
-				
-				var x = outputBuffer.Dequeue();
-				var y = outputBuffer.Dequeue();
-				var id = outputBuffer.Dequeue();
+        var cpu = new Cpu();
+        program[0] = 2;
+        cpu.SetProgram(program);
 
-				if (x == -1 && y == 0)
-				{
-					// Draw score
-					screenBuffer[0, 0] = id;
-				}
-				else
-				{
-					// Draw tile
-					screenBuffer[y + 2, x] = id;
+        cpu.RegisterOutput(o =>
+        {
+            outputBuffer.Enqueue((int)o);
 
-					switch (id)
-					{
-						case 4:
-							ballX = x;
-							break;
-						case 3:
-							paddleX = x;
-							break;
-					}
-				}
-			});
+            if (outputBuffer.Count != 3) return;
 
-			cpu.RegisterInput(() =>
-			{
-				if (ballX == paddleX)
-					cpu.WriteInput(0);
-				else if (ballX < paddleX)
-					cpu.WriteInput(-1);
-				else
-					cpu.WriteInput(1);
-			});
+            var x = outputBuffer.Dequeue();
+            var y = outputBuffer.Dequeue();
+            var id = outputBuffer.Dequeue();
 
-			await cpu.StartAsync();
+            if (x == -1 && y == 0)
+            {
+                // Draw score
+                screenBuffer[0, 0] = id;
+            }
+            else
+            {
+                // Draw tile
+                screenBuffer[y + 2, x] = id;
 
-			return screenBuffer[0,0].ToString();
-		}
-	}
+                switch (id)
+                {
+                    case 4:
+                        ballX = x;
+                        break;
+                    case 3:
+                        paddleX = x;
+                        break;
+                }
+            }
+        });
+
+        cpu.RegisterInput(() =>
+        {
+            if (ballX == paddleX)
+                cpu.WriteInput(0);
+            else if (ballX < paddleX)
+                cpu.WriteInput(-1);
+            else
+                cpu.WriteInput(1);
+        });
+
+        await cpu.StartAsync();
+
+        return screenBuffer[0, 0].ToString();
+    }
 }

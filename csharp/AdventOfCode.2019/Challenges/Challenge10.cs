@@ -9,7 +9,7 @@ namespace AdventOfCode2019.Challenges;
 public class Challenge10
 {
     private readonly IInputReader _inputReader;
-    private readonly List<Point2> _asteroids = new List<Point2>();
+    private readonly List<Point2> _asteroids = new();
 
     public Challenge10(IInputReader inputReader)
     {

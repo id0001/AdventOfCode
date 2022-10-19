@@ -173,4 +173,7 @@ public static class Euclid
 
             return x;
         }
+        
+        public static bool IsPowerOfTwo(int number) => number > 0 && (number & (number - 1)) == 0x0;
+        public static bool IsPowerOfTwo(long number) => number > 0 && (number & (number - 1)) == 0x0;
 }

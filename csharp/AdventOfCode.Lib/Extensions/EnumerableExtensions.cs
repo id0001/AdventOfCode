@@ -29,4 +29,10 @@ public static class EnumerableExtensions
             yield return (previous, first);
         }
     }
+
+    public static int Product(this IEnumerable<int> source) => source.Aggregate(1, (a, b) => a * b);
+    
+    public static long Product(this IEnumerable<long> source) => source.Aggregate(1L, (a, b) => a * b);
+    
+    public static double Product(this IEnumerable<double> source) => source.Aggregate(1d, (a, b) => a * b);
 }

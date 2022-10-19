@@ -2,48 +2,47 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2019.Challenges
+namespace AdventOfCode2019.Challenges;
+
+[Challenge(25)]
+public class Challenge25
 {
-    [Challenge(25)]
-    public class Challenge25
+    private readonly IInputReader _inputReader;
+
+    public Challenge25(IInputReader inputReader)
     {
-        private readonly IInputReader _inputReader;
+        _inputReader = inputReader;
+    }
 
-        public Challenge25(IInputReader inputReader)
+    [Part1]
+    public async Task<string?> Part1Async()
+    {
+        var program = await _inputReader.ReadLineAsync<long>(25, ',').ToArrayAsync();
+
+        var cpu = new Cpu();
+        cpu.SetProgram(program);
+
+        // F this, I bruteforced it by hand.
+        var buffer = string.Empty;
+        cpu.RegisterOutput(o =>
         {
-            this._inputReader = inputReader;
-        }
+            buffer += (char)o;
+            Console.Write((char)o);
 
-        [Part1]
-        public async Task<string?> Part1Async()
-        {
-            var program = await _inputReader.ReadLineAsync<long>(25, ',').ToArrayAsync();
+            if (!buffer.EndsWith("Command?")) return;
+            Console.WriteLine();
+            Console.Write("> ");
+            var cmd = Console.ReadLine();
+            foreach (var c in cmd!)
+                cpu.WriteInput(c);
 
-            var cpu = new Cpu();
-            cpu.SetProgram(program);
+            cpu.WriteInput('\n');
+            Console.Clear();
+            buffer = string.Empty;
+        });
 
-            // F this, I bruteforced it by hand.
-            var buffer = string.Empty;
-            cpu.RegisterOutput(o =>
-            {
-                buffer += (char)o;
-                Console.Write((char)o);
+        await cpu.StartAsync();
 
-                if (!buffer.EndsWith("Command?")) return;
-                Console.WriteLine();
-                Console.Write("> ");
-                var cmd = Console.ReadLine();
-                foreach (var c in cmd!)
-                    cpu.WriteInput(c);
-
-                cpu.WriteInput('\n');
-                Console.Clear();
-                buffer = string.Empty;
-            });
-
-            await cpu.StartAsync();
-
-            return null;
-        }
+        return null;
     }
 }

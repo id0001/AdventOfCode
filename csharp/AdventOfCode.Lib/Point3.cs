@@ -22,6 +22,8 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
 
     public static Point3 Zero { get; } = new();
 
+    IEnumerable<IPoint> IPoint.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint>();
+
     public IEnumerable<Point3> GetNeighbors(bool includeDiagonal = false)
     {
         for (var z = -1; z <= 1; z++)

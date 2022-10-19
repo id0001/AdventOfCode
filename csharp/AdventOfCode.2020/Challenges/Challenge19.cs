@@ -1,132 +1,116 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2020.Challenges
+namespace AdventOfCode2020.Challenges;
+
+[Challenge(19)]
+public class Challenge19
 {
-    [Challenge(19)]
-    public class Challenge19
+    private readonly IInputReader _inputReader;
+    private readonly Dictionary<int, string> _rules = new();
+    private readonly List<string> _input = new();
+
+
+    public Challenge19(IInputReader inputReader)
     {
-        private readonly IInputReader inputReader;
-        private IDictionary<int, string> rules;
-        private List<string> input;
+        _inputReader = inputReader;
+    }
 
+    [Setup]
+    public async Task SetupAsync()
+    {
+        var state = 0; // 0 = rules, 1 = input
 
-        public Challenge19(IInputReader inputReader)
+        await foreach (var line in _inputReader.ReadLinesAsync(19))
         {
-            this.inputReader = inputReader;
-        }
+            if (string.IsNullOrEmpty(line))
+                state++;
 
-        [Setup]
-        public async Task SetupAsync()
-        {
-            int state = 0; // 0 = rules, 1 = input
-            rules = new Dictionary<int, string>();
-            input = new List<string>();
-
-            await foreach (var line in inputReader.ReadLinesAsync(19))
+            if (state == 0)
             {
-                if (string.IsNullOrEmpty(line))
-                    state++;
-
-                if (state == 0)
-                {
-                    var match = Regex.Match(line, @"^(\d+): (.+)$");
-                    rules.Add(int.Parse(match.Groups[1].Value), match.Groups[2].Value);
-                }
-                else
-                {
-                    input.Add(line);
-                }
+                var match = Regex.Match(line, @"^(\d+): (.+)$");
+                _rules.Add(int.Parse(match.Groups[1].Value), match.Groups[2].Value);
+            }
+            else
+            {
+                _input.Add(line);
             }
         }
+    }
 
-        [Part1]
-        public string Part1()
+    [Part1]
+    public string Part1()
+    {
+        var pattern = BuildPattern(_rules, 0, new Dictionary<int, string>());
+        var count = _input.Count(line => Regex.IsMatch(line, pattern));
+
+        return count.ToString();
+    }
+
+    [Part2]
+    public string Part2()
+    {
+        _rules[8] = "42 | 42 8";
+        _rules[11] = "42 31 | 42 11 31";
+        var pattern = BuildPattern(_rules, 0, new Dictionary<int, string>());
+        var count = _input.Count(line => Regex.IsMatch(line, pattern));
+
+        return count.ToString();
+    }
+
+    private static string BuildPattern(IDictionary<int, string> rules, int key, IDictionary<int, string> cache)
+    {
+        if (cache.ContainsKey(key))
+            return cache[key];
+
+        switch (rules[key])
         {
-            string pattern = BuildPattern(rules, 0, new Dictionary<int, string>());
-
-            int count = 0;
-            foreach (var line in input)
-            {
-                if (Regex.IsMatch(line, pattern))
-                    count++;
-            }
-
-            return count.ToString();
-        }
-
-        [Part2]
-        public string Part2()
-        {
-            rules[8] = "42 | 42 8";
-            rules[11] = "42 31 | 42 11 31";
-            string pattern = BuildPattern(rules, 0, new Dictionary<int, string>());
-
-            int count = 0;
-            foreach (var line in input)
-            {
-                if (Regex.IsMatch(line, pattern))
-                    count++;
-            }
-
-            return count.ToString();
-        }
-
-        private string BuildPattern(IDictionary<int, string> rules, int key, IDictionary<int, string> cache, bool print = false)
-        {
-            if (cache.ContainsKey(key))
-                return cache[key];
-
-            if (rules[key] == "\"a\"")
+            case "\"a\"":
                 return "a";
-
-            if (rules[key] == "\"b\"")
+            case "\"b\"":
                 return "b";
+        }
 
-            string[] orGroups = rules[key].Split("|");
+        var orGroups = rules[key].Split("|");
 
-            for (int o = 0; o < orGroups.Length; o++)
+        for (var o = 0; o < orGroups.Length; o++)
+            switch (key)
             {
-                if (key == 8 && orGroups[o].Contains("8"))
+                case 8 when orGroups[o].Contains("8"):
                 {
-                    var p42 = BuildPattern(rules, 42, cache, print);
+                    var p42 = BuildPattern(rules, 42, cache);
                     orGroups[o] = $"{p42}+";
+                    break;
                 }
-                else if (key == 11 && orGroups[o].Contains("11"))
+                case 11 when orGroups[o].Contains("11"):
                 {
-                    var p42 = BuildPattern(rules, 42, cache, print);
-                    var p31 = BuildPattern(rules, 31, cache, print);
+                    var p42 = BuildPattern(rules, 42, cache);
+                    var p31 = BuildPattern(rules, 31, cache);
 
-                    orGroups[o] = "(?:" + string.Join("|", Enumerable.Range(1, 10).Select(i => $"{p42}{{{i}}}{p31}{{{i}}}")) + ")";
+                    orGroups[o] = "(?:" +
+                                  string.Join("|", Enumerable.Range(1, 10).Select(i => $"{p42}{{{i}}}{p31}{{{i}}}")) + ")";
+                    break;
                 }
-                else
+                default:
                 {
-                    string[] parts = orGroups[o].Trim().Split(" ");
-                    for (int p = 0; p < parts.Length; p++)
+                    var parts = orGroups[o].Trim().Split(" ");
+                    for (var p = 0; p < parts.Length; p++)
                     {
-                        int rule = int.Parse(parts[p].Trim());
-                        parts[p] = BuildPattern(rules, rule, cache, print);
+                        var rule = int.Parse(parts[p].Trim());
+                        parts[p] = BuildPattern(rules, rule, cache);
                     }
 
                     orGroups[o] = string.Concat(parts);
+                    break;
                 }
             }
 
-            string result = key == 0 ? $"^{string.Join("|", orGroups)}$" : $"(?:{string.Join("|", orGroups)})";
+        var result = key == 0 ? $"^{string.Join("|", orGroups)}$" : $"(?:{string.Join("|", orGroups)})";
 
-            if (print)
-                Console.WriteLine($"{key}: {result}");
+        if (!cache.ContainsKey(key))
+            cache.Add(key, result);
 
-            if (!cache.ContainsKey(key))
-                cache.Add(key, result);
-
-            return result;
-        }
+        return result;
     }
 }
