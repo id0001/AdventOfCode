@@ -1,50 +1,33 @@
-﻿using System;
+﻿namespace AdventOfCode.Lib;
 
-namespace AdventOfCode.Lib
+public readonly struct Rectangle : IEquatable<Rectangle>
 {
-    public struct Rectangle : IEquatable<Rectangle>
+    public Rectangle(int x, int y, int width, int height) => (X, Y, Width, Height) = (x, y, width, height);
+
+    public Rectangle(Point2 location, Point2 size) => (X, Y, Width, Height) = (location.X, location.Y, size.X, size.Y);
+
+    public int X { get; init; }
+    public int Y { get; init; }
+    public int Width { get; init; }
+    public int Height { get; init; }
+
+    public static Rectangle Empty { get; } = new();
+
+    public IEnumerable<Point2> AsGridPoints()
     {
-        public int X;
-        public int Y;
-        public int Width;
-        public int Height;
-
-        public Rectangle(int x, int y, int width, int height)
-        {
-            X = x;
-            Y = y;
-            Width = width;
-            Height = height;
-        }
-
-        public int Left => X;
-
-        public int Right => X + Width;
-
-        public int Top => Y;
-
-        public int Bottom => Y + Height;
-
-        public Point2 Location
-        {
-            get => new Point2(X, Y);
-            set => (X, Y) = value;
-        }
-
-        public Point2 Size
-        {
-            get => new Point2(Width, Height);
-            set => (Width, Height) = value;
-        }
-
-        public bool Contains(Point2 point) => point.X >= Left && point.X < Right && point.Y >= Top && point.Y < Bottom;
-
-        public bool Equals(Rectangle other) => other.X == X && other.Y == Y && other.Width == Width && other.Height == Height;
-
-        public override bool Equals(object obj) => (obj is Cube) && Equals((Cube)obj);
-
-        public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
-
-        public override string ToString() => $"{{X: {X}, Y: {Y}, Width: {Width}, Height: {Height}}}";
+        for (var y = Y; y < Y + Height; y++)
+        for (var x = X; x < X + Width; x++)
+            yield return new Point2(x, y);
     }
+
+    public bool Equals(Rectangle other) =>
+        X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
+
+    public override bool Equals(object? obj) => obj is Rectangle other && Equals(other);
+
+    public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
+
+    public static bool operator ==(Rectangle left, Rectangle right) => left.Equals(right);
+
+    public static bool operator !=(Rectangle left, Rectangle right) => !(left == right);
 }

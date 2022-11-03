@@ -1,83 +1,71 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2020.Challenges
+namespace AdventOfCode2020.Challenges;
+
+[Challenge(5)]
+public class Challenge05
 {
-    [Challenge(5)]
-    public class Challenge05
+    private readonly IInputReader _inputReader;
+
+    public Challenge05(IInputReader inputReader)
     {
-        private readonly IInputReader inputReader;
-        private string[] input;
+        _inputReader = inputReader;
+    }
 
-        public Challenge05(IInputReader inputReader)
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        var input = await _inputReader.ReadLinesAsync(5).ToArrayAsync();
+
+        var highestSeatId = input.Select(query => Search(8, 128, query)).Select(p => p.Y * 8 + p.X).Prepend(0).Max();
+
+        return highestSeatId.ToString();
+    }
+
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var input = await _inputReader.ReadLinesAsync(5).ToArrayAsync();
+
+        var seatIds = new HashSet<int>();
+        foreach (var query in input)
         {
-            this.inputReader = inputReader;
+            var p = Search(8, 128, query);
+            var id = p.Y * 8 + p.X;
+            seatIds.Add(id);
         }
 
-        [Setup]
-        public async Task SetupAsync()
-        {
-            input = await inputReader.ReadLinesAsync(5).ToArrayAsync();
-        }
+        var mySeat = Enumerable
+            .Range(0, 8 * 128)
+            .First(n => !seatIds.Contains(n) && seatIds.Contains(n - 1) && seatIds.Contains(n + 1));
 
-        [Part1]
-        public string Part1()
+        return mySeat.ToString();
+    }
+
+    private static Point2 Search(int width, int height, string query)
+    {
+        int xmin = 0, ymin = 0, xmax = width, ymax = height;
+        foreach (var c in query)
         {
-            int highestSeatId = 0;
-            foreach (string query in input)
+            switch (c)
             {
-                Point2 p = Search(8, 128, query);
-                int id = (p.Y * 8) + p.X;
-                if (id > highestSeatId)
-                    highestSeatId = id;
+                case 'F':
+                    ymax = (ymax + ymin) / 2;
+                    break;
+                case 'B':
+                    ymin = (ymax + ymin) / 2;
+                    break;
+                case 'L':
+                    xmax = (xmax + xmin) / 2;
+                    break;
+                case 'R':
+                    xmin = (xmax + xmin) / 2;
+                    break;
             }
-
-            return highestSeatId.ToString();
         }
 
-        [Part2]
-        public string Part2()
-        {
-            HashSet<int> seatIds = new HashSet<int>();
-            foreach(string query in input)
-            {
-                Point2 p = Search(8, 128, query);
-                int id = (p.Y * 8) + p.X;
-                seatIds.Add(id);
-            }
-
-            int mySeat = Enumerable.Range(0, 8 * 128).Where(n => !seatIds.Contains(n) && seatIds.Contains(n - 1) && seatIds.Contains(n + 1)).First();
-            return mySeat.ToString();
-        }
-
-        private Point2 Search(int width, int height, string query)
-        {
-            int xmin = 0, ymin = 0, xmax = width, ymax = height;
-            foreach (char c in query)
-            {
-                switch (c)
-                {
-                    case 'F':
-                        ymax = (ymax + ymin) / 2;
-                        break;
-                    case 'B':
-                        ymin = (ymax + ymin) / 2;
-                        break;
-                    case 'L':
-                        xmax = (xmax + xmin) / 2;
-                        break;
-                    case 'R':
-                        xmin = (xmax + xmin) / 2;
-                        break;
-                }
-            }
-
-            return new Point2(xmin, ymin);
-        }
+        return new Point2(xmin, ymin);
     }
 }

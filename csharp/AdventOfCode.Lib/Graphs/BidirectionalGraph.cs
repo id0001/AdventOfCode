@@ -1,212 +1,96 @@
-﻿using AdventOfCode.Lib.Graphs.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace AdventOfCode.Lib.Graphs;
 
-namespace AdventOfCode.Lib.Graphs
+public class BidirectionalGraph<TVertex, TEdge>
+where TVertex : notnull
+where TEdge : notnull
 {
-	public class BidirectionalGraph<TVertex, TEdge> :
-		IGraph<TVertex, TEdge>,
-		IMutableGraph<TVertex, TEdge>,
-		IBidirectionalGraph<TVertex, TEdge>
-		where TEdge : IEdge<TVertex>
-	{
-		private int edgeCount = 0;
-		private readonly IVertexEdgeDictionary<TVertex, TEdge> vertexOutEdges;
-		private readonly IVertexEdgeDictionary<TVertex, TEdge> vertexInEdges;
+    private readonly Dictionary<(TVertex, TVertex), TEdge> _edges = new();
+    private readonly Dictionary<TVertex, List<TVertex>> _vertexOutEdges = new();
+    private readonly Dictionary<TVertex, List<TVertex>> _vertexInEdges = new();
 
-		public BidirectionalGraph()
-		{
-			this.vertexInEdges = new VertexEdgeDictionary<TVertex, TEdge>();
-			this.vertexOutEdges = new VertexEdgeDictionary<TVertex, TEdge>();
-		}
+    public int VertexCount => _vertexOutEdges.Count;
 
-		public bool IsDirected => true;
+    public int EdgeCount => _edges.Count / 2; // _edges always contains 2 entries for each edge. (a->b, b->a)
 
-		public int VertexCount => vertexOutEdges.Count;
+    public IEnumerable<TVertex> Vertices => _vertexOutEdges.Keys;
 
-		public int EdgeCount => edgeCount;
+    public bool AddVertex(TVertex vertex)
+    {
+        if (ContainsVertex(vertex))
+            return false;
+        
+        _vertexInEdges.Add(vertex, new List<TVertex>());
+        _vertexOutEdges.Add(vertex, new List<TVertex>());
+        return true;
+    }
 
-		public IEnumerable<TVertex> Vertices => vertexOutEdges.Keys;
+    public bool RemoveVertex(TVertex vertex)
+    {
+        if (!ContainsVertex(vertex))
+            return false;
 
-		public IEnumerable<TEdge> Edges => vertexOutEdges.Values.SelectMany(e => e);
+        foreach (var target in _vertexOutEdges[vertex])
+        {
+            _edges.Remove((vertex, target));
+            _edges.Remove((target, vertex));
+            _vertexOutEdges[target].Remove(vertex);
+            _vertexInEdges[target].Remove(vertex);
+        }
+        
+        _vertexInEdges.Remove(vertex);
+        _vertexOutEdges.Remove(vertex);
+        return true;
+    }
 
-		public bool AddVertex(TVertex vertex)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
+    public bool AddEdge(TVertex vertex1, TVertex vertex2, TEdge edge)
+    {
+        if (ContainsEdge(vertex1, vertex2))
+            return false;
+        
+        _edges.Add((vertex1, vertex2), edge);
+        _edges.Add((vertex2, vertex1), edge);
+        _vertexOutEdges[vertex1].Add(vertex2);
+        _vertexOutEdges[vertex2].Add(vertex1);
+        _vertexInEdges[vertex1].Add(vertex2);
+        _vertexInEdges[vertex2].Add(vertex1);
+        return true;
+    }
 
-			if (ContainsVertex(vertex))
-				return false;
+    public bool RemoveEdge(TVertex vertex1, TVertex vertex2)
+    {
+        if (!ContainsEdge(vertex1, vertex2))
+            return false;
 
-			vertexOutEdges.Add(vertex, new EdgeList<TVertex, TEdge>());
-			vertexInEdges.Add(vertex, new EdgeList<TVertex, TEdge>());
-			return true;
-		}
+        _edges.Remove((vertex1, vertex2));
+        _edges.Remove((vertex2, vertex1));
+        _vertexOutEdges[vertex1].Remove(vertex2);
+        _vertexOutEdges[vertex2].Remove(vertex1);
+        _vertexInEdges[vertex1].Remove(vertex2);
+        _vertexInEdges[vertex2].Remove(vertex1);
+        return true;
+    }
 
-		public bool RemoveVertex(TVertex vertex)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
+    public bool ContainsVertex(TVertex vertex) => _vertexOutEdges.ContainsKey(vertex);
 
-			if (!ContainsVertex(vertex))
-				return false;
+    public bool ContainsEdge(TVertex source, TVertex target) => _edges.ContainsKey((source, target));
 
-			int removed = 0;
-			foreach (var outEdge in OutEdges(vertex))
-			{
-				vertexInEdges[outEdge.Target].Remove(outEdge);
-				removed++;
-			}
+    public bool HasEdges(TVertex vertex) => _vertexOutEdges.TryGetValue(vertex, out var edges) && edges.Count > 0;
+   
+    public IReadOnlyDictionary<TVertex, TEdge> OutEdges(TVertex vertex)
+    {
+        return !ContainsVertex(vertex) 
+            ? new Dictionary<TVertex,TEdge>()
+            : _vertexOutEdges[vertex]
+                .Select(t => (Target: t, Edge: _edges[(vertex, t)]))
+                .ToDictionary(kv => kv.Target, kv => kv.Edge);
+    }
 
-			foreach (var inEdge in InEdges(vertex))
-			{
-				if (vertexOutEdges[inEdge.Target].Remove(inEdge))
-					removed++;
-			}
-
-			vertexOutEdges.Remove(vertex);
-			vertexInEdges.Remove(vertex);
-			edgeCount -= removed;
-			return true;
-		}
-
-		public bool AddEdge(TEdge edge)
-		{
-			if (edge == null)
-				throw new ArgumentNullException(nameof(edge));
-
-			if (ContainsEdge(edge.Source, edge.Target))
-				return false;
-
-			vertexOutEdges[edge.Source].Add(edge);
-			vertexInEdges[edge.Target].Add(edge);
-			edgeCount++;
-			return true;
-		}
-
-		public bool RemoveEdge(TEdge edge)
-		{
-			if (edge == null)
-				throw new ArgumentNullException(nameof(edge));
-
-			if (vertexOutEdges[edge.Source].Remove(edge))
-			{
-				vertexInEdges[edge.Target].Remove(edge);
-				edgeCount--;
-				return true;
-			}
-
-			return false;
-		}
-
-		public bool ContainsVertex(TVertex vertex)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			return vertexOutEdges.ContainsKey(vertex);
-		}
-
-		public bool ContainsEdge(TVertex source, TVertex target)
-		{
-			if (source == null)
-				throw new ArgumentNullException(nameof(source));
-
-			if (target == null)
-				throw new ArgumentNullException(nameof(target));
-
-			foreach (var outEdge in OutEdges(source))
-			{
-				if (outEdge.Target.Equals(target))
-					return true;
-			}
-
-			return false;
-		}
-
-		public bool HasOutEdges(TVertex vertex)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			return vertexOutEdges[vertex].Count > 0;
-		}
-
-		public TEdge OutEdge(TVertex vertex, int index)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			return vertexOutEdges[vertex][index];
-		}
-
-		public IEnumerable<TEdge> OutEdges(TVertex vertex)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			if (!vertexOutEdges.ContainsKey(vertex))
-				return Enumerable.Empty<TEdge>();
-
-			return vertexOutEdges[vertex];
-		}
-
-		public bool TryGetOutEdge(TVertex vertex, int index, out TEdge edge)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			if (vertexOutEdges.TryGetValue(vertex, out var edgeList) && index >= 0 && index < edgeList.Count)
-			{
-				edge = edgeList[index];
-				return true;
-			}
-
-			edge = default;
-			return false;
-		}
-
-		public bool HasInEdges(TVertex vertex)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			return vertexInEdges[vertex].Count > 0;
-		}
-
-		public TEdge InEdge(TVertex vertex, int index)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			return vertexInEdges[vertex][index];
-		}
-
-		public IEnumerable<TEdge> InEdges(TVertex vertex)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			if (!vertexOutEdges.ContainsKey(vertex))
-				return Enumerable.Empty<TEdge>();
-
-			return vertexInEdges[vertex];
-		}
-
-		public bool TryGetInEdge(TVertex vertex, int index, out TEdge edge)
-		{
-			if (vertex == null)
-				throw new ArgumentNullException(nameof(vertex));
-
-			if (vertexInEdges.TryGetValue(vertex, out var edgeList) && index >= 0 && index < edgeList.Count)
-			{
-				edge = edgeList[index];
-				return true;
-			}
-
-			edge = default;
-			return false;
-		}
-	}
+    public IReadOnlyDictionary<TVertex, TEdge> InEdges(TVertex vertex)
+    {
+        return !ContainsVertex(vertex) 
+            ? new Dictionary<TVertex,TEdge>()
+            : _vertexInEdges[vertex]
+                .Select(t => (Target: t, Edge: _edges[(vertex, t)]))
+                .ToDictionary(kv => kv.Target, kv => kv.Edge);
+    }
 }

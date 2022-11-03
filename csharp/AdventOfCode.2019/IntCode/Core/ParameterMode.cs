@@ -1,9 +1,8 @@
-﻿namespace AdventOfCode2019.IntCode.Core
+﻿namespace AdventOfCode2019.IntCode.Core;
+
+public enum ParameterMode : byte
 {
-	public enum ParameterMode : byte
-	{
-		Positional = 0,
-		Immediate = 1,
-		Relative = 2
-	}
+    Positional = 0,
+    Immediate = 1,
+    Relative = 2
 }

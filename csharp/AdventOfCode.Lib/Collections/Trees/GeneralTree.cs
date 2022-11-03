@@ -1,43 +1,47 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿namespace AdventOfCode.Lib.Collections.Trees;
 
-namespace AdventOfCode.Lib.Collections.Trees
+public class GeneralTree<T>
 {
-    public class GeneralTree<TValue> :
-        ITree<GeneralTreeNode<TValue>, TValue>,
-        IDFSPreOrderEnumerable<GeneralTreeNode<TValue>, TValue>
+    private GeneralTreeNode<T>? _root;
+
+    public GeneralTreeNode<T>? Root
     {
-        private GeneralTreeNode<TValue> root;
-
-        public GeneralTreeNode<TValue> Root
+        get => _root;
+        set
         {
-            get => root;
-            set
-            {
+            if(value != null)
                 MakeRoot(value);
-                root = value;
-            }
+            _root = value;
         }
+    }
 
-        public IEnumerable<GeneralTreeNode<TValue>> EnumerateDFSPreOrder() => TraverseDFSPreOrder(Root);
+    public IEnumerable<GeneralTreeNode<T>> PreOrder()
+    {
+        if (Root == null)
+            yield break;
 
-        private void MakeRoot(GeneralTreeNode<TValue> node)
+        var stack = new Stack<GeneralTreeNode<T>>();
+        stack.Push(Root);
+
+        while (stack.Count > 0)
         {
-            if (node.Parent == null)
-                return;
+            var current = stack.Pop();
 
-            var parent = node.Parent;
-            parent.RemoveChild(node);
-            MakeRoot(parent);
-            node.AddChild(parent);
+            yield return current;
+
+            foreach (var child in current.Children.Reverse())
+                stack.Push(child);
         }
+    }
 
-        private IEnumerable<GeneralTreeNode<TValue>> TraverseDFSPreOrder(GeneralTreeNode<TValue> node)
-        {
-            yield return node;
+    private static void MakeRoot(GeneralTreeNode<T> node)
+    {
+        if (node.Parent == null)
+            return;
 
-            foreach (var child in node.Children.SelectMany(TraverseDFSPreOrder))
-                yield return child;
-        }
+        var parent = node.Parent;
+        parent.RemoveChild(node);
+        MakeRoot(parent);
+        node.AddChild(parent);
     }
 }

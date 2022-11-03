@@ -1,15 +1,10 @@
-﻿
-using System.Collections;
-using System.Collections.Generic;
+﻿namespace AdventOfCode.Lib;
 
-namespace AdventOfCode.Lib
+public interface IPoint : IEquatable<IPoint>
 {
-	public interface IPoint
-	{
-		int Dimensions { get; }
+    int this[int index] { get; }
 
-		int GetValue(int dimension);
+    int Dimensions { get; }
 
-		IEnumerable<IPoint> GetNeighbors();
-	}
+    IEnumerable<IPoint> GetNeighbors(bool includeDiagonal = false);
 }

@@ -1,198 +1,170 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Extensions;
-using AdventOfCode.Lib.IO;
-using AdventOfCode.Lib.Pathfinding;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.PathFinding;
 
-namespace AdventOfCode2019.Challenges
+namespace AdventOfCode2019.Challenges;
+
+[Challenge(20)]
+public class Challenge20
 {
-    [Challenge(20)]
-    public class Challenge20
+    private readonly IInputReader _inputReader;
+
+    public Challenge20(IInputReader inputReader)
     {
-        private readonly IInputReader inputReader;
-        private char[,] maze;
+        _inputReader = inputReader;
+    }
 
-        public Challenge20(IInputReader inputReader)
+    [Part1]
+    public async Task<string?> Part1Async()
+    {
+        var maze = await _inputReader.ReadGridAsync(20);
+
+        var mazeData = AnalyzeMaze(maze);
+        var bfs = new BreadthFirstSearch<Point2>(p => GetNeighborsPart1(maze, mazeData.Portals.Values.ToList(), p));
+
+        return bfs.TryPath(mazeData.Start.ToPoint2(), t => t == mazeData.End.ToPoint2(), out var path)
+            ? path.Count().ToString()
+            : null;
+    }
+
+    private static IEnumerable<Point2> GetNeighborsPart1(char[,] maze, IEnumerable<Portal> portals, Point2 p)
+    {
+        var portal = portals.SingleOrDefault(x => x.Inner == p || x.Outer == p);
+        if (portal != null)
+            yield return portal.Inner == p ? portal.Outer : portal.Inner;
+
+        foreach (var neighbor in p.GetNeighbors().Where(o => o.X == p.X || o.Y == p.Y))
         {
-            this.inputReader = inputReader;
+            if (maze[neighbor.Y, neighbor.X] == '.')
+                yield return neighbor;
         }
+    }
 
-        [Setup]
-        public async Task SetupAsync()
+    [Part2]
+    public async Task<string?> Part2Async()
+    {
+        var maze = await _inputReader.ReadGridAsync(20);
+
+        var mazeData = AnalyzeMaze(maze);
+
+        var list = mazeData.Portals.Values.ToList();
+
+        var bfs = new BreadthFirstSearch<Point3>(p => GetNeighborsPart2(maze, list, p));
+        return bfs.TryPath(mazeData.Start, t => t == mazeData.End, out var path) ? path.Count().ToString() : null;
+    }
+
+    private static IEnumerable<Point3> GetNeighborsPart2(char[,] maze, IEnumerable<Portal> portals, Point3 p)
+    {
+        var p2d = p.ToPoint2();
+
+        // Check if we're at a portal. At level 0 only inner portals are allowed.
+        var portal = portals.SingleOrDefault(x => (p.Z > 0 && (x.Inner == p2d || x.Outer == p2d)) || x.Inner == p2d);
+
+        if (portal != null)
         {
-            maze = await inputReader.ReadGridAsync(20);
-        }
-
-        [Part1]
-        public string Part1()
-        {
-            var mazeData = AnalyzeMaze();
-            var dijkstra = new BreadthFirstSearch<Point2>(p => GetNeighborsPart1(mazeData.Portals.Values.ToList(), p));
-
-            if (dijkstra.TryPath(mazeData.Start.ToPoint2(), mazeData.End.ToPoint2(), out Point2[] path))
+            if (portal.Inner == p2d)
             {
-                return path.Length.ToString();
+                // Go down
+                if (p.Z + 1 < 30) // Set max level limit to speed up algorithm.
+                    yield return new Point3(portal.Outer.X, portal.Outer.Y, p.Z + 1);
             }
-
-            return null;
-        }
-
-        private IEnumerable<Point2> GetNeighborsPart1(List<Portal> portals, Point2 p)
-        {
-            var portal = portals.SingleOrDefault(x => x.Inner == p || x.Outer == p);
-            if (portal is object)
-                yield return portal.Inner == p ? portal.Outer : portal.Inner;
-
-            foreach (var neighbor in p.GetNeighbors().Where(o => o.X == p.X || o.Y == p.Y))
+            else if (p.Z > 0)
             {
-                if (maze[neighbor.Y, neighbor.X] == '.')
-                    yield return neighbor;
+                // Go up. Not past level 0.
+                yield return new Point3(portal.Inner.X, portal.Inner.Y, p.Z - 1);
             }
         }
 
-        [Part2]
-        public string Part2()
+        foreach (var neighbor in p2d.GetNeighbors().Where(o => o.X == p2d.X || o.Y == p2d.Y))
         {
-            var mazeData = AnalyzeMaze();
-
-            var list = mazeData.Portals.Values.ToList();
-
-            var bfs = new BreadthFirstSearch<Point3>(p => GetNeighborsPart2(list, p));
-            if (bfs.TryPath(mazeData.Start, mazeData.End, out Point3[] path))
-            {
-                return path.Length.ToString();
-            }
-
-            return null;
+            if (maze[neighbor.Y, neighbor.X] == '.')
+                yield return new Point3(neighbor.X, neighbor.Y, p.Z);
         }
+    }
 
-        private IEnumerable<Point3> GetNeighborsPart2(List<Portal> portals, Point3 p)
+    private static MazeData AnalyzeMaze(char[,] maze)
+    {
+        var portals = new Dictionary<string, Portal>();
+        var start = Point3.Zero;
+        var end = Point3.Zero;
+
+        var dict = new Dictionary<string, (Point2 Point, bool Outer)>();
+
+        for (var y = 0; y < maze.GetLength(0); y++)
+        for (var x = 0; x < maze.GetLength(1); x++)
         {
-            var p2d = p.ToPoint2();
+            if (maze[y, x] != '.') continue;
 
-            // Check if we're at a portal. At level 0 only inner portals are allowed.
-            var portal = portals.SingleOrDefault(x => (p.Z > 0 && (x.Inner == p2d || x.Outer == p2d)) || x.Inner == p2d);
-
-            if (portal is object)
+            var p = new Point2(x, y);
+            foreach (var neighbor in p.GetNeighbors())
             {
-                if (portal.Inner == p2d)
+                if (char.IsUpper(maze[neighbor.Y, neighbor.X]))
                 {
-                    // Go down
-                    if (p.Z + 1 < 30) // Set max level limit to speed up algorithm.
-                        yield return new Point3(portal.Outer.X, portal.Outer.Y, p.Z + 1);
-                }
-                else if (p.Z > 0)
-                {
-                    // Go up. Not past level 0.
-                    yield return new Point3(portal.Inner.X, portal.Inner.Y, p.Z - 1);
-                }
-            }
+                    var direction = neighbor - p;
+                    var name = GetName(maze, neighbor, direction);
 
-            foreach (var neighbor in p2d.GetNeighbors().Where(o => o.X == p2d.X || o.Y == p2d.Y))
-            {
-                if (maze[neighbor.Y, neighbor.X] == '.')
-                    yield return new Point3(neighbor.X, neighbor.Y, p.Z);
-            }
-        }
-
-        private MazeData AnalyzeMaze()
-        {
-            var portals = new Dictionary<string, Portal>();
-            Point3 start = Point3.Zero;
-            Point3 end = Point3.Zero;
-
-            var dict = new Dictionary<string, (Point2 Point, bool Outer)>();
-
-            for (int y = 0; y < maze.GetLength(0); y++)
-            {
-                for (int x = 0; x < maze.GetLength(1); x++)
-                {
-                    if (maze[y, x] == '.')
+                    switch (name)
                     {
-                        var p = new Point2(x, y);
-                        foreach (var neighbor in p.GetNeighbors())
+                        case "AA":
+                            start = new Point3(x, y, 0);
+                            break;
+                        case "ZZ":
+                            end = new Point3(x, y, 0);
+                            break;
+                        default:
                         {
-                            if (char.IsUpper(maze[neighbor.Y, neighbor.X]))
+                            if (dict.ContainsKey(name))
                             {
-                                string name = null;
-                                Point2 direction = neighbor - p;
-                                name = GetName(neighbor, direction);
-
-                                if (name == "AA")
-                                {
-                                    start = new Point3(x, y, 0);
-                                }
-                                else if (name == "ZZ")
-                                {
-                                    end = new Point3(x, y, 0);
-                                }
-                                else if (dict.ContainsKey(name))
-                                {
-                                    var portal = dict[name].Outer ? new Portal(dict[name].Point, p) : new Portal(p, dict[name].Point);
-                                    portals.Add(name, portal);
-                                    dict.Remove(name);
-                                }
-                                else
-                                {
-                                    bool outer = p.X == 2 || p.X == maze.GetLength(1) - 3 || p.Y == 2 || p.Y == maze.GetLength(0) - 3;
-                                    dict.Add(name, (p, outer));
-                                }
+                                var portal = dict[name].Outer
+                                    ? new Portal(dict[name].Point, p)
+                                    : new Portal(p, dict[name].Point);
+                                portals.Add(name, portal);
+                                dict.Remove(name);
                             }
+                            else
+                            {
+                                var outer = p.X == 2 || p.X == maze.GetLength(1) - 3 || p.Y == 2 ||
+                                            p.Y == maze.GetLength(0) - 3;
+                                dict.Add(name, (p, outer));
+                            }
+
+                            break;
                         }
                     }
                 }
             }
-
-            return new MazeData(start, end, portals);
         }
 
-        private string GetName(Point2 p, Point2 direction)
+        return new MazeData(start, end, portals);
+    }
+
+    private static string GetName(char[,] maze, Point2 p, Point2 direction)
+    {
+        switch (direction.X)
         {
-            if (direction.X > 0)
-            {
+            case > 0:
                 return string.Join(string.Empty, maze[p.Y, p.X], maze[p.Y, p.X + 1]);
-            }
-            else if (direction.X < 0)
-            {
+            case < 0:
                 return string.Join(string.Empty, maze[p.Y, p.X - 1], maze[p.Y, p.X]);
-            }
-            else if (direction.Y > 0)
+            default:
             {
-                return string.Join(string.Empty, maze[p.Y, p.X], maze[p.Y + 1, p.X]);
-            }
-            else if (direction.Y < 0)
-            {
-                return string.Join(string.Empty, maze[p.Y - 1, p.X], maze[p.Y, p.X]);
-            }
-
-            throw new InvalidOperationException();
-        }
-
-        private void VisualizeMaze(ISet<Point2> path)
-        {
-            for (int y = 0; y < maze.GetLength(0); y++)
-            {
-                for (int x = 0; x < maze.GetLength(1); x++)
+                switch (direction.Y)
                 {
-                    Console.ResetColor();
-                    if (path.Contains(new Point2(x, y)))
-                    {
-                        Console.BackgroundColor = ConsoleColor.Red;
-                    }
-
-                    Console.Write(maze[y, x]);
+                    case > 0:
+                        return string.Join(string.Empty, maze[p.Y, p.X], maze[p.Y + 1, p.X]);
+                    case < 0:
+                        return string.Join(string.Empty, maze[p.Y - 1, p.X], maze[p.Y, p.X]);
                 }
 
-                Console.WriteLine();
+                break;
             }
-
-            Console.WriteLine();
         }
 
-        private record Portal(Point2 Outer, Point2 Inner);
-        private record MazeData(Point3 Start, Point3 End, Dictionary<string, Portal> Portals);
+        throw new InvalidOperationException();
     }
+
+    private record Portal(Point2 Outer, Point2 Inner);
+
+    private record MazeData(Point3 Start, Point3 End, Dictionary<string, Portal> Portals);
 }

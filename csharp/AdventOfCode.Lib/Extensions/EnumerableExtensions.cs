@@ -1,56 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AdventOfCode.Lib.Math;
 
-namespace AdventOfCode.Lib.Extensions
+namespace AdventOfCode.Lib;
+
+public static class EnumerableExtensions
 {
-    public static class EnumerableExtensions
+    public static IEnumerable<T[]> Permutations<T>(this IEnumerable<T> source) =>
+        Combinatorics.SelectAllPermutations(source);
+
+    public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> source, int k) =>
+        Combinatorics.SelectAllCombinations(source, k);
+
+    public static IEnumerable<(T Current, T Next)> CurrentAndNext<T>(this IEnumerable<T> source,
+        bool wrapAround = false)
     {
-        public static ulong Sum<T>(this IEnumerable<T> source, Func<T, ulong> selector)
-        {
-            ulong sum = 0;
-            foreach (var item in source)
-                sum += selector(item);
+        using var e = source.GetEnumerator();
+        if (!e.MoveNext())
+            yield break;
 
-            return sum;
+        var previous = e.Current;
+        var first = previous;
+        while (e.MoveNext())
+        {
+            yield return (previous, e.Current);
+            previous = e.Current;
         }
 
-        public static int Product<T>(this IEnumerable<T> source, Func<T, int> selector) => MathEx.Product(source.Select(selector).ToArray());
-
-        public static long Product<T>(this IEnumerable<T> source, Func<T, long> selector) => MathEx.Product(source.Select(selector).ToArray());
-
-        public static int Product(this IEnumerable<int> source) => MathEx.Product(source.ToArray());
-
-        public static long Product(this IEnumerable<long> source) => MathEx.Product(source.ToArray());
-
-
-        public static IEnumerable<T[]> Permutations<T>(this IEnumerable<T> source, int start, int end)
-        {
-            if (end < start)
-                throw new ArgumentException("End must be equal or higher than start.");
-
-            var list = new List<T[]>();
-            GeneratePermutationsInternal(list, source.ToArray(), start, end);
-            return list;
-        }
-
-        private static void GeneratePermutationsInternal<T>(List<T[]> perms, T[] source, int start, int end)
-        {
-            if (end == start)
-            {
-                T[] perm = new T[source.Length];
-                Array.Copy(source, 0, perm, 0, source.Length);
-                perms.Add(perm);
-            }
-            else
-            {
-                for (int i = start; i <= end; i++)
-                {
-                    (source[start], source[i]) = (source[i], source[start]);
-                    GeneratePermutationsInternal(perms, source, start + 1, end);
-                    (source[start], source[i]) = (source[i], source[start]);
-                }
-            }
-        }
+        if (wrapAround) yield return (previous, first);
     }
+
+    public static int Product(this IEnumerable<int> source) => source.Aggregate(1, (a, b) => a * b);
+
+    public static long Product(this IEnumerable<long> source) => source.Aggregate(1L, (a, b) => a * b);
+
+    public static double Product(this IEnumerable<double> source) => source.Aggregate(1d, (a, b) => a * b);
+
+    public static long Product<T>(this IEnumerable<T> source, Func<T, long> selector) =>
+        source.Aggregate(1L, (a, b) => a * selector(b));
+
+    public static ulong Sum<T>(this IEnumerable<T> source, Func<T, ulong> selector) =>
+        source.Aggregate<T, ulong>(0, (current, item) => current + selector(item));
 }

@@ -1,7 +1,5 @@
 ﻿using Microsoft;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -9,17 +7,16 @@ namespace AdventOfCode.Lib.Collections
 {
     [DebuggerTypeProxy(typeof(Deque<>.DequeDebugView))]
     [DebuggerDisplay("Count = {Count}")]
-    public class Deque<T> : IEnumerable<T>, ICollection, IReadOnlyCollection<T>
+    public class Deque<T> : ICollection, IReadOnlyCollection<T>
     {
         private const int MinimumGrow = 4;
         private const int GrowFactor = 2;
 
-        private T[] _array;
+        private T?[] _array;
 
         private int _head; // The index from which to remove or add if the deque isn't empty.
         private int _tail; // The index from which to remove or add if the deque isn't empty.
         private int _version;
-        private int _size; // Amount of items in the deque.
 
         public Deque()
         {
@@ -33,7 +30,7 @@ namespace AdventOfCode.Lib.Collections
             Requires.Argument(capacity >= 0, nameof(capacity), "Parameter must be greater or equal to 0.");
 
             _array = new T[capacity];
-            int center = capacity / 2;
+            var center = capacity / 2;
             _tail = center;
             _head = center;
         }
@@ -41,126 +38,110 @@ namespace AdventOfCode.Lib.Collections
         public Deque(IEnumerable<T> backCollection)
             : this(16)
         {
-            Requires.NotNull(backCollection, nameof(backCollection));
-
-            AddRangeLast(backCollection);
+            PushRangeBack(backCollection);
         }
 
         public Deque(IEnumerable<T> backCollection, IEnumerable<T> frontCollection)
             : this(16)
         {
-            Requires.NotNull(backCollection, nameof(backCollection));
-            Requires.NotNull(frontCollection, nameof(frontCollection));
-
-            AddRangeLast(backCollection);
-            AddRangeFirst(frontCollection);
+            PushRangeBack(backCollection);
+            PushRangeFront(frontCollection);
         }
 
         public int Capacity => _array.Length;
 
-        public int Count => _size;
+        public int Count { get; private set; }
 
-        public bool IsEmpty => _size == 0;
-
-        public IEnumerable<T> Reversed { get; }
+        public bool IsEmpty => Count == 0;
 
         bool ICollection.IsSynchronized => false;
 
         object ICollection.SyncRoot => this;
 
-        public void AddFirst(T item)
+        public void PushFront(T item)
         {
-            int insertIndex = IsEmpty ? _head : _head - 1;
+            var insertIndex = IsEmpty ? _head : _head - 1;
 
             if (insertIndex < 0)
             {
-                int newCapacity = (int)Math.Max((_array.LongLength * (long)GrowFactor), _array.Length + MinimumGrow);
+                var newCapacity = (int)System.Math.Max(_array.LongLength * GrowFactor, _array.Length + MinimumGrow);
                 SetCapacity(newCapacity);
                 insertIndex = IsEmpty ? _head : _head - 1;
             }
 
             _array[insertIndex] = item;
             _head = insertIndex;
-            _size++;
+            Count++;
             _version++;
         }
 
-        public void AddLast(T item)
+        public void PushBack(T item)
         {
-            int insertIndex = IsEmpty ? _tail : _tail + 1;
+            var insertIndex = IsEmpty ? _tail : _tail + 1;
 
             if (insertIndex == _array.Length)
             {
-                int newCapacity = (int)Math.Max((_array.LongLength * (long)GrowFactor), _array.Length + MinimumGrow);
+                var newCapacity = (int)System.Math.Max(_array.LongLength * GrowFactor, _array.Length + MinimumGrow);
                 SetCapacity(newCapacity);
                 insertIndex = IsEmpty ? _tail : _tail + 1;
             }
 
             _array[insertIndex] = item;
             _tail = insertIndex;
-            _size++;
+            Count++;
             _version++;
         }
 
-        public void AddRangeFirst(IEnumerable<T> items)
+        public void PushRangeFront(IEnumerable<T> items)
         {
             foreach (var item in items)
-            {
-                AddFirst(item);
-            }
+                PushFront(item);
         }
 
-        public void AddRangeLast(IEnumerable<T> items)
+        public void PushRangeBack(IEnumerable<T> items)
         {
             foreach (var item in items)
-            {
-                AddLast(item);
-            }
+                PushBack(item);
         }
 
         public void Clear()
         {
-            if (_size != 0)
+            if (Count != 0)
             {
                 if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-                {
-                    Array.Clear(_array, _head, _size);
-                }
+                    Array.Clear(_array, _head, Count);
 
-                _size = 0;
+                Count = 0;
             }
 
-            int center = _array.Length / 2;
+            var center = _array.Length / 2;
             _head = center;
             _tail = center;
             _version++;
         }
 
-        public T PeekFirst()
+        public T PeekFront()
         {
-            if (IsEmpty)
-                throw new InvalidOperationException("The collection is empty.");
+            Verify.Operation(!IsEmpty,"The collection is empty.");
 
-            return _array[_head];
+            return _array[_head]!;
         }
 
-        public T PeekLast()
+        public T PeekBack()
         {
-            if (IsEmpty)
-                throw new InvalidOperationException("The collection is empty.");
+            Verify.Operation(!IsEmpty,"The collection is empty.");
 
-            return _array[_tail];
+            return _array[_tail]!;
         }
 
-        public T PopFirst()
+        public T PopFront()
         {
-            if (IsEmpty)
-                throw new InvalidOperationException("The collection is empty.");
+            Verify.Operation(!IsEmpty,"The collection is empty.");
 
-            T removed = _array[_head];
+            var removed = _array[_head]!;
             _array[_head] = default;
 
-            _size--;
+            Count--;
             if (!IsEmpty)
                 _head++;
 
@@ -169,15 +150,14 @@ namespace AdventOfCode.Lib.Collections
             return removed;
         }
 
-        public T PopLast()
+        public T PopBack()
         {
-            if (IsEmpty)
-                throw new InvalidOperationException("The collection is empty.");
+            Verify.Operation(!IsEmpty,"The collection is empty.");
 
-            T removed = _array[_tail];
+            var removed = _array[_tail]!;
             _array[_tail] = default;
 
-            _size--;
+            Count--;
             if (!IsEmpty)
                 _tail--;
 
@@ -191,8 +171,8 @@ namespace AdventOfCode.Lib.Collections
             if (IsEmpty)
                 return Array.Empty<T>();
 
-            T[] arr = new T[_size];
-            Array.Copy(_array, _head, arr, 0, _size);
+            var arr = new T[Count];
+            Array.Copy(_array, _head, arr, 0, Count);
 
             return arr;
         }
@@ -206,21 +186,21 @@ namespace AdventOfCode.Lib.Collections
             if (IsEmpty)
                 return;
 
-            Array.Copy(_array, _head, array, index, _size);
+            Array.Copy(_array, _head, array, index, Count);
         }
 
         private void SetCapacity(int newCapacity)
         {
-            T[] oldArray = _array;
+            var oldArray = _array;
             _array = new T[newCapacity];
 
-            int ca = (int)((_tail + _head) / 2f);
-            int cb = (int)(newCapacity / 2f);
+            var ca = (int)((_tail + _head) / 2f);
+            var cb = (int)(newCapacity / 2f);
 
-            int newHead = cb - ca;
-            int newTail = IsEmpty ? newHead : newHead + _size - 1;
+            var newHead = cb - ca;
+            var newTail = IsEmpty ? newHead : newHead + Count - 1;
 
-            Array.Copy(oldArray, _head, _array, newHead, _size);
+            Array.Copy(oldArray, _head, _array, newHead, Count);
 
             _head = newHead;
             _tail = newTail;
@@ -241,7 +221,7 @@ namespace AdventOfCode.Lib.Collections
 
             try
             {
-                Array.Copy(_array, _head, array, index, _size);
+                Array.Copy(_array, _head, array, index, Count);
             }
             catch (ArrayTypeMismatchException)
             {
@@ -253,12 +233,12 @@ namespace AdventOfCode.Lib.Collections
 
         IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
-        public struct Enumerator : IEnumerator<T>, IEnumerator
+        public struct Enumerator : IEnumerator<T>
         {
             private readonly Deque<T> _source;
             private readonly int _version;
             private int _index;
-            private T _currentElement;
+            private T? _currentElement;
 
             internal Enumerator(Deque<T> source)
             {
@@ -275,11 +255,11 @@ namespace AdventOfCode.Lib.Collections
                     if (_index < 0)
                         ThrowEnumerationNotStartedOrEnded();
 
-                    return _currentElement;
+                    return _currentElement!;
                 }
             }
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current => Current!;
 
             public void Dispose()
             {
@@ -317,7 +297,7 @@ namespace AdventOfCode.Lib.Collections
 
             private void ThrowEnumerationNotStartedOrEnded()
             {
-                Debug.Assert(_index == -1 || _index == -2);
+                Debug.Assert(_index is -1 or -2);
                 throw new InvalidOperationException(_index == -1 ? $"Enumeration has not started." : $"Enumeration has ended.");
             }
         }
@@ -334,7 +314,7 @@ namespace AdventOfCode.Lib.Collections
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public T[] Items => _deque.ToArray();
+            public IEnumerable<T> Items => _deque;
         }
     }
 }

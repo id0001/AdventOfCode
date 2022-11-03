@@ -1,228 +1,207 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2021.Challenges
+namespace AdventOfCode2021.Challenges;
+
+[Challenge(18)]
+public class Challenge18
 {
-    [Challenge(18)]
-    public class Challenge18
+    private const string NumberNumberPattern = @"^\[(\d),(\d)\]$";
+    private const string NumberPairPattern = @"^\[(\d),(.+)\]$";
+    private const string PairNumberPattern = @"^\[(.+),(\d)\]$";
+
+    private readonly IInputReader _inputReader;
+
+    public Challenge18(IInputReader inputReader)
     {
-        private const string NumberNumberPattern = @"^\[(\d),(\d)\]$";
-        private const string NumberPairPattern = @"^\[(\d),(.+)\]$";
-        private const string PairNumberPattern = @"^\[(.+),(\d)\]$";
+        _inputReader = inputReader;
+    }
 
-        private readonly IInputReader inputReader;
-        private string[] lines;
-
-        public Challenge18(IInputReader inputReader)
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        var lines = await _inputReader.ReadLinesAsync(18).ToArrayAsync();
+        var number = lines[0];
+        for (var i = 1; i < lines.Length; i++)
         {
-            this.inputReader = inputReader;
+            number = Add(number, lines[i]);
+            number = Reduce(number);
         }
 
-        [Setup]
-        public async Task SetupAsync()
-        {
-            lines = await inputReader.ReadLinesAsync(18).ToArrayAsync();
-        }
+        return GetMagnitude(number).ToString();
+    }
 
-        [Part1]
-        public string Part1()
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var lines = await _inputReader.ReadLinesAsync(18).ToArrayAsync();
+        var maxMagnitude = 0;
+        for (var y = 0; y < lines.Length; y++)
         {
-            string number = lines[0];
-            for (int i = 1; i < lines.Length; i++)
+            var line1 = lines[y];
+            for (var x = 0; x < lines.Length; x++)
             {
-                number = Add(number, lines[i]);
-                number = Reduce(number);
-            }
+                var line2 = lines[x];
 
-            return GetMagnitude(number).ToString();
-        }
+                var num1 = Add(line1, line2);
+                var mag = GetMagnitude(Reduce(num1));
+                if (mag > maxMagnitude)
+                    maxMagnitude = mag;
 
-        [Part2]
-        public string Part2()
-        {
-            int maxMagnitude = 0;
-            for (int y = 0; y < lines.Length; y++)
-            {
-                string line1 = lines[y];
-                for (int x = 0; x < lines.Length; x++)
-                {
-                    string line2 = lines[x];
-
-                    string num1 = Add(line1, line2);
-                    int mag = GetMagnitude(Reduce(num1));
-                    if (mag > maxMagnitude)
-                        maxMagnitude = mag;
-
-                    string num2 = Add(line2, line1);
-                    mag = GetMagnitude(Reduce(num2));
-                    if (mag > maxMagnitude)
-                        maxMagnitude = mag;
-                }
-            }
-
-            return maxMagnitude.ToString();
-        }
-
-        private string Add(string number1, string number2)
-        {
-            return $"[{number1},{number2}]";
-        }
-
-        private string Reduce(string line)
-        {
-            string result = line;
-            while (true)
-            {
-                if (!TryExplode(result, out result) && !TrySplit(result, out result))
-                    return result;
+                var num2 = Add(line2, line1);
+                mag = GetMagnitude(Reduce(num2));
+                if (mag > maxMagnitude)
+                    maxMagnitude = mag;
             }
         }
 
-        private bool TryExplode(string line, out string result)
+        return maxMagnitude.ToString();
+    }
+
+    private string Add(string number1, string number2)
+    {
+        return $"[{number1},{number2}]";
+    }
+
+    private string Reduce(string line)
+    {
+        var result = line;
+        while (true)
         {
-            int depth = 0;
-            int lastNumberIndex = -1;
-            int lastNumberLength = 0;
-            for (int i = 0; i < line.Length; i++)
+            if (!TryExplode(result, out result) && !TrySplit(result, out result))
+                return result;
+        }
+    }
+
+    private bool TryExplode(string line, out string result)
+    {
+        var depth = 0;
+        var lastNumberIndex = -1;
+        var lastNumberLength = 0;
+        for (var i = 0; i < line.Length; i++)
+        {
+            switch (line[i])
             {
-                switch (line[i])
-                {
-                    case '[' when depth == 4:
-                        Match m = Regex.Match(line.Substring(i), @"^\[(\d+),(\d+)\]");
-                        int n1 = int.Parse(m.Groups[1].Value);
-                        int n2 = int.Parse(m.Groups[2].Value);
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append(line.Substring(0, i));
-                        if (lastNumberIndex > 0)
-                        {
-                            int num = int.Parse(line.Substring(lastNumberIndex, lastNumberLength));
-                            sb.Remove(lastNumberIndex, lastNumberLength);
-                            sb.Insert(lastNumberIndex, n1 + num);
-                        }
+                case '[' when depth == 4:
+                    var m = Regex.Match(line.Substring(i), @"^\[(\d+),(\d+)\]");
+                    var n1 = int.Parse(m.Groups[1].Value);
+                    var n2 = int.Parse(m.Groups[2].Value);
+                    var sb = new StringBuilder();
+                    sb.Append(line.Substring(0, i));
+                    if (lastNumberIndex > 0)
+                    {
+                        var num = int.Parse(line.Substring(lastNumberIndex, lastNumberLength));
+                        sb.Remove(lastNumberIndex, lastNumberLength);
+                        sb.Insert(lastNumberIndex, n1 + num);
+                    }
 
-                        sb.Append('0');
-                        i += m.Length;
+                    sb.Append('0');
+                    i += m.Length;
 
-                        for (; i < line.Length && !char.IsDigit(line[i]); i++)
-                            sb.Append(line[i]);
+                    for (; i < line.Length && !char.IsDigit(line[i]); i++)
+                        sb.Append(line[i]);
 
-                        if (i != line.Length)
-                        {
-                            string num = GetNumber(line.Substring(i));
-                            sb.Append(int.Parse(num) + n2);
-                            i += num.Length;
-                        }
+                    if (i != line.Length)
+                    {
+                        var num = GetNumber(line.Substring(i));
+                        sb.Append(int.Parse(num) + n2);
+                        i += num.Length;
+                    }
 
-                        sb.Append(line.Substring(i));
+                    sb.Append(line.Substring(i));
+                    result = sb.ToString();
+                    return true;
+                case '[':
+                    depth++;
+                    break;
+                case ']':
+                    depth--;
+                    break;
+                case var c when char.IsDigit(c):
+                    lastNumberIndex = i;
+                    lastNumberLength = Regex.Match(line.Substring(i), @"^(\d+)").Length;
+                    i += lastNumberLength - 1;
+                    break;
+            }
+        }
+
+        result = line;
+        return false;
+    }
+
+    private bool TrySplit(string line, out string result)
+    {
+        for (var i = 0; i < line.Length; i++)
+        {
+            switch (line[i])
+            {
+                case var c when char.IsDigit(c):
+                    var num = GetNumber(line.Substring(i));
+                    if (num.Length >= 2)
+                    {
+                        var number = int.Parse(num);
+                        var l = number / 2;
+                        var r = number - l;
+                        var sb = new StringBuilder();
+                        sb.Append(line.AsSpan(0, i));
+                        sb.Append($"[{l},{r}]");
+                        i += num.Length;
+                        sb.Append(line.AsSpan(i));
                         result = sb.ToString();
                         return true;
-                    case '[':
-                        depth++;
-                        break;
-                    case ']':
-                        depth--;
-                        break;
-                    case char c when char.IsDigit(c):
-                        lastNumberIndex = i;
-                        lastNumberLength = Regex.Match(line.Substring(i), @"^(\d+)").Length;
-                        i += lastNumberLength - 1;
-                        break;
-                    default:
-                        break;
-                }
-            }
+                    }
 
-            result = line;
-            return false;
+                    break;
+            }
         }
 
-        private bool TrySplit(string line, out string result)
+        result = line;
+        return false;
+    }
+
+    private static string GetNumber(string line)
+    {
+        var m = Regex.Match(line, @"^(\d+)");
+        return m.Groups[1].Value;
+    }
+
+    private static int GetMagnitude(string line)
+    {
+        var match = Regex.Match(line, NumberNumberPattern);
+        if (match.Success) return 3 * int.Parse(match.Groups[1].Value) + 2 * int.Parse(match.Groups[2].Value);
+
+        match = Regex.Match(line, NumberPairPattern);
+        if (match.Success) return 3 * int.Parse(match.Groups[1].Value) + 2 * GetMagnitude(match.Groups[2].Value);
+
+        match = Regex.Match(line, PairNumberPattern);
+        if (match.Success) return 3 * GetMagnitude(match.Groups[1].Value) + 2 * int.Parse(match.Groups[2].Value);
+
+        // Find splitting point
+        var splitIndex = FindSplitIndex(line);
+        return 3 * GetMagnitude(line.Substring(1, splitIndex - 1)) +
+               2 * GetMagnitude(line.Substring(splitIndex + 1, line.Length - splitIndex - 2));
+    }
+
+    private static int FindSplitIndex(string line)
+    {
+        var bracket = 0;
+        for (var i = 0; i < line.Length; i++)
         {
-            for (int i = 0; i < line.Length; i++)
+            switch (line[i])
             {
-                switch (line[i])
-                {
-                    case char c when char.IsDigit(c):
-                        string num = GetNumber(line.Substring(i));
-                        if (num.Length >= 2)
-                        {
-                            int number = int.Parse(num);
-                            int l = number / 2;
-                            int r = number - l;
-                            StringBuilder sb = new StringBuilder();
-                            sb.Append(line.Substring(0, i));
-                            sb.Append($"[{l},{r}]");
-                            i += num.Length;
-                            sb.Append(line.Substring(i));
-                            result = sb.ToString();
-                            return true;
-                        }
-                        break;
-                }
+                case ',' when bracket == 1:
+                    return i;
+                case '[':
+                    bracket++;
+                    break;
+                case ']':
+                    bracket--;
+                    break;
             }
-
-            result = line;
-            return false;
         }
 
-        private string GetNumber(string line)
-        {
-            var m = Regex.Match(line, @"^(\d+)");
-            return m.Groups[1].Value;
-        }
-
-        private int GetMagnitude(string line)
-        {
-            var match = Regex.Match(line, NumberNumberPattern);
-            if (match.Success)
-            {
-                return (3 * int.Parse(match.Groups[1].Value)) + (2 * int.Parse(match.Groups[2].Value));
-            }
-
-            match = Regex.Match(line, NumberPairPattern);
-            if (match.Success)
-            {
-                return (3 * int.Parse(match.Groups[1].Value)) + (2 * GetMagnitude(match.Groups[2].Value));
-            }
-
-            match = Regex.Match(line, PairNumberPattern);
-            if (match.Success)
-            {
-                return (3 * GetMagnitude(match.Groups[1].Value)) + (2 * int.Parse((match.Groups[2].Value)));
-            }
-
-            // Find splitting point
-            int splitIndex = FindSplitIndex(line);
-            return (3 * GetMagnitude(line.Substring(1, splitIndex - 1))) + (2 * GetMagnitude(line.Substring(splitIndex + 1, line.Length - splitIndex - 2)));
-        }
-
-        private static int FindSplitIndex(string line)
-        {
-            int bracket = 0;
-            for (int i = 0; i < line.Length; i++)
-            {
-                switch (line[i])
-                {
-                    case ',' when bracket == 1:
-                        return i;
-                    case '[':
-                        bracket++;
-                        break;
-                    case ']':
-                        bracket--;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            return -1;
-        }
+        return -1;
     }
 }

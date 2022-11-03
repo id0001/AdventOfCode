@@ -1,84 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace AdventOfCode.Lib;
 
-namespace AdventOfCode.Lib
+public class BoundingBox<T> where T : IPoint, new()
 {
-    public class BoundingBox<T> where T : IPoint, new()
+    private int[] _min;
+    private int[] _max;
+
+    public BoundingBox()
     {
-        private int[] min;
-        private int[] max;
+        Dimensions = new T().Dimensions;
+        _min = Enumerable.Repeat(int.MaxValue, Dimensions).ToArray();
+        _max = Enumerable.Repeat(int.MinValue, Dimensions).ToArray();
+    }
 
-        public BoundingBox()
+    public int Dimensions { get; }
+
+    public void Inflate(T added)
+    {
+        for (var d = 0; d < Dimensions; d++)
         {
-            Dimensions = new T().Dimensions;
-            min = Enumerable.Repeat(int.MaxValue, Dimensions).ToArray();
-            max = Enumerable.Repeat(int.MinValue, Dimensions).ToArray();
+            if (added[d] < _min[d])
+                _min[d] = added[d];
+
+            if (added[d] > _max[d])
+                _max[d] = added[d];
+        }
+    }
+
+    public void Deflate(IEnumerable<T> points, T removed)
+    {
+        var shouldUpdate = false;
+        for (var d = 0; d < Dimensions; d++)
+        {
+            if (removed[d] != _min[d] && removed[d] != _max[d]) continue;
+
+            shouldUpdate = true;
+            break;
         }
 
-        public int Dimensions { get; }
+        if (!shouldUpdate) return;
 
-        public void Inflate(T added)
-        {
-            for (int d = 0; d < Dimensions; d++)
-            {
-                if (added.GetValue(d) < min[d])
-                    min[d] = added.GetValue(d);
+        _min = Enumerable.Repeat(int.MaxValue, Dimensions).ToArray();
+        _max = Enumerable.Repeat(int.MinValue, Dimensions).ToArray();
 
-                if (added.GetValue(d) > max[d])
-                    max[d] = added.GetValue(d);
-            }
-        }
+        foreach (var point in points) Inflate(point);
+    }
 
-        public void Deflate(IEnumerable<T> points, T removed)
-        {
-            bool shouldUpdate = false;
-            for (int d = 0; d < Dimensions; d++)
-            {
-                if (removed.GetValue(d) == min[d] || removed.GetValue(d) == max[d])
-                {
-                    shouldUpdate = true;
-                    break;
-                }
-            }
+    public int GetMin(int dimension)
+    {
+        if (dimension < 0 || dimension >= Dimensions)
+            throw new ArgumentOutOfRangeException(nameof(dimension));
 
-            if (shouldUpdate)
-            {
-                min = Enumerable.Repeat(int.MaxValue, Dimensions).ToArray();
-                max = Enumerable.Repeat(int.MinValue, Dimensions).ToArray();
+        return _min[dimension];
+    }
 
-                foreach (var point in points)
-                {
-                    Inflate(point);
-                }
-            }
-        }
+    public int GetMax(int dimension)
+    {
+        if (dimension < 0 || dimension >= Dimensions)
+            throw new ArgumentOutOfRangeException(nameof(dimension));
 
-        public int GetMin(int dimension)
-        {
-            if (dimension < 0 || dimension >= Dimensions)
-                throw new ArgumentOutOfRangeException(nameof(dimension));
+        return _max[dimension] + 1;
+    }
 
-            return min[dimension];
-        }
+    public bool Contains(IPoint point)
+    {
+        for (var d = 0; d < Dimensions; d++)
+            if (point[d] < _min[d] || point[d] > _max[d])
+                return false;
 
-        public int GetMax(int dimension)
-        {
-            if (dimension < 0 || dimension >= Dimensions)
-                throw new ArgumentOutOfRangeException(nameof(dimension));
-
-            return max[dimension] + 1;
-        }
-
-        public bool Contains(IPoint point)
-        {
-            for (int d = 0; d < Dimensions; d++)
-            {
-                if (point.GetValue(d) < min[d] || point.GetValue(d) > max[d])
-                    return false;
-            }
-
-            return true;
-        }
+        return true;
     }
 }

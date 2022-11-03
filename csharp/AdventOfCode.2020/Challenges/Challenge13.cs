@@ -1,73 +1,60 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
-namespace AdventOfCode2020.Challenges
+namespace AdventOfCode2020.Challenges;
+
+[Challenge(13)]
+public class Challenge13
 {
-	[Challenge(13)]
-	public class Challenge13
-	{
-		private readonly IInputReader inputReader;
-		private int earliestDepartureTime;
-		private int[] busses;
-		private IDictionary<int, int> offsets = new SortedDictionary<int, int>();
+    private readonly IInputReader _inputReader;
+    private readonly IDictionary<long, long> _offsets = new SortedDictionary<long, long>();
+    private long _earliestDepartureTime;
+    private long[] _busses = Array.Empty<long>();
 
-		public Challenge13(IInputReader inputReader)
-		{
-			this.inputReader = inputReader;
-		}
+    public Challenge13(IInputReader inputReader)
+    {
+        _inputReader = inputReader;
+    }
 
-		[Setup]
-		public async Task SetupAsync()
-		{
-			string[] lines = await inputReader.ReadLinesAsync(13).ToArrayAsync();
-			earliestDepartureTime = int.Parse(lines[0]);
-			busses = lines[1].Split(',').Where(e => e != "x").Select(e => int.Parse(e)).ToArray();
+    [Setup]
+    public async Task SetupAsync()
+    {
+        var lines = await _inputReader.ReadLinesAsync(13).ToArrayAsync();
+        _earliestDepartureTime = long.Parse(lines[0]);
+        _busses = lines[1].Split(',').Where(e => e != "x").Select(long.Parse).ToArray();
 
-			int offset = 0;
-			foreach (string s in lines[1].Split(','))
-			{
-				if (s != "x")
-				{
-					offsets.Add(int.Parse(s), offset);
-				}
+        var offset = 0;
+        foreach (var s in lines[1].Split(','))
+        {
+            if (s != "x") _offsets.Add(long.Parse(s), offset);
+            offset++;
+        }
+    }
 
-				offset++;
-			}
-		}
+    [Part1]
+    public string Part1()
+    {
+        var ordered = _busses
+            .ToDictionary(kv => kv, kv => (int)(Math.Ceiling(_earliestDepartureTime / (double)kv) * kv))
+            .OrderBy(kv => kv.Value).ToArray();
+        return (ordered[0].Key * (ordered[0].Value - _earliestDepartureTime)).ToString();
+    }
 
-		[Part1]
-		public string Part1()
-		{
-			var ordered = busses.ToDictionary(kv => kv, kv => (int)(Math.Ceiling(earliestDepartureTime / (double)kv) * kv)).OrderBy(kv => kv.Value).ToArray();
-			return (ordered[0].Key * (ordered[0].Value - earliestDepartureTime)).ToString();
-		}
+    [Part2]
+    public string Part2()
+    {
+        var totalMod = _busses.Product();
+        var total = 0L;
+        for (var i = 1; i < _busses.Length; i++)
+        {
+            var bi = _busses[i] - _offsets[_busses[i]];
+            var ni = totalMod / _busses[i];
+            var xi = Euclid.ModInverse(ni, _busses[i]);
+            total += bi * ni * xi;
+        }
 
-		[Part2]
-		public string Part2()
-		{
-			long totalMod = MathEx.Product(busses.Select(e => (long)e).ToArray());
-			long total = 0;
-
-			for(int i = 1; i < busses.Length; i++)
-			{
-				long bi = busses[i] - offsets[busses[i]];
-				long ni = totalMod / busses[i];
-				long xi = MathEx.ModInverse(ni, busses[i]);
-				total += bi * ni * xi;
-			}
-			
-
-			return (total % totalMod).ToString();
-		}
-
-		public bool Departs(int bus, long t)
-		{
-			return t % bus == 0;
-		}
-	}
+        return (total % totalMod).ToString();
+    }
 }

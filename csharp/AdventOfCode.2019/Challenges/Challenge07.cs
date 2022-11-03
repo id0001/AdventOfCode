@@ -1,114 +1,103 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Extensions;
-using AdventOfCode.Lib.IO;
 using AdventOfCode2019.IntCode.Core;
-using System.Linq;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
-namespace AdventOfCode2019.Challenges
+namespace AdventOfCode2019.Challenges;
+
+[Challenge(7)]
+public class Challenge07
 {
-    [Challenge(7)]
-    public class Challenge07
+    private readonly IInputReader _inputReader;
+
+    public Challenge07(IInputReader inputReader)
     {
-        private readonly IInputReader inputReader;
-        private long[] program;
+        _inputReader = inputReader;
+    }
 
-        public Challenge07(IInputReader inputReader)
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        var program = await _inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+        var perms = Combinatorics.GenerateAllPermutations(5);
+
+        var highest = int.MinValue;
+        foreach (var permutation in perms)
         {
-            this.inputReader = inputReader;
-        }
-
-        [Setup]
-        public async Task SetupAsync()
-        {
-            program = await inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
-        }
-
-        [Part1]
-        public async Task<string> Part1Async()
-        {
-            var perms = Enumerable.Range(0, 5).Permutations(0, 4);
-
-            int highest = int.MinValue;
-            foreach (var permutation in perms)
+            var signal = 0;
+            foreach (var phase in permutation)
             {
-                int signal = 0;
-                foreach (var phase in permutation)
-                {
-                    var cpu = new Cpu();
-                    cpu.SetProgram(program);
-                    cpu.RegisterOutput(o => signal = (int)o);
-                    await cpu.StartAsync(phase, signal);
-                }
-
-                if (signal > highest)
-                    highest = signal;
+                var cpu = new Cpu();
+                cpu.SetProgram(program);
+                cpu.RegisterOutput(o => signal = (int)o);
+                await cpu.StartAsync(phase, signal);
             }
 
-            return highest.ToString();
+            if (signal > highest)
+                highest = signal;
         }
 
-        [Part2]
-        public async Task<string> Part2Async()
+        return highest.ToString();
+    }
+
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var program = await _inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+        var perms = Enumerable.Range(5, 5).Permutations();
+
+        var highest = int.MinValue;
+        foreach (var permutation in perms)
         {
-            var perms = Enumerable.Range(5, 9).Permutations(0, 4);
+            var ampA = new Amp(program, permutation[0]);
+            var ampB = new Amp(program, permutation[1]);
+            var ampC = new Amp(program, permutation[2]);
+            var ampD = new Amp(program, permutation[3]);
+            var ampE = new Amp(program, permutation[4]);
 
-            int highest = int.MinValue;
-            foreach (var permutation in perms)
-            {
-                var ampA = new Amp("A", program, permutation[0]);
-                var ampB = new Amp("B", program, permutation[1]);
-                var ampC = new Amp("C", program, permutation[2]);
-                var ampD = new Amp("D", program, permutation[3]);
-                var ampE = new Amp("E", program, permutation[4]);
+            ampA.PipeTo(ampB);
+            ampB.PipeTo(ampC);
+            ampC.PipeTo(ampD);
+            ampD.PipeTo(ampE);
+            ampE.PipeTo(ampA);
 
-                ampA.PipeTo(ampB);
-                ampB.PipeTo(ampC);
-                ampC.PipeTo(ampD);
-                ampD.PipeTo(ampE);
-                ampE.PipeTo(ampA);
+            await Task.WhenAll(ampA.RunAsync(0), ampB.RunAsync(), ampC.RunAsync(), ampD.RunAsync(), ampE.RunAsync());
 
-                await Task.WhenAll(ampA.RunAsync(0), ampB.RunAsync(), ampC.RunAsync(), ampD.RunAsync(), ampE.RunAsync());
+            var result = ampE.LastSignal;
 
-                int result = ampE.LastSignal;
-                
-                if (result > highest)
-                    highest = result;
-            }
-
-            return highest.ToString();
+            if (result > highest)
+                highest = result;
         }
 
-        private class Amp
+        return highest.ToString();
+    }
+
+    private class Amp
+    {
+        private readonly Cpu _cpu;
+        private Amp? _pipeTo;
+
+        public Amp(long[] input, int phase)
         {
-            private Amp pipeTo;
+            _cpu = new Cpu();
+            _cpu.SetProgram(input);
+            _cpu.WriteInput(phase);
+        }
 
-            public Amp(string id, long[] input, int phase)
+        public int LastSignal { get; private set; }
+
+        public void PipeTo(Amp amp) => _pipeTo = amp;
+
+        public Task RunAsync(params long[] input)
+        {
+            _cpu.RegisterOutput(o =>
             {
-                Id = id;
-                Cpu = new Cpu();
-                Cpu.SetProgram(input);
-                Cpu.WriteInput(phase);
-            }
+                LastSignal = (int)o;
+                _pipeTo?._cpu.WriteInput(o);
+            });
 
-            public string Id { get; set; }
-
-            public Cpu Cpu { get; }
-
-            public int LastSignal { get; private set; }
-
-            public void PipeTo(Amp amp) => pipeTo = amp;
-
-            public Task RunAsync(params long[] input)
-            {
-                Cpu.RegisterOutput(o =>
-                {
-                    LastSignal = (int)o;
-                    pipeTo.Cpu.WriteInput(o);
-                });
-
-                return Cpu.StartAsync(input);
-            }
+            return _cpu.StartAsync(input);
         }
     }
 }

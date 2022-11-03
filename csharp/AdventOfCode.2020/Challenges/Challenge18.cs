@@ -1,95 +1,74 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2020.Challenges
+namespace AdventOfCode2020.Challenges;
+
+[Challenge(18)]
+public class Challenge18
 {
-	[Challenge(18)]
-	public class Challenge18
-	{
-		private readonly IInputReader inputReader;
+    private readonly IInputReader _inputReader;
 
-		public Challenge18(IInputReader inputReader)
-		{
-			this.inputReader = inputReader;
-		}
+    public Challenge18(IInputReader inputReader)
+    {
+        _inputReader = inputReader;
+    }
 
-		[Part1]
-		public async Task<string> Part1Async()
-		{
-			long sum = 0;
-			await foreach (var line in inputReader.ReadLinesAsync(18))
-			{
-				sum += EvaluateExpression(line);
-			}
+    [Part1]
+    public async Task<string?> Part1Async() =>
+        await _inputReader.ReadLinesAsync(18).SumAsync(line => EvaluateExpression(line)).ToStringAsync();
 
-			return sum.ToString();
-		}
+    [Part2]
+    public async Task<string?> Part2Async() => await _inputReader.ReadLinesAsync(18)
+        .SumAsync(line => EvaluateExpression(line, new HashSet<char> { '*' })).ToStringAsync();
 
-		[Part2]
-		public async Task<string> Part2Async()
-		{
-			long sum = 0;
-			await foreach (var line in inputReader.ReadLinesAsync(18))
-			{
-				sum += EvaluateExpression(line, new HashSet<char> { '*' });
-			}
+    private static long EvaluateExpression(string expr, ICollection<char>? lowestPrecedence = null)
+    {
+        expr = expr.Trim();
 
-			return sum.ToString();
-		}
+        var bracketCounter = 0;
+        var operatorIndex = -1;
 
-		private long EvaluateExpression(string expr, ISet<char> lowestPrecedence = null)
-		{
-			expr = expr.Trim();
+        // Search the expr for an operator.
+        for (var i = expr.Length - 1; i >= 0; i--)
+        {
+            var c = expr[i];
 
-			int bracketCounter = 0;
-			int operatorIndex = -1;
+            switch (c)
+            {
+                case '(':
+                    bracketCounter--;
+                    break;
+                case ')':
+                    bracketCounter++;
+                    break;
+                case '+' when bracketCounter == 0:
+                    operatorIndex = i;
+                    break;
+                case '*' when bracketCounter == 0:
+                    operatorIndex = i;
+                    break;
+            }
 
-			// Search the expr for an operator.
-			for (int i = expr.Length - 1; i >= 0; i--)
-			{
-				char c = expr[i];
+            if (operatorIndex >= 0 && (lowestPrecedence == null || lowestPrecedence.Contains(expr[operatorIndex])))
+                break;
+        }
 
-				switch (c)
-				{
-					case '(':
-						bracketCounter--;
-						break;
-					case ')':
-						bracketCounter++;
-						break;
-					case '+' when bracketCounter == 0:
-						operatorIndex = i;
-						break;
-					case '*' when bracketCounter == 0:
-						operatorIndex = i;
-						break;
-				}
+        // Parse expr as value if it does not contain an operator.
+        if (operatorIndex >= 0)
+            return expr[operatorIndex] switch
+            {
+                '+' => EvaluateExpression(expr[..operatorIndex], lowestPrecedence) +
+                       EvaluateExpression(expr[(operatorIndex + 1)..], lowestPrecedence),
+                '*' => EvaluateExpression(expr[..operatorIndex], lowestPrecedence) *
+                       EvaluateExpression(expr[(operatorIndex + 1)..], lowestPrecedence),
+                _ => throw new NotSupportedException()
+            };
 
-				if (operatorIndex >= 0 && (lowestPrecedence == null || lowestPrecedence.Contains(expr[operatorIndex])))
-					break;
-			}
+        // Evaluate expressions around operators and execute on the values.
+        if (expr.StartsWith('(') && expr.EndsWith(')'))
+            return EvaluateExpression(expr.Substring(1, expr.Length - 2), lowestPrecedence);
 
-			// Parse expr as value if it does not contain an operator.
-			if (operatorIndex < 0)
-			{
-				if (expr.StartsWith('(') && expr.EndsWith(')'))
-					return EvaluateExpression(expr.Substring(1, expr.Length - 2), lowestPrecedence);
-
-				return long.Parse(expr);
-			}
-
-			// Evaluate expressions arount operators and execute on the values.
-			return expr[operatorIndex] switch
-			{
-				'+' => EvaluateExpression(expr.Substring(0, operatorIndex), lowestPrecedence) + EvaluateExpression(expr.Substring(operatorIndex + 1), lowestPrecedence),
-				'*' => EvaluateExpression(expr.Substring(0, operatorIndex), lowestPrecedence) * EvaluateExpression(expr.Substring(operatorIndex + 1), lowestPrecedence),
-				_ => throw new NotSupportedException()
-			};
-		}
-	}
+        return long.Parse(expr);
+    }
 }
