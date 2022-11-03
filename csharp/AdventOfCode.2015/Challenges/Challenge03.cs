@@ -19,10 +19,11 @@ public class Challenge03
     {
         var map = new Dictionary<Point2, int>();
         var location = Point2.Zero;
-        
+
         await foreach (var c in _inputReader.ReadLineAsync(3))
         {
-            map.AddOrUpdate(location, v => v + 1);
+            map.TryAdd(location, 0);
+            map[location]++;
             location = c switch
             {
                 '^' => new Point2(location.X, location.Y - 1),
@@ -35,17 +36,18 @@ public class Challenge03
 
         return map.Count.ToString();
     }
-    
+
     [Part2]
     public async Task<string?> Part2Async()
     {
         var map = new Dictionary<Point2, int>();
-        var locations = new[]{ Point2.Zero, Point2.Zero };
-        int index = 0;
-        
+        var locations = new[] { Point2.Zero, Point2.Zero };
+        var index = 0;
+
         await foreach (var c in _inputReader.ReadLineAsync(3))
         {
-            map.AddOrUpdate(locations[index], v => v + 1);
+            map.TryAdd(locations[index], 0);
+            map[locations[index]]++;
             locations[index] = c switch
             {
                 '^' => new Point2(locations[index].X, locations[index].Y - 1),

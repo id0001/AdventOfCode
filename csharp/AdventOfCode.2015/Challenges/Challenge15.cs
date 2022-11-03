@@ -10,6 +10,7 @@ public class Challenge15
 {
     private static readonly Regex Pattern =
         new(@"\w+: capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)");
+
     private readonly IInputReader _inputReader;
 
     public Challenge15(IInputReader inputReader)
@@ -27,15 +28,15 @@ public class Challenge15
         {
             var zip = list.Zip(distribution).ToList();
             var cap = Math.Max(0, zip.Sum(x => x.First.Capacity * x.Second));
-            var dur = Math.Max(0,zip.Sum(x => x.First.Durability * x.Second));
-            var fla = Math.Max(0,zip.Sum(x => x.First.Flavor * x.Second));
-            var tex = Math.Max(0,zip.Sum(x => x.First.Texture * x.Second));
+            var dur = Math.Max(0, zip.Sum(x => x.First.Durability * x.Second));
+            var fla = Math.Max(0, zip.Sum(x => x.First.Flavor * x.Second));
+            var tex = Math.Max(0, zip.Sum(x => x.First.Texture * x.Second));
             score = Math.Max(score, cap * dur * fla * tex);
         }
-        
+
         return score.ToString();
     }
-    
+
     [Part2]
     public async Task<string?> Part2Async()
     {
@@ -46,15 +47,15 @@ public class Challenge15
         {
             var zip = list.Zip(distribution).ToList();
             var cap = Math.Max(0, zip.Sum(x => x.First.Capacity * x.Second));
-            var dur = Math.Max(0,zip.Sum(x => x.First.Durability * x.Second));
-            var fla = Math.Max(0,zip.Sum(x => x.First.Flavor * x.Second));
-            var tex = Math.Max(0,zip.Sum(x => x.First.Texture * x.Second));
+            var dur = Math.Max(0, zip.Sum(x => x.First.Durability * x.Second));
+            var fla = Math.Max(0, zip.Sum(x => x.First.Flavor * x.Second));
+            var tex = Math.Max(0, zip.Sum(x => x.First.Texture * x.Second));
             var cal = Math.Max(0, zip.Sum(x => x.First.Calories * x.Second));
-            
-            if(cal == 500)
+
+            if (cal == 500)
                 score = Math.Max(score, cap * dur * fla * tex);
         }
-        
+
         return score.ToString();
     }
 

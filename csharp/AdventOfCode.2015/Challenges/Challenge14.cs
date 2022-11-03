@@ -10,7 +10,7 @@ public class Challenge14
 {
     private static readonly Regex Pattern =
         new(@"(\w+) can fly (\d+) km/s for (\d+) seconds, but then must rest for (\d+) seconds.");
-    
+
     private readonly IInputReader _inputReader;
 
     public Challenge14(IInputReader inputReader)
@@ -19,7 +19,8 @@ public class Challenge14
     }
 
     [Part1]
-    public async Task<string?> Part1Async() => await _inputReader.ParseLinesAsync(14, ParseLine).Select(r => r.DistanceTraveledAfter(2503)).MaxAsync().ToStringAsync();
+    public async Task<string?> Part1Async() => await _inputReader.ParseLinesAsync(14, ParseLine)
+        .Select(r => r.DistanceTraveledAfter(2503)).MaxAsync().ToStringAsync();
 
     [Part2]
     public async Task<string> Part2Async()
@@ -30,16 +31,10 @@ public class Challenge14
         var distanceTraveled = reindeer.ToDictionary(kv => kv, _ => 0);
         for (var s = 1; s <= 2503; s++)
         {
-            foreach (var deer in reindeer)
-            {
-                distanceTraveled[deer] = deer.DistanceTraveledAfter(s);
-            }
+            foreach (var deer in reindeer) distanceTraveled[deer] = deer.DistanceTraveledAfter(s);
 
             var max = distanceTraveled.Values.Max();
-            foreach (var deer in reindeer.Where(x => distanceTraveled[x] == max))
-            {
-                score[deer]++;
-            }
+            foreach (var deer in reindeer.Where(x => distanceTraveled[x] == max)) score[deer]++;
         }
 
         return score.Values.Max().ToString();

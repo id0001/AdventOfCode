@@ -35,8 +35,10 @@ public class Challenge20
             yield return portal.Inner == p ? portal.Outer : portal.Inner;
 
         foreach (var neighbor in p.GetNeighbors().Where(o => o.X == p.X || o.Y == p.Y))
+        {
             if (maze[neighbor.Y, neighbor.X] == '.')
                 yield return neighbor;
+        }
     }
 
     [Part2]
@@ -75,8 +77,10 @@ public class Challenge20
         }
 
         foreach (var neighbor in p2d.GetNeighbors().Where(o => o.X == p2d.X || o.Y == p2d.Y))
+        {
             if (maze[neighbor.Y, neighbor.X] == '.')
                 yield return new Point3(neighbor.X, neighbor.Y, p.Z);
+        }
     }
 
     private static MazeData AnalyzeMaze(char[,] maze)
@@ -94,6 +98,7 @@ public class Challenge20
 
             var p = new Point2(x, y);
             foreach (var neighbor in p.GetNeighbors())
+            {
                 if (char.IsUpper(maze[neighbor.Y, neighbor.X]))
                 {
                     var direction = neighbor - p;
@@ -128,6 +133,7 @@ public class Challenge20
                         }
                     }
                 }
+            }
         }
 
         return new MazeData(start, end, portals);

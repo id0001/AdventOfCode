@@ -183,8 +183,10 @@ public class Challenge15
         };
 
         for (var i = 0; i < 4; i++)
+        {
             if (!visited.ContainsKey(moves[i]))
                 discovery.Push(new Move(source, moves[i]));
+        }
     }
 
     private record Move(Point2 Source, Point2 Target);

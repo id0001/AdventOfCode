@@ -19,7 +19,7 @@ public class Challenge02
         (await _inputReader
             .ParseLinesAsync(2, ParseLine)
             .SumAsync(TotalPaperNeeded))
-            .ToString();
+        .ToString();
 
     [Part2]
     public async Task<string?> Part2Async() =>
@@ -31,7 +31,7 @@ public class Challenge02
     private static Cube ParseLine(string line)
     {
         var split = line.Split('x').Select(int.Parse).OrderBy(_ => _).ToArray();
-        return new Cube(0,0,0,split[0],split[1],split[2]);
+        return new Cube(0, 0, 0, split[0], split[1], split[2]);
     }
 
     private static int TotalPaperNeeded(Cube cube) => cube.TotalSurfaceArea + cube.SmallestArea;

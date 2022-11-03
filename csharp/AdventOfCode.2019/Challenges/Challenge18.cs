@@ -89,6 +89,7 @@ public class Challenge18
         {
             var v = vertices[state.Locations[i]];
             foreach (var edge in edges[v])
+            {
                 if (HasKeys(state.ObtainedKeys, edge.RequiredKeys))
                 {
                     var c = edge.To.Key;
@@ -109,6 +110,7 @@ public class Challenge18
                         yield return new DroneState(newLocs, keys, edge.Distance);
                     }
                 }
+            }
         }
     }
 
@@ -153,10 +155,12 @@ public class Challenge18
     {
         for (var y = p.Y - 1; y <= p.Y + 1; y++)
         for (var x = p.X - 1; x <= p.X + 1; x++)
+        {
             if (x == p.X || y == p.Y)
                 maze[y, x] = '#';
             else
                 maze[y, x] = '@';
+        }
     }
 
     private static int AddKey(int obtainedKeys, char key)

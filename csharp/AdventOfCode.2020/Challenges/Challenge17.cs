@@ -24,8 +24,10 @@ public class Challenge17
         var lines = await _inputReader.ReadLinesAsync(17).ToArrayAsync();
         for (var y = 0; y < lines.Length; y++)
         for (var x = 0; x < lines[y].Length; x++)
+        {
             if (lines[y][x] == '#')
                 state.Add(new Point3(x, y, 0), true);
+        }
 
         for (var i = 0; i < 6; i++)
         {
@@ -65,8 +67,10 @@ public class Challenge17
         var lines = await _inputReader.ReadLinesAsync(17).ToArrayAsync();
         for (var y = 0; y < lines.Length; y++)
         for (var x = 0; x < lines[y].Length; x++)
+        {
             if (lines[y][x] == '#')
                 state.Add(new Point4(x, y, 0, 0), true);
+        }
 
         for (var i = 0; i < 6; i++)
         {

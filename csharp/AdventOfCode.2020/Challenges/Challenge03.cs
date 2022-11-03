@@ -26,7 +26,8 @@ public class Challenge03
     {
         var input = await _inputReader.ReadLinesAsync(3).ToArrayAsync();
 
-        return (TraverseSlope(input, 1, 1) * TraverseSlope(input, 3, 1) * TraverseSlope(input, 5, 1) * TraverseSlope(input, 7, 1) *
+        return (TraverseSlope(input, 1, 1) * TraverseSlope(input, 3, 1) * TraverseSlope(input, 5, 1) *
+                TraverseSlope(input, 7, 1) *
                 TraverseSlope(input, 1, 2)).ToString();
     }
 

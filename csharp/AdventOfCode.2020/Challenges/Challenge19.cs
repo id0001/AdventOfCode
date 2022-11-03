@@ -75,6 +75,7 @@ public class Challenge19
         var orGroups = rules[key].Split("|");
 
         for (var o = 0; o < orGroups.Length; o++)
+        {
             switch (key)
             {
                 case 8 when orGroups[o].Contains("8"):
@@ -89,7 +90,8 @@ public class Challenge19
                     var p31 = BuildPattern(rules, 31, cache);
 
                     orGroups[o] = "(?:" +
-                                  string.Join("|", Enumerable.Range(1, 10).Select(i => $"{p42}{{{i}}}{p31}{{{i}}}")) + ")";
+                                  string.Join("|", Enumerable.Range(1, 10).Select(i => $"{p42}{{{i}}}{p31}{{{i}}}")) +
+                                  ")";
                     break;
                 }
                 default:
@@ -105,6 +107,7 @@ public class Challenge19
                     break;
                 }
             }
+        }
 
         var result = key == 0 ? $"^{string.Join("|", orGroups)}$" : $"(?:{string.Join("|", orGroups)})";
 

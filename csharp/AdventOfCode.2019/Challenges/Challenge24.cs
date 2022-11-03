@@ -204,8 +204,10 @@ public class Challenge24
     {
         var diversity = 0;
         for (var i = 0; i < data.Count; i++)
+        {
             if (data[i] == '#')
                 diversity += (int)Math.Pow(2, i);
+        }
 
         return diversity;
     }

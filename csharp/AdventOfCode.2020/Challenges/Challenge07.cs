@@ -59,8 +59,10 @@ public class Challenge07
             count++;
 
             foreach (var target in _bagGraph.InEdges(source).Keys)
+            {
                 if (!closedSet.Contains(target))
                     openSet.Push(target);
+            }
         }
 
         return count.ToString();

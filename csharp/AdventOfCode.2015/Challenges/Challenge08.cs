@@ -18,7 +18,7 @@ public class Challenge08
     {
         var c1 = 0;
         var c2 = 0;
-        await foreach (var (a,b) in _inputReader.ParseLinesAsync(8, ParseLine))
+        await foreach (var (a, b) in _inputReader.ParseLinesAsync(8, ParseLine))
         {
             c1 += a;
             c2 += b;
@@ -26,7 +26,7 @@ public class Challenge08
 
         return (c1 - c2).ToString();
     }
-    
+
     [Part2]
     public async Task<string?> Part2Async()
     {
@@ -41,13 +41,13 @@ public class Challenge08
         return (c1 - c2).ToString();
     }
 
-    private (int,int) ParseLine(string line)
+    private (int, int) ParseLine(string line)
     {
         var c1 = line.Length;
 
         var c2 = 0;
         var escaped = false;
-        for (var i = 1; i < line.Length-1; i++)
+        for (var i = 1; i < line.Length - 1; i++)
         {
             if (line[i] == '\\' && !escaped)
             {
@@ -55,10 +55,7 @@ public class Challenge08
                 continue;
             }
 
-            if (escaped && line[i] == 'x')
-            {
-                i += 2;
-            }
+            if (escaped && line[i] == 'x') i += 2;
 
             c2++;
             escaped = false;

@@ -176,4 +176,14 @@ public static class Euclid
         
         public static bool IsPowerOfTwo(int number) => number > 0 && (number & (number - 1)) == 0x0;
         public static bool IsPowerOfTwo(long number) => number > 0 && (number & (number - 1)) == 0x0;
+        
+        /// <summary>
+        /// Calculates the triangular number of the given number.
+        /// https://en.wikipedia.org/wiki/Triangular_number
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static int TriangularNumber(int number) => (number * (number + 1)) / 2;
+        
+        public static int InverseTriangleNumber(int number) => (int)System.Math.Sqrt(number * 2);
 }

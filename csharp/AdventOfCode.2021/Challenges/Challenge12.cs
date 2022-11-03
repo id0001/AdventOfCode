@@ -1,83 +1,65 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AdventOfCode.Lib.Extensions;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2021.Challenges
+namespace AdventOfCode2021.Challenges;
+
+[Challenge(12)]
+public class Challenge12
 {
-    [Challenge(12)]
-    public class Challenge12
+    private readonly IInputReader _inputReader;
+    private readonly Dictionary<string, HashSet<string>> _edges = new();
+
+    public Challenge12(IInputReader inputReader)
     {
-        private readonly IInputReader inputReader;
-        private Dictionary<string, ISet<string>> edges;
+        _inputReader = inputReader;
+    }
 
-        public Challenge12(IInputReader inputReader)
+    [Setup]
+    public async Task SetupAsync()
+    {
+        await foreach (var line in _inputReader.ReadLinesAsync(12))
         {
-            this.inputReader = inputReader;
+            var splitPath = line.Split('-');
+
+            if (!_edges.TryGetValue(splitPath[0], out var set))
+                _edges.Add(splitPath[0], set = new HashSet<string>());
+            set.Add(splitPath[1]);
+
+            if (!_edges.TryGetValue(splitPath[1], out set))
+                _edges.Add(splitPath[1], set = new HashSet<string>());
+            set.Add(splitPath[0]);
         }
+    }
 
-        [Setup]
-        public async Task SetupAsync()
-        {
-            edges = new Dictionary<string, ISet<string>>();
-            await foreach (var line in inputReader.ReadLinesAsync(12))
-            {
-                string[] splitPath = line.Split('-');
+    [Part1]
+    public string Part1()
+    {
+        return CountPaths("start", ImmutableHashSet<string>.Empty, false).ToString();
+    }
 
-                edges.AddOrUpdate(splitPath[0], set =>
-                {
-                    set ??= new HashSet<string>();
-                    set.Add(splitPath[1]);
-                    return set;
-                });
+    [Part2]
+    public string Part2()
+    {
+        return CountPaths("start", ImmutableHashSet<string>.Empty, true).ToString();
+    }
 
-                edges.AddOrUpdate(splitPath[1], set =>
-                {
-                    set ??= new HashSet<string>();
-                    set.Add(splitPath[0]);
-                    return set;
-                });
-            }
-        }
+    private int CountPaths(string currentNode, IImmutableSet<string> visited, bool canVisitTwice)
+    {
+        if (currentNode == "end")
+            return 1;
 
-        [Part1]
-        public string Part1()
-        {
-            return CountPaths("start", ImmutableHashSet<string>.Empty, false).ToString();
-        }
+        if (currentNode == "start" && visited.Contains(currentNode)) // Can never visit start twice
+            return 0;
 
-        [Part2]
-        public string Part2()
-        {
-            return CountPaths("start", ImmutableHashSet<string>.Empty, true).ToString();
-        }
+        if (visited.Contains(currentNode) && !canVisitTwice)
+            return 0;
 
-        private int CountPaths(string currentNode, IImmutableSet<string> visited, bool canVisitTwice)
-        {
-            if (currentNode == "end")
-                return 1;
+        var newVisited = visited;
+        if (currentNode.All(char.IsLower))
+            newVisited = visited.Add(currentNode);
 
-            if (currentNode == "start" && visited.Contains(currentNode)) // Can never visit start twice
-                return 0;
-
-            if (visited.Contains(currentNode) && !canVisitTwice)
-                return 0;
-
-            IImmutableSet<string> newVisited = null;
-            if (currentNode.All(char.IsLower))
-            {
-                newVisited = visited.Add(currentNode);
-            }
-            else
-            {
-                newVisited = visited;
-            }
-
-            return edges[currentNode].Sum(neighbor => CountPaths(neighbor, newVisited, canVisitTwice && !visited.Contains(currentNode)));
-        }
+        return _edges[currentNode].Sum(neighbor =>
+            CountPaths(neighbor, newVisited, canVisitTwice && !visited.Contains(currentNode)));
     }
 }

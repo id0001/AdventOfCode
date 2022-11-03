@@ -131,10 +131,12 @@ public class Challenge11
         for (var y = 0; y < rows; y++)
         {
             for (var x = 0; x < cols; x++)
+            {
                 if (locations.TryGetValue(new Point2(x + leftMost, y + topMost), out var pvalue))
                     sb.Append(pvalue == 1 ? '#' : '.');
                 else
                     sb.Append('.');
+            }
 
             sb.AppendLine();
         }

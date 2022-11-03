@@ -38,6 +38,7 @@ public class Challenge11
             var newState = new char[state.Length];
             for (var y = 0; y < _height; y++)
             for (var x = 0; x < _width; x++)
+            {
                 stateChanged |= state[Index(x, y)] switch
                 {
                     '.' => Ignore(newState, x, y),
@@ -45,6 +46,7 @@ public class Challenge11
                     '#' => Empty1(state, newState, x, y),
                     _ => throw new NotSupportedException()
                 };
+            }
 
             state = newState;
         } while (stateChanged);
@@ -65,6 +67,7 @@ public class Challenge11
             var newState = new char[state.Length];
             for (var y = 0; y < _height; y++)
             for (var x = 0; x < _width; x++)
+            {
                 stateChanged |= state[Index(x, y)] switch
                 {
                     '.' => Ignore(newState, x, y),
@@ -72,6 +75,7 @@ public class Challenge11
                     '#' => Empty2(state, newState, x, y),
                     _ => throw new NotSupportedException()
                 };
+            }
 
             state = newState;
         } while (stateChanged);
@@ -89,11 +93,13 @@ public class Challenge11
     {
         for (var y = py - 1; y <= py + 1; y++)
         for (var x = px - 1; x <= px + 1; x++)
+        {
             if (!(x == px && y == py) && WithinBoundaries(x, y) && oldState[Index(x, y)] == '#')
             {
                 newState[Index(px, py)] = 'L';
                 return false;
             }
+        }
 
         newState[Index(px, py)] = '#';
         return true;
@@ -103,11 +109,13 @@ public class Challenge11
     {
         for (var y = -1; y <= 1; y++)
         for (var x = -1; x <= 1; x++)
+        {
             if (!(x == 0 && y == 0) && CastRay(oldState, px, py, x, y) == '#')
             {
                 newState[Index(px, py)] = 'L';
                 return false;
             }
+        }
 
         newState[Index(px, py)] = '#';
         return true;
@@ -118,11 +126,13 @@ public class Challenge11
         var count = 0;
         for (var y = py - 1; y <= py + 1; y++)
         for (var x = px - 1; x <= px + 1; x++)
+        {
             if (!(x == px && y == py) && WithinBoundaries(x, y) && oldState[Index(x, y)] == '#' && ++count >= 4)
             {
                 newState[Index(px, py)] = 'L';
                 return true;
             }
+        }
 
         newState[Index(px, py)] = '#';
         return false;
@@ -133,11 +143,13 @@ public class Challenge11
         var count = 0;
         for (var y = -1; y <= 1; y++)
         for (var x = -1; x <= 1; x++)
+        {
             if (!(x == 0 && y == 0) && CastRay(oldState, px, py, x, y) == '#' && ++count >= 5)
             {
                 newState[Index(px, py)] = 'L';
                 return true;
             }
+        }
 
         newState[Index(px, py)] = '#';
         return false;

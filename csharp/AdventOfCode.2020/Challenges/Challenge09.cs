@@ -61,8 +61,10 @@ public class Challenge09
     {
         for (var y = 0; y < buffer.Count; y++)
         for (var x = y; x < buffer.Count; x++)
+        {
             if (value == buffer[x] + buffer[y])
                 return true;
+        }
 
         return false;
     }

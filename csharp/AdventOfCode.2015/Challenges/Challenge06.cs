@@ -9,8 +9,8 @@ namespace AdventOfCode2015.Challenges;
 public class Challenge06
 {
     private readonly IInputReader _inputReader;
-    private readonly Regex _pattern = new Regex(@"(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)");
-    
+    private readonly Regex _pattern = new(@"(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)");
+
     public Challenge06(IInputReader inputReader)
     {
         _inputReader = inputReader;
@@ -19,8 +19,8 @@ public class Challenge06
     [Part1]
     public async Task<string?> Part1Async()
     {
-        var grid = new bool[1000*1000];
-        
+        var grid = new bool[1000 * 1000];
+
         await foreach (var action in _inputReader.ParseLinesAsync(6, ParseLine))
         {
             var rect = new Rectangle(action.From, action.To - action.From);
@@ -44,8 +44,8 @@ public class Challenge06
     [Part2]
     public async Task<string?> Part2Async()
     {
-        var grid = new int[1000*1000];
-        
+        var grid = new int[1000 * 1000];
+
         await foreach (var action in _inputReader.ParseLinesAsync(6, ParseLine))
         {
             var rect = new Rectangle(action.From, action.To - action.From);
@@ -70,7 +70,7 @@ public class Challenge06
     {
         var match = _pattern.Match(line);
         var from = new Point2(int.Parse(match.Groups[2].Value), int.Parse(match.Groups[3].Value));
-        var to = new Point2(int.Parse(match.Groups[4].Value)+1, int.Parse(match.Groups[5].Value)+1);
+        var to = new Point2(int.Parse(match.Groups[4].Value) + 1, int.Parse(match.Groups[5].Value) + 1);
 
         return new LightAction(match.Groups[1].Value, from, to);
     }

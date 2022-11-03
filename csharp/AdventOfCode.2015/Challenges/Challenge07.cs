@@ -1,6 +1,5 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
-using AdventOfCode.Lib;
 
 namespace AdventOfCode2015.Challenges;
 
@@ -21,7 +20,7 @@ public class Challenge07
         var buffer = new Dictionary<string, int>();
         return Resolve(instructionSet, buffer, "a").ToString();
     }
-    
+
     [Part2]
     public async Task<string?> Part2Async()
     {
@@ -37,9 +36,7 @@ public class Challenge07
     {
         var instructionSet = new Dictionary<string, Instruction>();
         await foreach (var (key, instruction) in _inputReader.ParseLinesAsync(7, ParseInstruction))
-        {
             instructionSet.Add(key, instruction);
-        }
 
         return instructionSet;
     }
@@ -64,10 +61,11 @@ public class Challenge07
     }
 
     private int Not(IDictionary<string, Instruction> instructionSet, IDictionary<string, int> buffer, string wire) =>
-        ~Resolve(instructionSet, buffer, wire)  & 0xffff;
-    
+        ~Resolve(instructionSet, buffer, wire) & 0xffff;
+
     private int RShift(IDictionary<string, Instruction> instructionSet, IDictionary<string, int> buffer, string wireA,
-    string wireB) {
+        string wireB)
+    {
         var resA = Resolve(instructionSet, buffer, wireA);
         var resB = Resolve(instructionSet, buffer, wireB);
         return resA >> resB;
@@ -108,7 +106,8 @@ public class Challenge07
             return value;
 
         var instruction = instructionSet[wire];
-        buffer.AddOrUpdate(wire, instruction.Execute(instructionSet, buffer));
+        buffer.TryAdd(wire, 0);
+        buffer[wire] = instruction.Execute(instructionSet, buffer);
         return buffer[wire];
     }
 

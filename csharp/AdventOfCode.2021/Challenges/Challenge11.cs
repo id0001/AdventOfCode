@@ -1,111 +1,102 @@
 ﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
 
-namespace AdventOfCode2021.Challenges
+namespace AdventOfCode2021.Challenges;
+
+[Challenge(11)]
+public class Challenge11
 {
-    [Challenge(11)]
-    public class Challenge11
+    private readonly IInputReader _inputReader;
+
+    public Challenge11(IInputReader inputReader)
     {
-        private readonly IInputReader inputReader;
-        private int[,] input;
+        _inputReader = inputReader;
+    }
 
-        public Challenge11(IInputReader inputReader)
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        var input = await _inputReader.ReadGridAsync<int>(11);
+
+        var totalFlashCount = 0;
+
+        for (var steps = 0; steps < 100; steps++)
         {
-            this.inputReader = inputReader;
+            var queue = new Queue<Point2>();
+            var visited = new HashSet<Point2>();
+
+            // Increment step
+            Increment(input, queue, visited);
+
+            // Flash step
+            Flash(input, queue, visited);
+            totalFlashCount += visited.Count;
         }
 
-        [Setup]
-        public async Task SetupAsync()
+        return totalFlashCount.ToString();
+    }
+
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var input = await _inputReader.ReadGridAsync<int>(11);
+
+        var step = 0;
+        while (true)
         {
-            input = await inputReader.ReadGridAsync<int>(11);
+            var queue = new Queue<Point2>();
+            var visited = new HashSet<Point2>();
+
+            // Increment step
+            Increment(input, queue, visited);
+
+            // Flash step
+            Flash(input, queue, visited);
+
+            step++;
+            if (visited.Count == 100) // all octopusses flashed this step
+                break;
         }
 
-        [Part1]
-        public string Part1()
-        {
-            int totalFlashCount = 0;
+        return step.ToString();
+    }
 
-            for (int steps = 0; steps < 100; steps++)
+    private static void Flash(int[,] input, Queue<Point2> queue, ISet<Point2> visited)
+    {
+        while (queue.Count > 0)
+        {
+            var p = queue.Dequeue();
+            input[p.Y, p.X] = 0;
+
+            foreach (var neighbor in p.GetNeighbors(true))
             {
-                Queue<Point2> queue = new Queue<Point2>();
-                ISet<Point2> visited = new HashSet<Point2>();
+                if (neighbor.X < 0 || neighbor.Y < 0 || neighbor.X >= input.GetLength(1) ||
+                    neighbor.Y >= input.GetLength(0))
+                    continue;
 
-                // Increment step
-                Increment(queue, visited);
+                if (visited.Contains(neighbor)) continue;
 
-                // Flash step
-                Flash(queue, visited);
-                totalFlashCount += visited.Count;
-            }
+                input[neighbor.Y, neighbor.X]++;
 
-            return totalFlashCount.ToString();
-        }
+                if (input[neighbor.Y, neighbor.X] <= 9) continue;
 
-        [Part2]
-        public string Part2()
-        {
-            int step = 0;
-            while (true)
-            {
-                Queue<Point2> queue = new Queue<Point2>();
-                ISet<Point2> visited = new HashSet<Point2>();
-
-                // Increment step
-                Increment(queue, visited);
-
-                // Flash step
-                Flash(queue, visited);
-
-                step++;
-                if (visited.Count == 100) // all octopusses flashed this step
-                    break;
-            }
-
-            return step.ToString();
-        }
-
-        private void Flash(Queue<Point2> queue, ISet<Point2> visited)
-        {
-            while (queue.Count > 0)
-            {
-                Point2 p = queue.Dequeue();
-                input[p.Y, p.X] = 0;
-
-                foreach (var neighbor in p.GetNeighbors())
-                {
-                    if (neighbor.X < 0 || neighbor.Y < 0 || neighbor.X >= input.GetLength(1) || neighbor.Y >= input.GetLength(0))
-                        continue;
-
-                    if (!visited.Contains(neighbor))
-                    {
-                        input[neighbor.Y, neighbor.X]++;
-                        if (input[neighbor.Y, neighbor.X] > 9)
-                        {
-                            queue.Enqueue(neighbor);
-                            visited.Add(neighbor);
-                        }
-                    }
-                }
+                queue.Enqueue(neighbor);
+                visited.Add(neighbor);
             }
         }
+    }
 
-        private void Increment(Queue<Point2> flashQueue, ISet<Point2> hasFlashed)
+    private static void Increment(int[,] input, Queue<Point2> flashQueue, ISet<Point2> hasFlashed)
+    {
+        for (var y = 0; y < 10; y++)
+        for (var x = 0; x < 10; x++)
         {
-            for (int y = 0; y < 10; y++)
-            {
-                for (int x = 0; x < 10; x++)
-                {
-                    input[y, x]++;
-                    if (input[y, x] > 9)
-                    {
-                        flashQueue.Enqueue(new Point2(x, y));
-                        hasFlashed.Add(new Point2(x, y));
-                    }
-                }
-            }
+            input[y, x]++;
+            if (input[y, x] <= 9) continue;
+
+            flashQueue.Enqueue(new Point2(x, y));
+            hasFlashed.Add(new Point2(x, y));
         }
     }
 }

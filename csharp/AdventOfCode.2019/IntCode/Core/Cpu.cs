@@ -44,7 +44,7 @@ public partial class Cpu
     {
         _inputBuffer.Enqueue(value);
         if (!_waitingForInput) return;
-        
+
         _waitingForInput = false;
         if (!_manualMode)
             Task.Run(RunUntilHaltOrInput);
@@ -205,6 +205,6 @@ public partial class Cpu
         { OpCode.JumpIfFalse, JumpIfFalse },
         { OpCode.LessThan, LessThan },
         { OpCode.Equals, Equals },
-        { OpCode.AjustRelativeBase, AjustRelativeBase }
+        { OpCode.AdjustRelativeBase, AjustRelativeBase }
     };
 }

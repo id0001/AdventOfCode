@@ -45,8 +45,12 @@ public class AStar<T> where T : notnull
 
                 if (newDistance >= oldDistance) continue;
 
-                distances.AddOrUpdate(adjacent, newDistance);
-                previous.AddOrUpdate(adjacent, currentNode);
+                if (!distances.TryAdd(adjacent, newDistance))
+                    distances[adjacent] = newDistance;
+
+                if (!previous.TryAdd(adjacent, currentNode))
+                    previous[adjacent] = currentNode;
+                
                 queue.Enqueue(adjacent, newDistance + heuristic(adjacent));
             }
         }

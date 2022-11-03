@@ -29,17 +29,11 @@ public class Challenge12
             switch (current.ValueKind)
             {
                 case JsonValueKind.Object:
-                    foreach (var child in current.EnumerateObject())
-                    {
-                        stack.Push(child.Value);
-                    }
+                    foreach (var child in current.EnumerateObject()) stack.Push(child.Value);
 
                     break;
                 case JsonValueKind.Array:
-                    foreach (var child in current.EnumerateArray())
-                    {
-                        stack.Push(child);
-                    }
+                    foreach (var child in current.EnumerateArray()) stack.Push(child);
                     break;
                 case JsonValueKind.Number:
                     sum += current.GetInt32();
@@ -63,7 +57,7 @@ public class Challenge12
     {
         var json = await _inputReader.ReadAllTextAsync(12);
         var doc = JsonDocument.Parse(json);
-        
+
         var queue = new Queue<JsonElement>();
         queue.Enqueue(doc.RootElement);
 
@@ -78,13 +72,13 @@ public class Challenge12
                     var children = current.EnumerateObject();
                     if (children.Any(c => c.Value.ValueKind == JsonValueKind.String && c.Value.GetString() == "red"))
                         break;
-                    
-                    foreach(var child in children)
+
+                    foreach (var child in children)
                         queue.Enqueue(child.Value);
-                    
+
                     break;
                 case JsonValueKind.Array:
-                    foreach(var child in current.EnumerateArray())
+                    foreach (var child in current.EnumerateArray())
                         queue.Enqueue(child);
                     break;
                 case JsonValueKind.Number:

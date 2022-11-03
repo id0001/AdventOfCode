@@ -76,7 +76,6 @@ public class Challenge08
                 history.Add(ip);
                 var instruction = input[ip];
                 if (!changedInstruction)
-                {
                     switch (instruction.Opcode)
                     {
                         case "nop" when instruction.Value != 0 && !closedList.Contains(ip) &&
@@ -93,7 +92,6 @@ public class Challenge08
                             changedInstruction = true;
                             break;
                     }
-                }
 
                 switch (instruction.Opcode)
                 {

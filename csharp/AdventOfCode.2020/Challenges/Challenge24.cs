@@ -32,6 +32,7 @@ public class Challenge24
         {
             var steps = new List<string>();
             for (var i = 0; i < line.Length; i++)
+            {
                 if (line[i] == 'n' || line[i] == 's')
                 {
                     steps.Add(line.Substring(i, 2));
@@ -41,6 +42,7 @@ public class Challenge24
                 {
                     steps.Add(line[i].ToString());
                 }
+            }
 
             _input.Add(steps);
         }

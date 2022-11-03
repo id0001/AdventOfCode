@@ -52,8 +52,10 @@ public class Challenge08
         var image = Enumerable.Range(0, ppl).Select(i =>
         {
             for (var si = 0; si < segments.Length; si++)
+            {
                 if (segments[si][i] != 2)
                     return segments[si][i];
+            }
 
             return -1;
         }).ToArray();

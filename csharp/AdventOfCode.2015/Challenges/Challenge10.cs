@@ -12,17 +12,17 @@ public class Challenge10
     public string Part1()
     {
         var input = OriginalInput;
-        for (var i = 0; i < 40; i++) 
+        for (var i = 0; i < 40; i++)
             input = Transform(input);
 
         return input.Length.ToString();
     }
-    
+
     [Part2]
     public string Part2()
     {
         var input = OriginalInput;
-        for (var i = 0; i < 50; i++) 
+        for (var i = 0; i < 50; i++)
             input = Transform(input);
 
         return input.Length.ToString();

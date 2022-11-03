@@ -17,7 +17,7 @@ public class Challenge04
 
     private static int FindHashStartingWith(string startsWith)
     {
-        for(var i = 0; ; i++)
+        for (var i = 0;; i++)
         {
             using var md5 = MD5.Create();
             var input = Encoding.ASCII.GetBytes($"{Input}{i}");

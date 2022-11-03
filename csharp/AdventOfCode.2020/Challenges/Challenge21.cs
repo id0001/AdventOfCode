@@ -44,10 +44,12 @@ public class Challenge21
             }
 
             foreach (var allergen in food.Allergens)
+            {
                 if (potentialAllergens.ContainsKey(allergen))
                     potentialAllergens[allergen].IntersectWith(food.Ingredients);
                 else
                     potentialAllergens[allergen] = new HashSet<string>(food.Ingredients);
+            }
         }
 
         var dangerousIngredients = potentialAllergens.Values.SelectMany(e => e).ToHashSet();
@@ -64,10 +66,12 @@ public class Challenge21
 
         foreach (var food in _input)
         foreach (var allergen in food.Allergens)
+        {
             if (potentialAllergens.ContainsKey(allergen))
                 potentialAllergens[allergen].IntersectWith(food.Ingredients);
             else
                 potentialAllergens[allergen] = new HashSet<string>(food.Ingredients);
+        }
 
         var result = new Dictionary<string, string>();
 

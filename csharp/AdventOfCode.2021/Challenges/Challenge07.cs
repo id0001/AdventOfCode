@@ -1,60 +1,54 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.IO;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
-namespace AdventOfCode2021.Challenges
+namespace AdventOfCode2021.Challenges;
+
+[Challenge(7)]
+public class Challenge07
 {
-    [Challenge(7)]
-    public class Challenge07
+    private readonly IInputReader _inputReader;
+
+    public Challenge07(IInputReader inputReader)
     {
-        private readonly IInputReader inputReader;
-        private int[] data;
+        _inputReader = inputReader;
+    }
 
-        public Challenge07(IInputReader inputReader)
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        var data = await _inputReader.ReadLineAsync<int>(7, ',').ToArrayAsync();
+
+        var min = data.Min();
+        var max = data.Max();
+
+        var lowest = int.MaxValue;
+        for (var pos = min; pos < max; pos++)
         {
-            this.inputReader = inputReader;
+            var test = data.Select(x => Math.Abs(x - pos)).Sum();
+            if (test < lowest)
+                lowest = test;
         }
 
-        [Setup]
-        public async Task SetupAsync()
+        return lowest.ToString();
+    }
+
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var data = await _inputReader.ReadLineAsync<int>(7, ',').ToArrayAsync();
+
+        var min = data.Min();
+        var max = data.Max();
+
+        var lowest = int.MaxValue;
+        for (var pos = min; pos < max; pos++)
         {
-            data = await inputReader.ReadLineAsync<int>(7, ',').ToArrayAsync();
+            var test = data.Select(x => Euclid.TriangularNumber(Math.Abs(x - pos))).Sum();
+            if (test < lowest)
+                lowest = test;
         }
 
-        [Part1]
-        public string Part1()
-        {
-            int min = data.Min();
-            int max = data.Max();
-
-            int lowest = int.MaxValue;
-            for (int pos = min; pos < max; pos++)
-            {
-                int test = data.Select(x => Math.Abs(x - pos)).Sum();
-                if (test < lowest)
-                    lowest = test;
-            }
-
-            return lowest.ToString();
-        }
-
-        [Part2]
-        public string Part2()
-        {
-            int min = data.Min();
-            int max = data.Max();
-
-            int lowest = int.MaxValue;
-            for (int pos = min; pos < max; pos++)
-            {
-                int test = data.Select(x => MathEx.TriangularNumber(Math.Abs(x - pos))).Sum();
-                if (test < lowest)
-                    lowest = test;
-            }
-
-            return lowest.ToString();
-        }
+        return lowest.ToString();
     }
 }

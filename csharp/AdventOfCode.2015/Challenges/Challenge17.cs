@@ -20,13 +20,13 @@ public class Challenge17
         var items = await _inputReader.ReadLinesAsync<int>(17).ToArrayAsync();
 
         var combinations = Enumerable
-            .Range(1, items.Length+1)
+            .Range(1, items.Length + 1)
             .SelectMany(k => Combinatorics.SelectAllCombinations(items, k))
             .Count(c => c.Sum() == 150);
 
         return combinations.ToString();
     }
-    
+
     [Part2]
     public async Task<string?> Part2Async()
     {

@@ -36,7 +36,8 @@ public class Challenge13
     [Part1]
     public string Part1()
     {
-        var ordered = _busses.ToDictionary(kv => kv, kv => (int)(Math.Ceiling(_earliestDepartureTime / (double)kv) * kv))
+        var ordered = _busses
+            .ToDictionary(kv => kv, kv => (int)(Math.Ceiling(_earliestDepartureTime / (double)kv) * kv))
             .OrderBy(kv => kv.Value).ToArray();
         return (ordered[0].Key * (ordered[0].Value - _earliestDepartureTime)).ToString();
     }

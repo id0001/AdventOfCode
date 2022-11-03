@@ -35,9 +35,9 @@ public readonly struct Cube : IEquatable<Cube>
 
     public int Volume => Size.X * Size.Y * Size.Z;
 
-    public long LongVolume => Size.X * Size.Y * Size.Z;
+    public long LongVolume => (long)Size.X * Size.Y * Size.Z;
 
-    public int SmallestArea => new[] {AreaFrontBack, AreaLeftRight, AreaTopBottom}.Min();
+    public int SmallestArea => new[] { AreaFrontBack, AreaLeftRight, AreaTopBottom }.Min();
 
     public int SmallestPerimeter
     {
@@ -49,6 +49,43 @@ public readonly struct Cube : IEquatable<Cube>
     }
 
     public int TotalSurfaceArea => AreaFrontBack * 2 + AreaLeftRight * 2 + AreaTopBottom * 2;
+
+    public IEnumerable<Point3> Points
+    {
+        get
+        {
+            for (var z = Front; z < Back; z++)
+            for (var y = Top; y < Bottom; y++)
+            for (var x = Left; x < Right; x++)
+                yield return new Point3(x, y, z);
+        }
+    }
+
+    public bool IntersectsWith(Cube other) => Intersects(this, other);
+
+    public static bool Intersects(Cube a, Cube b)
+    {
+        return b.Left < a.Right
+               && a.Left < b.Right
+               && b.Top < a.Bottom
+               && a.Top < b.Bottom
+               && b.Front < a.Back
+               && a.Front < b.Back;
+    }
+
+    public static Cube Intersect(Cube a, Cube b)
+    {
+        if (!a.IntersectsWith(b))
+            return Empty;
+
+        var rightSide = System.Math.Min(a.Right, b.Right);
+        var leftSide = System.Math.Max(a.Left, b.Left);
+        var bottomSide = System.Math.Min(a.Bottom, b.Bottom);
+        var topSide = System.Math.Max(a.Top, b.Top);
+        var backSide = System.Math.Min(a.Back, b.Back);
+        var frontSide = System.Math.Max(a.Front, b.Front);
+        return new Cube(leftSide, topSide, frontSide, rightSide - leftSide, bottomSide - topSide, backSide - frontSide);
+    }
 
     public override string ToString() => $"({Position}, {Size})";
 

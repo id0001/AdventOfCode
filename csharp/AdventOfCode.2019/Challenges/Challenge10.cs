@@ -23,8 +23,10 @@ public class Challenge10
         await foreach (var line in _inputReader.ReadLinesAsync(10))
         {
             for (var x = 0; x < line.Length; x++)
+            {
                 if (line[x] == '#')
                     _asteroids.Add(new Point2(x, y));
+            }
 
             y++;
         }

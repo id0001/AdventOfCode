@@ -29,6 +29,7 @@ public class Challenge15
         var last = 0;
 
         for (var i = startingNumbers.Count; i < turns; i++)
+        {
             if (!lookup.ContainsKey(last))
             {
                 lookup.Add(last, i - 1);
@@ -40,6 +41,7 @@ public class Challenge15
                 lookup[last] = i - 1;
                 last = diff;
             }
+        }
 
         return last;
     }

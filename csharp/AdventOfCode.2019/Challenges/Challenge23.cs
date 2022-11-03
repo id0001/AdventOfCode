@@ -68,8 +68,10 @@ public class Challenge23
             cpus[i].Start(i);
 
         while (result == -1)
+        {
             foreach (var cpu in cpus)
                 cpu.Next();
+        }
 
         return result.ToString();
     }

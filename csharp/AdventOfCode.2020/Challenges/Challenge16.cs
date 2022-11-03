@@ -89,14 +89,18 @@ public class Challenge16
 
         for (var y = 0; y < 20; y++) // y = rule index
         for (var x = 0; x < 20; x++) // x = pos index
+        {
             if (_ticketRules[y].IsSupersetOf(validTickets.Select(ticket => ticket[x])))
                 matrix[y] += 1 << x;
+        }
 
         var order = new int[20];
         var found = 0;
         var mask = (1 << 20) - 1;
         while (found < 20)
+        {
             for (var y = 0; y < matrix.Length; y++)
+            {
                 if (Euclid.IsPowerOfTwo(matrix[y] & mask))
                 {
                     var o = InversePow(matrix[y] & mask);
@@ -104,6 +108,8 @@ public class Challenge16
                     found++;
                     mask -= 1 << o;
                 }
+            }
+        }
 
         return Enumerable.Range(0, 6).Select(i => (long)_yourTicket[order[i]]).Product().ToString();
     }

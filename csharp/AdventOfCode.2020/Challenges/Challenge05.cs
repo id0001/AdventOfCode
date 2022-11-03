@@ -48,6 +48,7 @@ public class Challenge05
     {
         int xmin = 0, ymin = 0, xmax = width, ymax = height;
         foreach (var c in query)
+        {
             switch (c)
             {
                 case 'F':
@@ -63,6 +64,7 @@ public class Challenge05
                     xmin = (xmax + xmin) / 2;
                     break;
             }
+        }
 
         return new Point2(xmin, ymin);
     }

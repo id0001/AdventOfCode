@@ -20,6 +20,7 @@ public class Challenge22
     public async Task SetupAsync()
     {
         await foreach (var line in _inputReader.ReadLinesAsync(22))
+        {
             if (line == "deal into new stack")
             {
                 _shuffleList.Add(new ShuffleType(0, 0));
@@ -34,6 +35,7 @@ public class Challenge22
                 var num = int.Parse(line.Substring(20));
                 _shuffleList.Add(new ShuffleType(2, num));
             }
+        }
     }
 
     [Part1]
@@ -42,6 +44,7 @@ public class Challenge22
         var position = 2019;
 
         foreach (var action in _shuffleList)
+        {
             position = action.Type switch
             {
                 0 => PositionAfterReverse(10007, position),
@@ -49,6 +52,7 @@ public class Challenge22
                 2 => PositionAfterIncrement(10007, position, action.Number),
                 _ => throw new NotSupportedException()
             };
+        }
 
         return position.ToString();
     }

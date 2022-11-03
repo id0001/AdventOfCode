@@ -85,11 +85,13 @@ public class Challenge20
             lakeImg.Orientation = orientation;
             for (var y = 0; y < lakeImg.Height - 3; y++)
             for (var x = 0; x < lakeImg.Width - monster[0].Length; x++)
+            {
                 if (IsMonster(lakeImg, monster, x, y))
                 {
                     monsterCount++;
                     MarkMonster(lakeImg, monster, x, y);
                 }
+            }
 
             if (monsterCount > 0)
                 break;
@@ -98,8 +100,10 @@ public class Challenge20
         var foamCount = 0;
         for (var y = 0; y < lakeImg.Height; y++)
         for (var x = 0; x < lakeImg.Width; x++)
+        {
             if (lakeImg[y, x] == '#')
                 foamCount++;
+        }
 
         return foamCount.ToString();
     }
@@ -108,8 +112,10 @@ public class Challenge20
     {
         for (var my = 0; my < monster.Count; my++)
         for (var mx = 0; mx < monster[my].Length; mx++)
+        {
             if (monster[my][mx] == '#' && lake[ly + my, lx + mx] != '#')
                 return false;
+        }
 
         return true;
     }
@@ -118,8 +124,10 @@ public class Challenge20
     {
         for (var my = 0; my < monster.Count; my++)
         for (var mx = 0; mx < monster[my].Length; mx++)
+        {
             if (monster[my][mx] == '#' && lake[ly + my, lx + mx] == '#')
                 lake[ly + my, lx + mx] = 'O';
+        }
     }
 
     private SparseSpatialMap<Point2, Image> StitchImage()
@@ -305,10 +313,12 @@ public class Challenge20
         {
             var s = 0;
             for (var i = 0; i < line.Length; i++)
+            {
                 if (!reverse)
                     s += line[i] == '#' ? 1 << i : 0;
                 else
                     s += line[i] == '#' ? 1 << (line.Length - 1 - i) : 0;
+            }
 
             return s;
         }
