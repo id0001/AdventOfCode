@@ -28,6 +28,23 @@ public static class EnumerableExtensions
         if (wrapAround) yield return (previous, first);
     }
 
+    public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, T separator)
+    {
+        var list = new List<T>();
+        foreach (var item in source)
+        {
+            if (!EqualityComparer<T>.Default.Equals(item, separator))
+            {
+                list.Add(item);
+            }
+            else
+            {
+                yield return list;
+                list = new List<T>();
+            }
+        }
+    }
+
     public static int Product(this IEnumerable<int> source) => source.Aggregate(1, (a, b) => a * b);
 
     public static long Product(this IEnumerable<long> source) => source.Aggregate(1L, (a, b) => a * b);

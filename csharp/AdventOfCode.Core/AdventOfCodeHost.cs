@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SimpleInjector;
 using SimpleInjector.Integration.ServiceCollection;
+using TextCopy;
 
 namespace AdventOfCode.Core;
 
@@ -199,14 +200,20 @@ public class AdventOfCodeHost : IHostedService
     {
         var result = await executor.ExecutePart2Async();
         if (!result.IsEmpty)
+        {
             Console.WriteLine($"- Part 2 ({result.Duration.TotalMilliseconds:F6}ms): {result.Result}");
+            await ClipboardService.SetTextAsync(result.Result!);
+        }
     }
 
     private static async Task RunPart1(ChallengeExecutor executor)
     {
         var result = await executor.ExecutePart1Async();
         if (!result.IsEmpty)
+        {
             Console.WriteLine($"- Part 1 ({result.Duration.TotalMilliseconds:F6}ms): {result.Result}");
+            await ClipboardService.SetTextAsync(result.Result!);
+        }
     }
 
     private static Dictionary<int, Type> ScanAssemblyForChallengeTypes()

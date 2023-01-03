@@ -20,8 +20,8 @@ public class ChallengeExecutor
         var challenge = _container.GetInstance(_type);
         await SetupAsync(challenge);
 
-        Stopwatch sw = Stopwatch.StartNew();
-        string? result = await Part1Async(challenge);
+        var sw = Stopwatch.StartNew();
+        var result = await Part1Async(challenge);
         sw.Stop();
         return new ChallengeExecutionResult(sw.Elapsed, result);
     }
@@ -31,8 +31,8 @@ public class ChallengeExecutor
         var challenge = _container.GetInstance(_type);
         await SetupAsync(challenge);
 
-        Stopwatch sw = Stopwatch.StartNew();
-        string? result = await Part2Async(challenge);
+        var sw = Stopwatch.StartNew();
+        var result = await Part2Async(challenge);
         sw.Stop();
         return new ChallengeExecutionResult(sw.Elapsed, result);
     }
@@ -41,7 +41,8 @@ public class ChallengeExecutor
     {
         var type = challenge.GetType();
 
-        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly);
+        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod |
+                                      BindingFlags.DeclaredOnly);
         var runMethod = methods.FirstOrDefault(m => m.GetCustomAttribute<SetupAttribute>() != null);
         var result = runMethod?.Invoke(challenge, null);
         if (result is Task t)
@@ -52,26 +53,28 @@ public class ChallengeExecutor
     {
         var type = challenge.GetType();
 
-        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly);
+        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod |
+                                      BindingFlags.DeclaredOnly);
         var runMethod = methods.FirstOrDefault(m => m.GetCustomAttribute<Part1Attribute>() != null);
         var result = runMethod?.Invoke(challenge, null);
         if (result is Task<string?> t)
             return await t;
 
-        return (string?) result;
+        return (string?)result;
     }
 
     private static async Task<string?> Part2Async(object challenge)
     {
         var type = challenge.GetType();
 
-        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.DeclaredOnly);
+        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod |
+                                      BindingFlags.DeclaredOnly);
         var runMethod = methods.FirstOrDefault(m => m.GetCustomAttribute<Part2Attribute>() != null);
         var result = runMethod?.Invoke(challenge, null);
         if (result is Task<string?> t)
             return await t;
 
-        return (string?) result;
+        return (string?)result;
     }
 }
 
