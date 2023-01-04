@@ -26,7 +26,7 @@ public class Challenge01
             ).MaxAsync()
             .ToStringAsync();
     }
-    
+
     [Part2]
     public async Task<string?> Part2Async()
     {
