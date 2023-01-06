@@ -1,6 +1,5 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
-using AdventOfCode.Lib;
 
 namespace AdventOfCode2022.Challenges;
 
@@ -28,7 +27,7 @@ public class Challenge03
 
         return itemsInBoth.Select(GetPriority).Sum().ToString();
     }
-    
+
     [Part2]
     public async Task<string> Part2Async()
     {
