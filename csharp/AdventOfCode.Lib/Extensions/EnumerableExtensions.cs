@@ -1,4 +1,5 @@
 ﻿using AdventOfCode.Lib.Math;
+using System.Numerics;
 
 namespace AdventOfCode.Lib;
 
@@ -75,6 +76,10 @@ public static class EnumerableExtensions
     public static long Product(this IEnumerable<long> source) => source.Aggregate(1L, (a, b) => a * b);
 
     public static double Product(this IEnumerable<double> source) => source.Aggregate(1d, (a, b) => a * b);
+
+    public static ulong Product(this IEnumerable<ulong> source) => source.Aggregate(1UL, (a, b) => a * b);
+
+    public static BigInteger Product(this IEnumerable<BigInteger> source) => source.Aggregate(BigInteger.One, (a, b) => a * b);
 
     public static long Product<T>(this IEnumerable<T> source, Func<T, long> selector) =>
         source.Aggregate(1L, (a, b) => a * selector(b));
