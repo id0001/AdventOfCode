@@ -2,12 +2,7 @@
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode2022.Challenges
 {
@@ -147,25 +142,25 @@ namespace AdventOfCode2022.Challenges
             }
         }
 
-        private static void PrintMap(SparseSpatialMap<Point2, char> map)
-        {
-            var sb = new StringBuilder(); ;
+        //private static void PrintMap(SparseSpatialMap<Point2, char> map)
+        //{
+        //    var sb = new StringBuilder(); ;
 
-            for (int y = map.Bounds.GetMin(1); y <= map.Bounds.GetMax(1); y++)
-            {
-                for (int x = map.Bounds.GetMin(0); x <= map.Bounds.GetMax(0); x++)
-                {
-                    var p = new Point2(x, y);
-                    if (map.ContainsKey(p))
-                        sb.Append(map[p]);
-                    else
-                        sb.Append('.');
-                }
+        //    for (int y = map.Bounds.GetMin(1); y <= map.Bounds.GetMax(1); y++)
+        //    {
+        //        for (int x = map.Bounds.GetMin(0); x <= map.Bounds.GetMax(0); x++)
+        //        {
+        //            var p = new Point2(x, y);
+        //            if (map.ContainsKey(p))
+        //                sb.Append(map[p]);
+        //            else
+        //                sb.Append('.');
+        //        }
 
-                sb.AppendLine();
-            }
+        //        sb.AppendLine();
+        //    }
 
-            File.WriteAllText(@"C:\Temp\output.txt", sb.ToString());
-        }
+        //    File.WriteAllText(@"C:\Temp\output.txt", sb.ToString());
+        //}
     }
 }
