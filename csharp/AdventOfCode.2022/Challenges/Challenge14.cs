@@ -38,51 +38,41 @@ namespace AdventOfCode2022.Challenges
                 }
             }
 
+            var down = new Point2(0, 1);
+            var downLeft = new Point2(-1, 1);
+            var downRight = new Point2(1, 1);
             var start = new Point2(500, 0);
+
             int s = 0;
             int bottomBound = map.Bounds.GetMax(1);
-            while (true)
+            Point2 curr = start;
+
+            while (curr.Y < bottomBound)
             {
-                map[start] = 'o';
-
-                while (true)
+                if (map.GetValueOrDefault(curr + down, '.') == '.')
                 {
-                    var bottom = start + new Point2(0, 1);
-                    var bottomLeft = start + new Point2(-1, 1);
-                    var bottomRight = start + new Point2(1, 1);
-
-                    if (bottom.Y > bottomBound)
-                    {
-                        PrintMap(map);
-                        return s.ToString();
-                    }
-
-                    if (map.GetValueOrDefault(bottom, '.') == '.')
-                    {
-                        map.AddOrUpdate(start, '.');
-                        map.AddOrUpdate(bottom, 'o');
-                        start = bottom;
-                    }
-                    else if (map.GetValueOrDefault(bottomLeft, '.') == '.')
-                    {
-                        map.AddOrUpdate(start, '.');
-                        map.AddOrUpdate(bottomLeft, 'o');
-                        start = bottomLeft;
-                    }
-                    else if (map.GetValueOrDefault(bottomRight, '.') == '.')
-                    {
-                        map.AddOrUpdate(start, '.');
-                        map.AddOrUpdate(bottomRight, 'o');
-                        start = bottomRight;
-                    }
-                    else
-                    {
-                        start = new Point2(500, 0);
-                        s++;
-                        break;
-                    }
+                    curr += down;
+                    continue;
                 }
+
+                if (map.GetValueOrDefault(curr + downLeft, '.') == '.')
+                {
+                    curr += downLeft;
+                    continue;
+                }
+
+                if (map.GetValueOrDefault(curr + downRight, '.') == '.')
+                {
+                    curr += downRight;
+                    continue;
+                }
+
+                s++;
+                map.AddOrUpdate(curr, 'o');
+                curr = start;
             }
+
+            return s.ToString();
         }
 
         [Part2]
@@ -102,57 +92,49 @@ namespace AdventOfCode2022.Challenges
                 }
             }
 
+            var down = new Point2(0, 1);
+            var downLeft = new Point2(-1, 1);
+            var downRight = new Point2(1, 1);
             var start = new Point2(500, 0);
+
             int s = 0;
             int bottomBound = map.Bounds.GetMax(1) + 1;
+            Point2 curr = start;
+
             while (true)
             {
-                map[start] = 'o';
-
-                while (true)
+                if ((curr + down).Y != bottomBound)
                 {
-                    var bottom = start + new Point2(0, 1);
-                    var bottomLeft = start + new Point2(-1, 1);
-                    var bottomRight = start + new Point2(1, 1);
+                    if (map.GetValueOrDefault(curr + down, '.') == '.')
+                    {
+                        curr += down;
+                        continue;
+                    }
 
-                    if(bottom.Y == bottomBound)
+                    if (map.GetValueOrDefault(curr + downLeft, '.') == '.')
                     {
-                        start = new Point2(500, 0);
-                        s++;
-                        break;
+                        curr += downLeft;
+                        continue;
                     }
-                    else if (map.GetValueOrDefault(bottom, '.') == '.')
+
+                    if (map.GetValueOrDefault(curr + downRight, '.') == '.')
                     {
-                        map.AddOrUpdate(start, '.');
-                        map.AddOrUpdate(bottom, 'o');
-                        start = bottom;
-                    }
-                    else if (map.GetValueOrDefault(bottomLeft, '.') == '.')
-                    {
-                        map.AddOrUpdate(start, '.');
-                        map.AddOrUpdate(bottomLeft, 'o');
-                        start = bottomLeft;
-                    }
-                    else if (map.GetValueOrDefault(bottomRight, '.') == '.')
-                    {
-                        map.AddOrUpdate(start, '.');
-                        map.AddOrUpdate(bottomRight, 'o');
-                        start = bottomRight;
-                    }
-                    else if(start == new Point2(500, 0))
-                    {
-                        PrintMap(map);
-                        s++;
-                        return s.ToString();
-                    }
-                    else
-                    {
-                        start = new Point2(500, 0);
-                        s++;
-                        break;
+                        curr += downRight;
+                        continue;
                     }
                 }
+
+                // At rest
+                s++;
+                map.AddOrUpdate(curr, 'o');
+
+                if (curr == start)
+                    break;
+
+                curr = start;
             }
+
+            return s.ToString();
         }
 
         private static IEnumerable<Point2> ParseLine(string line)
