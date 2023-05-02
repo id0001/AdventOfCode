@@ -114,6 +114,26 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
         }
     }
 
+    public static int ManhattanDistance(Point2 p0, Point2 p1) => System.Math.Abs(p1.X - p0.X) + System.Math.Abs(p1.Y - p0.Y);
+
+    /// <summary>
+    /// Enumerate the points that cover the border at the manhattan distance from the given center point.
+    /// </summary>
+    /// <param name="center">The center</param>
+    /// <param name="distance">The manhattan distance</param>
+    /// <returns>An enumerable of Point2 that cover the border</returns>
+    public static IEnumerable<Point2> ManhattanBorder(Point2 center, int distance)
+    {
+        for (int x = center.X - distance; x <= center.X + distance; x++)
+        {
+            int dy = distance - System.Math.Abs(center.X - x);
+
+            yield return new Point2(x, center.Y - dy);
+            if (dy > 0)
+                yield return new Point2(x, center.Y + dy);
+        }
+    }
+
     public static bool operator ==(Point2 left, Point2 right) => left.Equals(right);
 
     public static bool operator !=(Point2 left, Point2 right) => !(left == right);
