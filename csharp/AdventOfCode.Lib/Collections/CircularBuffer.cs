@@ -23,7 +23,7 @@ public class CircularBuffer<T> : IEnumerable<T?>
     private int GetCurrentPositionAndMoveNext()
     {
         var p = _head;
-        _head = Euclid.Remainder(_head + 1, Count);
+        _head = (_head + 1) % Count;
         return p;
     }
 
