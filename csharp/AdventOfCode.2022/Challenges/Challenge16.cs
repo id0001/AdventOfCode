@@ -1,7 +1,9 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Graphs;
 using AdventOfCode.Lib.PathFinding;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
@@ -24,7 +26,10 @@ namespace AdventOfCode2022.Challenges
         {
             var valves = await _inputReader.ParseLinesAsync(16, ParseLine).ToDictionaryAsync(x => x.Name);
 
-            var travelTimeLookup = GetTravelTimeLookup(valves);
+            var edges = valves.SelectMany(kv => kv.Value.LeadsTo.SelectMany(t => new[] { (kv.Key, t), (t, kv.Key) })).ToList();
+            var vertices = valves.Keys.ToList();
+
+            var travelTimeLookup = FloydWarshall.Calculate(vertices, edges, (_, _) => 1);
             var unopenedWithFlowRate = valves.Where(kv => kv.Value.FlowRate > 0).Select(kv => kv.Key).ToHashSet();
 
             int max = 0;
@@ -38,22 +43,27 @@ namespace AdventOfCode2022.Challenges
         {
             var valves = await _inputReader.ParseLinesAsync(16, ParseLine).ToDictionaryAsync(x => x.Name);
 
-            var travelTimeLookup = GetTravelTimeLookup(valves);
+            var edges = valves.SelectMany(kv => kv.Value.LeadsTo.SelectMany(t => new[] { (kv.Key, t), (t, kv.Key) })).ToList();
+            var vertices = valves.Keys.ToList();
+
+            var travelTimeLookup = FloydWarshall.Calculate(vertices, edges, (_, _) => 1);
             var unopenedWithFlowRate = valves.Where(kv => kv.Value.FlowRate > 0).Select(kv => kv.Key).ToHashSet();
 
-            var moves = new List<(int, ISet<string>)>();
+            var map = new Dictionary<ISet<string>, int>();
+            Search(valves, travelTimeLookup, unopenedWithFlowRate, "AA", 26, 0, (p, s) =>
+            {
+                if (map.ContainsKey(s) && p > map[s])
+                    map[s] = p;
+                else if (!map.ContainsKey(s))
+                    map.Add(s, p);
+            });
 
             int max = 0;
-            Search(valves, travelTimeLookup, unopenedWithFlowRate, "AA", 26, 0, (m, o) => moves.Add((m, o)));
-
-            foreach (var m1 in moves)
-            {
-                foreach (var m2 in moves)
-                {
-                    if (m1.Item1 + m2.Item1 > max && !m1.Item2.Intersect(m2.Item2).Any())
-                        max = m1.Item1 + m2.Item1;
-                }
-            }
+            var keys = map.Keys.ToArray();
+            for (int y = 0; y < keys.Length; y++)
+                for (int x = y + 1; x < keys.Length; x++)
+                    if (keys[x].Intersect(keys[y]).Count() == 0)
+                        max = Math.Max(max, map[keys[x]] + map[keys[y]]);
 
             return max.ToString();
         }
@@ -74,36 +84,6 @@ namespace AdventOfCode2022.Challenges
             }
         }
 
-        private IDictionary<(string, string), int> GetTravelTimeLookup(Dictionary<string, Valve> valves)
-        {
-            var bfs = new BreadthFirstSearch<string>(n => GetAdjecent(valves, n));
-            var all = valves.Values.Select(x => x.Name).ToList();
-            var dict = new Dictionary<(string, string), int>();
-
-            for (int y = 0; y < all.Count; y++)
-            {
-                for (int x = 0; x < all.Count; x++)
-                {
-                    if (x == y)
-                        continue;
-
-                    if (bfs.TryPath(all[y], n => n == all[x], out var path))
-                    {
-                        int len = path.Count();
-                        dict.Add((all[x], all[y]), len - 1);
-                    }
-                }
-            }
-
-            return dict;
-        }
-
-        private static IEnumerable<string> GetAdjecent(Dictionary<string, Valve> valves, string currentValve)
-        {
-            foreach (var next in valves[currentValve].LeadsTo)
-                yield return next;
-        }
-
         private static Valve ParseLine(string line)
         {
             var match = Pattern.Match(line);
@@ -117,20 +97,6 @@ namespace AdventOfCode2022.Challenges
 
         private record Valve(string Name, int FlowRate, string[] LeadsTo);
 
-        private sealed record State(int RemainingTime, string CurrentValve, HashSet<string> OpenValves, int CurrentRate, int TotalReleased)
-        {
-            public bool Equals(State? other)
-            {
-                if (ReferenceEquals(null, other)) return false;
-
-                return RemainingTime == other.RemainingTime
-                    && CurrentValve == other.CurrentValve
-                    && OpenValves.SetEquals(OpenValves)
-                    && other.CurrentRate == CurrentRate
-                    && other.TotalReleased == TotalReleased;
-            }
-
-            public override int GetHashCode() => HashCode.Combine(RemainingTime, CurrentValve, OpenValves, CurrentRate, TotalReleased);
-        }
+        private record TravelState(int RemainingTime, string CurrentValve, IEnumerable<string> UnopenedValves, int TotalPressure);
     }
 }
