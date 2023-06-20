@@ -1,10 +1,9 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib.Graphs;
-using AdventOfCode.Lib.PathFinding;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
+using AdventOfCode.Lib.Math;
+using System.Collections;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2022.Challenges
@@ -30,7 +29,7 @@ namespace AdventOfCode2022.Challenges
             var vertices = valves.Keys.ToList();
 
             var travelTimeLookup = FloydWarshall.Calculate(vertices, edges, (_, _) => 1);
-            var unopenedWithFlowRate = valves.Where(kv => kv.Value.FlowRate > 0).Select(kv => kv.Key).ToHashSet();
+            var unopenedWithFlowRate = valves.Where(kv => kv.Value.FlowRate > 0 && kv.Key != "AA").Select(kv => kv.Key).ToHashSet();
 
             int max = 0;
             Search(valves, travelTimeLookup, unopenedWithFlowRate, "AA", 30, 0, (m, _) => max = Math.Max(max, m));
@@ -42,30 +41,31 @@ namespace AdventOfCode2022.Challenges
         public async Task<string> Part2Async()
         {
             var valves = await _inputReader.ParseLinesAsync(16, ParseLine).ToDictionaryAsync(x => x.Name);
+            var sortedValves = valves.Keys.OrderBy(v => v).ToArray();
 
             var edges = valves.SelectMany(kv => kv.Value.LeadsTo.SelectMany(t => new[] { (kv.Key, t), (t, kv.Key) })).ToList();
             var vertices = valves.Keys.ToList();
 
             var travelTimeLookup = FloydWarshall.Calculate(vertices, edges, (_, _) => 1);
-            var unopenedWithFlowRate = valves.Where(kv => kv.Value.FlowRate > 0).Select(kv => kv.Key).ToHashSet();
+            var unopenedWithFlowRate = valves.Where(kv => kv.Value.FlowRate > 0 && kv.Key != "AA").ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            var map = new Dictionary<ISet<string>, int>();
-            Search(valves, travelTimeLookup, unopenedWithFlowRate, "AA", 26, 0, (p, s) =>
+            // Generate combinations for half of the unopened valves
+            var splitCount = (int)Math.Ceiling(unopenedWithFlowRate.Count / 2d);
+            var combinations = Combinatorics.SelectAllCombinations(unopenedWithFlowRate, splitCount).Select(x => x.ToDictionary(kv => kv.Key, kv => kv.Value)).ToList();
+
+            int combinedMax = 0;
+            foreach (var combination in combinations)
             {
-                if (map.ContainsKey(s) && p > map[s])
-                    map[s] = p;
-                else if (!map.ContainsKey(s))
-                    map.Add(s, p);
-            });
+                var remainingValves = unopenedWithFlowRate.Except(combination).ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            int max = 0;
-            var keys = map.Keys.ToArray();
-            for (int y = 0; y < keys.Length; y++)
-                for (int x = y + 1; x < keys.Length; x++)
-                    if (keys[x].Intersect(keys[y]).Count() == 0)
-                        max = Math.Max(max, map[keys[x]] + map[keys[y]]);
+                var max1 = 0;
+                Search(combination, travelTimeLookup, combination.Select(kv => kv.Key).ToHashSet(), "AA", 26, 0, (m, _) => max1 = Math.Max(max1, m));
+                var max2 = 0;
+                Search(remainingValves, travelTimeLookup, remainingValves.Select(kv => kv.Key).ToHashSet(), "AA", 26, 0, (m, _) => max2 = Math.Max(max2, m));
+                combinedMax = Math.Max(combinedMax, max1 + max2);
+            }
 
-            return max.ToString();
+            return combinedMax.ToString();
         }
 
         private void Search(IDictionary<string, Valve> valves, IDictionary<(string, string), int> travelTimeLookup, ISet<string> unvisited, string current, int timeRemaining, int pressure, Action<int, ISet<string>> reportPressure)
