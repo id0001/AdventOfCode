@@ -1,5 +1,8 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
+using AdventOfCode.Lib.Collections;
+using System.Net.WebSockets;
 using System.Text;
 
 namespace AdventOfCode2022.Challenges
@@ -16,71 +19,196 @@ namespace AdventOfCode2022.Challenges
             _inputReader = inputReader;
         }
 
-        [Part1]
-        public async Task<string> Part1Async()
+        //[Part1]
+        //public async Task<string> Part1Async()
+        //{
+        //    var dirs = await _inputReader.ReadLineAsync(17).ToArrayAsync();
+
+        //    var space = new SparseSpatialMap<Point2, bool>();
+        //    var position = new Point2(2, 3);
+        //    Point2 nextPosition;
+        //    int stoppedRocks = 0;
+        //    int shapeIndex = 0;
+        //    int dirIndex = 0;
+
+        //    Shape currentShape = GetShape(Shapes[shapeIndex]);
+
+        //    do
+        //    {
+        //        switch (dirs[dirIndex])
+        //        {
+        //            case '<':
+        //                nextPosition = new Point2(position.X - 1, position.Y);
+        //                if (nextPosition.X < 0)
+        //                    break;
+        //                if (!Collides(space, currentShape, nextPosition))
+        //                    position = nextPosition;
+        //                break;
+        //            case '>':
+        //                nextPosition = new Point2(position.X + 1, position.Y);
+        //                if (nextPosition.X + currentShape.Width > 7)
+        //                    break;
+        //                if (!Collides(space, currentShape, nextPosition))
+        //                    position = nextPosition;
+        //                break;
+        //            default:
+        //                throw new NotImplementedException();
+        //        }
+
+        //        nextPosition = new Point2(position.X, position.Y - 1);
+        //        if (nextPosition.Y + (currentShape.Height-1) >= 0 && !Collides(space, currentShape, nextPosition))
+        //            position = nextPosition;
+        //        else
+        //        {
+        //            LockShape(space, currentShape, position);
+        //            stoppedRocks++;
+        //            shapeIndex = (shapeIndex + 1) % Shapes.Length;
+        //            currentShape = GetShape(Shapes[shapeIndex]);
+
+        //            position = new Point2(2, space.Bounds.GetMax(1) + currentShape.Height + 2);
+        //        }
+
+        //        dirIndex = (dirIndex + 1) % dirs.Length;
+        //    }
+        //    while (stoppedRocks < 2022);
+
+        //    return space.Bounds.GetMax(1).ToString();
+        //}
+
+        [Part2]
+        public async Task<string> Part2Async()
         {
-            var dirs = await _inputReader.ReadLineAsync(0).ToArrayAsync();
-            var dirIndex = 0;
+            var dirs = await _inputReader.ReadLineAsync(17).ToArrayAsync();
 
+            var space = new SparseSpatialMap<Point2, bool>();
+            var position = new Point2(2, 3);
+            Point2 nextPosition;
+            long stoppedRocks = 0;
+            int shapeIndex = 0;
+            int dirIndex = 0;
 
-            var index = 0;
-            var grid = new bool[2022 * 4, 7];
-            var currentBottom = grid.GetLength(0);
-            var currentShape = GetShape(Shapes[index]);
-            int x = 2;
-            int y = currentBottom - 3 - currentShape.Height;
+            Shape currentShape = GetShape(Shapes[shapeIndex]);
 
-            int rocksStopped = 0;
-            while (rocksStopped < 2022)
+            do
             {
-                //PrintState(grid, currentShape, x, y);
-                //Console.WriteLine();
-                //Console.ReadKey(false);
-
-                char dir = dirs[dirIndex % dirs.Length];
-
-                switch (dir)
+                switch (dirs[dirIndex])
                 {
-                    case '>':
-                        if (!Collides(grid, currentShape, x + 1, y))
-                            x++;
-                        break;
                     case '<':
-                        if (!Collides(grid, currentShape, x - 1, y))
-                            x--;
+                        nextPosition = new Point2(position.X - 1, position.Y);
+                        if (nextPosition.X < 0)
+                            break;
+                        if (!Collides(space, currentShape, nextPosition))
+                            position = nextPosition;
+                        break;
+                    case '>':
+                        nextPosition = new Point2(position.X + 1, position.Y);
+                        if (nextPosition.X + currentShape.Width > 7)
+                            break;
+                        if (!Collides(space, currentShape, nextPosition))
+                            position = nextPosition;
                         break;
                     default:
                         throw new NotImplementedException();
                 }
 
-                if (Collides(grid, currentShape, x, y + 1))
+                nextPosition = new Point2(position.X, position.Y - 1);
+                if (nextPosition.Y + (currentShape.Height - 1) >= 0 && !Collides(space, currentShape, nextPosition))
+                    position = nextPosition;
+                else
                 {
-                    BakeShape(grid, currentShape, x, y);
-                    index = (index + 1) % Shapes.Length;
-                    currentShape = GetShape(Shapes[index]);
-                    currentBottom = y;
-                    x = 2;
-                    y = currentBottom - 3 - currentShape.Height;
-                    dirIndex++;
-                    rocksStopped++;
-                    continue;
+                    LockShape(space, currentShape, position);
+                    stoppedRocks++;
+                    shapeIndex = (shapeIndex + 1) % Shapes.Length;
+                    currentShape = GetShape(Shapes[shapeIndex]);
+
+                    position = new Point2(2, space.Bounds.GetMax(1) + currentShape.Height + 2);
                 }
 
-                y++;
-                dirIndex++;
-            }
+                dirIndex = (dirIndex + 1) % dirs.Length;
 
-            Print(grid);
-            return currentBottom.ToString();
+                //if (dirIndex == 0 && shapeIndex == 0)
+                //    break;
+            }
+            while (stoppedRocks < 1697);
+
+            Print(space);
+
+            var cycles = 1000000000000L / stoppedRocks;
+            var remaining = 1000000000000L % stoppedRocks;
+            var currentHeight = space.Bounds.GetMax(1);
+
+            var finalHeight = currentHeight * cycles - ((cycles-1) * 2);
+
+            var remHeight = await ExecuteDropsAsync((int)remaining);
+
+            return (finalHeight + remHeight - 2).ToString();
         }
 
-        private static void Print(bool[,] grid)
+        private async Task<int> ExecuteDropsAsync(int amount)
+        {
+            var dirs = await _inputReader.ReadLineAsync(17).ToArrayAsync();
+
+            var space = new SparseSpatialMap<Point2, bool>();
+            var position = new Point2(2, 3);
+            Point2 nextPosition;
+            long stoppedRocks = 0;
+            int shapeIndex = 0;
+            int dirIndex = 0;
+
+            Shape currentShape = GetShape(Shapes[shapeIndex]);
+
+            do
+            {
+                switch (dirs[dirIndex])
+                {
+                    case '<':
+                        nextPosition = new Point2(position.X - 1, position.Y);
+                        if (nextPosition.X < 0)
+                            break;
+                        if (!Collides(space, currentShape, nextPosition))
+                            position = nextPosition;
+                        break;
+                    case '>':
+                        nextPosition = new Point2(position.X + 1, position.Y);
+                        if (nextPosition.X + currentShape.Width > 7)
+                            break;
+                        if (!Collides(space, currentShape, nextPosition))
+                            position = nextPosition;
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                nextPosition = new Point2(position.X, position.Y - 1);
+                if (nextPosition.Y + (currentShape.Height - 1) >= 0 && !Collides(space, currentShape, nextPosition))
+                    position = nextPosition;
+                else
+                {
+                    LockShape(space, currentShape, position);
+                    stoppedRocks++;
+                    shapeIndex = (shapeIndex + 1) % Shapes.Length;
+                    currentShape = GetShape(Shapes[shapeIndex]);
+
+                    position = new Point2(2, space.Bounds.GetMax(1) + currentShape.Height + 2);
+                }
+
+                dirIndex = (dirIndex + 1) % dirs.Length;
+
+                if (dirIndex == 0 && shapeIndex == 0)
+                    break;
+            }
+            while (stoppedRocks < amount);
+
+            return space.Bounds.GetMax(1);
+        }
+
+        private static void Print(SparseSpatialMap<Point2, bool> space)
         {
             StringBuilder sw = new StringBuilder();
-            for (int y = 0; y < grid.GetLength(0); y++)
+            for (int y = space.Bounds.GetMax(1); y >= 0; y--)
             {
-                for (int x = 0; x < grid.GetLength(1); x++)
-                    sw.Append(grid[y, x] ? '#' : '.');
+                for (int x = 0; x < 7; x++)
+                    sw.Append(space[new Point2(x, y)] ? '#' : '.');
 
                 if (sw.ToString().Any(x => x == '#'))
                     Console.WriteLine(sw.ToString());
@@ -89,38 +217,18 @@ namespace AdventOfCode2022.Challenges
             }
         }
 
-        private static void PrintState(bool[,] grid, Shape shape, int left, int top)
+        public bool Collides(SparseSpatialMap<Point2, bool> space, Shape shape, Point2 next)
         {
-            bool doPrint = false;
-            StringBuilder sw = new StringBuilder();
-            for (int y = 0; y < grid.GetLength(0); y++)
+            for (int y = 0; y < shape.Height; y++)
             {
-                for (int x = 0; x < grid.GetLength(1); x++)
+                for (int x = 0; x < shape.Width; x++)
                 {
-                    bool isBlock = false;
-
-                    if (grid[y, x])
-                        isBlock = true;
-                    else if (x >= left && x < left + shape.Width && y >= top && y < top + shape.Height)
-                    {
-                        if (shape.Grid[y - top, x - left])
-                            isBlock = true;
-                    }
-
-                    sw.Append(isBlock ? '#' : '.');
+                    if (shape.Grid[y, x] && space[new Point2(next.X + x, next.Y - y)])
+                        return true;
                 }
-
-                if (sw.ToString().Any(x => x == '#'))
-                    doPrint = true;
-
-                if (doPrint)
-                    Console.WriteLine(sw.ToString());
-
-                sw.Clear();
             }
 
-            Console.WriteLine();
-            Console.WriteLine();
+            return false;
         }
 
         public static Shape GetShape(char type) => type switch
@@ -133,39 +241,18 @@ namespace AdventOfCode2022.Challenges
             _ => throw new NotImplementedException()
         };
 
-        public static bool Collides(bool[,] grid, Shape shape, int left, int top)
-        {
-            if (left < 0 || left + shape.Width - 1 == grid.GetLength(1))
-                return true;
-
-            if (top + shape.Height - 1 == grid.GetLength(0))
-                return true;
-
-            for (int ly = shape.Height - 1; ly >= 0; ly--)
-            {
-                for (int lx = 0; lx < shape.Width; lx++)
-                {
-                    int y = top + ly;
-                    int x = left + lx;
-
-                    if (shape.Grid[ly, lx] && grid[y, x])
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static void BakeShape(bool[,] grid, Shape shape, int left, int top)
+        private static void LockShape(SparseSpatialMap<Point2, bool> space, Shape shape, Point2 position)
         {
             for (int y = 0; y < shape.Height; y++)
             {
                 for (int x = 0; x < shape.Width; x++)
                 {
-                    grid[top + y, left + x] = shape.Grid[y, x];
+                    if (shape.Grid[y, x])
+                        space[new Point2(position.X + x, position.Y - y)] = true;
                 }
             }
         }
+
 
         public record Shape(int Width, int Height, char Type, bool[,] Grid);
     }

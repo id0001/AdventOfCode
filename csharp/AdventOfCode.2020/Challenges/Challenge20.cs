@@ -134,8 +134,8 @@ public class Challenge20
     {
         var map = new SparseSpatialMap<Point2, Image>();
         var list = _images.ToList();
-        map.Add(Point2.Zero, list[0]);
-        list.Remove(map[Point2.Zero]);
+        map.Set(Point2.Zero, list[0]);
+        list.Remove(map[Point2.Zero]!);
 
         var stack = new Stack<Point2>(new[] { Point2.Zero });
         while (stack.Count > 0)
@@ -156,33 +156,33 @@ public class Challenge20
             {
                 img.Orientation = orientation;
 
-                if (!map.ContainsKey(neighbors[0]) && img.Bottom == map[coord].Top)
+                if (!map.ContainsKey(neighbors[0]) && img.Bottom == map[coord]!.Top)
                 {
-                    map.Add(neighbors[0], img);
+                    map.Set(neighbors[0], img);
                     toRemove.Add(img);
                     stack.Push(neighbors[0]);
                     break;
                 }
 
-                if (!map.ContainsKey(neighbors[1]) && img.Left == map[coord].Right)
+                if (!map.ContainsKey(neighbors[1]) && img.Left == map[coord]!.Right)
                 {
-                    map.Add(neighbors[1], img);
+                    map.Set(neighbors[1], img);
                     toRemove.Add(img);
                     stack.Push(neighbors[1]);
                     break;
                 }
 
-                if (!map.ContainsKey(neighbors[2]) && img.Top == map[coord].Bottom)
+                if (!map.ContainsKey(neighbors[2]) && img.Top == map[coord]!.Bottom)
                 {
-                    map.Add(neighbors[2], img);
+                    map.Set(neighbors[2], img);
                     toRemove.Add(img);
                     stack.Push(neighbors[2]);
                     break;
                 }
 
-                if (!map.ContainsKey(neighbors[3]) && img.Right == map[coord].Left)
+                if (!map.ContainsKey(neighbors[3]) && img.Right == map[coord]!.Left)
                 {
-                    map.Add(neighbors[3], img);
+                    map.Set(neighbors[3], img);
                     toRemove.Add(img);
                     stack.Push(neighbors[3]);
                     break;

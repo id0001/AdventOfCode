@@ -26,7 +26,7 @@ public class Challenge17
         for (var x = 0; x < lines[y].Length; x++)
         {
             if (lines[y][x] == '#')
-                state.Add(new Point3(x, y, 0), true);
+                state.Set(new Point3(x, y, 0), true);
         }
 
         for (var i = 0; i < 6; i++)
@@ -39,16 +39,16 @@ public class Challenge17
             {
                 var p = new Point3(x, y, z);
                 var neighbors = state.GetNeighbors(p, true).ToArray();
-                switch (state.GetValue(p, false))
+                switch (state.Get(p, false))
                 {
                     case true when neighbors.Count(n => n.Value) is 2 or 3:
-                        newState.AddOrUpdate(p, true);
+                        newState.Set(p, true);
                         break;
                     case false when neighbors.Count(n => n.Value) == 3:
-                        newState.AddOrUpdate(p, true);
+                        newState.Set(p, true);
                         break;
                     default:
-                        newState.Remove(p);
+                        newState.Unset(p);
                         break;
                 }
             }
@@ -56,7 +56,7 @@ public class Challenge17
             state = newState;
         }
 
-        return state.Values.Count(e => e).ToString();
+        return state.Count(e => e.Value).ToString();
     }
 
     [Part2]
@@ -69,7 +69,7 @@ public class Challenge17
         for (var x = 0; x < lines[y].Length; x++)
         {
             if (lines[y][x] == '#')
-                state.Add(new Point4(x, y, 0, 0), true);
+                state.Set(new Point4(x, y, 0, 0), true);
         }
 
         for (var i = 0; i < 6; i++)
@@ -83,16 +83,16 @@ public class Challenge17
             {
                 var p = new Point4(x, y, z, w);
                 var neighbors = state.GetNeighbors(p, true).ToArray();
-                switch (state.GetValue(p, false))
+                switch (state.Get(p, false))
                 {
                     case true when neighbors.Count(n => n.Value) is 2 or 3:
-                        newState.AddOrUpdate(p, true);
+                        newState.Set(p, true);
                         break;
                     case false when neighbors.Count(n => n.Value) == 3:
-                        newState.AddOrUpdate(p, true);
+                        newState.Set(p, true);
                         break;
                     default:
-                        newState.Remove(p);
+                        newState.Unset(p);
                         break;
                 }
             }
@@ -100,6 +100,6 @@ public class Challenge17
             state = newState;
         }
 
-        return state.Values.Count(e => e).ToString();
+        return state.Count.ToString();
     }
 }

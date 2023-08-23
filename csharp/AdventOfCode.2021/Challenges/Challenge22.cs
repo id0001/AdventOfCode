@@ -50,7 +50,7 @@ public class Challenge22
             if (!instruction.Cuboid.IntersectsWith(bounds))
                 break;
 
-            foreach (var point in instruction.Cuboid.Points) map.AddOrUpdate(point, instruction.State);
+            foreach (var point in instruction.Cuboid.Points) map.Set(point, instruction.State);
         }
 
         return map.Count(x => x.Value).ToString();

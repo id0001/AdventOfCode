@@ -2,7 +2,6 @@
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Collections;
-using System.Text;
 
 namespace AdventOfCode2022.Challenges
 {
@@ -28,7 +27,7 @@ namespace AdventOfCode2022.Challenges
                 {
                     foreach (var p in Point2.BresenhamLine(current, next))
                     {
-                        map.AddOrUpdate(p, '#');
+                        map.Set(p, '#');
                     }
                 }
             }
@@ -44,26 +43,26 @@ namespace AdventOfCode2022.Challenges
 
             while (curr.Y < bottomBound)
             {
-                if (map.GetValueOrDefault(curr + down, '.') == '.')
+                if (map.Get(curr + down, '.') == '.')
                 {
                     curr += down;
                     continue;
                 }
 
-                if (map.GetValueOrDefault(curr + downLeft, '.') == '.')
+                if (map.Get(curr + downLeft, '.') == '.')
                 {
                     curr += downLeft;
                     continue;
                 }
 
-                if (map.GetValueOrDefault(curr + downRight, '.') == '.')
+                if (map.Get(curr + downRight, '.') == '.')
                 {
                     curr += downRight;
                     continue;
                 }
 
                 s++;
-                map.AddOrUpdate(curr, 'o');
+                map.Set(curr, 'o');
                 curr = start;
             }
 
@@ -82,7 +81,7 @@ namespace AdventOfCode2022.Challenges
                 {
                     foreach (var p in Point2.BresenhamLine(current, next))
                     {
-                        map.AddOrUpdate(p, '#');
+                        map.Set(p, '#');
                     }
                 }
             }
@@ -100,19 +99,19 @@ namespace AdventOfCode2022.Challenges
             {
                 if ((curr + down).Y != bottomBound)
                 {
-                    if (map.GetValueOrDefault(curr + down, '.') == '.')
+                    if (map.Get(curr + down, '.') == '.')
                     {
                         curr += down;
                         continue;
                     }
 
-                    if (map.GetValueOrDefault(curr + downLeft, '.') == '.')
+                    if (map.Get(curr + downLeft, '.') == '.')
                     {
                         curr += downLeft;
                         continue;
                     }
 
-                    if (map.GetValueOrDefault(curr + downRight, '.') == '.')
+                    if (map.Get(curr + downRight, '.') == '.')
                     {
                         curr += downRight;
                         continue;
@@ -121,7 +120,7 @@ namespace AdventOfCode2022.Challenges
 
                 // At rest
                 s++;
-                map.AddOrUpdate(curr, 'o');
+                map.Set(curr, 'o');
 
                 if (curr == start)
                     break;
