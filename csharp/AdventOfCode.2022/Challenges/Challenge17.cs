@@ -78,7 +78,7 @@ namespace AdventOfCode2022.Challenges
         [Part2]
         public async Task<string> Part2Async()
         {
-            var dirs = await _inputReader.ReadLineAsync(17).ToArrayAsync();
+            var dirs = await _inputReader.ReadLineAsync(0).ToArrayAsync();
 
             var space = new SparseSpatialMap<Point2, bool>();
             var position = new Point2(2, 3);
@@ -86,6 +86,8 @@ namespace AdventOfCode2022.Challenges
             long stoppedRocks = 0;
             int shapeIndex = 0;
             int dirIndex = 0;
+
+            var dict = new Dictionary<State, (long, int)>();
 
             Shape currentShape = GetShape(Shapes[shapeIndex]);
 
@@ -118,6 +120,15 @@ namespace AdventOfCode2022.Challenges
                 {
                     LockShape(space, currentShape, position);
                     stoppedRocks++;
+
+                    var state = new State(GetLineCode(space, position.Y - (currentShape.Height - 1)), shapeIndex, dirIndex);
+                    if (dict.ContainsKey(state))
+                    {
+                        bool now = true;
+                    }
+                    else
+                        dict.Add(state, (stoppedRocks, space.Bounds.GetMax(1)));
+
                     shapeIndex = (shapeIndex + 1) % Shapes.Length;
                     currentShape = GetShape(Shapes[shapeIndex]);
 
@@ -125,23 +136,21 @@ namespace AdventOfCode2022.Challenges
                 }
 
                 dirIndex = (dirIndex + 1) % dirs.Length;
-
-                //if (dirIndex == 0 && shapeIndex == 0)
-                //    break;
             }
-            while (stoppedRocks < 1697);
+            while (true);
 
             Print(space);
 
+            stoppedRocks--;
             var cycles = 1000000000000L / stoppedRocks;
             var remaining = 1000000000000L % stoppedRocks;
-            var currentHeight = space.Bounds.GetMax(1);
+            var currentHeight = space.Bounds.GetMax(1) - currentShape.Height;
 
-            var finalHeight = currentHeight * cycles - ((cycles-1) * 2);
+            var finalHeight = currentHeight * cycles;
 
             var remHeight = await ExecuteDropsAsync((int)remaining);
 
-            return (finalHeight + remHeight - 2).ToString();
+            return (finalHeight + remHeight).ToString();
         }
 
         private async Task<int> ExecuteDropsAsync(int amount)
@@ -217,7 +226,7 @@ namespace AdventOfCode2022.Challenges
             }
         }
 
-        public bool Collides(SparseSpatialMap<Point2, bool> space, Shape shape, Point2 next)
+        private bool Collides(SparseSpatialMap<Point2, bool> space, Shape shape, Point2 next)
         {
             for (int y = 0; y < shape.Height; y++)
             {
@@ -231,7 +240,7 @@ namespace AdventOfCode2022.Challenges
             return false;
         }
 
-        public static Shape GetShape(char type) => type switch
+        private static Shape GetShape(char type) => type switch
         {
             '-' => new Shape(4, 1, type, new[,] { { true, true, true, true } }),
             '+' => new Shape(3, 3, type, new[,] { { false, true, false }, { true, true, true }, { false, true, false } }),
@@ -253,7 +262,21 @@ namespace AdventOfCode2022.Challenges
             }
         }
 
+        private short GetLineCode(SparseSpatialMap<Point2, bool> space, int y)
+        {
+            short code = 0;
+            for (var x = 0; x < 7; x++)
+            {
+                if (space[new Point2(x, y)])
+                    code |= (short)(1 << (6 - x));
+            }
 
-        public record Shape(int Width, int Height, char Type, bool[,] Grid);
+            return code;
+        }
+
+
+        private record Shape(int Width, int Height, char Type, bool[,] Grid);
+
+        private record State(int Code, int ShapeIndex, int DirIndex);
     }
 }
