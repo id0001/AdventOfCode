@@ -2,128 +2,122 @@
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.PathFinding;
-using System.Security.Authentication.ExtendedProtection;
 
-namespace AdventOfCode2022.Challenges
+namespace AdventOfCode2022.Challenges;
+
+[Challenge(12)]
+public class Challenge12
 {
-    [Challenge(12)]
-    public class Challenge12
+    private readonly IInputReader _inputReader;
+
+    public Challenge12(IInputReader inputReader)
     {
-        private readonly IInputReader _inputReader;
+        _inputReader = inputReader;
+    }
 
-        public Challenge12(IInputReader inputReader)
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        var (map, start, end) = ExtractInformation(await _inputReader.ReadGridAsync(12));
+
+        var bfs = new BreadthFirstSearch<Point2>(p => GetNeighbors(map, p));
+
+        if (!bfs.TryPath(start, p => p == end, out var path))
+            throw new InvalidOperationException("No path was found");
+
+        return (path.Count() - 1).ToString();
+    }
+
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var (map, starts, end) = ExtractInformation2(await _inputReader.ReadGridAsync(12));
+
+        var bfs = new BreadthFirstSearch<Point2>(p => GetNeighbors(map, p));
+
+        var lowest = int.MaxValue;
+        foreach (var start in starts)
         {
-            _inputReader = inputReader;
-        }
-
-        [Part1]
-        public async Task<string> Part1Async()
-        {
-            var (map,start,end) = ExtractInformation(await _inputReader.ReadGridAsync(12));
-
-            var bfs = new BreadthFirstSearch<Point2>(p => GetNeighbors(map, p));
-
             if (!bfs.TryPath(start, p => p == end, out var path))
-                throw new InvalidOperationException("No path was found");
+                continue;
 
-            return (path.Count() - 1).ToString();
+            lowest = Math.Min(path.Count() - 1, lowest);
         }
 
-        [Part2]
-        public async Task<string> Part2Async()
+        return lowest.ToString();
+    }
+
+    private IEnumerable<Point2> GetNeighbors(int[,] grid, Point2 point)
+    {
+        foreach (var neighbor in point.GetNeighbors())
         {
-            var (map, starts, end) = ExtractInformation2(await _inputReader.ReadGridAsync(12));
+            if (neighbor.X < 0 || neighbor.X >= grid.GetLength(1) || neighbor.Y < 0 || neighbor.Y >= grid.GetLength(0))
+                continue;
 
-            var bfs = new BreadthFirstSearch<Point2>(p => GetNeighbors(map, p));
+            if (grid[neighbor.Y, neighbor.X] - grid[point.Y, point.X] > 1)
+                continue;
 
-            int lowest = int.MaxValue;
-            foreach(var start in starts)
-            {
-                if (!bfs.TryPath(start, p => p == end, out var path))
-                    continue;
-
-                lowest = Math.Min(path.Count() - 1, lowest);
-            }
-
-            return lowest.ToString();
+            yield return neighbor;
         }
+    }
 
-        private IEnumerable<Point2> GetNeighbors(int[,] grid, Point2 point)
+    private static (int[,], Point2, Point2) ExtractInformation(char[,] originalMap)
+    {
+        var grid = new int[originalMap.GetLength(0), originalMap.GetLength(1)];
+        var start = Point2.Zero;
+        var end = Point2.Zero;
+
+        for (var y = 0; y < originalMap.GetLength(0); y++)
+        for (var x = 0; x < originalMap.GetLength(1); x++)
         {
-            foreach(var neighbor in point.GetNeighbors())
+            var c = originalMap[y, x];
+            if (c == 'S')
             {
-                if (neighbor.X < 0 || neighbor.X >= grid.GetLength(1) || neighbor.Y < 0 || neighbor.Y >= grid.GetLength(0))
-                    continue;
-
-                if (grid[neighbor.Y, neighbor.X] - grid[point.Y, point.X] > 1)
-                    continue;
-
-                yield return neighbor;
+                start = new Point2(x, y);
+                grid[y, x] = 0;
+            }
+            else if (c == 'E')
+            {
+                end = new Point2(x, y);
+                grid[y, x] = 25;
+            }
+            else
+            {
+                grid[y, x] = c - 'a';
             }
         }
 
-        private static (int[,], Point2, Point2) ExtractInformation(char[,] originalMap)
+        return (grid, start, end);
+    }
+
+    private static (int[,], List<Point2>, Point2) ExtractInformation2(char[,] originalMap)
+    {
+        var grid = new int[originalMap.GetLength(0), originalMap.GetLength(1)];
+        var starts = new List<Point2>();
+        var end = Point2.Zero;
+
+        for (var y = 0; y < originalMap.GetLength(0); y++)
+        for (var x = 0; x < originalMap.GetLength(1); x++)
         {
-            int[,] grid = new int[originalMap.GetLength(0), originalMap.GetLength(1)];
-            var start = Point2.Zero;
-            var end = Point2.Zero;
-
-            for (int y = 0; y < originalMap.GetLength(0); y++)
+            var c = originalMap[y, x];
+            if (c == 'S')
             {
-                for (int x = 0; x < originalMap.GetLength(1); x++)
-                {
-                    char c = originalMap[y, x];
-                    if (c == 'S')
-                    {
-                        start = new Point2(x, y);
-                        grid[y, x] = 0;
-                    }
-                    else if (c == 'E')
-                    {
-                        end = new Point2(x, y);
-                        grid[y, x] = 25;
-                    }
-                    else
-                    {
-                        grid[y, x] = (c - 'a');
-                    }
-                }
+                starts.Add(new Point2(x, y));
+                grid[y, x] = 0;
             }
-
-            return (grid, start, end);
+            else if (c == 'E')
+            {
+                end = new Point2(x, y);
+                grid[y, x] = 25;
+            }
+            else
+            {
+                grid[y, x] = c - 'a';
+                if (grid[y, x] == 0)
+                    starts.Add(new Point2(x, y));
+            }
         }
 
-        private static (int[,], List<Point2>, Point2) ExtractInformation2(char[,] originalMap)
-        {
-            int[,] grid = new int[originalMap.GetLength(0), originalMap.GetLength(1)];
-            var starts = new List<Point2>();
-            var end = Point2.Zero;
-
-            for (int y = 0; y < originalMap.GetLength(0); y++)
-            {
-                for (int x = 0; x < originalMap.GetLength(1); x++)
-                {
-                    char c = originalMap[y, x];
-                    if (c == 'S')
-                    {
-                        starts.Add(new Point2(x, y));
-                        grid[y, x] = 0;
-                    }
-                    else if (c == 'E')
-                    {
-                        end = new Point2(x, y);
-                        grid[y, x] = 25;
-                    }
-                    else
-                    {
-                        grid[y, x] = (c - 'a');
-                        if (grid[y, x] == 0)
-                            starts.Add(new Point2(x, y));
-                    }
-                }
-            }
-
-            return (grid, starts, end);
-        }
+        return (grid, starts, end);
     }
 }

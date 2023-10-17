@@ -69,9 +69,8 @@ public class Challenge07
     private async Task<FsNode> ParseFileSystemAsync()
     {
         var root = FsNode.CreateDirectory("/");
-        var dirStack = new Stack<FsNode>(new[] { root });
+        var dirStack = new Stack<FsNode>(new[] {root});
         await foreach (var line in _inputReader.ReadLinesAsync(7))
-        {
             if (line.StartsWith("$"))
             {
                 var match = InputPattern.Match(line);
@@ -118,7 +117,6 @@ public class Challenge07
                     currentDir.AddFile(split[1], int.Parse(split[0]));
                 }
             }
-        }
 
         return root;
     }
@@ -141,12 +139,24 @@ public class Challenge07
 
         public IEnumerable<FsNode> Children => _children;
 
-        public static FsNode CreateDirectory(string name) => new(name, 0, false);
+        public static FsNode CreateDirectory(string name)
+        {
+            return new(name, 0, false);
+        }
 
-        private static FsNode CreateFile(string name, int size) => new(name, size, true);
+        private static FsNode CreateFile(string name, int size)
+        {
+            return new(name, size, true);
+        }
 
-        public void AddFile(string name, int size) => _children.Add(CreateFile(name, size));
+        public void AddFile(string name, int size)
+        {
+            _children.Add(CreateFile(name, size));
+        }
 
-        public void AddDirectory(string name) => _children.Add(CreateDirectory(name));
+        public void AddDirectory(string name)
+        {
+            _children.Add(CreateDirectory(name));
+        }
     }
 }

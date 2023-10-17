@@ -1,165 +1,166 @@
-﻿using AdventOfCode.Core;
+﻿using System.Text;
+using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib.Math;
-using System.Text;
 
-namespace AdventOfCode2022.Challenges
+namespace AdventOfCode2022.Challenges;
+
+[Challenge(13)]
+public class Challenge13
 {
-    [Challenge(13)]
-    public class Challenge13
+    private readonly IInputReader _inputReader;
+
+    public Challenge13(IInputReader inputReader)
     {
-        private readonly IInputReader _inputReader;
+        _inputReader = inputReader;
+    }
 
-        public Challenge13(IInputReader inputReader)
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        var sumInOrder = 0;
+        var n = 1;
+        await foreach (var (left, right) in ParseInputAsync(13))
         {
-            _inputReader = inputReader;
+            if (CompareLine(left, right) == State.RightOrder)
+                sumInOrder += n;
+
+            n++;
         }
 
-        [Part1]
-        public async Task<string> Part1Async()
+        return sumInOrder.ToString();
+    }
+
+    [Part2]
+    public async Task<string> Part2Async()
+    {
+        var list = new List<string>();
+        await foreach (var (left, right) in ParseInputAsync(13))
         {
-            int sumInOrder = 0;
-            int n = 1;
-            await foreach (var (left, right) in ParseInputAsync(13))
-            {
-                if (CompareLine(left, right) == State.RightOrder)
-                    sumInOrder+= n;
-
-                n++;
-            }
-
-            return sumInOrder.ToString();
+            list.Add(left);
+            list.Add(right);
         }
 
-        [Part2]
-        public async Task<string> Part2Async()
+        list.Add("[2]");
+        list.Add("[6]");
+
+        var cmp = new PacketComparer();
+
+        var ordered = list.OrderBy(x => x, cmp).ToList();
+        var p1 = ordered.IndexOf("[2]") + 1;
+        var p2 = ordered.IndexOf("[6]") + 1;
+
+        return (p1 * p2).ToString();
+    }
+
+    private async IAsyncEnumerable<(string, string)> ParseInputAsync(int challenge)
+    {
+        var parts = new string[2];
+        var i = 0;
+        await foreach (var line in _inputReader.ReadLinesAsync(challenge))
         {
-            var list = new List<string>();
-            await foreach (var (left, right) in ParseInputAsync(13))
+            if (string.IsNullOrEmpty(line))
             {
-                list.Add(left);
-                list.Add(right);
+                yield return (parts[0], parts[1]);
+                continue;
             }
 
-            list.Add("[2]");
-            list.Add("[6]");
-
-            var cmp = new PacketComparer();
-
-            var ordered = list.OrderBy(x => x, cmp).ToList();
-            int p1 = ordered.IndexOf("[2]")+1;
-            int p2 = ordered.IndexOf("[6]")+1;
-
-            return (p1*p2).ToString();
+            parts[i] = line;
+            i = Euclid.Modulus(i + 1, 2);
         }
 
-        private async IAsyncEnumerable<(string, string)> ParseInputAsync(int challenge)
+        yield return (parts[0], parts[1]);
+    }
+
+    private static State CompareLine(string left, string right)
+    {
+        // Compare if both are numbers
+        if (IsNumber(left, out var ln) && IsNumber(right, out var rn))
         {
-            var parts = new string[2];
-            var i = 0;
-            await foreach (var line in _inputReader.ReadLinesAsync(challenge))
-            {
-                if (string.IsNullOrEmpty(line))
-                {
-                    yield return (parts[0], parts[1]);
-                    continue;
-                }
-
-                parts[i] = line;
-                i = Euclid.Modulus(i + 1, 2);
-            }
-
-            yield return (parts[0], parts[1]);
-        }
-
-        private static State CompareLine(string left, string right)
-        {
-            // Compare if both are numbers
-            if (IsNumber(left, out var ln) && IsNumber(right, out var rn))
-            {
-                if (ln == rn)
-                    return State.None;
-
-                return ln < rn ? State.RightOrder : State.WrongOrder;
-            }
-
-            // Convert both to a list
-            left = IsNumber(left, out _) ? $"[{left}]" : left;
-            right = IsNumber(right, out _) ? $"[{right}]" : right;
-
-            // Extract children and recursively compare each item
-            var leftList = ExtractFromList(left).ToList();
-            var rightList = ExtractFromList(right).ToList();
-
-            for(int i = 0; i < Math.Min(leftList.Count, rightList.Count); i++)
-            {
-                var substate = CompareLine(leftList[i], rightList[i]);
-                if (substate == State.None)
-                    continue;
-
-                return substate;
-            }
-
-            // Check array length when the loop has run out of items
-            if (leftList.Count == rightList.Count)
+            if (ln == rn)
                 return State.None;
 
-            return leftList.Count < rightList.Count ? State.RightOrder : State.WrongOrder;
+            return ln < rn ? State.RightOrder : State.WrongOrder;
         }
 
-        private static bool IsNumber(string input, out int number) => int.TryParse(input, out number);
+        // Convert both to a list
+        left = IsNumber(left, out _) ? $"[{left}]" : left;
+        right = IsNumber(right, out _) ? $"[{right}]" : right;
 
-        private static IEnumerable<string> ExtractFromList(string listInput)
+        // Extract children and recursively compare each item
+        var leftList = ExtractFromList(left).ToList();
+        var rightList = ExtractFromList(right).ToList();
+
+        for (var i = 0; i < Math.Min(leftList.Count, rightList.Count); i++)
         {
-            var sb = new StringBuilder();
-            int listDepth = 0;
-            for (int i = 1; i < listInput.Length - 1; i++)
+            var substate = CompareLine(leftList[i], rightList[i]);
+            if (substate == State.None)
+                continue;
+
+            return substate;
+        }
+
+        // Check array length when the loop has run out of items
+        if (leftList.Count == rightList.Count)
+            return State.None;
+
+        return leftList.Count < rightList.Count ? State.RightOrder : State.WrongOrder;
+    }
+
+    private static bool IsNumber(string input, out int number)
+    {
+        return int.TryParse(input, out number);
+    }
+
+    private static IEnumerable<string> ExtractFromList(string listInput)
+    {
+        var sb = new StringBuilder();
+        var listDepth = 0;
+        for (var i = 1; i < listInput.Length - 1; i++)
+        {
+            if (listInput[i] == ',' && listDepth == 0)
             {
-                if (listInput[i] == ',' && listDepth == 0)
-                {
-                    yield return sb.ToString();
-                    sb.Clear();
-                    continue;
-                }
-
-                sb.Append(listInput[i]);
-
-                if (listInput[i] == '[')
-                {
-                    listDepth++;
-                    continue;
-                }
-
-                if (listInput[i] == ']')
-                {
-                    listDepth--;
-                    continue;
-                }
-            }
-
-            if (sb.Length > 0)
                 yield return sb.ToString();
-        }
-
-        private enum State
-        {
-            None,
-            RightOrder,
-            WrongOrder
-        }
-
-        private class PacketComparer : IComparer<string>
-        {
-            public int Compare(string? x, string? y)
-            {
-                return CompareLine(x!, y!) switch
-                {
-                    State.None => 0,
-                    State.RightOrder => -1,
-                    State.WrongOrder => 1,
-                    _ => throw new NotImplementedException(),
-                };
+                sb.Clear();
+                continue;
             }
+
+            sb.Append(listInput[i]);
+
+            if (listInput[i] == '[')
+            {
+                listDepth++;
+                continue;
+            }
+
+            if (listInput[i] == ']')
+            {
+                listDepth--;
+            }
+        }
+
+        if (sb.Length > 0)
+            yield return sb.ToString();
+    }
+
+    private enum State
+    {
+        None,
+        RightOrder,
+        WrongOrder
+    }
+
+    private class PacketComparer : IComparer<string>
+    {
+        public int Compare(string? x, string? y)
+        {
+            return CompareLine(x!, y!) switch
+            {
+                State.None => 0,
+                State.RightOrder => -1,
+                State.WrongOrder => 1,
+                _ => throw new NotImplementedException()
+            };
         }
     }
 }

@@ -43,20 +43,29 @@ public class Challenge02
         return resultSum.ToString();
     }
 
-    private static int RoundResult(char other, char you) => (you - 'X' - (other - 'A')) switch
+    private static int RoundResult(char other, char you)
     {
-        0 => 3, // draw
-        1 or -2 => 6, // win
-        _ => 0 // lose
-    };
+        return (you - 'X' - (other - 'A')) switch
+        {
+            0 => 3, // draw
+            1 or -2 => 6, // win
+            _ => 0 // lose
+        };
+    }
 
-    private static int Score(char you, int roundResult) => you - 'X' + 1 + roundResult;
-
-    private static char Choose(char other, char you) => (other - 'A', you) switch
+    private static int Score(char you, int roundResult)
     {
-        (var o, 'Z') => (char)('X' + (o + 1) % 3),
-        (var o, 'Y') => (char)('X' + o),
-        (var o, 'X') => (char)(Euclid.Modulus(o - 1, 3) + 'X'),
-        _ => throw new NotImplementedException()
-    };
+        return you - 'X' + 1 + roundResult;
+    }
+
+    private static char Choose(char other, char you)
+    {
+        return (other - 'A', you) switch
+        {
+            (var o, 'Z') => (char) ('X' + (o + 1) % 3),
+            (var o, 'Y') => (char) ('X' + o),
+            (var o, 'X') => (char) (Euclid.Modulus(o - 1, 3) + 'X'),
+            _ => throw new NotImplementedException()
+        };
+    }
 }

@@ -9,20 +9,20 @@ public class Challenge05
 {
     private static readonly Regex Pattern = new(@"move (\d+) from (\d) to (\d)", RegexOptions.Compiled);
 
+    private readonly IInputReader _inputReader;
+
     private readonly Stack<char>[] _stacks =
     {
-        new(new[] { 'J', 'H', 'P', 'M', 'S', 'F', 'N', 'V' }),
-        new(new[] { 'S', 'R', 'L', 'M', 'J', 'D', 'Q' }),
-        new(new[] { 'N', 'Q', 'D', 'H', 'C', 'S', 'W', 'B' }),
-        new(new[] { 'R', 'S', 'C', 'L' }),
-        new(new[] { 'M', 'V', 'T', 'P', 'F', 'B' }),
-        new(new[] { 'T', 'R', 'Q', 'N', 'C' }),
-        new(new[] { 'G', 'V', 'R' }),
-        new(new[] { 'C', 'Z', 'S', 'P', 'D', 'L', 'R' }),
-        new(new[] { 'D', 'S', 'J', 'V', 'G', 'P', 'B', 'F' })
+        new(new[] {'J', 'H', 'P', 'M', 'S', 'F', 'N', 'V'}),
+        new(new[] {'S', 'R', 'L', 'M', 'J', 'D', 'Q'}),
+        new(new[] {'N', 'Q', 'D', 'H', 'C', 'S', 'W', 'B'}),
+        new(new[] {'R', 'S', 'C', 'L'}),
+        new(new[] {'M', 'V', 'T', 'P', 'F', 'B'}),
+        new(new[] {'T', 'R', 'Q', 'N', 'C'}),
+        new(new[] {'G', 'V', 'R'}),
+        new(new[] {'C', 'Z', 'S', 'P', 'D', 'L', 'R'}),
+        new(new[] {'D', 'S', 'J', 'V', 'G', 'P', 'B', 'F'})
     };
-
-    private readonly IInputReader _inputReader;
 
     public Challenge05(IInputReader inputReader)
     {

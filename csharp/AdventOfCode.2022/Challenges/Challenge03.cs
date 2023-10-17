@@ -42,5 +42,8 @@ public class Challenge03
         return badges.Select(GetPriority).Sum().ToString();
     }
 
-    private static int GetPriority(char c) => char.IsLower(c) ? c - 'a' + 1 : c - 'A' + 27;
+    private static int GetPriority(char c)
+    {
+        return char.IsLower(c) ? c - 'a' + 1 : c - 'A' + 27;
+    }
 }

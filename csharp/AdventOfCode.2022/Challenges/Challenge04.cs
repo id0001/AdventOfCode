@@ -25,13 +25,13 @@ public class Challenge04
             var (from1, to1) = (int.Parse(elf1[0]), int.Parse(elf1[1]));
             var (from2, to2) = (int.Parse(elf2[0]), int.Parse(elf2[1]));
 
-            if ((from1 >= from2 && to1 <= to2) || (from2 >= from1 && to2 <= to1))
+            if (from1 >= from2 && to1 <= to2 || from2 >= from1 && to2 <= to1)
                 sum++;
         }
 
         return sum.ToString();
     }
-    
+
     [Part2]
     public async Task<string> Part2Async()
     {
@@ -44,7 +44,7 @@ public class Challenge04
             var (from1, to1) = (int.Parse(elf1[0]), int.Parse(elf1[1]));
             var (from2, to2) = (int.Parse(elf2[0]), int.Parse(elf2[1]));
 
-            if ((from2 >= from1 && from2 <= to1) || (from1 >= from2 && from1 <= to2))
+            if (from2 >= from1 && from2 <= to1 || from1 >= from2 && from1 <= to2)
                 sum++;
         }
 
