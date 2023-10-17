@@ -27,21 +27,21 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
     public IEnumerable<Point3> GetNeighbors(bool includeDiagonal = false)
     {
         for (var z = -1; z <= 1; z++)
-        for (var y = -1; y <= 1; y++)
-        for (var x = -1; x <= 1; x++)
-        {
-            if (!includeDiagonal && !((x == 0) ^ (y == 0) ^ (z == 0)))
-                continue;
+            for (var y = -1; y <= 1; y++)
+                for (var x = -1; x <= 1; x++)
+                {
+                    if (!includeDiagonal && !((x == 0 && y == 0) ^ (x == 0 && z == 0) ^ (y == 0 && z == 0)))
+                        continue;
 
-            if (x == 0 && y == 0 && z == 0)
-                continue;
+                    if (x == 0 && y == 0 && z == 0)
+                        continue;
 
-            yield return new Point3(X + x, Y + y, Z + z);
-        }
+                    yield return new Point3(X + x, Y + y, Z + z);
+                }
     }
 
     public Point2 ToPoint2() => new(X, Y);
-    
+
     public static Point3 Subtract(Point3 left, Point3 right) => new(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
 
     public static Point3 Add(Point3 left, Point3 right) => new(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
@@ -72,8 +72,8 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
     public static bool operator ==(Point3 left, Point3 right) => left.Equals(right);
 
     public static bool operator !=(Point3 left, Point3 right) => !(left == right);
-    
+
     public static Point3 operator +(Point3 left, Point3 right) => Add(left, right);
-    
+
     public static Point3 operator -(Point3 left, Point3 right) => Subtract(left, right);
 }

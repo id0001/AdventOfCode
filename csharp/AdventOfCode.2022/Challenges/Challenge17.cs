@@ -22,7 +22,7 @@ namespace AdventOfCode2022.Challenges
         {
             var dirs = await _inputReader.ReadLineAsync(17).ToListAsync();
 
-            var result = SimulateUntil(new SparseSpatialMap<Point2, bool>(), dirs, 0, 0, 0, 0, state => state.FallenRocks == 2022);
+            var result = SimulateUntil(new PointCloud<Point2>(), dirs, 0, 0, 0, 0, state => state.FallenRocks == 2022);
             return result.CurrentHeight.ToString();
         }
 
@@ -35,7 +35,7 @@ namespace AdventOfCode2022.Challenges
             var cache = new Dictionary<StateKey, State>();
 
             // Detect cycle
-            var cycleEnd = SimulateUntil(new SparseSpatialMap<Point2, bool>(), dirs, 0, 0, 0, 0, state =>
+            var cycleEnd = SimulateUntil(new PointCloud<Point2>(), dirs, 0, 0, 0, 0, state =>
             {
                 if (cache.ContainsKey(state.Key))
                     return true;
@@ -63,24 +63,24 @@ namespace AdventOfCode2022.Challenges
             var remainingRocks = targetRocks - fallenRocks;
 
             // Simulate again from the given state until the desired amount of fallen rocks is reached
-            var rest = SimulateUntil(new SparseSpatialMap<Point2, bool>(), dirs, cycleEnd.Key.DirIndex, cycleEnd.Key.ShapeIndex + 1, 0, 0, state => state.FallenRocks == remainingRocks);
+            var rest = SimulateUntil(new PointCloud<Point2>(), dirs, cycleEnd.Key.DirIndex, cycleEnd.Key.ShapeIndex + 1, 0, 0, state => state.FallenRocks == remainingRocks);
 
             // Add the remaining height to the height after the last cycle
             return (heightAfterLastCycle + rest.CurrentHeight).ToString();
         }
 
-        private Point2 MoveHorizontal(SparseSpatialMap<Point2, bool> map, Point2 position, char direction, Shape shape)
+        private Point2 MoveHorizontal(PointCloud<Point2> cloud, Point2 position, char direction, Shape shape)
         {
             switch (direction)
             {
                 case '>':
                     var pRight = new Point2(position.X + 1, position.Y);
-                    if (!Collides(map, pRight, shape))
+                    if (!Collides(cloud, pRight, shape))
                         return pRight;
                     break;
                 case '<':
                     var pLeft = new Point2(position.X - 1, position.Y);
-                    if (!Collides(map, pLeft, shape))
+                    if (!Collides(cloud, pLeft, shape))
                         return pLeft;
                     break;
             }
@@ -88,23 +88,23 @@ namespace AdventOfCode2022.Challenges
             return position;
         }
 
-        private bool TryMoveDown(SparseSpatialMap<Point2, bool> map, Point2 position, Shape shape, out Point2 newPosition)
+        private bool TryMoveDown(PointCloud<Point2> cloud, Point2 position, Shape shape, out Point2 newPosition)
         {
             newPosition = position;
-            if (Collides(map, new Point2(position.X, position.Y - 1), shape))
+            if (Collides(cloud, new Point2(position.X, position.Y - 1), shape))
                 return false;
 
             newPosition = new Point2(position.X, position.Y - 1);
             return true;
         }
 
-        private bool TryMove(SparseSpatialMap<Point2, bool> map, Point2 position, char direction, Shape shape, out Point2 newPosition)
+        private bool TryMove(PointCloud<Point2> cloud, Point2 position, char direction, Shape shape, out Point2 newPosition)
         {
-            newPosition = MoveHorizontal(map, position, direction, shape);
-            return TryMoveDown(map, newPosition, shape, out newPosition);
+            newPosition = MoveHorizontal(cloud, position, direction, shape);
+            return TryMoveDown(cloud, newPosition, shape, out newPosition);
         }
 
-        private bool Collides(SparseSpatialMap<Point2, bool> map, Point2 position, Shape shape)
+        private bool Collides(PointCloud<Point2> cloud, Point2 position, Shape shape)
         {
             // Detect boundaries
             if (position.X < 0 || position.X + shape.Width > 7 || position.Y < 0)
@@ -116,7 +116,7 @@ namespace AdventOfCode2022.Challenges
                 for (int lx = 0; lx < shape.Width; lx++)
                 {
                     var p = new Point2(position.X + lx, position.Y + (shape.Height - 1 - ly));
-                    if (shape.Map[ly, lx] && map[p])
+                    if (shape.Map[ly, lx] && cloud.Contains(p))
                         return true;
                 }
             }
@@ -124,7 +124,7 @@ namespace AdventOfCode2022.Challenges
             return false;
         }
 
-        private void BakeShape(SparseSpatialMap<Point2, bool> map, Point2 position, Shape shape)
+        private void BakeShape(PointCloud<Point2> cloud, Point2 position, Shape shape)
         {
             for (int ly = 0; ly < shape.Height; ly++)
             {
@@ -132,24 +132,24 @@ namespace AdventOfCode2022.Challenges
                 {
                     var p = new Point2(position.X + lx, position.Y + (shape.Height - 1 - ly));
                     if (shape.Map[ly, lx])
-                        map[p] = true;
+                        cloud.Set(p);
                 }
             }
         }
 
-        private short Hash(SparseSpatialMap<Point2, bool> map, int currentHeight)
+        private short Hash(PointCloud<Point2> cloud, int currentHeight)
         {
             short code = 0;
             for (var x = 0; x < 7; x++)
             {
-                if (map[new Point2(x, currentHeight - 1)])
+                if (cloud.Contains(new Point2(x, currentHeight - 1)))
                     code |= (short)(1 << (6 - x));
             }
 
             return code;
         }
 
-        private State SimulateUntil(SparseSpatialMap<Point2, bool> map, List<char> dirs, int dirIndex, int shapeIndex, int currentHeight, int fallenRocks, Func<State, bool> predicate)
+        private State SimulateUntil(PointCloud<Point2> cloud, List<char> dirs, int dirIndex, int shapeIndex, int currentHeight, int fallenRocks, Func<State, bool> predicate)
         {
             var shape1 = new Shape(4, 1, new bool[1, 4] { { true, true, true, true } }); // -
             var shape2 = new Shape(3, 3, new bool[3, 3] { { false, true, false }, { true, true, true }, { false, true, false } }); // +
@@ -166,24 +166,24 @@ namespace AdventOfCode2022.Challenges
             while (true)
             {
                 // Make the first 3 moves
-                TryMove(map, position, dirs[Euclid.Modulus(dirIndex, dirs.Count)], shapes[shapeIndex], out position);
-                TryMove(map, position, dirs[Euclid.Modulus(dirIndex + 1, dirs.Count)], shapes[shapeIndex], out position);
-                TryMove(map, position, dirs[Euclid.Modulus(dirIndex + 2, dirs.Count)], shapes[shapeIndex], out position);
+                TryMove(cloud, position, dirs[Euclid.Modulus(dirIndex, dirs.Count)], shapes[shapeIndex], out position);
+                TryMove(cloud, position, dirs[Euclid.Modulus(dirIndex + 1, dirs.Count)], shapes[shapeIndex], out position);
+                TryMove(cloud, position, dirs[Euclid.Modulus(dirIndex + 2, dirs.Count)], shapes[shapeIndex], out position);
 
                 dirIndex = Euclid.Modulus(dirIndex + 3, dirs.Count);
 
-                while (TryMove(map, position, dirs[dirIndex], shapes[shapeIndex], out position))
+                while (TryMove(cloud, position, dirs[dirIndex], shapes[shapeIndex], out position))
                 {
                     dirIndex = Euclid.Modulus(dirIndex + 1, dirs.Count);
                 }
 
                 dirIndex = Euclid.Modulus(dirIndex + 1, dirs.Count);
 
-                BakeShape(map, position, shapes[shapeIndex]);
+                BakeShape(cloud, position, shapes[shapeIndex]);
                 currentHeight = Math.Max(currentHeight, position.Y + shapes[shapeIndex].Height);
                 fallenRocks++;
 
-                var key = new StateKey(Hash(map, currentHeight), dirIndex, shapeIndex);
+                var key = new StateKey(Hash(cloud, currentHeight), dirIndex, shapeIndex);
                 var state = new State(key, fallenRocks, currentHeight);
                 if (predicate(state))
                     return state;
@@ -193,7 +193,7 @@ namespace AdventOfCode2022.Challenges
             }
         }
 
-        private void PrintState(SparseSpatialMap<Point2, bool> map, int currentHeight, Shape shape, Point2 position)
+        private void PrintState(PointCloud<Point2> cloud, int currentHeight, Shape shape, Point2 position)
         {
             var sb = new StringBuilder();
             for (int y = currentHeight + 3 + shape.Height; y >= 0; y--)
@@ -209,7 +209,7 @@ namespace AdventOfCode2022.Challenges
                     }
                     else
                     {
-                        sb.Append(map[p] ? '#' : '.');
+                        sb.Append(cloud.Contains(p) ? '#' : '.');
                     }
                 }
 
@@ -220,7 +220,7 @@ namespace AdventOfCode2022.Challenges
             Console.WriteLine();
         }
 
-        private void PrintFinal(SparseSpatialMap<Point2, bool> map, int currentHeight)
+        private void PrintFinal(PointCloud<Point2> cloud, int currentHeight)
         {
             var sb = new StringBuilder();
             for (int y = currentHeight + 3; y >= 0; y--)
@@ -228,7 +228,7 @@ namespace AdventOfCode2022.Challenges
                 for (int x = 0; x < 7; x++)
                 {
                     var p = new Point2(x, y);
-                    sb.Append(map[p] ? '#' : '.');
+                    sb.Append(cloud.Contains(p) ? '#' : '.');
                 }
 
                 Console.WriteLine(sb.ToString());
