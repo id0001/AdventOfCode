@@ -53,7 +53,7 @@ namespace AdventOfCode2022.Challenges
             }
         }
 
-        private Point3 ParseLine(string line)
+        private static Point3 ParseLine(string line)
         {
             var parsed = line.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
             return new Point3(parsed[0], parsed[1], parsed[2]);
