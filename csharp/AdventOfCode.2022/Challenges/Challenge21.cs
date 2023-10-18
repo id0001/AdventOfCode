@@ -1,6 +1,6 @@
-﻿using System.Linq.Expressions;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2022.Challenges;
 
@@ -21,33 +21,53 @@ public class Challenge21
             .Select(line => line.Split(':', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
             .ToDictionaryAsync(kv => kv[0], kv => kv[1]);
 
-        var result = Expression.Lambda<Func<long>>(Parse(new Dictionary<string, Expression>(), lines, "root")).Compile();
-        return result().ToString();
+        return BuildExpressionTree(new Dictionary<string, Func<long>>(), lines, "root")().ToString();
     }
 
-    private static Expression Parse(IDictionary<string, Expression> cache, IDictionary<string, string> map, string key)
+    [Part2]
+    public async Task<string> Part2Async()
     {
-        if (cache.ContainsKey(key))
-            return cache[key];
-        
-        var line = map[key];
-        if (long.TryParse(line, out var num))
+        var lines = await _inputReader.ReadLinesAsync(21)
+            .Select(line => line.Split(':', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+            .ToDictionaryAsync(kv => kv[0], kv => kv[1]);
+
+        lines.Remove("root"); // Don't need root
+
+        var cache = new Dictionary<string, Func<long>>();
+        var calcFflg = BuildExpressionTree(cache, lines, "fflg");
+        var calcQwqj = BuildExpressionTree(cache, lines, "qwqj");
+
+        var list = new List<string>();
+        var v = SpecialFunctions.BinarySearch(0, 10_000_000_000_000L, m =>
         {
-            cache.Add(key, Expression.Constant(num));
-        }
-        else
+            cache["humn"] = () => m;
+            return calcQwqj() - calcFflg();
+        });
+
+        return v!.Value.ToString();
+    }
+
+    private static Func<long> BuildExpressionTree(IDictionary<string, Func<long>> cache, IDictionary<string, string> lines, string key)
+    {
+        if (!cache.ContainsKey(key))
         {
-            var split = line.Split(' ');
-            cache.Add(key, split[1] switch
+            var line = lines[key];
+            if (long.TryParse(line, out var num))
+                cache.Add(key, () => num);
+            else
             {
-                "+" => Expression.Add(Parse(cache, map, split[0]), Parse(cache, map, split[2])),
-                "-" => Expression.Subtract(Parse(cache, map, split[0]), Parse(cache, map, split[2])),
-                "*" => Expression.Multiply(Parse(cache, map, split[0]), Parse(cache, map, split[2])),
-                "/" => Expression.Divide(Parse(cache, map, split[0]), Parse(cache, map, split[2])),
-                _ => throw new NotImplementedException()
-            });
+                var split = line.Split(' ');
+                cache.Add(key, split[1] switch
+                {
+                    "+" => () => BuildExpressionTree(cache, lines, split[0])() + BuildExpressionTree(cache, lines, split[2])(),
+                    "-" => () => BuildExpressionTree(cache, lines, split[0])() - BuildExpressionTree(cache, lines, split[2])(),
+                    "*" => () => BuildExpressionTree(cache, lines, split[0])() * BuildExpressionTree(cache, lines, split[2])(),
+                    "/" => () => BuildExpressionTree(cache, lines, split[0])() / BuildExpressionTree(cache, lines, split[2])(),
+                    _ => throw new NotImplementedException()
+                });
+            }
         }
-        
+
         return cache[key];
     }
 }

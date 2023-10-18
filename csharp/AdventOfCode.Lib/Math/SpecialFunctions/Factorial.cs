@@ -3,7 +3,7 @@ using Microsoft;
 
 namespace AdventOfCode.Lib.Math;
 
-public static class SpecialFunctions
+public static partial class SpecialFunctions
 {
     private static readonly double[] FactorialCache =
     {
