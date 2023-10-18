@@ -97,8 +97,8 @@ public class InputReader : IInputReader
 
         var map = new char[lines.Count, lines[0].Length];
         for (var y = 0; y < map.GetLength(0); y++)
-        for (var x = 0; x < map.GetLength(1); x++)
-            map[y, x] = lines[y][x];
+            for (var x = 0; x < map.GetLength(1); x++)
+                map[y, x] = lines[y][x];
 
         return map;
     }
@@ -113,12 +113,12 @@ public class InputReader : IInputReader
 
         var map = new T[lines.Count, lines[0].Length];
         for (var y = 0; y < map.GetLength(0); y++)
-        for (var x = 0; x < map.GetLength(1); x++)
-            map[y, x] = (T)Convert.ChangeType(lines[y][x].ToString(), typeof(T));
+            for (var x = 0; x < map.GetLength(1); x++)
+                map[y, x] = (T)Convert.ChangeType(lines[y][x].ToString(), typeof(T));
 
         return map;
     }
-    
+
     public async IAsyncEnumerable<T> ParseLinesAsync<T>(int challenge, Func<string, T> parser)
     {
         using var reader = File.OpenText(GetPath(challenge));
