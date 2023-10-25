@@ -2,8 +2,8 @@
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
-using System.Net.WebSockets;
 using System.Text;
+using static AdventOfCode.Lib.CubeWalker;
 
 namespace AdventOfCode2022.Challenges
 {
@@ -11,10 +11,38 @@ namespace AdventOfCode2022.Challenges
     public class Challenge22
     {
         private readonly IInputReader _inputReader;
+        private readonly IDictionary<Face, Point2> _faceOffset;
+        private readonly Edge[] _edges;
 
         public Challenge22(IInputReader inputReader)
         {
             _inputReader = inputReader;
+
+            _faceOffset = new Dictionary<Face, Point2>()
+            {
+                {Face.Top, new Point2(50,0) },
+                {Face.Right, new Point2(100,0) },
+                {Face.Front, new Point2(50,50) },
+                {Face.Left, new Point2(0,100) },
+                {Face.Bottom, new Point2(50,100) },
+                {Face.Back, new Point2(0,150) }
+            };
+
+            _edges = new Edge[12]
+            {
+                new Edge(Face.Top, Face.Right, Side.Right, Side.Left),
+                new Edge(Face.Top, Face.Front, Side.Bottom, Side.Top),
+                new Edge(Face.Top, Face.Left, Side.Left, Side.Left),
+                new Edge(Face.Top, Face.Back, Side.Top, Side.Left),
+                new Edge(Face.Front, Face.Right, Side.Right, Side.Bottom),
+                new Edge(Face.Front, Face.Left, Side.Left, Side.Top),
+                new Edge(Face.Front, Face.Bottom, Side.Bottom, Side.Top),
+                new Edge(Face.Right, Face.Bottom, Side.Right, Side.Right),
+                new Edge(Face.Right, Face.Back, Side.Top, Side.Bottom),
+                new Edge(Face.Left, Face.Back, Side.Bottom, Side.Top),
+                new Edge(Face.Left, Face.Bottom, Side.Right, Side.Left),
+                new Edge(Face.Bottom, Face.Back, Side.Bottom, Side.Right)
+            };
         }
 
         [Part1]
@@ -23,55 +51,25 @@ namespace AdventOfCode2022.Challenges
             var lines = await _inputReader.ReadLinesAsync(22).ToListAsync();
             var (map, line) = ReadGridWithInstructions(lines);
 
-            var pos = FindLeftMostOpenTile(map);
-            var dir = new Point2(1, 0);
+            var position = FindLeftMostOpenTile(map);
+            var direction = new Point2(1, 0);
             var instructions = new Queue<char>(line);
-            var numberBuilder = new StringBuilder();
+            var steps = new StringBuilder();
 
             foreach (var instruction in instructions)
             {
-                if (char.IsNumber(instruction))
-                    numberBuilder.Append(instruction);
-                else
+                (position, direction) = char.IsNumber(instruction) switch
                 {
-                    if (numberBuilder.Length > 0)
-                    {
-                        int num = int.Parse(numberBuilder.ToString());
-                        numberBuilder.Clear();
-
-                        for (int i = 0; i < num; i++)
-                        {
-                            var next = GetNext(map, pos, dir);
-                            if (map[next.Y, next.X] == '.')
-                                pos = next;
-                        }
-                    }
-
-                    dir = instruction switch
-                    {
-                        'L' => Point2.Turn(dir, Point2.Zero, -Trigonometry.DegreeToRadian(90)),
-                        'R' => Point2.Turn(dir, Point2.Zero, Trigonometry.DegreeToRadian(90)),
-                        _ => throw new NotImplementedException()
-                    };
-                }
+                    true => AppendSteps(position, direction, steps, instruction),
+                    _ => MoveAndTurn(map, position, direction, steps, instruction)
+                };
             }
 
-            if (numberBuilder.Length > 0)
-            {
-                int num = int.Parse(numberBuilder.ToString());
-                numberBuilder.Clear();
+            position = Move(map, position, direction, int.Parse(steps.ToString()));
 
-                for (int i = 0; i < num; i++)
-                {
-                    var next = GetNext(map, pos, dir);
-                    if (map[next.Y, next.X] == '.')
-                        pos = next;
-                }
-            }
-
-            var facing = GetFacing(dir);
-            var rows = (pos.Y + 1) * 1000;
-            var cols = (pos.X + 1) * 4;
+            var facing = GetFacing(direction);
+            var rows = (position.Y + 1) * 1000;
+            var cols = (position.X + 1) * 4;
             return (rows + cols + facing).ToString();
         }
 
@@ -81,65 +79,97 @@ namespace AdventOfCode2022.Challenges
             var lines = await _inputReader.ReadLinesAsync(22).ToListAsync();
             var (map, line) = ReadGridWithInstructions(lines);
 
-            var pos = FindLeftMostOpenTile(map);
-            var dir = new Point2(1, 0);
+            var position = new CubeCoord(Face.Top, Point2.Zero);
+            var direction = new Point2(1, 0);
             var instructions = new Queue<char>(line);
-            var numberBuilder = new StringBuilder();
+            var steps = new StringBuilder();
 
-            for(int y = 0; y < map.GetLength(0); y++)
-            {
-                for(int x = 0; x < map.GetLength(1); x++)
-                {
-                    int zoneX = (int)Math.Floor(x / 50d);
-                    int zoneY = (int)Math.Floor(y / 50d);
-                }
-            }
+            var cubeWalker = new CubeWalker(50, _edges);
 
             foreach (var instruction in instructions)
             {
-                if (char.IsNumber(instruction))
-                    numberBuilder.Append(instruction);
-                else
+                (position, direction) = char.IsNumber(instruction) switch
                 {
-                    if (numberBuilder.Length > 0)
-                    {
-                        int num = int.Parse(numberBuilder.ToString());
-                        numberBuilder.Clear();
-
-                        for (int i = 0; i < num; i++)
-                        {
-                            var next = GetNext(map, pos, dir);
-                            if (map[next.Y, next.X] == '.')
-                                pos = next;
-                        }
-                    }
-
-                    dir = instruction switch
-                    {
-                        'L' => Point2.Turn(dir, Point2.Zero, -Trigonometry.DegreeToRadian(90)),
-                        'R' => Point2.Turn(dir, Point2.Zero, Trigonometry.DegreeToRadian(90)),
-                        _ => throw new NotImplementedException()
-                    };
-                }
+                    true => AppendSteps(position, direction, steps, instruction),
+                    _ => MoveAndTurnPart2(map, cubeWalker, _faceOffset, position, direction, steps, instruction)
+                };
             }
 
-            if (numberBuilder.Length > 0)
-            {
-                int num = int.Parse(numberBuilder.ToString());
-                numberBuilder.Clear();
+            (position, direction) = MovePart2(map, cubeWalker, _faceOffset, position, direction, int.Parse(steps.ToString()));
 
-                for (int i = 0; i < num; i++)
-                {
-                    var next = GetNext(map, pos, dir);
-                    if (map[next.Y, next.X] == '.')
-                        pos = next;
-                }
-            }
-
-            var facing = GetFacing(dir);
-            var rows = (pos.Y + 1) * 1000;
-            var cols = (pos.X + 1) * 4;
+            var facing = GetFacing(direction);
+            var p = _faceOffset[position.Face] + position.Position;
+            var rows = (p.Y + 1) * 1000;
+            var cols = (p.X + 1) * 4;
             return (rows + cols + facing).ToString();
+        }
+
+        private static (T, K) AppendSteps<T, K>(T position, K direction, StringBuilder moveAmount, char c)
+        {
+            moveAmount.Append(c);
+            return (position, direction);
+        }
+
+        private static (Point2, Point2) MoveAndTurn(char[,] map, Point2 position, Point2 direction, StringBuilder steps, char c)
+        {
+            if (steps.Length > 0)
+                position = Move(map, position, direction, int.Parse(steps.ToString()));
+
+            steps.Clear();
+
+            direction = Turn(direction, c);
+
+            return (position, direction);
+        }
+
+        private static (CubeCoord, Point2) MoveAndTurnPart2(char[,] map, CubeWalker cubeWalker, IDictionary<Face, Point2> faceOffset, CubeCoord position, Point2 direction, StringBuilder steps, char c)
+        {
+            if (steps.Length > 0)
+                (position, direction) = MovePart2(map, cubeWalker, faceOffset, position, direction, int.Parse(steps.ToString()));
+
+            steps.Clear();
+
+            direction = Turn(direction, c);
+
+            return (position, direction);
+        }
+
+        private static Point2 Turn(Point2 dir, char instruction)
+        {
+            return instruction switch
+            {
+                'L' => Point2.Turn(dir, Point2.Zero, -(Math.PI / 2d)),
+                'R' => Point2.Turn(dir, Point2.Zero, Math.PI / 2d),
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        private static Point2 Move(char[,] map, Point2 pos, Point2 dir, int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                var next = GetNextPosition(map, pos, dir);
+                if (map[next.Y, next.X] == '.')
+                    pos = next;
+            }
+
+            return pos;
+        }
+
+        private static (CubeCoord, Point2) MovePart2(char[,] map, CubeWalker cubeWalker, IDictionary<Face, Point2> faceOffset, CubeCoord position, Point2 direction, int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                var (nextCube, nextDir) = cubeWalker.Move(position, direction);
+                var next = faceOffset[nextCube.Face] + nextCube.Position;
+                if (map[next.Y, next.X] == '.')
+                {
+                    position = nextCube;
+                    direction = nextDir;
+                }
+            }
+
+            return (position, direction);
         }
 
         private static int GetFacing(Point2 direction)
@@ -154,59 +184,8 @@ namespace AdventOfCode2022.Challenges
             };
         }
 
-        private static Point2 GetNext(char[,] map, Point2 position, Point2 direction)
+        private static Point2 GetNextPosition(char[,] map, Point2 position, Point2 direction)
         {
-            var next = new Point2(Euclid.Modulus(position.X + direction.X, map.GetLength(1)), Euclid.Modulus(position.Y + direction.Y, map.GetLength(0)));
-            if (map[next.Y, next.X] == ' ')
-            {
-                if (direction.X == 1)
-                {
-                    for (var x = 0; x < map.GetLength(1); x++)
-                        if (map[next.Y, x] != ' ')
-                            return new Point2(x, next.Y);
-                }
-                else if (direction.X == -1)
-                {
-                    for (var x = map.GetLength(1) - 1; x >= 0; x--)
-                        if (map[next.Y, x] != ' ')
-                            return new Point2(x, next.Y);
-                }
-                else if (direction.Y == 1)
-                {
-                    for (var y = 0; y < map.GetLength(0); y++)
-                        if (map[y, next.X] != ' ')
-                            return new Point2(next.X, y);
-                }
-                else if (direction.Y == -1)
-                {
-                    for (var y = map.GetLength(0) - 1; y >= 0; y--)
-                        if (map[y, next.X] != ' ')
-                            return new Point2(next.X, y);
-                }
-            }
-
-            return next;
-        }
-
-        private static Point2 GetNext2(char[,] map, Point2 position, Point2 direction)
-        {
-            /*    |    x0     |    x1   |     y0    |    y1     |
-             * ---+-----------+---------+-----------+-----------+
-             * x0 |###########| (x+l,y) | (y,x)     | (l-y,l-x) |
-             * ---+-----------+---------+-----------+-----------+
-             * x1 | (x-l,y)   | (x,l-y) | (l-y,l-x) |########## |
-             * ---+-----------+---------+-----------+-----------+
-             * y0 | (y,x)     | (l,h-x) |###########| (l-x,y)   |
-             * ---+-----------+---------+-----------+-----------+
-             * y1 | (l-y,l-x) |#########| (l-x,y)   | (l-x,y)   |
-             * ---+-----------+---------+-----------+-----------+
-             * 
-             */
-
-
-
-
-
             var next = new Point2(Euclid.Modulus(position.X + direction.X, map.GetLength(1)), Euclid.Modulus(position.Y + direction.Y, map.GetLength(0)));
             if (map[next.Y, next.X] == ' ')
             {
@@ -254,7 +233,9 @@ namespace AdventOfCode2022.Challenges
             if (breakIndex == -1)
                 throw new FormatException("Input does not have a break.");
 
-            var map = new char[breakIndex, lines[0].Length];
+            int width = 150;
+
+            var map = new char[breakIndex, width];
             for (var y = 0; y < breakIndex; y++)
                 for (var x = 0; x < map.GetLength(1); x++)
                 {
