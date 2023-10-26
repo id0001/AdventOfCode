@@ -2,8 +2,9 @@
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
+using AdventOfCode.Lib.Misc;
 using System.Text;
-using static AdventOfCode.Lib.CubeWalker;
+using static AdventOfCode.Lib.Misc.CubeWalker;
 
 namespace AdventOfCode2022.Challenges
 {

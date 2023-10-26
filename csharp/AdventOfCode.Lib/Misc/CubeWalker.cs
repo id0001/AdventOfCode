@@ -1,7 +1,6 @@
-﻿using AdventOfCode.Lib.Math;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 
-namespace AdventOfCode.Lib
+namespace AdventOfCode.Lib.Misc
 {
     public class CubeWalker
     {
@@ -80,16 +79,16 @@ namespace AdventOfCode.Lib
             if (from == to)
                 return Point2.Turn(direction, Point2.Zero, System.Math.PI);
 
-            if ((from == Side.Top && to == Side.Left) || (from == Side.Bottom && to == Side.Right))
+            if (from == Side.Top && to == Side.Left || from == Side.Bottom && to == Side.Right)
                 return Point2.Turn(direction, Point2.Zero, System.Math.PI / 2d);
 
-            if ((from == Side.Top && to == Side.Right) || (from == Side.Bottom && to == Side.Left))
+            if (from == Side.Top && to == Side.Right || from == Side.Bottom && to == Side.Left)
                 return Point2.Turn(direction, Point2.Zero, -(System.Math.PI / 2d));
 
-            if ((from == Side.Right && to == Side.Top) || (from == Side.Left && to == Side.Bottom))
+            if (from == Side.Right && to == Side.Top || from == Side.Left && to == Side.Bottom)
                 return Point2.Turn(direction, Point2.Zero, System.Math.PI / 2d);
 
-            if ((from == Side.Right && to == Side.Bottom) || (from == Side.Left && to == Side.Top))
+            if (from == Side.Right && to == Side.Bottom || from == Side.Left && to == Side.Top)
                 return Point2.Turn(direction, Point2.Zero, -(System.Math.PI / 2d));
 
             return direction;
@@ -103,7 +102,7 @@ namespace AdventOfCode.Lib
 
         private Point2 VerticalFlip(Point2 p) => new Point2(p.X, Flip(p.Y));
 
-        private int Flip(int v) => (_size - 1) - v;
+        private int Flip(int v) => _size - 1 - v;
 
         private ImmutableDictionary<(Side, Side), Func<Point2, Point2>> InitializeOperations()
         {
