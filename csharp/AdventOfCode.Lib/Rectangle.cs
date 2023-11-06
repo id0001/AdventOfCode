@@ -37,6 +37,8 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 
     public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
 
+    public bool Contains(Point2 p) => p.X >= Left && p.X < Right && p.Y >= Top && p.Y < Bottom;
+
     public bool IntersectsWith(Rectangle other) => Intersects(this, other);
 
     public static bool Intersects(Rectangle a, Rectangle b) => b.Left < a.Right && a.Left < b.Right && b.Top < a.Bottom && a.Top < b.Bottom;
