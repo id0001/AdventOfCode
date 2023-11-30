@@ -133,10 +133,7 @@ public class Challenge13
                 continue;
             }
 
-            if (listInput[i] == ']')
-            {
-                listDepth--;
-            }
+            if (listInput[i] == ']') listDepth--;
         }
 
         if (sb.Length > 0)

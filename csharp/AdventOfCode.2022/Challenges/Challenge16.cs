@@ -41,7 +41,6 @@ public class Challenge16
     public async Task<string> Part2Async()
     {
         var valves = await _inputReader.ParseLinesAsync(16, ParseLine).ToDictionaryAsync(x => x.Name);
-        var sortedValves = valves.Keys.OrderBy(v => v).ToArray();
 
         var edges = valves.SelectMany(kv => kv.Value.LeadsTo.SelectMany(t => new[] {(kv.Key, t), (t, kv.Key)}))
             .ToList();
@@ -105,7 +104,4 @@ public class Challenge16
     }
 
     private record Valve(string Name, int FlowRate, string[] LeadsTo);
-
-    private record TravelState(int RemainingTime, string CurrentValve, IEnumerable<string> UnopenedValves,
-        int TotalPressure);
 }

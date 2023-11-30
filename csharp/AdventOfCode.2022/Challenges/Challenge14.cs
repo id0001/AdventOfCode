@@ -22,7 +22,6 @@ public class Challenge14
 
         await foreach (var points in _inputReader.ParseLinesAsync(14, ParseLine))
         {
-            var iterator = points.GetEnumerator();
             foreach (var (current, next) in points.CurrentAndNext())
             foreach (var p in Point2.BresenhamLine(current, next))
                 map.Set(p, '#');
@@ -72,7 +71,6 @@ public class Challenge14
 
         await foreach (var points in _inputReader.ParseLinesAsync(14, ParseLine))
         {
-            var iterator = points.GetEnumerator();
             foreach (var (current, next) in points.CurrentAndNext())
             foreach (var p in Point2.BresenhamLine(current, next))
                 map.Set(p, '#');

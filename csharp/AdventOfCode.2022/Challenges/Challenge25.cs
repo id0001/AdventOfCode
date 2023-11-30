@@ -1,10 +1,6 @@
+using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
-using AdventOfCode.Lib;
-using AdventOfCode.Lib.Math;
-using DocoptNet;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
 
 namespace AdventOfCode2022.Challenges;
 
@@ -27,9 +23,9 @@ public class Challenge25
     private static long Decode(string line)
     {
         long number = 0;
-        for (int i = 0; i < line.Length; i++)
+        for (var i = 0; i < line.Length; i++)
         {
-            long col = (long)Math.Pow(5d, line.Length - 1 - i);
+            var col = (long) Math.Pow(5d, line.Length - 1 - i);
 
             number += line[i] switch
             {
@@ -51,11 +47,11 @@ public class Challenge25
         if (number == 0)
             return "0";
 
-        while(number != 0)
+        while (number != 0)
         {
-            long remainder = number % 5;
+            var remainder = number % 5;
             number /= 5;
-            if(remainder > 2)
+            if (remainder > 2)
             {
                 number++;
                 remainder -= 5;
@@ -70,6 +66,5 @@ public class Challenge25
         }
 
         return sb.ToString();
-
     }
 }

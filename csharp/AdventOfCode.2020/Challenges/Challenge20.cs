@@ -46,8 +46,8 @@ public class Challenge20
         var t = map.Bounds.GetMin(1);
         var b = map.Bounds.GetMax(1) - 1;
 
-        return (map[new Point2(l, t)].Id * map[new Point2(r, t)].Id * map[new Point2(l, b)].Id *
-                map[new Point2(r, b)].Id).ToString();
+        return (map[new Point2(l, t)]!.Id * map[new Point2(r, t)]!.Id * map[new Point2(l, b)]!.Id *
+                map[new Point2(r, b)]!.Id).ToString();
     }
 
     [Part2]
@@ -64,7 +64,7 @@ public class Challenge20
             {
                 var p = new Point2(mapX, mapY);
 
-                for (var lineX = 1; lineX < 9; lineX++) sb.Append(map[p][lineY, lineX]);
+                for (var lineX = 1; lineX < 9; lineX++) sb.Append(map[p]![lineY, lineX]);
             }
 
             lake.Add(sb.ToString());

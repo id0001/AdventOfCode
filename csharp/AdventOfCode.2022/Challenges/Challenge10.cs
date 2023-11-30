@@ -2,6 +2,8 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 
+// ReSharper disable StringLiteralTypo
+
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(10)]

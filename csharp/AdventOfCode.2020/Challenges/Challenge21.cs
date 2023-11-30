@@ -8,7 +8,7 @@ namespace AdventOfCode2020.Challenges;
 public class Challenge21
 {
     private readonly IInputReader _inputReader;
-    private List<Food> _input = new();
+    private readonly List<Food> _input = new();
 
     public Challenge21(IInputReader inputReader)
     {
@@ -37,19 +37,16 @@ public class Challenge21
         {
             foreach (var ingredient in food.Ingredients)
             {
-                if (!ingredientsWithCount.ContainsKey(ingredient))
-                    ingredientsWithCount.Add(ingredient, 0);
+                ingredientsWithCount.TryAdd(ingredient, 0);
 
                 ingredientsWithCount[ingredient]++;
             }
 
             foreach (var allergen in food.Allergens)
-            {
                 if (potentialAllergens.ContainsKey(allergen))
                     potentialAllergens[allergen].IntersectWith(food.Ingredients);
                 else
                     potentialAllergens[allergen] = new HashSet<string>(food.Ingredients);
-            }
         }
 
         var dangerousIngredients = potentialAllergens.Values.SelectMany(e => e).ToHashSet();
@@ -66,12 +63,10 @@ public class Challenge21
 
         foreach (var food in _input)
         foreach (var allergen in food.Allergens)
-        {
             if (potentialAllergens.ContainsKey(allergen))
                 potentialAllergens[allergen].IntersectWith(food.Ingredients);
             else
                 potentialAllergens[allergen] = new HashSet<string>(food.Ingredients);
-        }
 
         var result = new Dictionary<string, string>();
 

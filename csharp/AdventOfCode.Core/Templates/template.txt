@@ -1,0 +1,27 @@
+﻿using AdventOfCode.Core;
+using AdventOfCode.Core.IO;
+
+namespace AdventOfCode{{year}}.Challenges;
+
+//[Challenge({{day}})]
+public class Challenge{{zeroday}}
+{
+    private readonly IInputReader _inputReader;
+
+    public Challenge{{zeroday}}(IInputReader inputReader)
+    {
+        _inputReader = inputReader;
+    }
+
+    [Part1]
+    public async Task<string> Part1Async()
+    {
+        return string.Empty;
+    }
+
+    // [Part2]
+    public async Task<string> Part2Async()
+    {
+        return string.Empty;
+    }
+}

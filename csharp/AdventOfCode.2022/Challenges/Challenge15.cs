@@ -29,7 +29,8 @@ public class Challenge15
         var bounds = GetCoverageBounds(sensorsWithNearestBeacon);
 
         return Enumerable
-            .Range(bounds.X, bounds.Width + 1).Count(n => CanNotContainBeacon(sensorsWithNearestBeacon, new Point2(n, 2000000))).ToString();
+            .Range(bounds.X, bounds.Width + 1)
+            .Count(n => CanNotContainBeacon(sensorsWithNearestBeacon, new Point2(n, 2000000))).ToString();
     }
 
     [Part2]

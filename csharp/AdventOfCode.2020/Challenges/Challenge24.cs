@@ -78,7 +78,7 @@ public class Challenge24
 
             foreach (var tile in toCheck)
             {
-                var value = floor.ContainsKey(tile) ? floor[tile] : false;
+                var value = floor.TryGetValue(tile, out var value1) && value1;
 
                 var count = 0;
                 foreach (var n in Neighbors)

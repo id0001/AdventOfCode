@@ -36,7 +36,7 @@ public class Challenge01
             .Select(x => x
                 .Select(int.Parse)
                 .Sum()
-            ).OrderByDescending(_ => _)
+            ).OrderByDescending(x => x)
             .Take(3)
             .SumAsync()
             .ToStringAsync();

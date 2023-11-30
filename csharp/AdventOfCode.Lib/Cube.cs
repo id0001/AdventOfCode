@@ -43,7 +43,7 @@ public readonly struct Cube : IEquatable<Cube>
     {
         get
         {
-            var ordered = new[] { Size.X, Size.Y, Size.Z }.OrderBy(_ => _).ToArray();
+            var ordered = new[] { Size.X, Size.Y, Size.Z }.OrderBy(x => x).ToArray();
             return ordered[0] + ordered[0] + ordered[1] + ordered[1];
         }
     }

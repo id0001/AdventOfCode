@@ -86,8 +86,8 @@ public class Challenge22
     {
         var key = GetKey(deck1, deck2);
 
-        if (gameCache.ContainsKey(key))
-            return gameCache[key];
+        if (gameCache.TryGetValue(key, out var combat))
+            return combat;
 
         var history1 = new HashSet<string>();
         var history2 = new HashSet<string>();
