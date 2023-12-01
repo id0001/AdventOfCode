@@ -1,41 +1,46 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly struct Cube : IEquatable<Cube>
+public readonly record struct Cube(int X, int Y, int Z, int Width, int Height, int Depth) : IEquatable<Cube>
 {
-    public Cube(int x, int y, int z, int width, int height, int depth) =>
-        (Position, Size) = (new Point3(x, y, z), new Point3(width, height, depth));
+    public Cube(Point3 Position, Point3 Size)
+        : this(Position.X, Position.Y, Position.Z, Size.X, Size.Y, Size.Z)
+    {
+    }
 
-    public Cube(int width, int height, int depth) => Size = new Point3(width, height, depth);
+    public Cube(int width, int height, int depth)
+        : this(0, 0, 0, width, height, depth)
+    {
+    }
 
-    public Point3 Position { get; } = Point3.Zero;
+    public Point3 Position => new(X, Y, Z);
 
-    public Point3 Size { get; } = Point3.Zero;
+    public Point3 Size => new(Width, Height, Depth);
 
     public static Cube Empty { get; } = new();
 
-    public int Left => Position.X;
+    public int Left => X;
 
-    public int Top => Position.Y;
+    public int Top => Y;
 
-    public int Front => Position.Z;
+    public int Front => Z;
 
-    public int Right => Position.X + Size.X;
+    public int Right => X + Width;
 
-    public int Bottom => Position.Y + Size.Y;
+    public int Bottom => Y + Height;
 
-    public int Back => Position.Z + Size.Z;
+    public int Back => Z + Depth;
 
-    public int AreaFrontBack => Size.X * Size.Y;
+    public int AreaFrontBack => Width * Height;
 
-    public int AreaLeftRight => Size.Y * Size.Z;
+    public int AreaLeftRight => Height * Depth;
 
-    public int AreaTopBottom => Size.X * Size.Z;
+    public int AreaTopBottom => Width * Depth;
 
-    public bool IsEmpty => Size == Point3.Zero;
+    public bool IsEmpty => Width == 0 && Height == 0 && Depth == 0;
 
-    public int Volume => Size.X * Size.Y * Size.Z;
+    public int Volume => Width * Height * Depth;
 
-    public long LongVolume => (long)Size.X * Size.Y * Size.Z;
+    public long LongVolume => (long)Width * Height * Depth;
 
     public int SmallestArea => new[] { AreaFrontBack, AreaLeftRight, AreaTopBottom }.Min();
 
@@ -43,7 +48,7 @@ public readonly struct Cube : IEquatable<Cube>
     {
         get
         {
-            var ordered = new[] { Size.X, Size.Y, Size.Z }.OrderBy(x => x).ToArray();
+            var ordered = new[] { Width, Height, Depth }.OrderBy(x => x).ToArray();
             return ordered[0] + ordered[0] + ordered[1] + ordered[1];
         }
     }
@@ -55,9 +60,9 @@ public readonly struct Cube : IEquatable<Cube>
         get
         {
             for (var z = Front; z < Back; z++)
-            for (var y = Top; y < Bottom; y++)
-            for (var x = Left; x < Right; x++)
-                yield return new Point3(x, y, z);
+                for (var y = Top; y < Bottom; y++)
+                    for (var x = Left; x < Right; x++)
+                        yield return new Point3(x, y, z);
         }
     }
 
@@ -87,15 +92,9 @@ public readonly struct Cube : IEquatable<Cube>
         return new Cube(leftSide, topSide, frontSide, rightSide - leftSide, bottomSide - topSide, backSide - frontSide);
     }
 
-    public override string ToString() => $"({Position}, {Size})";
+    public override string ToString() => $"[X: {X}, Y: {Y}, Z: {Z}, Width: {Width}, Height: {Height}, Depth: {Depth}";
 
-    public bool Equals(Cube other) => Position.Equals(other.Position) && Size.Equals(other.Size);
-
-    public override bool Equals(object? obj) => obj is Cube other && Equals(other);
+    public bool Equals(Cube other) => X == other.X && Y == other.Y && Z == other.Z && Width == other.Width && Height == other.Height && Depth == other.Depth;
 
     public override int GetHashCode() => HashCode.Combine(Position, Size);
-
-    public static bool operator ==(Cube left, Cube right) => left.Equals(right);
-
-    public static bool operator !=(Cube left, Cube right) => !(left == right);
 }

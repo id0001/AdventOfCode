@@ -1,23 +1,17 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly struct Point2 : IPoint, IEquatable<Point2>
+public readonly record struct Point2(int X, int Y) : IPoint, IEquatable<Point2>
 {
-    public Point2(int x, int y) => (X, Y) = (x, y);
+    public static readonly Point2 Zero = new();
 
-    public int this[int index] => index switch
+    int IPoint.this[int index] => index switch
     {
         0 => X,
         1 => Y,
         _ => throw new NotSupportedException()
     };
 
-    public int X { get; init; }
-
-    public int Y { get; init; }
-
-    public int Dimensions => 2;
-
-    public static Point2 Zero { get; } = new();
+    int IPoint.Dimensions => 2;
 
     IEnumerable<IPoint> IPoint.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint>();
 
@@ -43,11 +37,13 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
         if (other is null)
             return false;
 
-        if (other.Dimensions != Dimensions)
+        var instance = (IPoint)this;
+
+        if (other.Dimensions != instance.Dimensions)
             return false;
 
-        for (var d = 0; d < Dimensions; d++)
-            if (this[d] != other[d])
+        for (var d = 0; d < instance.Dimensions; d++)
+            if (instance[d] != other[d])
                 return false;
 
         return true;
@@ -57,8 +53,6 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
 
     public override string ToString() => $"({X},{Y})";
 
-    public override bool Equals(object? obj) => obj is Point2 point2 && Equals(point2);
-
     public override int GetHashCode() => HashCode.Combine(X, Y);
 
     public static Point2 Subtract(Point2 left, Point2 right) => new(left.X - right.X, left.Y - right.Y);
@@ -66,8 +60,6 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
     public static Point2 Add(Point2 left, Point2 right) => new(left.X + right.X, left.Y + right.Y);
 
     public static Point2 Multiply(Point2 point, int multiplier) => new(point.X * multiplier, point.Y * multiplier);
-
-    public static Point2 Multiply(Point2 left, Point2 right) => new(left.X * right.X, left.Y * right.Y);
 
     public static int DistanceSquared(Point2 left, Point2 right)
     {
@@ -134,17 +126,11 @@ public readonly struct Point2 : IPoint, IEquatable<Point2>
         }
     }
 
-    public static bool operator ==(Point2 left, Point2 right) => left.Equals(right);
-
-    public static bool operator !=(Point2 left, Point2 right) => !(left == right);
-
     public static Point2 operator +(Point2 left, Point2 right) => Add(left, right);
 
     public static Point2 operator -(Point2 left, Point2 right) => Subtract(left, right);
 
-    public static Point2 operator *(Point2 left, int multiplier) => Multiply(left, multiplier);
-
-    public static Point2 operator *(Point2 left, Point2 right) => Multiply(left, right);
+    public static Point2 operator *(Point2 left, int right) => Multiply(left, right);
 
     public static implicit operator Vector2(Point2 value) => new Vector2(value.X, value.Y);
 

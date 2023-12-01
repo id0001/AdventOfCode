@@ -1,15 +1,13 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly struct Rectangle : IEquatable<Rectangle>
+public readonly record struct Rectangle(int X, int Y, int Width, int Height) : IEquatable<Rectangle>
 {
-    public Rectangle(int x, int y, int width, int height) => (X, Y, Width, Height) = (x, y, width, height);
+    public static readonly Rectangle Empty = new();
 
-    public Rectangle(Point2 location, Point2 size) => (X, Y, Width, Height) = (location.X, location.Y, size.X, size.Y);
-
-    public int X { get; init; }
-    public int Y { get; init; }
-    public int Width { get; init; }
-    public int Height { get; init; }
+    public Rectangle(Point2 location, Point2 size)
+        : this(location.X, location.Y, size.X, size.Y)
+    {
+    }
 
     public int Left => X;
 
@@ -18,8 +16,6 @@ public readonly struct Rectangle : IEquatable<Rectangle>
     public int Right => X + Width;
 
     public int Bottom => Y + Height;
-
-    public static Rectangle Empty { get; } = new();
 
     public IEnumerable<Point2> AsGridPoints()
     {
@@ -31,9 +27,9 @@ public readonly struct Rectangle : IEquatable<Rectangle>
     public bool Equals(Rectangle other) =>
         X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
 
-    public override bool Equals(object? obj) => obj is Rectangle other && Equals(other);
-
     public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
+
+    public override string ToString() => $"[X: {X}, Y: {Y}, Width: {Width}, Height: {Height}]";
 
     public bool Contains(Point2 p) => p.X >= Left && p.X < Right && p.Y >= Top && p.Y < Bottom;
 
@@ -53,8 +49,4 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 
         return new Rectangle(leftSide, topSide, rightSide - leftSide, bottomSide - topSide);
     }
-
-    public static bool operator ==(Rectangle left, Rectangle right) => left.Equals(right);
-
-    public static bool operator !=(Rectangle left, Rectangle right) => !(left == right);
 }

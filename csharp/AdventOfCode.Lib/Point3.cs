@@ -1,16 +1,10 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly struct Point3 : IPoint, IEquatable<Point3>
+public readonly record struct Point3(int X, int Y, int Z) : IPoint, IEquatable<Point3>
 {
-    public Point3(int x, int y, int z) => (X, Y, Z) = (x, y, z);
+    public static readonly Point3 Zero = new();
 
-    public int X { get; init; }
-
-    public int Y { get; init; }
-
-    public int Z { get; init; }
-
-    public int this[int index] => index switch
+    int IPoint.this[int index] => index switch
     {
         0 => X,
         1 => Y,
@@ -18,9 +12,7 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
         _ => throw new NotSupportedException()
     };
 
-    public int Dimensions => 3;
-
-    public static Point3 Zero { get; } = new();
+    int IPoint.Dimensions => 3;
 
     IEnumerable<IPoint> IPoint.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint>();
 
@@ -46,6 +38,8 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
 
     public static Point3 Add(Point3 left, Point3 right) => new(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 
+    public static Point3 Multiply(Point3 left, int multiplier) => new(left.X * multiplier, left.Y * multiplier, left.Z * multiplier);
+
     public void Deconstruct(out int x, out int y, out int z) => (x, y, z) = (X, Y, Z);
 
     public bool Equals(Point3 other) => X == other.X && Y == other.Y && Z == other.Z;
@@ -55,25 +49,25 @@ public readonly struct Point3 : IPoint, IEquatable<Point3>
         if (other is null)
             return false;
 
-        if (other.Dimensions != Dimensions)
+        var instance = (IPoint)this;
+
+        if (other.Dimensions != instance.Dimensions)
             return false;
 
-        for (var d = 0; d < Dimensions; d++)
-            if (this[d] != other[d])
+        for (var d = 0; d < instance.Dimensions; d++)
+            if (instance[d] != other[d])
                 return false;
 
         return true;
     }
 
-    public override bool Equals(object? obj) => obj is Point3 other && Equals(other);
-
     public override int GetHashCode() => HashCode.Combine(X, Y, Z);
 
-    public static bool operator ==(Point3 left, Point3 right) => left.Equals(right);
-
-    public static bool operator !=(Point3 left, Point3 right) => !(left == right);
+    public override string ToString() => $"({X},{Y},{Z})";
 
     public static Point3 operator +(Point3 left, Point3 right) => Add(left, right);
 
     public static Point3 operator -(Point3 left, Point3 right) => Subtract(left, right);
+
+    public static Point3 operator *(Point3 left, int right) => Multiply(left, right);
 }

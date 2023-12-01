@@ -49,7 +49,7 @@ public class Challenge18
             points.Add(p);
 
             foreach (var neighbor in p.GetNeighbors().Where(n =>
-                         !points.Contains(n) && !cloud.Contains(n) && !IsPointOutOfBounds(n, cloud.Bounds)))
+                         !points.Contains(n) && !cloud.Contains(n) && cloud.Bounds.Contains(n, inflateBy: 1)))
                 stack.Push(neighbor);
         }
     }
@@ -58,15 +58,5 @@ public class Challenge18
     {
         var parsed = line.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
         return new Point3(parsed[0], parsed[1], parsed[2]);
-    }
-
-    private static bool IsPointOutOfBounds(Point3 p, BoundingBox<Point3> bounds)
-    {
-        return p.X < bounds.GetMin(0) - 1
-               || p.Y < bounds.GetMin(1) - 1
-               || p.Z < bounds.GetMin(2) - 1
-               || p.X > bounds.GetMax(0) + 1
-               || p.Y > bounds.GetMax(1) + 1
-               || p.Z > bounds.GetMax(2) + 1;
     }
 }

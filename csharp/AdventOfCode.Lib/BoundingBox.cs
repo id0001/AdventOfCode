@@ -61,10 +61,10 @@ public class BoundingBox<T> where T : IPoint, new()
         return _max[dimension] + 1;
     }
 
-    public bool Contains(IPoint point)
+    public bool Contains(IPoint point, int inflateBy = 0)
     {
         for (var d = 0; d < Dimensions; d++)
-            if (point[d] < _min[d] || point[d] > _max[d])
+            if (point[d] < _min[d] - inflateBy || point[d] > _max[d] + inflateBy)
                 return false;
 
         return true;
