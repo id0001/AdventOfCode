@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.Json.Nodes;
 using DocoptNet;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -175,16 +176,20 @@ public class AdventOfCodeHost : IHostedService
 
         try
         {
+            var answers = JsonNode.Parse(File.ReadAllText("answers.json"));
+
             foreach (var (day, type) in _challengeTypeMap.OrderBy(kv => kv.Key).Select(kv => (kv.Key, kv.Value)))
             {
                 var executor = new ChallengeExecutor(_container, type);
                 Console.WriteLine($"Day {day}:");
 
                 // Run part 1
-                await RunPart1(executor);
+                var part1 = await RunPart1(executor);
+                DisplayCorrectOrIncorrect(answers, day, 1, part1);
 
                 // Run part 2
-                await RunPart2(executor);
+                var part2 = await RunPart2(executor);
+                DisplayCorrectOrIncorrect(answers, day, 2, part2);
             }
         }
         catch (Exception ex)
@@ -196,7 +201,27 @@ public class AdventOfCodeHost : IHostedService
         _hostApplicationLifetime.StopApplication();
     }
 
-    private static async Task RunPart2(ChallengeExecutor executor)
+    private static void DisplayCorrectOrIncorrect(JsonNode? answers, int day, int part, ChallengeExecutionResult result)
+    {
+        if (!result.IsEmpty)
+        {
+            var success = result.Result == answers?[day.ToString()]?[part.ToString()]?.GetValue<string>();
+            if (success)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Correct");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Incorrect");
+            }
+
+            Console.ResetColor();
+        }
+    }
+
+    private static async Task<ChallengeExecutionResult> RunPart2(ChallengeExecutor executor)
     {
         var result = await executor.ExecutePart2Async();
         if (!result.IsEmpty)
@@ -204,9 +229,11 @@ public class AdventOfCodeHost : IHostedService
             Console.WriteLine($"- Part 2 ({result.Duration.TotalMilliseconds:F6}ms): {result.Result}");
             await ClipboardService.SetTextAsync(result.Result!);
         }
+
+        return result;
     }
 
-    private static async Task RunPart1(ChallengeExecutor executor)
+    private static async Task<ChallengeExecutionResult> RunPart1(ChallengeExecutor executor)
     {
         var result = await executor.ExecutePart1Async();
         if (!result.IsEmpty)
@@ -214,15 +241,17 @@ public class AdventOfCodeHost : IHostedService
             Console.WriteLine($"- Part 1 ({result.Duration.TotalMilliseconds:F6}ms): {result.Result}");
             await ClipboardService.SetTextAsync(result.Result!);
         }
+
+        return result;
     }
 
     private static Dictionary<int, Type> ScanAssemblyForChallengeTypes()
     {
         var challengeTypeMap = (from a in AppDomain.CurrentDomain.GetAssemblies()
-            from t in a.GetTypes()
-            let c = t.GetCustomAttribute<ChallengeAttribute>()
-            where c is not null
-            select (c, t)).ToDictionary(kv => kv.c!.Day, kv => kv.t);
+                                from t in a.GetTypes()
+                                let c = t.GetCustomAttribute<ChallengeAttribute>()
+                                where c is not null
+                                select (c, t)).ToDictionary(kv => kv.c!.Day, kv => kv.t);
         return challengeTypeMap;
     }
 }
