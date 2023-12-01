@@ -7,6 +7,8 @@ namespace AdventOfCode2023.Challenges;
 [Challenge(1)]
 public class Challenge01
 {
+    private static readonly string[] Numbers = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+
     private readonly IInputReader _inputReader;
 
     public Challenge01(IInputReader inputReader)
@@ -17,38 +19,13 @@ public class Challenge01
     [Part1]
     public async Task<string> Part1Async()
     {
+        var pattern = new Regex(@"(\d)", RegexOptions.Compiled);
         var sum = 0;
+
         await foreach (var line in _inputReader.ReadLinesAsync(1))
         {
-            char? firstNum = null;
-            char? lastNum = null;
-
-            var i = 0;
-            var j = line.Length - 1;
-            foreach (var _ in line)
-            {
-                if (!firstNum.HasValue)
-                {
-                    if (char.IsDigit(line[i]))
-                        firstNum = line[i];
-
-                    i++;
-                }
-
-                if (!lastNum.HasValue)
-                {
-                    if (char.IsDigit(line[j]))
-                        lastNum = line[j];
-
-                    j--;
-                }
-
-                if (!firstNum.HasValue || !lastNum.HasValue) 
-                    continue;
-                
-                sum += int.Parse($"{firstNum}{lastNum}");
-                break;
-            }
+            var matches = pattern.Matches(line);
+            sum += int.Parse($"{matches[0].Groups[1].Value}{matches[^1].Groups[1].Value}");
         }
 
         return sum.ToString();
@@ -57,59 +34,17 @@ public class Challenge01
     [Part2]
     public async Task<string> Part2Async()
     {
-        var numbers = new[] {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
-        var pattern = new Regex("(zero|one|two|three|four|five|six|seven|eight|nine)", RegexOptions.Compiled);
-
+        var pattern = new Regex(@"(?=(one|two|three|four|five|six|seven|eight|nine|\d))", RegexOptions.Compiled);
         var sum = 0;
+
         await foreach (var line in _inputReader.ReadLinesAsync(1))
         {
-            string firstNum = null;
-            string lastNum = null;
-
-            var i = 0;
-            var j = line.Length - 1;
-            foreach (var _ in line)
-            {
-                if (string.IsNullOrEmpty(firstNum))
-                {
-                    if (char.IsDigit(line[i]))
-                    {
-                        firstNum = line[i].ToString();
-                    }
-                    else
-                    {
-                        var match = pattern.Match(line[..(i + 1)]);
-                        if (match.Success)
-                            firstNum = Array.IndexOf(numbers, match.Groups[1].Value).ToString();
-                    }
-
-                    i++;
-                }
-
-                if (string.IsNullOrEmpty(lastNum))
-                {
-                    if (char.IsDigit(line[j]))
-                    {
-                        lastNum = line[j].ToString();
-                    }
-                    else
-                    {
-                        var match = pattern.Match(line[j..]);
-                        if (match.Success)
-                            lastNum = Array.IndexOf(numbers, match.Groups[1].Value).ToString();
-                    }
-
-                    j--;
-                }
-
-                if (string.IsNullOrEmpty(firstNum) || string.IsNullOrEmpty(lastNum)) 
-                    continue;
-                
-                sum += int.Parse($"{firstNum}{lastNum}");
-                break;
-            }
+            var matches = pattern.Matches(line);
+            sum += int.Parse($"{ToDigit(matches[0].Groups[1].Value)}{ToDigit(matches[^1].Groups[1].Value)}");
         }
 
         return sum.ToString();
     }
+
+    private char ToDigit(string s) => char.IsDigit(s[0]) ? s[0] : (char)('0' | Array.IndexOf(Numbers, s));
 }
