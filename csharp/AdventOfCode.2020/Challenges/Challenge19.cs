@@ -7,9 +7,9 @@ namespace AdventOfCode2020.Challenges;
 [Challenge(19)]
 public class Challenge19
 {
+    private readonly List<string> _input = new();
     private readonly IInputReader _inputReader;
     private readonly Dictionary<int, string> _rules = new();
-    private readonly List<string> _input = new();
 
 
     public Challenge19(IInputReader inputReader)
@@ -61,8 +61,8 @@ public class Challenge19
 
     private static string BuildPattern(IDictionary<int, string> rules, int key, IDictionary<int, string> cache)
     {
-        if (cache.ContainsKey(key))
-            return cache[key];
+        if (cache.TryGetValue(key, out var pattern))
+            return pattern;
 
         switch (rules[key])
         {
@@ -75,7 +75,6 @@ public class Challenge19
         var orGroups = rules[key].Split("|");
 
         for (var o = 0; o < orGroups.Length; o++)
-        {
             switch (key)
             {
                 case 8 when orGroups[o].Contains("8"):
@@ -107,7 +106,6 @@ public class Challenge19
                     break;
                 }
             }
-        }
 
         var result = key == 0 ? $"^{string.Join("|", orGroups)}$" : $"(?:{string.Join("|", orGroups)})";
 

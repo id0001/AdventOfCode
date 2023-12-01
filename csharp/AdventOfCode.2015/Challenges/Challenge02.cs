@@ -30,7 +30,7 @@ public class Challenge02
 
     private static Cube ParseLine(string line)
     {
-        var split = line.Split('x').Select(int.Parse).OrderBy(_ => _).ToArray();
+        var split = line.Split('x').Select(int.Parse).OrderBy(x => x).ToArray();
         return new Cube(0, 0, 0, split[0], split[1], split[2]);
     }
 

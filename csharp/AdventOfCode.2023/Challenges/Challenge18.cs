@@ -1,14 +1,14 @@
-﻿using AdventOfCode.Core;
+using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 
-namespace AdventOfCode{{year}}.Challenges;
+namespace AdventOfCode2023.Challenges;
 
-[Challenge({{day}})]
-public class Challenge{{zeroday}}
+//[Challenge(18)]
+public class Challenge18
 {
     private readonly IInputReader _inputReader;
 
-    public Challenge{{zeroday}}(IInputReader inputReader)
+    public Challenge18(IInputReader inputReader)
     {
         _inputReader = inputReader;
     }

@@ -74,8 +74,7 @@ public class Challenge14
 
     private long Request(string component, long amount, Dictionary<string, long> supply)
     {
-        if (!supply.ContainsKey(component))
-            supply.Add(component, 0);
+        supply.TryAdd(component, 0);
 
         // Take all from supply.
         if (supply[component] > amount)

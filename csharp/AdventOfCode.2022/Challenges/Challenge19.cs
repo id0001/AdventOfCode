@@ -9,11 +9,6 @@ namespace AdventOfCode2022.Challenges;
 [Challenge(19)]
 public class Challenge19
 {
-    private const string OreBot = nameof(OreBot);
-    private const string ClayBot = nameof(ClayBot);
-    private const string ObsidianBot = nameof(ObsidianBot);
-    private const string GeodeBot = nameof(GeodeBot);
-
     private readonly IInputReader _inputReader;
 
     public Challenge19(IInputReader inputReader)

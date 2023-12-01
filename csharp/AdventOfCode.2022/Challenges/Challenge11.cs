@@ -135,6 +135,8 @@ public class Challenge11
         var trueY = int.Parse(truePattern.Groups[1].Value);
         var falseY = int.Parse(falsePattern.Groups[1].Value);
         var ty = ulong.Parse(testPattern.Groups[1].Value);
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         var test = new Func<ulong, int>(x => x % ty == 0 ? trueY : falseY);
 
         return new Monkey(startingItems, operation, test, ty);

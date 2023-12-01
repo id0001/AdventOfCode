@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace AdventOfCode.Lib;
+﻿namespace AdventOfCode.Lib;
 
 public readonly struct Rectangle : IEquatable<Rectangle>
 {

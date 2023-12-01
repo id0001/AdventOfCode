@@ -22,7 +22,6 @@ public class Challenge14
 
         string? mask = null;
         await foreach (var line in _inputReader.ReadLinesAsync(14))
-        {
             if (line.StartsWith("mask = "))
             {
                 mask = line["mask = ".Length..];
@@ -33,14 +32,12 @@ public class Challenge14
                 var addr = ulong.Parse(match.Groups[1].Value);
                 var value = ulong.Parse(match.Groups[2].Value);
 
-                if (!memory.ContainsKey(addr))
-                    memory.Add(addr, 0);
+                memory.TryAdd(addr, 0);
 
                 memory[addr] = ApplyMask(value, mask!);
             }
-        }
 
-        return memory.Sum(kv => (long)kv.Value).ToString();
+        return memory.Sum(kv => (long) kv.Value).ToString();
     }
 
     [Part2]
@@ -50,7 +47,6 @@ public class Challenge14
 
         string? mask = null;
         await foreach (var line in _inputReader.ReadLinesAsync(14))
-        {
             if (line.StartsWith("mask = "))
             {
                 mask = line["mask = ".Length..];
@@ -63,28 +59,24 @@ public class Challenge14
 
                 foreach (var realAddr in EnumerateAddresses(addr, mask!))
                 {
-                    if (!memory.ContainsKey(realAddr))
-                        memory.Add(realAddr, 0);
+                    memory.TryAdd(realAddr, 0);
 
                     memory[realAddr] = value;
                 }
             }
-        }
 
-        return memory.Sum(kv => (long)kv.Value).ToString();
+        return memory.Sum(kv => (long) kv.Value).ToString();
     }
 
     private static ulong ApplyMask(ulong value, string mask)
     {
         for (var i = 0; i < mask.Length; i++)
-        {
             value = mask[i] switch
             {
                 '0' => value & MaskFor(i),
                 '1' => (value & MaskFor(i)) + (1ul << (35 - i)),
                 _ => value
             };
-        }
 
         return value;
     }
@@ -93,7 +85,6 @@ public class Challenge14
     {
         var floatingIndices = new List<int>();
         for (var i = 0; i < mask.Length; i++)
-        {
             switch (mask[i])
             {
                 case '1':
@@ -104,12 +95,11 @@ public class Challenge14
                     floatingIndices.Add(i);
                     break;
             }
-        }
 
-        var count = (int)Math.Pow(2, floatingIndices.Count);
+        var count = (int) Math.Pow(2, floatingIndices.Count);
         for (var i = 0; i < count; i++)
         {
-            var bits = new BitArray(new[] { i });
+            var bits = new BitArray(new[] {i});
             yield return AddBitVal(bits, floatingIndices, value, 0);
         }
     }

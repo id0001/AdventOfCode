@@ -139,7 +139,7 @@ namespace AdventOfCode.Lib.Misc
             return tmp.ToImmutableDictionary(kv => (kv.FromFace, kv.FromSide));
         }
 
-        public enum Face : int
+        public enum Face
         {
             Top = 0,
             Back = 1,
@@ -149,7 +149,7 @@ namespace AdventOfCode.Lib.Misc
             Right = 5
         }
 
-        public enum Side : int
+        public enum Side
         {
             Top = 0,
             Right = 1,

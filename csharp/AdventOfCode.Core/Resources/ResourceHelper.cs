@@ -10,10 +10,10 @@ public static class ResourceHelper
         return reader.ReadToEnd();
     }
     
-    public static Task<string> ReadAsync(string resourceName)
+    public static async Task<string> ReadAsync(string resourceName)
     {
         using var reader = OpenStream(resourceName);
-        return reader.ReadToEndAsync();
+        return await reader.ReadToEndAsync();
     }
 
     private static StreamReader OpenStream(string resourceName)

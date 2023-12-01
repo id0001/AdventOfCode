@@ -1,5 +1,4 @@
-﻿using System.Text;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Collections;
@@ -37,10 +36,7 @@ public class Challenge17
         // Detect cycle
         var cycleEnd = SimulateUntil(new PointCloud<Point2>(), dirs, 0, 0, 0, 0, state =>
         {
-            if (cache.ContainsKey(state.Key))
-            {
-                return true;
-            }
+            if (cache.ContainsKey(state.Key)) return true;
 
             cache.Add(state.Key, state);
             return false;
@@ -147,13 +143,13 @@ public class Challenge17
     private State SimulateUntil(PointCloud<Point2> cloud, List<char> dirs, int dirIndex, int shapeIndex,
         int currentHeight, int fallenRocks, Func<State, bool> predicate)
     {
-        var shape1 = new Shape(4, 1, new bool[1, 4] {{true, true, true, true}}); // -
+        var shape1 = new Shape(4, 1, new[,] {{true, true, true, true}}); // -
         var shape2 = new Shape(3, 3,
-            new bool[3, 3] {{false, true, false}, {true, true, true}, {false, true, false}}); // +
+            new[,] {{false, true, false}, {true, true, true}, {false, true, false}}); // +
         var shape3 = new Shape(3, 3,
-            new bool[3, 3] {{false, false, true}, {false, false, true}, {true, true, true}}); // L
-        var shape4 = new Shape(1, 4, new bool[4, 1] {{true}, {true}, {true}, {true}}); // |
-        var shape5 = new Shape(2, 2, new bool[2, 2] {{true, true}, {true, true}}); // #
+            new[,] {{false, false, true}, {false, false, true}, {true, true, true}}); // L
+        var shape4 = new Shape(1, 4, new[,] {{true}, {true}, {true}, {true}}); // |
+        var shape5 = new Shape(2, 2, new[,] {{true, true}, {true, true}}); // #
 
         var shapes = new[] {shape1, shape2, shape3, shape4, shape5};
         shapeIndex = Euclid.Modulus(shapeIndex, shapes.Length);
@@ -189,54 +185,55 @@ public class Challenge17
         }
     }
 
-    private void PrintState(PointCloud<Point2> cloud, int currentHeight, Shape shape, Point2 position)
-    {
-        var sb = new StringBuilder();
-        for (var y = currentHeight + 3 + shape.Height; y >= 0; y--)
-        {
-            for (var x = 0; x < 7; x++)
-            {
-                var p = new Point2(x, y);
-
-                if (p.X >= position.X && p.X < position.X + shape.Width && p.Y >= position.Y &&
-                    p.Y < position.Y + shape.Height)
-                {
-                    var lp = new Point2(p.X - position.X, shape.Height - 1 - (p.Y - position.Y));
-                    sb.Append(shape.Map[lp.Y, lp.X] ? '@' : '.');
-                }
-                else
-                {
-                    sb.Append(cloud.Contains(p) ? '#' : '.');
-                }
-            }
-
-            Console.WriteLine(sb.ToString());
-            sb.Clear();
-        }
-
-        Console.WriteLine();
-    }
-
-    private void PrintFinal(PointCloud<Point2> cloud, int currentHeight)
-    {
-        var sb = new StringBuilder();
-        for (var y = currentHeight + 3; y >= 0; y--)
-        {
-            for (var x = 0; x < 7; x++)
-            {
-                var p = new Point2(x, y);
-                sb.Append(cloud.Contains(p) ? '#' : '.');
-            }
-
-            Console.WriteLine(sb.ToString());
-            sb.Clear();
-        }
-
-        Console.WriteLine();
-    }
+    // private void PrintState(PointCloud<Point2> cloud, int currentHeight, Shape shape, Point2 position)
+    // {
+    //     var sb = new StringBuilder();
+    //     for (var y = currentHeight + 3 + shape.Height; y >= 0; y--)
+    //     {
+    //         for (var x = 0; x < 7; x++)
+    //         {
+    //             var p = new Point2(x, y);
+    //
+    //             if (p.X >= position.X && p.X < position.X + shape.Width && p.Y >= position.Y &&
+    //                 p.Y < position.Y + shape.Height)
+    //             {
+    //                 var lp = new Point2(p.X - position.X, shape.Height - 1 - (p.Y - position.Y));
+    //                 sb.Append(shape.Map[lp.Y, lp.X] ? '@' : '.');
+    //             }
+    //             else
+    //             {
+    //                 sb.Append(cloud.Contains(p) ? '#' : '.');
+    //             }
+    //         }
+    //
+    //         Console.WriteLine(sb.ToString());
+    //         sb.Clear();
+    //     }
+    //
+    //     Console.WriteLine();
+    // }
+    //
+    // private void PrintFinal(PointCloud<Point2> cloud, int currentHeight)
+    // {
+    //     var sb = new StringBuilder();
+    //     for (var y = currentHeight + 3; y >= 0; y--)
+    //     {
+    //         for (var x = 0; x < 7; x++)
+    //         {
+    //             var p = new Point2(x, y);
+    //             sb.Append(cloud.Contains(p) ? '#' : '.');
+    //         }
+    //
+    //         Console.WriteLine(sb.ToString());
+    //         sb.Clear();
+    //     }
+    //
+    //     Console.WriteLine();
+    // }
 
     private record Shape(int Width, int Height, bool[,] Map);
 
+    // ReSharper disable once NotAccessedPositionalProperty.Local
     private record StateKey(short Hash, int DirIndex, int ShapeIndex);
 
     private record State(StateKey Key, int FallenRocks, int CurrentHeight);

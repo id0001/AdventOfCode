@@ -65,8 +65,7 @@ public class Challenge03
                 };
 
                 steps++;
-                if (!dict.ContainsKey(current))
-                    dict.Add(current, steps);
+                dict.TryAdd(current, steps);
             }
         }
 

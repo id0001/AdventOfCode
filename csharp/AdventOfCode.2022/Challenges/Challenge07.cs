@@ -141,12 +141,12 @@ public class Challenge07
 
         public static FsNode CreateDirectory(string name)
         {
-            return new(name, 0, false);
+            return new FsNode(name, 0, false);
         }
 
         private static FsNode CreateFile(string name, int size)
         {
-            return new(name, size, true);
+            return new FsNode(name, size, true);
         }
 
         public void AddFile(string name, int size)

@@ -37,7 +37,6 @@ public class Challenge21
         var calcFflg = BuildExpressionTree(cache, lines, "fflg");
         var calcQwqj = BuildExpressionTree(cache, lines, "qwqj");
 
-        var list = new List<string>();
         var v = SpecialFunctions.BinarySearch(0, 10_000_000_000_000L, m =>
         {
             cache["humn"] = () => m;
@@ -47,22 +46,29 @@ public class Challenge21
         return v!.Value.ToString();
     }
 
-    private static Func<long> BuildExpressionTree(IDictionary<string, Func<long>> cache, IDictionary<string, string> lines, string key)
+    private static Func<long> BuildExpressionTree(IDictionary<string, Func<long>> cache,
+        IDictionary<string, string> lines, string key)
     {
         if (!cache.ContainsKey(key))
         {
             var line = lines[key];
             if (long.TryParse(line, out var num))
+            {
                 cache.Add(key, () => num);
+            }
             else
             {
                 var split = line.Split(' ');
                 cache.Add(key, split[1] switch
                 {
-                    "+" => () => BuildExpressionTree(cache, lines, split[0])() + BuildExpressionTree(cache, lines, split[2])(),
-                    "-" => () => BuildExpressionTree(cache, lines, split[0])() - BuildExpressionTree(cache, lines, split[2])(),
-                    "*" => () => BuildExpressionTree(cache, lines, split[0])() * BuildExpressionTree(cache, lines, split[2])(),
-                    "/" => () => BuildExpressionTree(cache, lines, split[0])() / BuildExpressionTree(cache, lines, split[2])(),
+                    "+" => () =>
+                        BuildExpressionTree(cache, lines, split[0])() + BuildExpressionTree(cache, lines, split[2])(),
+                    "-" => () =>
+                        BuildExpressionTree(cache, lines, split[0])() - BuildExpressionTree(cache, lines, split[2])(),
+                    "*" => () =>
+                        BuildExpressionTree(cache, lines, split[0])() * BuildExpressionTree(cache, lines, split[2])(),
+                    "/" => () =>
+                        BuildExpressionTree(cache, lines, split[0])() / BuildExpressionTree(cache, lines, split[2])(),
                     _ => throw new NotImplementedException()
                 });
             }

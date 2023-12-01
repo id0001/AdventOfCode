@@ -99,8 +99,7 @@ public class Challenge15
         cpu.SetProgram(program);
         cpu.RegisterOutput(o =>
         {
-            if (!visited.ContainsKey(nextLocation))
-                visited.Add(nextLocation, (int)o);
+            visited.TryAdd(nextLocation, (int)o);
 
             switch (o)
             {
