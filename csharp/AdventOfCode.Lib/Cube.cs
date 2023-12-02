@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly record struct Cube(int X, int Y, int Z, int Width, int Height, int Depth) : IEquatable<Cube>
+public readonly record struct Cube(int X, int Y, int Z, int Width, int Height, int Depth)
 {
     public Cube(Point3 Position, Point3 Size)
         : this(Position.X, Position.Y, Position.Z, Size.X, Size.Y, Size.Z)
@@ -93,8 +93,4 @@ public readonly record struct Cube(int X, int Y, int Z, int Width, int Height, i
     }
 
     public override string ToString() => $"[X: {X}, Y: {Y}, Z: {Z}, Width: {Width}, Height: {Height}, Depth: {Depth}";
-
-    public bool Equals(Cube other) => X == other.X && Y == other.Y && Z == other.Z && Width == other.Width && Height == other.Height && Depth == other.Depth;
-
-    public override int GetHashCode() => HashCode.Combine(Position, Size);
 }

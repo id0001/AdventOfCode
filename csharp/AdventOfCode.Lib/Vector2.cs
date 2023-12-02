@@ -1,11 +1,11 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly record struct Vector2(double X, double Y) : IEquatable<Vector2>
+public readonly record struct Vector2(double X, double Y)
 {
     public static readonly Vector2 Zero = new();
-    
+
     /// <summary>
-    /// Calculates the angle of the vector on a circle.
+    ///     Calculates the angle of the vector on a circle.
     /// </summary>
     /// <param name="v">The vector</param>
     /// <param name="pivot">The center of the circle</param>
@@ -19,19 +19,15 @@ public readonly record struct Vector2(double X, double Y) : IEquatable<Vector2>
         return angle;
     }
 
-    public bool Equals(Vector2 other) => X.Equals(other.X) && Y.Equals(other.Y);
-
-    public override int GetHashCode() => HashCode.Combine(X, Y);
-    
     public override string ToString() => $"({X},{Y})";
-    
+
     public void Deconstruct(out double x, out double y) => (x, y) = (X, Y);
-    
+
     public static Vector2 Subtract(Vector2 left, Vector2 right) => new(left.X - right.X, left.Y - right.Y);
 
     public static Vector2 Add(Vector2 left, Vector2 right) => new(left.X + right.X, left.Y + right.Y);
-    
+
     public static Vector2 operator +(Vector2 left, Vector2 right) => Add(left, right);
-    
+
     public static Vector2 operator -(Vector2 left, Vector2 right) => Subtract(left, right);
 }

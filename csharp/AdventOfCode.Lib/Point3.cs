@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly record struct Point3(int X, int Y, int Z) : IPoint, IEquatable<Point3>
+public readonly record struct Point3(int X, int Y, int Z) : IPoint
 {
     public static readonly Point3 Zero = new();
 
@@ -16,40 +16,12 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint, IEquatable<P
 
     IEnumerable<IPoint> IPoint.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint>();
 
-    public IEnumerable<Point3> GetNeighbors(bool includeDiagonal = false)
-    {
-        for (var z = -1; z <= 1; z++)
-            for (var y = -1; y <= 1; y++)
-                for (var x = -1; x <= 1; x++)
-                {
-                    if (!includeDiagonal && !((x == 0 && y == 0) ^ (x == 0 && z == 0) ^ (y == 0 && z == 0)))
-                        continue;
-
-                    if (x == 0 && y == 0 && z == 0)
-                        continue;
-
-                    yield return new Point3(X + x, Y + y, Z + z);
-                }
-    }
-
-    public Point2 ToPoint2() => new(X, Y);
-
-    public static Point3 Subtract(Point3 left, Point3 right) => new(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
-
-    public static Point3 Add(Point3 left, Point3 right) => new(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
-
-    public static Point3 Multiply(Point3 left, int multiplier) => new(left.X * multiplier, left.Y * multiplier, left.Z * multiplier);
-
-    public void Deconstruct(out int x, out int y, out int z) => (x, y, z) = (X, Y, Z);
-
-    public bool Equals(Point3 other) => X == other.X && Y == other.Y && Z == other.Z;
-
     public bool Equals(IPoint? other)
     {
         if (other is null)
             return false;
 
-        var instance = (IPoint)this;
+        var instance = (IPoint) this;
 
         if (other.Dimensions != instance.Dimensions)
             return false;
@@ -61,7 +33,33 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint, IEquatable<P
         return true;
     }
 
-    public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+    public IEnumerable<Point3> GetNeighbors(bool includeDiagonal = false)
+    {
+        for (var z = -1; z <= 1; z++)
+        for (var y = -1; y <= 1; y++)
+        for (var x = -1; x <= 1; x++)
+        {
+            if (!includeDiagonal && !((x == 0 && y == 0) ^ (x == 0 && z == 0) ^ (y == 0 && z == 0)))
+                continue;
+
+            if (x == 0 && y == 0 && z == 0)
+                continue;
+
+            yield return new Point3(X + x, Y + y, Z + z);
+        }
+    }
+
+    public Point2 ToPoint2() => new(X, Y);
+
+    public static Point3 Subtract(Point3 left, Point3 right) =>
+        new(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+
+    public static Point3 Add(Point3 left, Point3 right) => new(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+
+    public static Point3 Multiply(Point3 left, int multiplier) =>
+        new(left.X * multiplier, left.Y * multiplier, left.Z * multiplier);
+
+    public void Deconstruct(out int x, out int y, out int z) => (x, y, z) = (X, Y, Z);
 
     public override string ToString() => $"({X},{Y},{Z})";
 

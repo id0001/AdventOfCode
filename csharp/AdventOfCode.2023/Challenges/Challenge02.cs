@@ -1,6 +1,7 @@
-using System.Text.RegularExpressions;
 using AdventOfCode.Core;
+using AdventOfCode.Core.Extensions;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Core.Parsing;
 using AdventOfCode.Lib;
 
 namespace AdventOfCode2023.Challenges;
@@ -18,25 +19,21 @@ public class Challenge02
     [Part1]
     public async Task<string> Part1Async()
     {
-        int sum = 0;
+        var sum = 0;
         await foreach (var game in _inputReader.ParseLinesAsync(2, ParseLine))
-        {
             if (IsPossible(game))
                 sum += game.Number;
-        }
-        
+
         return sum.ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        int sum = 0;
+        var sum = 0;
         await foreach (var game in _inputReader.ParseLinesAsync(2, ParseLine))
-        {
             sum += GetPowerOfMinimumNumberOfCubes(game);
-        }
-        
+
         return sum.ToString();
     }
 
@@ -44,60 +41,51 @@ public class Challenge02
     {
         int[] max = {12, 13, 14};
         foreach (var set in game.Sets)
-        {
             if (set.Zip(max).Any(x => x.First > x.Second))
                 return false;
-        }
 
         return true;
     }
 
-    private int GetPowerOfMinimumNumberOfCubes(Game game) => game.Sets.Aggregate(new[] {0, 0, 0},
-            (a, b) => new[] {Math.Max(a[0], b[0]), Math.Max(a[1], b[1]), Math.Max(a[2], b[2])})
-        .Product();
+    private int GetPowerOfMinimumNumberOfCubes(Game game)
+    {
+        return game.Sets.Aggregate(new int[3],
+                (a, b) => new[] {Math.Max(a[0], b[0]), Math.Max(a[1], b[1]), Math.Max(a[2], b[2])})
+            .Product();
+    }
 
     private Game ParseLine(string line)
     {
         // Game 1: 3 blue, 2 green, 6 red; 17 green, 4 red, 8 blue; 2 red, 1 green, 10 blue; 1 blue, 5 green
 
-        var split = line.Split(new[] {":"}, StringSplitOptions.TrimEntries);
-        var gamePattern = new Regex(@"Game (\d+)", RegexOptions.Compiled);
-        var match = gamePattern.Match(split[0]);
-        int game = int.Parse(match.Groups[1].Value);
-
-        var sets = ParseSets(split[1]);
-        return new Game(game, sets);
+        return line.SplitBy(":")
+            .Select(x => new Game(
+                int.Parse(x.First().SplitBy(" ").Second()),
+                x.Second()
+                    .SplitBy(";")
+                    .SplitEachBy(",")
+                    .Select(set => Increment(new int[3], set))
+                    .ToList()
+            ));
     }
 
-    private List<int[]> ParseSets(string line)
+    private int[] Increment(int[] set, StringSplitCollection value)
     {
-        var split = line.Split(new[] {";"}, StringSplitOptions.TrimEntries);
-        return split.Select(ParseSet).ToList();
-    }
-
-    private int[] ParseSet(string line)
-    {
-        var split = line.Split(new[] {","}, StringSplitOptions.TrimEntries);
-        var set = new int[3];
-
-        foreach (var item in split)
-        {
-            var itemSplit = item.Split(' ');
-            switch (itemSplit[1])
+        foreach (var item in value.SplitEachBy(" "))
+            switch (item.Second())
             {
                 case "red":
-                    set[0] += int.Parse(itemSplit[0]);
+                    set[0] += int.Parse(item.First());
                     break;
                 case "green":
-                    set[1] += int.Parse(itemSplit[0]);
+                    set[1] += int.Parse(item.First());
                     break;
                 case "blue":
-                    set[2] += int.Parse(itemSplit[0]);
+                    set[2] += int.Parse(item.First());
                     break;
                 default:
                     throw new NotImplementedException();
             }
-        }
 
         return set;
     }

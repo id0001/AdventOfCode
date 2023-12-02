@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly record struct Rectangle(int X, int Y, int Width, int Height) : IEquatable<Rectangle>
+public readonly record struct Rectangle(int X, int Y, int Width, int Height)
 {
     public static readonly Rectangle Empty = new();
 
@@ -20,14 +20,9 @@ public readonly record struct Rectangle(int X, int Y, int Width, int Height) : I
     public IEnumerable<Point2> AsGridPoints()
     {
         for (var y = Y; y < Y + Height; y++)
-            for (var x = X; x < X + Width; x++)
-                yield return new Point2(x, y);
+        for (var x = X; x < X + Width; x++)
+            yield return new Point2(x, y);
     }
-
-    public bool Equals(Rectangle other) =>
-        X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
-
-    public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
 
     public override string ToString() => $"[X: {X}, Y: {Y}, Width: {Width}, Height: {Height}]";
 
@@ -35,7 +30,8 @@ public readonly record struct Rectangle(int X, int Y, int Width, int Height) : I
 
     public bool IntersectsWith(Rectangle other) => Intersects(this, other);
 
-    public static bool Intersects(Rectangle a, Rectangle b) => b.Left < a.Right && a.Left < b.Right && b.Top < a.Bottom && a.Top < b.Bottom;
+    public static bool Intersects(Rectangle a, Rectangle b) =>
+        b.Left < a.Right && a.Left < b.Right && b.Top < a.Bottom && a.Top < b.Bottom;
 
     public static Rectangle Intersect(Rectangle a, Rectangle b)
     {
