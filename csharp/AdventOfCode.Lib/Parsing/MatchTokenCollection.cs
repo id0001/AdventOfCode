@@ -12,7 +12,6 @@ namespace AdventOfCode.Lib.Parsing
             _tokens = tokens;
         }
 
-
         public Match First => _tokens[0];
         public Match Second => _tokens[1];
         public Match Third => _tokens[2];
