@@ -40,12 +40,13 @@ public class Challenge04
 
     private ScratchCard ParseLine(string line)
     {
+        // Card   1:  9 39 27 89 87 29 54 19 43 45 |  9 80 29 20 54 58 78 77 39 35 76 79 19 87 45 89 23 31 94 34 67 43 56 50 27
         return line
-            .SplitBy(":", x => new ScratchCard
+            .SplitBy(new[] { ":", "|" }, x => new ScratchCard
             {
                 Id = int.Parse(x.First.SplitBy(" ").Second),
-                WinningNumbers = x.Second.SplitBy("|").First().SplitBy(" ").Select(int.Parse).ToArray(),
-                Numbers = x.Second.SplitBy("|").Second.SplitBy(" ").Select(int.Parse).ToArray(),
+                WinningNumbers = x.Second.SplitBy(" ").Select(int.Parse).ToArray(),
+                Numbers = x.Third.SplitBy(" ").Select(int.Parse).ToArray(),
             });
     }
 

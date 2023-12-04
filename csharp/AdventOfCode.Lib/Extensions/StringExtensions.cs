@@ -11,9 +11,21 @@ public static class StringExtensions
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
     }
 
+    public static StringTokenCollection SplitBy(this string source, params string[] separators)
+    {
+        return new StringTokenCollection(source.Split(separators,
+            StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+    }
+
     public static T SplitBy<T>(this string source, string separator, Func<StringTokenCollection, T> selector)
     {
         return selector(new StringTokenCollection(source.Split(new[] { separator },
+            StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)));
+    }
+
+    public static T SplitBy<T>(this string source, string[] separators, Func<StringTokenCollection, T> selector)
+    {
+        return selector(new StringTokenCollection(source.Split(separators,
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)));
     }
 
