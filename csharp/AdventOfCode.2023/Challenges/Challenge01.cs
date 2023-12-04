@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2023.Challenges;
 
@@ -17,33 +18,24 @@ public class Challenge01
     }
 
     [Part1]
-    public async Task<string> Part1Async()
+    public async Task<string?> Part1Async()
     {
-        var pattern = new Regex(@"(\d)", RegexOptions.Compiled);
-        var sum = 0;
-
-        await foreach (var line in _inputReader.ReadLinesAsync(1))
-        {
-            var matches = pattern.Matches(line);
-            sum += int.Parse($"{matches[0].Groups[1].Value}{matches[^1].Groups[1].Value}");
-        }
-
-        return sum.ToString();
+        return await _inputReader
+            .ReadLinesAsync(1)
+            .SumAsync(line => line
+                .MatchBy(@"(\d)", m => int.Parse($"{m[0].Groups[1].Value}{m[^1].Groups[1].Value}")))
+            .ToStringAsync();
     }
 
     [Part2]
-    public async Task<string> Part2Async()
+    public async Task<string?> Part2Async()
     {
         var pattern = new Regex(@"(?=(one|two|three|four|five|six|seven|eight|nine|\d))", RegexOptions.Compiled);
-        var sum = 0;
-
-        await foreach (var line in _inputReader.ReadLinesAsync(1))
-        {
-            var matches = pattern.Matches(line);
-            sum += int.Parse($"{ToDigit(matches[0].Groups[1].Value)}{ToDigit(matches[^1].Groups[1].Value)}");
-        }
-
-        return sum.ToString();
+        return await _inputReader
+            .ReadLinesAsync(1)
+            .SumAsync(line => line
+                .MatchBy(pattern, m => int.Parse($"{ToDigit(m.First.Groups[1].Value)}{ToDigit(m[^1].Groups[1].Value)}")))
+            .ToStringAsync();
     }
 
     private char ToDigit(string s) => char.IsDigit(s[0]) ? s[0] : (char)('0' | Array.IndexOf(Numbers, s));
