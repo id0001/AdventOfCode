@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 using System.Text.Json.Nodes;
 using DocoptNet;
 using Microsoft.Extensions.DependencyInjection;
@@ -226,7 +227,11 @@ public class AdventOfCodeHost : IHostedService
         var result = await executor.ExecutePart2Async();
         if (!result.IsEmpty)
         {
-            Console.WriteLine($"- Part 2 ({result.Duration.TotalMilliseconds:F6}ms): {result.Result}");
+            var duration = result.Duration;
+            if (duration < TimeSpan.FromSeconds(100))
+                duration = await BenchmarkAsync(executor.ExecutePart2Async);
+
+            Console.WriteLine($"- Part 2 ({duration.TotalMilliseconds:F6}ms): {result.Result}");
             await ClipboardService.SetTextAsync(result.Result!);
         }
 
@@ -238,11 +243,24 @@ public class AdventOfCodeHost : IHostedService
         var result = await executor.ExecutePart1Async();
         if (!result.IsEmpty)
         {
-            Console.WriteLine($"- Part 1 ({result.Duration.TotalMilliseconds:F6}ms): {result.Result}");
+            var duration = result.Duration;
+            if (duration < TimeSpan.FromSeconds(100))
+                duration = await BenchmarkAsync(executor.ExecutePart1Async);
+
+            Console.WriteLine($"- Part 1 ({duration.TotalMilliseconds:F6}ms): {result.Result}");
             await ClipboardService.SetTextAsync(result.Result!);
         }
 
         return result;
+    }
+
+    private static async Task<TimeSpan> BenchmarkAsync(Func<Task<ChallengeExecutionResult>> execute)
+    {
+        TimeSpan avg = TimeSpan.Zero;
+        for (int i = 0; i < 1000; i++)
+            avg += (await execute()).Duration;
+
+        return avg / 1000;
     }
 
     private static Dictionary<int, Type> ScanAssemblyForChallengeTypes()
