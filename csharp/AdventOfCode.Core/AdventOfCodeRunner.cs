@@ -13,13 +13,11 @@ namespace AdventOfCode.Core
     {
         private const string UsageResourceName = "AdventOfCode.Core.Resources.docopt.txt";
         private readonly string _usage;
-        private readonly int _year;
 
         private readonly Table _container;
 
         public AdventOfCodeRunner(int year)
         {
-            _year = year;
             _usage = ResourceHelper.Read(UsageResourceName);
 
             _container = new Table().HideHeaders();
@@ -27,7 +25,7 @@ namespace AdventOfCode.Core
             _container.Title = new TableTitle($"Advent of Code {year}");
         }
 
-        public async Task Run(string[] args)
+        public async Task RunAsync(string[] args)
         {
             try
             {
@@ -126,12 +124,8 @@ namespace AdventOfCode.Core
         {
             bool benchmark = ShouldBenchmark();
 
-            var instance = CreateInstance(type);
             var part1Method = GetPart1(type);
             var part2Method = GetPart2(type);
-
-            if (instance is null)
-                throw new InvalidOperationException("Unable to instantiate challenge");
 
             var answers = JsonNode.Parse(File.ReadAllText("answers.json"));
             if (answers is null)
@@ -140,16 +134,21 @@ namespace AdventOfCode.Core
             var table = CreateTable(benchmark, day);
 
             if (part1Method is not null)
-                await RunPart(day, 1, benchmark, answers, instance, part1Method, table);
+                await RunPart(day, 1, benchmark, answers, type, part1Method, table);
 
             if (part2Method is not null)
-                await RunPart(day, 2, benchmark, answers, instance, part2Method, table);
+                await RunPart(day, 2, benchmark, answers, type, part2Method, table);
 
             _container.AddRow(table);
         }
 
-        private static async Task RunPart(int day, int part, bool benchmark, JsonNode answers, object instance, MethodInfo part1Method, Table table)
+        private static async Task RunPart(int day, int part, bool benchmark, JsonNode answers, Type type, MethodInfo part1Method, Table table)
         {
+            var instance = CreateInstance(type);
+
+            if (instance is null)
+                throw new InvalidOperationException("Unable to instantiate challenge");
+
             var items = new List<Text>();
             var (result, time) = await Benchmark(() => RunMethod(instance, part1Method), 1);
             if (result is not null)
