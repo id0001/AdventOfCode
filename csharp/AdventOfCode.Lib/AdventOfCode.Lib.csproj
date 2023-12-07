@@ -1,11 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <RootNamespace>AdventOfCode.Lib</RootNamespace>
-    </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
       <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.8.8" />

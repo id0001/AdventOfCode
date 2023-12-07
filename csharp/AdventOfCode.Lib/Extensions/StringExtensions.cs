@@ -1,4 +1,5 @@
 ﻿using AdventOfCode.Lib.Parsing;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Lib;
@@ -29,12 +30,12 @@ public static class StringExtensions
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)));
     }
 
-    public static MatchTokenCollection MatchBy(this string source, string pattern)
+    public static MatchTokenCollection MatchBy(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
     {
         return new MatchTokenCollection(Regex.Matches(source, pattern).ToArray());
     }
 
-    public static T MatchBy<T>(this string source, string pattern, Func<MatchTokenCollection, T> selector)
+    public static T MatchBy<T>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, Func<MatchTokenCollection, T> selector)
     {
         return selector(new MatchTokenCollection(Regex.Matches(source, pattern).ToArray()));
     }

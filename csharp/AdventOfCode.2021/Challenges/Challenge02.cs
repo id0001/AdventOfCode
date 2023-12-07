@@ -1,5 +1,6 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
@@ -7,32 +8,19 @@ namespace AdventOfCode2021.Challenges;
 public class Challenge02
 {
     private readonly IInputReader _inputReader;
-    private Movement[] _movements;
 
     public Challenge02(IInputReader inputReader)
     {
         _inputReader = inputReader;
-        _movements = Array.Empty<Movement>();
-    }
-
-    [Setup]
-    public async Task SetupAsync()
-    {
-        _movements = await _inputReader.ReadLinesAsync(2)
-            .Select(l =>
-            {
-                var s = l.Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                return new Movement(s[0], int.Parse(s[1]));
-            }).ToArrayAsync();
     }
 
     [Part1]
-    public string Part1()
+    public async Task<string> Part1Async()
     {
         var x = 0;
         var y = 0;
 
-        foreach (var movement in _movements)
+        await foreach (var movement in _inputReader.ParseLinesAsync(2, ParseLine))
         {
             switch (movement.Direction)
             {
@@ -52,13 +40,13 @@ public class Challenge02
     }
 
     [Part2]
-    public string Part2()
+    public async Task<string> Part2Async()
     {
         var x = 0;
         var y = 0;
         var aim = 0;
 
-        foreach (var movement in _movements)
+        await foreach (var movement in _inputReader.ParseLinesAsync(2, ParseLine))
         {
             switch (movement.Direction)
             {
@@ -77,6 +65,8 @@ public class Challenge02
 
         return (x * y).ToString();
     }
+
+    private Movement ParseLine(string line) => line.SplitBy(" ", parts => new Movement(parts.First, int.Parse(parts.Second)));
 
     private record Movement(string Direction, int Amount);
 }

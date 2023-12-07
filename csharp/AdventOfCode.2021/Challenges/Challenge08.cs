@@ -1,5 +1,6 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
@@ -7,37 +8,35 @@ namespace AdventOfCode2021.Challenges;
 public class Challenge08
 {
     private readonly IInputReader _inputReader;
-    private IoPair[] _data = Array.Empty<IoPair>();
 
     public Challenge08(IInputReader inputReader)
     {
         _inputReader = inputReader;
     }
 
-    [Setup]
-    public async Task SetupAsync()
-    {
-        _data = await _inputReader.ReadLinesAsync(8).Select(line =>
-        {
-            var ioSplit = line.Split(new[] { '|' }, StringSplitOptions.TrimEntries);
-            return new IoPair(new Input(ioSplit[0].Split(' ')), new Output(ioSplit[1].Split(' ')));
-        }).ToArrayAsync();
-    }
-
     [Part1]
-    public string Part1()
+    public async Task<string?> Part1Async()
     {
         var lengths = new[] { 2, 3, 4, 7 };
-        var count = _data.SelectMany(x => x.Output.Values).Count(x => lengths.Contains(x.Length));
-
-        return count.ToString();
+        return await _inputReader
+            .ParseLinesAsync(8, ParseLine)
+            .SelectMany(x => x.Output.Values.ToAsyncEnumerable())
+            .CountAsync(x => lengths.Contains(x.Length))
+            .ToStringAsync();
     }
 
     [Part2]
-    public string Part2()
+    public async Task<string?> Part2Async()
     {
-        return _data.Select(FindNumberForSignal).Sum().ToString();
+        return await _inputReader
+            .ParseLinesAsync(8, ParseLine)
+            .Select(FindNumberForSignal)
+            .SumAsync()
+            .ToStringAsync();
     }
+
+    private static IoPair ParseLine(string line)
+        => line.SplitBy("|", parts => new IoPair(new Input(parts.First.SplitBy(" ").ToArray()), new Output(parts.Second.SplitBy(" ").ToArray())));
 
     private static int FindNumberForSignal(IoPair io)
     {

@@ -5,6 +5,7 @@ using Spectre.Console;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using TextCopy;
 
 namespace AdventOfCode.Core
@@ -124,6 +125,7 @@ namespace AdventOfCode.Core
         {
             bool benchmark = ShouldBenchmark();
 
+            var setupMethod = GetSetup(type);
             var part1Method = GetPart1(type);
             var part2Method = GetPart2(type);
 
@@ -134,23 +136,30 @@ namespace AdventOfCode.Core
             var table = CreateTable(benchmark, day);
 
             if (part1Method is not null)
-                await RunPart(day, 1, benchmark, answers, type, part1Method, table);
+                await RunPart(day, 1, benchmark, answers, type, setupMethod, part1Method, table);
 
             if (part2Method is not null)
-                await RunPart(day, 2, benchmark, answers, type, part2Method, table);
+                await RunPart(day, 2, benchmark, answers, type, setupMethod, part2Method, table);
 
             _container.AddRow(table);
         }
 
-        private static async Task RunPart(int day, int part, bool benchmark, JsonNode answers, Type type, MethodInfo part1Method, Table table)
+        private static async Task RunPart(int day, int part, bool benchmark, JsonNode answers, Type type, MethodInfo? setupMethod, MethodInfo part1Method, Table table)
         {
             var instance = CreateInstance(type);
 
             if (instance is null)
                 throw new InvalidOperationException("Unable to instantiate challenge");
 
+            if (setupMethod is not null)
+            {
+                var setupResult = setupMethod.Invoke(instance, null);
+                if (setupResult is Task t)
+                    await t;
+            }
+
             var items = new List<Text>();
-            var (result, time) = await Benchmark(() => RunMethod(instance, part1Method), 1);
+            var (result, time) = await Benchmark(() => GetPartResult(instance, part1Method), 1);
             if (result is not null)
             {
                 await ClipboardService.SetTextAsync(result);
@@ -162,7 +171,7 @@ namespace AdventOfCode.Core
                 {
                     try
                     {
-                        (_, time) = await Benchmark(() => RunMethod(instance, part1Method), 100, TimeSpan.FromSeconds(60));
+                        (_, time) = await Benchmark(() => GetPartResult(instance, part1Method), 100, TimeSpan.FromSeconds(60));
                         items.Add(new Text(time.ToString()));
                     }
                     catch (TimeoutException ex)
@@ -174,7 +183,7 @@ namespace AdventOfCode.Core
                 var answer = answers?[day.ToString()]?[part.ToString()]?.GetValue<string>();
                 items.Add(string.IsNullOrEmpty(answer)
                     ? new Text("-")
-                    : result == answer
+                    : result == Regex.Replace(answer, @"(?:\r\n)|\n", Environment.NewLine)
                     ? new Text("Yes", new Style(Color.Green))
                     : new Text("No", new Style(Color.Red)));
 
@@ -247,7 +256,18 @@ namespace AdventOfCode.Core
             }
         }
 
-        private static object? CreateInstance(Type type) => Activator.CreateInstance(type, new InputReader());
+        private static object? CreateInstance(Type type)
+        {
+            var ctor = type.GetConstructor([typeof(IInputReader)]);
+            if(ctor is not null)
+                return Activator.CreateInstance(type, new InputReader());
+
+            return Activator.CreateInstance(type);
+        }
+
+#pragma warning disable CS0612 // Type or member is obsolete
+        private static MethodInfo? GetSetup(Type type) => GetMethod<SetupAttribute>(type);
+#pragma warning restore CS0612 // Type or member is obsolete
 
         private static MethodInfo? GetPart1(Type type) => GetMethod<Part1Attribute>(type);
 
@@ -261,7 +281,7 @@ namespace AdventOfCode.Core
             return methods.FirstOrDefault(m => m.GetCustomAttribute<T>() != null);
         }
 
-        private static async Task<string?> RunMethod(object instance, MethodInfo method)
+        private static async Task<string?> GetPartResult(object instance, MethodInfo method)
         {
             var result = method.Invoke(instance, null);
             if (result is Task<string?> task)

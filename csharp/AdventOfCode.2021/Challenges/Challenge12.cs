@@ -15,32 +15,17 @@ public class Challenge12
         _inputReader = inputReader;
     }
 
-    [Setup]
-    public async Task SetupAsync()
-    {
-        await foreach (var line in _inputReader.ReadLinesAsync(12))
-        {
-            var splitPath = line.Split('-');
-
-            if (!_edges.TryGetValue(splitPath[0], out var set))
-                _edges.Add(splitPath[0], set = new HashSet<string>());
-            set.Add(splitPath[1]);
-
-            if (!_edges.TryGetValue(splitPath[1], out set))
-                _edges.Add(splitPath[1], set = new HashSet<string>());
-            set.Add(splitPath[0]);
-        }
-    }
-
     [Part1]
-    public string Part1()
+    public async Task<string> Part1Async()
     {
+        await FillEdgesAsync();
         return CountPaths("start", ImmutableHashSet<string>.Empty, false).ToString();
     }
 
     [Part2]
-    public string Part2()
+    public async Task<string> Part2()
     {
+        await FillEdgesAsync();
         return CountPaths("start", ImmutableHashSet<string>.Empty, true).ToString();
     }
 
@@ -61,5 +46,21 @@ public class Challenge12
 
         return _edges[currentNode].Sum(neighbor =>
             CountPaths(neighbor, newVisited, canVisitTwice && !visited.Contains(currentNode)));
+    }
+
+    private async Task FillEdgesAsync()
+    {
+        await foreach (var line in _inputReader.ReadLinesAsync(12))
+        {
+            var splitPath = line.Split('-');
+
+            if (!_edges.TryGetValue(splitPath[0], out var set))
+                _edges.Add(splitPath[0], set = new HashSet<string>());
+            set.Add(splitPath[1]);
+
+            if (!_edges.TryGetValue(splitPath[1], out set))
+                _edges.Add(splitPath[1], set = new HashSet<string>());
+            set.Add(splitPath[0]);
+        }
     }
 }

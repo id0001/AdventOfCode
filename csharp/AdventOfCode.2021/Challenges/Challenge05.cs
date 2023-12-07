@@ -9,33 +9,18 @@ namespace AdventOfCode2021.Challenges;
 public class Challenge05
 {
     private readonly IInputReader _inputReader;
-    private Segment[] _segments;
 
     public Challenge05(IInputReader inputReader)
     {
         _inputReader = inputReader;
-        _segments = Array.Empty<Segment>();
-    }
-
-    [Setup]
-    public async Task SetupAsync()
-    {
-        _segments = await _inputReader.ReadLinesAsync(5)
-            .Select(line =>
-            {
-                var match = Regex.Match(line, @"^(\d+),(\d+) -> (\d+),(\d+)$");
-                var p1 = new Point2(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
-                var p2 = new Point2(int.Parse(match.Groups[3].Value), int.Parse(match.Groups[4].Value));
-                return new Segment(p1, p2);
-            }).ToArrayAsync();
     }
 
     [Part1]
-    public string Part1()
+    public async Task<string> Part1Async()
     {
         var overlapDict = new Dictionary<Point2, int>();
 
-        foreach (var segment in _segments)
+        await foreach (var segment in _inputReader.ParseLinesAsync(5, ParseLine))
         {
             if (segment.Start.X != segment.End.X && segment.Start.Y != segment.End.Y)
                 continue;
@@ -49,15 +34,24 @@ public class Challenge05
     }
 
     [Part2]
-    public string Part2()
+    public async Task<string> Part2Async()
     {
         var overlapDict = new Dictionary<Point2, int>();
 
-        foreach (var segment in _segments) UpdateOverlapFromSegment(overlapDict, segment);
+        await foreach (var segment in _inputReader.ParseLinesAsync(5, ParseLine))
+            UpdateOverlapFromSegment(overlapDict, segment);
 
         var overlapCount = overlapDict.Count(x => x.Value >= 2);
 
         return overlapCount.ToString();
+    }
+
+    private Segment ParseLine(string line)
+    {
+        var match = Regex.Match(line, @"^(\d+),(\d+) -> (\d+),(\d+)$");
+        var p1 = new Point2(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+        var p2 = new Point2(int.Parse(match.Groups[3].Value), int.Parse(match.Groups[4].Value));
+        return new Segment(p1, p2);
     }
 
     private static void UpdateOverlapFromSegment(Dictionary<Point2, int> overlapDict, Segment segment)

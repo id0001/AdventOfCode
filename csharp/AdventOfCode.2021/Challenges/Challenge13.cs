@@ -10,43 +10,45 @@ namespace AdventOfCode2021.Challenges;
 public class Challenge13
 {
     private readonly IInputReader _inputReader;
-    private HashSet<Point2> _points = new();
-    private List<string> _folds = new();
 
     public Challenge13(IInputReader inputReader)
     {
         _inputReader = inputReader;
     }
 
-    [Setup]
-    public async Task SetupAsync()
+    private async Task<(HashSet<Point2>, List<string>)> ReadInputAsync()
     {
         var lines = await _inputReader.ReadLinesAsync(13).ToArrayAsync();
         var indexOfNewline = Array.IndexOf(lines, string.Empty);
 
-        _points = lines.Take(indexOfNewline).Select(x =>
+        var points = lines.Take(indexOfNewline).Select(x =>
         {
             var point = x.Split(',');
             return new Point2(int.Parse(point[0]), int.Parse(point[1]));
         }).ToHashSet();
 
-        _folds = lines.Skip(indexOfNewline + 1).ToList();
+        var folds = lines.Skip(indexOfNewline + 1).ToList();
+        return (points, folds);
     }
 
     [Part1]
-    public string Part1()
+    public async Task<string> Part1Async()
     {
-        var (axis, index) = ReadFold(_folds[0]);
-        var set = Fold(_points, axis, index);
+        var (points, folds) = await ReadInputAsync();
+
+        var (axis, index) = ReadFold(folds[0]);
+        var set = Fold(points, axis, index);
 
         return set.Count.ToString();
     }
 
     [Part2]
-    public string Part2()
+    public async Task<string> Part2Async()
     {
-        var output = _points;
-        foreach (var (axis, index) in _folds.Select(ReadFold)) output = Fold(output, axis, index);
+        var (points, folds) = await ReadInputAsync();
+
+        var output = points;
+        foreach (var (axis, index) in folds.Select(ReadFold)) output = Fold(output, axis, index);
 
         var xmax = output.Max(p => p.X);
         var ymax = output.Max(p => p.Y);
