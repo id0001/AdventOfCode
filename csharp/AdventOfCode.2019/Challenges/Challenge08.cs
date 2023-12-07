@@ -17,7 +17,7 @@ public class Challenge08
     [Part1]
     public async Task<string> Part1Async()
     {
-        var rawInput = await _inputReader.ReadLineAsync(8).Select(Convert.ToInt32).ToArrayAsync();
+        var rawInput = await _inputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
         const int width = 25;
         const int height = 6;
         const int ppl = width * height;
@@ -41,7 +41,7 @@ public class Challenge08
     [Part2]
     public async Task<string> Part2Async()
     {
-        var rawInput = await _inputReader.ReadLineAsync(8).Select(Convert.ToInt32).ToArrayAsync();
+        var rawInput = await _inputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
         const int width = 25;
         const int height = 6;
         const int ppl = width * height;

@@ -24,7 +24,7 @@ public class Challenge20
         var bfs = new BreadthFirstSearch<Point2>(p => GetNeighborsPart1(maze, mazeData.Portals.Values.ToList(), p));
 
         return bfs.TryPath(mazeData.Start.ToPoint2(), t => t == mazeData.End.ToPoint2(), out var path)
-            ? path.Count().ToString()
+            ? (path.Count()-1).ToString()
             : null;
     }
 
@@ -51,7 +51,7 @@ public class Challenge20
         var list = mazeData.Portals.Values.ToList();
 
         var bfs = new BreadthFirstSearch<Point3>(p => GetNeighborsPart2(maze, list, p));
-        return bfs.TryPath(mazeData.Start, t => t == mazeData.End, out var path) ? path.Count().ToString() : null;
+        return bfs.TryPath(mazeData.Start, t => t == mazeData.End, out var path) ? (path.Count() - 1).ToString() : null;
     }
 
     private static IEnumerable<Point3> GetNeighborsPart2(char[,] maze, IEnumerable<Portal> portals, Point3 p)

@@ -1,5 +1,4 @@
 using AdventOfCode.Core;
-using AdventOfCode.Core.Extensions;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 

@@ -26,7 +26,7 @@ public class Challenge18
         var start = new State(data.Start, 0);
 
         var bfs = new BreadthFirstSearch<State>(x => GetNeighborsPart1(maze, x));
-        return bfs.TryPath(start, s => s.ObtainedKeys == keyTotal, out var path) ? path.Count().ToString() : null;
+        return bfs.TryPath(start, s => s.ObtainedKeys == keyTotal, out var path) ? (path.Count() - 1).ToString() : null;
     }
 
     [Part2]
@@ -50,7 +50,7 @@ public class Challenge18
 
         var start = new DroneState(new[] { p0, p1, p2, p3 }, 0, 0);
         var astar = new AStar<DroneState>(s => GetNeighborsPart2(vertices, edges, s), (_, b) => b.Distance);
-        return astar.TryPath(start, s => s.ObtainedKeys == keyTotal, out _, out var cost) ? cost.ToString() : null;
+        return astar.TryPath(start, s => s.ObtainedKeys == keyTotal, out var path, out var cost) ? cost.ToString() : null;
     }
 
     private IEnumerable<Point2> GetNeighborsSimple(char[,] maze, Point2 p)
@@ -132,35 +132,35 @@ public class Challenge18
         var bfs = new BreadthFirstSearch<Point2>(x => GetNeighborsSimple(maze, x));
 
         foreach (var v0 in vertices)
-        foreach (var v1 in vertices)
-        {
-            if (v0 == v1)
-                continue;
+            foreach (var v1 in vertices)
+            {
+                if (v0 == v1)
+                    continue;
 
-            if (v1.Key == '@')
-                continue;
+                if (v1.Key == '@')
+                    continue;
 
-            if (!bfs.TryPath(v0.Location, t => t == v1.Location, out var path))
-                continue;
+                if (!bfs.TryPath(v0.Location, t => t == v1.Location, out var path))
+                    continue;
 
-            var list = path.ToList();
-            var doors = KeysToInt(list.Where(p => pointToDoor.ContainsKey(p))
-                .Select(p => char.ToLower(pointToDoor[p])));
-            var edge = new Edge(v0, v1, doors, list.Count);
-            yield return edge;
-        }
+                var list = path.ToList();
+                var doors = KeysToInt(list.Where(p => pointToDoor.ContainsKey(p))
+                    .Select(p => char.ToLower(pointToDoor[p])));
+                var edge = new Edge(v0, v1, doors, list.Count - 1);
+                yield return edge;
+            }
     }
 
     private static void UpdateMazeForPart2(char[,] maze, Point2 p)
     {
         for (var y = p.Y - 1; y <= p.Y + 1; y++)
-        for (var x = p.X - 1; x <= p.X + 1; x++)
-        {
-            if (x == p.X || y == p.Y)
-                maze[y, x] = '#';
-            else
-                maze[y, x] = '@';
-        }
+            for (var x = p.X - 1; x <= p.X + 1; x++)
+            {
+                if (x == p.X || y == p.Y)
+                    maze[y, x] = '#';
+                else
+                    maze[y, x] = '@';
+            }
     }
 
     private static int AddKey(int obtainedKeys, char key)
@@ -189,22 +189,22 @@ public class Challenge18
         var start = Point2.Zero;
 
         for (var y = 0; y < maze.GetLength(0); y++)
-        for (var x = 0; x < maze.GetLength(1); x++)
-        {
-            var c = maze[y, x];
-            switch (c)
+            for (var x = 0; x < maze.GetLength(1); x++)
             {
-                case var _ when char.IsLower(c):
-                    keys.Add(c, new Point2(x, y));
-                    break;
-                case var _ when char.IsUpper(c):
-                    doors.Add(c, new Point2(x, y));
-                    break;
-                case '@':
-                    start = new Point2(x, y);
-                    break;
+                var c = maze[y, x];
+                switch (c)
+                {
+                    case var _ when char.IsLower(c):
+                        keys.Add(c, new Point2(x, y));
+                        break;
+                    case var _ when char.IsUpper(c):
+                        doors.Add(c, new Point2(x, y));
+                        break;
+                    case '@':
+                        start = new Point2(x, y);
+                        break;
+                }
             }
-        }
 
         return new MazeData(start, keys, doors);
     }
