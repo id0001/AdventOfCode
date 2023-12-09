@@ -57,10 +57,10 @@ public class Challenge02
     {
         // Game 1: 3 blue, 2 green, 6 red; 17 green, 4 red, 8 blue; 2 red, 1 green, 10 blue; 1 blue, 5 green
 
-        return line.SplitBy(":", x => new Game
+        return line.SplitBy(":", parts => new Game
         {
-            Number = int.Parse(x.First.SplitBy(" ").Second),
-            Sets = x.Second
+            Number = int.Parse(parts.First.SplitBy(" ").Second),
+            Sets = parts.Second
                 .SplitBy(";")
                 .Select(x => x.SplitBy(",", set => Increment(new int[3], set)))
                 .ToList()

@@ -1,7 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2023.Challenges;

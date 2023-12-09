@@ -6,7 +6,7 @@ namespace AdventOfCode2019.Challenges;
 public class Challenge25
 {
     [Part1]
-    public async Task<string?> Part1Async()
+    public Task<string> Part1Async()
     {
         //var program = await _inputReader.ReadLineAsync<long>(25, ',').ToArrayAsync();
 
@@ -34,6 +34,6 @@ public class Challenge25
         //await cpu.StartAsync();
 
         // F this, I bruteforced it by hand.
-        return "2147502592";
+        return Task.FromResult("2147502592");
     }
 }

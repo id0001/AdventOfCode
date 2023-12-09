@@ -70,12 +70,12 @@ public class Challenge05
             .SplitBy(":")
             .Second
             .SplitBy("\r\n")
-            .Select(x => x.SplitBy(" ", x =>
+            .Select(x => x.SplitBy(" ", parts =>
                 new
                 {
-                    DestStart = long.Parse(x.First),
-                    SourceStart = long.Parse(x.Second),
-                    Length = long.Parse(x.Third)
+                    DestStart = long.Parse(parts.First),
+                    SourceStart = long.Parse(parts.Second),
+                    Length = long.Parse(parts.Third)
                 }))
             .Select(kv => new Mapping(new LongRange(kv.SourceStart, kv.SourceStart + kv.Length - 1), new LongRange(kv.DestStart, kv.DestStart + kv.Length - 1)))
             .OrderBy(x => x.Source.Start)
@@ -102,7 +102,7 @@ public class Challenge05
             var temperature = MapValue(LightToTemperature, light);
             var humidity = MapValue(TemperatureToHumidity, temperature);
             var location = MapValue(HumidityToLocation, humidity);
-            return new AlmanacEntry(seed, soil, fertilizer, water, light, temperature, humidity, location);
+            return new AlmanacEntry(seed, location);
         }
 
         public AlmanacEntry FindByLocation(long location)
@@ -114,7 +114,7 @@ public class Challenge05
             var fertilizer = ReverseMapValue(FertilizerToWater, water);
             var soil = ReverseMapValue(SoilToFertilizer, fertilizer);
             var seed = ReverseMapValue(SeedsToSoil, soil);
-            return new AlmanacEntry(seed, soil, fertilizer, water, light, temperature, humidity, location);
+            return new AlmanacEntry(seed, location);
         }
 
         private long MapValue(List<Mapping> map, long input)
@@ -136,7 +136,7 @@ public class Challenge05
         }
     }
 
-    private record AlmanacEntry(long Seed, long Soil, long Fertilizer, long Water, long Light, long Temperature, long Humidity, long Location);
+    private record AlmanacEntry(long Seed, long Location);
 
     private record Mapping(LongRange Source, LongRange Dest);
 

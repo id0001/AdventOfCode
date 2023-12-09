@@ -1,6 +1,4 @@
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using System.Xml.Schema;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
@@ -70,19 +68,4 @@ public class Challenge08
     }
     
     private record Input(string Instructions, Dictionary<string, string[]> Nodes);
-
-    private sealed record Step(string Name, long Index, long InitialSteps)
-    {
-        public bool Equals(Step? other)
-        {
-            if (other is null)
-                return false;
-
-            return Name == other.Name && Index == other.Index;
-        }
-
-        public override int GetHashCode() => HashCode.Combine(Name, Index);
-    }
-
-    private record Cycle(long Offset, long Modulus);
 }

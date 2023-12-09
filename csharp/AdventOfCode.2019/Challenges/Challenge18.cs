@@ -50,7 +50,7 @@ public class Challenge18
 
         var start = new DroneState(new[] { p0, p1, p2, p3 }, 0, 0);
         var astar = new AStar<DroneState>(s => GetNeighborsPart2(vertices, edges, s), (_, b) => b.Distance);
-        return astar.TryPath(start, s => s.ObtainedKeys == keyTotal, out var path, out var cost) ? cost.ToString() : null;
+        return astar.TryPath(start, s => s.ObtainedKeys == keyTotal, out _, out var cost) ? cost.ToString() : null;
     }
 
     private IEnumerable<Point2> GetNeighborsSimple(char[,] maze, Point2 p)

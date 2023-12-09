@@ -51,13 +51,13 @@ public class Challenge04
 
     private record ScratchCard
     {
-        private int amountOfWinningNumbers = -1;
+        private int _amountOfWinningNumbers = -1;
 
         public required int Id { get; init; }
         public required int[] WinningNumbers { get; init; }
         public required int[] Numbers { get; init; }
 
-        public int AmountOfWinningNumbers => amountOfWinningNumbers < 0 ? amountOfWinningNumbers = Numbers.Intersect(WinningNumbers).Count() : amountOfWinningNumbers;
+        public int AmountOfWinningNumbers => _amountOfWinningNumbers < 0 ? _amountOfWinningNumbers = Numbers.Intersect(WinningNumbers).Count() : _amountOfWinningNumbers;
 
         public int Score
         {
