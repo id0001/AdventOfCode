@@ -72,8 +72,8 @@ public class Challenge11
 
     private IEnumerable<Point2> GetGalaxies(char[,] grid, int expansion)
     {
-        var emptyRows = GetEmptyRows(grid).ToHashSet();
-        var emptyColumns = GetEmptyColumns(grid).ToHashSet();
+        var emptyRows = GetEmptyRows(grid).ToList();
+        var emptyColumns = GetEmptyColumns(grid).ToList();
 
         for (var y = 0; y < grid.GetLength(0); y++)
         {
@@ -85,7 +85,7 @@ public class Challenge11
         }
     }
 
-    private Point2 ExpandGalaxyPosition(Point2 p, ISet<int> emptyRows, ISet<int> emptyColumns, int expansion)
+    private Point2 ExpandGalaxyPosition(Point2 p, IList<int> emptyRows, IList<int> emptyColumns, int expansion)
     {
         var x = p.X + (expansion * emptyColumns.Count(c => c < p.X));
         var y = p.Y + (expansion * emptyRows.Count(r => r < p.Y));
