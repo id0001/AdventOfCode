@@ -36,7 +36,7 @@ public class Challenge08
     }
 
     private static IoPair ParseLine(string line)
-        => line.SplitBy("|", parts => new IoPair(new Input(parts.First.SplitBy(" ").ToArray()), new Output(parts.Second.SplitBy(" ").ToArray())));
+        => line.SplitBy("|").Transform(parts => new IoPair(new Input(parts.First().SplitBy(" ").ToArray()), new Output(parts.Second().SplitBy(" ").ToArray())));
 
     private static int FindNumberForSignal(IoPair io)
     {

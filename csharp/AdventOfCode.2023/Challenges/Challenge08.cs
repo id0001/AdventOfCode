@@ -30,10 +30,11 @@ public class Challenge08
         return input.Nodes.Keys
             .Where(n => n.EndsWith("A"))
             .Aggregate(1L,
-            (total, next) => Euclid.LeastCommonMultiple(total, CalculateSteps(next, input, n => n.EndsWith("Z")))).ToString();
+                (total, next) => Euclid.LeastCommonMultiple(total, CalculateSteps(next, input, n => n.EndsWith("Z"))))
+            .ToString();
     }
 
-    private static int CalculateSteps(string currentNode, Input input, Func<string,bool> isFinished)
+    private static int CalculateSteps(string currentNode, Input input, Func<string, bool> isFinished)
     {
         var index = 0;
         var steps = 0;
@@ -57,15 +58,17 @@ public class Challenge08
     {
         var nl = Environment.NewLine;
         var text = await _inputReader.ReadAllTextAsync(day);
-        return text.SplitBy($"{nl}{nl}", parts =>
-        {
-            return new Input(parts.First,
-                parts.Second
-                    .SplitBy(nl)
-                    .Select(line => Regex.Match(line, @"^(\w{3}) = \((\w{3}), (\w{3})\)$"))
-                    .ToDictionary(kv => kv.Groups[1].Value, kv => new[] {kv.Groups[2].Value, kv.Groups[3].Value}));
-        });
+        return text
+            .SplitBy($"{nl}{nl}")
+            .Transform(parts =>
+            {
+                return new Input(parts.First(),
+                    parts.Second()
+                        .SplitBy(nl)
+                        .Select(line => Regex.Match(line, @"^(\w{3}) = \((\w{3}), (\w{3})\)$"))
+                        .ToDictionary(kv => kv.Groups[1].Value, kv => new[] {kv.Groups[2].Value, kv.Groups[3].Value}));
+            });
     }
-    
+
     private record Input(string Instructions, Dictionary<string, string[]> Nodes);
 }

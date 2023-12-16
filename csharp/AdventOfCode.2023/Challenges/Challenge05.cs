@@ -25,59 +25,62 @@ public class Challenge05
     public async Task<string> Part2Async()
     {
         var almanac = MapInput(await _inputReader.ReadAllTextAsync(5));
-        var seedRanges = almanac.Seeds.Chunk(2).Select(chunk => new LongRange(chunk[0], chunk[0] + chunk[1] - 1)).ToList();
+        var seedRanges = almanac.Seeds.Chunk(2).Select(chunk => new LongRange(chunk[0], chunk[0] + chunk[1] - 1))
+            .ToList();
         var largestLocation = almanac.HumidityToLocation.Max(x => x.Dest.End);
 
         for (long i = 0; i <= largestLocation; i++)
-        {
             if (seedRanges.Any(r => r.Contains(almanac.FindByLocation(i).Seed)))
                 return i.ToString();
-        }
 
         throw new InvalidOperationException("Answer not found");
     }
 
     private Almanac MapInput(string input)
     {
-        return input.SplitBy("\r\n\r\n", parts =>
-        {
-            var seeds = parts[0].SplitBy(":").Second.SplitBy(" ").Select(long.Parse).ToArray();
-            var seedsToSoil = ParsePart(parts[1]);
-            var soilToFertilizer = ParsePart(parts[2]);
-            var fertilizerToWater = ParsePart(parts[3]);
-            var waterToLight = ParsePart(parts[4]);
-            var lightToTemperature = ParsePart(parts[5]);
-            var temperatureToHumidity = ParsePart(parts[6]);
-            var humidityToLocation = ParsePart(parts[7]);
-
-            return new Almanac
+        var nl = Environment.NewLine;
+        return input
+            .SplitBy($"{nl}{nl}")
+            .Transform(parts =>
             {
-                Seeds = seeds,
-                SeedsToSoil = seedsToSoil,
-                SoilToFertilizer = soilToFertilizer,
-                FertilizerToWater = fertilizerToWater,
-                WaterToLight = waterToLight,
-                LightToTemperature = lightToTemperature,
-                TemperatureToHumidity = temperatureToHumidity,
-                HumidityToLocation = humidityToLocation
-            };
-        });
+                var seeds = parts[0].SplitBy(":").Second().SplitBy(" ").Select(long.Parse).ToArray();
+                var seedsToSoil = ParsePart(parts[1]);
+                var soilToFertilizer = ParsePart(parts[2]);
+                var fertilizerToWater = ParsePart(parts[3]);
+                var waterToLight = ParsePart(parts[4]);
+                var lightToTemperature = ParsePart(parts[5]);
+                var temperatureToHumidity = ParsePart(parts[6]);
+                var humidityToLocation = ParsePart(parts[7]);
+
+                return new Almanac
+                {
+                    Seeds = seeds,
+                    SeedsToSoil = seedsToSoil,
+                    SoilToFertilizer = soilToFertilizer,
+                    FertilizerToWater = fertilizerToWater,
+                    WaterToLight = waterToLight,
+                    LightToTemperature = lightToTemperature,
+                    TemperatureToHumidity = temperatureToHumidity,
+                    HumidityToLocation = humidityToLocation
+                };
+            });
     }
 
     private List<Mapping> ParsePart(string part)
     {
         return part
             .SplitBy(":")
-            .Second
+            .Second()
             .SplitBy("\r\n")
-            .Select(x => x.SplitBy(" ", parts =>
+            .Select(x => x.SplitBy(" ").Transform(parts =>
                 new
                 {
-                    DestStart = long.Parse(parts.First),
-                    SourceStart = long.Parse(parts.Second),
-                    Length = long.Parse(parts.Third)
+                    DestStart = long.Parse(parts.First()),
+                    SourceStart = long.Parse(parts.Second()),
+                    Length = long.Parse(parts.Third())
                 }))
-            .Select(kv => new Mapping(new LongRange(kv.SourceStart, kv.SourceStart + kv.Length - 1), new LongRange(kv.DestStart, kv.DestStart + kv.Length - 1)))
+            .Select(kv => new Mapping(new LongRange(kv.SourceStart, kv.SourceStart + kv.Length - 1),
+                new LongRange(kv.DestStart, kv.DestStart + kv.Length - 1)))
             .OrderBy(x => x.Source.Start)
             .ToList();
     }
@@ -123,7 +126,7 @@ public class Challenge05
             if (mapping == null)
                 return input;
 
-            return (input - mapping.Source.Start) + mapping.Dest.Start;
+            return input - mapping.Source.Start + mapping.Dest.Start;
         }
 
         private long ReverseMapValue(List<Mapping> map, long input)
@@ -132,7 +135,7 @@ public class Challenge05
             if (mapping == null)
                 return input;
 
-            return (input - mapping.Dest.Start) + mapping.Source.Start;
+            return input - mapping.Dest.Start + mapping.Source.Start;
         }
     }
 

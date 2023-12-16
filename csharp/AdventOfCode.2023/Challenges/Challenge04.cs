@@ -26,7 +26,8 @@ public class Challenge04
     [Part2]
     public async Task<string> Part2Async()
     {
-        var lookup = await _inputReader.ParseLinesAsync(4, ParseLine).ToDictionaryAsync(kv => kv.Id, kv => kv.AmountOfWinningNumbers);
+        var lookup = await _inputReader.ParseLinesAsync(4, ParseLine)
+            .ToDictionaryAsync(kv => kv.Id, kv => kv.AmountOfWinningNumbers);
         return lookup.Keys.Sum(c => CountCards(c, lookup)).ToString();
     }
 
@@ -41,11 +42,12 @@ public class Challenge04
     {
         // Card   1:  9 39 27 89 87 29 54 19 43 45 |  9 80 29 20 54 58 78 77 39 35 76 79 19 87 45 89 23 31 94 34 67 43 56 50 27
         return line
-            .SplitBy(new[] { ":", "|" }, x => new ScratchCard
+            .SplitBy(":", "|")
+            .Transform(x => new ScratchCard
             {
-                Id = int.Parse(x.First.SplitBy(" ").Second),
-                WinningNumbers = x.Second.SplitBy(" ").Select(int.Parse).ToArray(),
-                Numbers = x.Third.SplitBy(" ").Select(int.Parse).ToArray(),
+                Id = int.Parse(x.First().SplitBy(" ").Second()),
+                WinningNumbers = x.Second().SplitBy(" ").Select(int.Parse).ToArray(),
+                Numbers = x.Third().SplitBy(" ").Select(int.Parse).ToArray()
             });
     }
 
@@ -57,7 +59,9 @@ public class Challenge04
         public required int[] WinningNumbers { get; init; }
         public required int[] Numbers { get; init; }
 
-        public int AmountOfWinningNumbers => _amountOfWinningNumbers < 0 ? _amountOfWinningNumbers = Numbers.Intersect(WinningNumbers).Count() : _amountOfWinningNumbers;
+        public int AmountOfWinningNumbers => _amountOfWinningNumbers < 0
+            ? _amountOfWinningNumbers = Numbers.Intersect(WinningNumbers).Count()
+            : _amountOfWinningNumbers;
 
         public int Score
         {
@@ -66,7 +70,7 @@ public class Challenge04
                 if (AmountOfWinningNumbers == 0)
                     return 0;
 
-                return (int)Math.Pow(2, AmountOfWinningNumbers - 1);
+                return (int) Math.Pow(2, AmountOfWinningNumbers - 1);
             }
         }
     }

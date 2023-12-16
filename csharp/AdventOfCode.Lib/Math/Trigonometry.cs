@@ -10,4 +10,7 @@ public static class Trigonometry
     public static double DegreeToRadian(double degree) => degree * PiOver180;
 
     public static double RadianToDegree(double radian) => radian / PiOver180;
+
+    public static double Negative90 => -(System.Math.PI / 2d);
+    public static double Positive90 => System.Math.PI / 2d;
 }

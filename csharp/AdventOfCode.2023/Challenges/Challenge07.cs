@@ -16,33 +16,34 @@ public class Challenge07
 
     [Part1]
     public async Task<string?> Part1Async() => await _inputReader.ParseLinesAsync(7, ParseLine)
-            .OrderBy(x => Strength(x.Cards[4], false))
-            .OrderBy(x => Strength(x.Cards[3], false))
-            .OrderBy(x => Strength(x.Cards[2], false))
-            .OrderBy(x => Strength(x.Cards[1], false))
-            .OrderBy(x => Strength(x.Cards[0], false))
-            .OrderBy(x => Score(x.Cards, false))
-            .Select((x, i) => (i + 1) * x.Bid)
-            .SumAsync()
-            .ToStringAsync();
+        .OrderBy(x => Strength(x.Cards[4], false))
+        .OrderBy(x => Strength(x.Cards[3], false))
+        .OrderBy(x => Strength(x.Cards[2], false))
+        .OrderBy(x => Strength(x.Cards[1], false))
+        .OrderBy(x => Strength(x.Cards[0], false))
+        .OrderBy(x => Score(x.Cards, false))
+        .Select((x, i) => (i + 1) * x.Bid)
+        .SumAsync()
+        .ToStringAsync();
 
     [Part2]
     public async Task<string?> Part2Async() => await _inputReader.ParseLinesAsync(7, ParseLine)
-            .OrderBy(x => Strength(x.Cards[4], true))
-            .OrderBy(x => Strength(x.Cards[3], true))
-            .OrderBy(x => Strength(x.Cards[2], true))
-            .OrderBy(x => Strength(x.Cards[1], true))
-            .OrderBy(x => Strength(x.Cards[0], true))
-            .OrderBy(x => Score(x.Cards, true))
-            .Select((x, i) => (i + 1) * x.Bid)
-            .SumAsync()
-            .ToStringAsync();
+        .OrderBy(x => Strength(x.Cards[4], true))
+        .OrderBy(x => Strength(x.Cards[3], true))
+        .OrderBy(x => Strength(x.Cards[2], true))
+        .OrderBy(x => Strength(x.Cards[1], true))
+        .OrderBy(x => Strength(x.Cards[0], true))
+        .OrderBy(x => Score(x.Cards, true))
+        .Select((x, i) => (i + 1) * x.Bid)
+        .SumAsync()
+        .ToStringAsync();
 
     private Hand ParseLine(string line) =>
-        line.SplitBy(" ", parts => new Hand(
-            parts.First,
-            int.Parse(parts.Second)
-        ));
+        line.SplitBy(" ")
+            .Transform(parts => new Hand(
+                parts.First(),
+                int.Parse(parts.Second())
+            ));
 
     private static int Strength(char c, bool useJokers)
     {
@@ -72,7 +73,7 @@ public class Challenge07
     {
         var values = cards.GroupBy(c => c).ToDictionary(kv => kv.Key, kv => kv.Count());
 
-        int jokerCount = 0;
+        var jokerCount = 0;
         if (useJokers)
             values.TryGetValue('J', out jokerCount);
 

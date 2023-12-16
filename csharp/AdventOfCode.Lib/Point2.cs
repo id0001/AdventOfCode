@@ -3,6 +3,10 @@
 public readonly record struct Point2(int X, int Y) : IPoint
 {
     public static readonly Point2 Zero = new();
+    public static readonly Point2 Up = new(0, -1);
+    public static readonly Point2 Right = new(1, 0);
+    public static readonly Point2 Down = new(0, 1);
+    public static readonly Point2 Left = new(-1, 0);
 
     int IPoint.this[int index] => index switch
     {
@@ -124,6 +128,8 @@ public readonly record struct Point2(int X, int Y) : IPoint
     public static Point2 operator -(Point2 left, Point2 right) => Subtract(left, right);
 
     public static Point2 operator *(Point2 left, int right) => Multiply(left, right);
+
+    public static Point2 operator *(int left, Point2 right) => Multiply(right, left);
 
     public static implicit operator Vector2(Point2 value) => new(value.X, value.Y);
 

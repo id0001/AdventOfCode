@@ -66,7 +66,7 @@ public class Challenge02
         return (x * y).ToString();
     }
 
-    private Movement ParseLine(string line) => line.SplitBy(" ", parts => new Movement(parts.First, int.Parse(parts.Second)));
+    private Movement ParseLine(string line) => line.SplitBy(" ").Transform(parts => new Movement(parts.First(), int.Parse(parts.Second())));
 
     private record Movement(string Direction, int Amount);
 }

@@ -36,27 +36,28 @@ public class Challenge06
         // x^2 - tx - d = 0
 
         var (low, high) = Polynomial.FindRoots(1d, -time, distance);
-        var r = ((long)Math.Ceiling(high) - 1) - (long)Math.Floor(low);
+        var r = (long) Math.Ceiling(high) - 1 - (long) Math.Floor(low);
         return r;
     }
 
     private (long[], long[]) ParseInput(string input)
     {
         var nl = Environment.NewLine;
-        return input.SplitBy(nl, split => (
-                split.First.SplitBy(":").Second.SplitBy(" ").Select(long.Parse).ToArray(),
-                split.Second.SplitBy(":").Second.SplitBy(" ").Select(long.Parse).ToArray()
-            )
-        );
+        return input
+            .SplitBy(nl)
+            .Transform(parts => (
+                parts.First().SplitBy(":").Second().SplitBy(" ").Select(long.Parse).ToArray(),
+                parts.Second().SplitBy(":").Second().SplitBy(" ").Select(long.Parse).ToArray()
+            ));
     }
 
     private (long, long) ParseInput2(string input)
     {
         var nl = Environment.NewLine;
-        return input.SplitBy(nl, split => (
-                int.Parse(split.First.SplitBy(":").Second.Replace(" ", "")),
-                long.Parse(split.Second.SplitBy(":").Second.Replace(" ", ""))
-            )
-        );
+        return input.SplitBy(nl)
+            .Transform(parts => (
+                int.Parse(parts.First().SplitBy(":").Second().Replace(" ", "")),
+                long.Parse(parts.Second().SplitBy(":").Second().Replace(" ", ""))
+            ));
     }
 }

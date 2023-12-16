@@ -24,12 +24,12 @@ public class Challenge15
     public async Task<string> Part2Async()
     {
         var boxes = Enumerable.Range(0, 256).Select(_ => new List<Lens>()).ToArray();
-        
+
         await foreach (var part in _inputReader.ReadLineAsync(15, ','))
-        {
             if (part.Contains('='))
             {
-                var lens = part.SplitBy("=", parts => new Lens(parts.First, int.Parse(parts.Second)));
+                var lens = part.SplitBy("=")
+                    .Transform(parts => new Lens(parts.First(), int.Parse(parts.Second())));
                 var hash = Hash(lens.Label);
                 var index = boxes[hash].IndexOf(lens);
                 if (index < 0)
@@ -39,13 +39,12 @@ public class Challenge15
             }
             else
             {
-                var lens = new Lens(part[0..^1], 0);
+                var lens = new Lens(part[..^1], 0);
                 var hash = Hash(lens.Label);
                 var index = boxes[hash].IndexOf(lens);
                 if (index >= 0)
                     boxes[hash].RemoveAt(index);
             }
-        }
 
         return boxes
             .SelectMany((b, bi) => b

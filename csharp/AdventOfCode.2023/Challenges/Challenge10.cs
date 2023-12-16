@@ -31,7 +31,7 @@ public class Challenge10
         grid[start.Y, start.X] = GetStartType(grid, start);
 
         var pipeSegments = GetLoop(grid, start).Keys.ToHashSet();
-        
+
         // Loop over every row and column and count how many vertical borders are crossed.
         // A point is inside the polygon when the amount of crossed borders is uneven.
         var inside = 0;
@@ -56,7 +56,7 @@ public class Challenge10
                         continue;
                     }
 
-                    if(grid[y,x] == '-') // Special case - does not cross any border
+                    if (grid[y, x] == '-') // Special case - does not cross any border
                         continue;
 
                     prev = grid[y, x];
@@ -64,11 +64,11 @@ public class Challenge10
                     continue;
                 }
 
-                if (bordersCrossed % 2 == 1) 
+                if (bordersCrossed % 2 == 1)
                     inside++;
             }
         }
-        
+
         return inside.ToString();
     }
 
@@ -82,13 +82,13 @@ public class Challenge10
         {
             var currentNode = queue.Dequeue();
             var currentDistance = visited[currentNode];
-            
+
             foreach (var adjacent in GetConnectingPipes(grid, currentNode))
             {
-                if (visited.ContainsKey(adjacent)) 
+                if (visited.ContainsKey(adjacent))
                     continue;
-                
-                visited.Add(adjacent, currentDistance+1);
+
+                visited.Add(adjacent, currentDistance + 1);
                 queue.Enqueue(adjacent);
             }
         }
@@ -121,10 +121,8 @@ public class Challenge10
         var neighbors = start.GetNeighbors().ToList();
         var bits = 0;
         for (var i = 0; i < 4; i++)
-        {
             if (pipes.Contains(neighbors[i]))
                 bits |= 1 << i;
-        }
 
         return bits switch
         {
@@ -141,9 +139,9 @@ public class Challenge10
     private static Point2 FindStart(char[,] grid)
     {
         for (var y = 0; y < grid.GetLength(0); y++)
-            for (var x = 0; x < grid.GetLength(1); x++)
-                if (grid[y, x] == 'S')
-                    return new Point2(x, y);
+        for (var x = 0; x < grid.GetLength(1); x++)
+            if (grid[y, x] == 'S')
+                return new Point2(x, y);
 
         throw new InvalidOperationException("Starting point not found");
     }

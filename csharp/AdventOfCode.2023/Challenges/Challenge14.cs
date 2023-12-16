@@ -1,7 +1,7 @@
+using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Text;
 
 namespace AdventOfCode2023.Challenges;
 
@@ -33,7 +33,7 @@ public class Challenge14
 
         var totalCycles = 1_000_000_000;
         var states = new Dictionary<string, int>();
-        bool cycleFound = false;
+        var cycleFound = false;
         for (var i = 0; i < totalCycles; i++)
         {
             states.TryAdd(GetState(round, cubes, grid), i);
@@ -63,22 +63,16 @@ public class Challenge14
         var cubes = new HashSet<Point2>();
 
         for (var y = 0; y < grid.GetLength(0); y++)
-        {
-            for (var x = 0; x < grid.GetLength(1); x++)
+        for (var x = 0; x < grid.GetLength(1); x++)
+            switch (grid[y, x])
             {
-                switch (grid[y, x])
-                {
-                    case 'O':
-                        round.Add(new Point2(x, y));
-                        break;
-                    case '#':
-                        cubes.Add(new Point2(x, y));
-                        break;
-                    default:
-                        break;
-                }
+                case 'O':
+                    round.Add(new Point2(x, y));
+                    break;
+                case '#':
+                    cubes.Add(new Point2(x, y));
+                    break;
             }
-        }
 
         return (round, cubes);
     }
@@ -153,14 +147,12 @@ public class Challenge14
         for (var y = 0; y < grid.GetLength(0); y++)
         {
             for (var x = 0; x < grid.GetLength(1); x++)
-            {
                 if (round.Contains(new Point2(x, y)))
                     sb.Append('O');
                 else if (cubes.Contains(new Point2(x, y)))
                     sb.Append('#');
                 else
                     sb.Append('.');
-            }
 
             sb.AppendLine();
         }

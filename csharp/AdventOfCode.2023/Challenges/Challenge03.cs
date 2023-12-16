@@ -1,7 +1,7 @@
+using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode2023.Challenges;
 
@@ -22,7 +22,7 @@ public class Challenge03
 
         var sum = 0;
         var numberPattern = new Regex(@"(\d+)", RegexOptions.Compiled);
-        for (int l = 0; l < lines.Count; l++)
+        for (var l = 0; l < lines.Count; l++)
         {
             var line = lines[l];
             var matches = numberPattern.Matches(line);
@@ -31,7 +31,8 @@ public class Challenge03
                 var numstr = matches[i].Groups[1].Value;
                 var index = matches[i].Groups[1].Index;
 
-                var neighbors = Enumerable.Range(index, numstr.Length).Select(x => new Point2(x, l)).SelectMany(p => p.GetNeighbors(true)).ToHashSet();
+                var neighbors = Enumerable.Range(index, numstr.Length).Select(x => new Point2(x, l))
+                    .SelectMany(p => p.GetNeighbors(true)).ToHashSet();
                 foreach (var neighbor in neighbors)
                 {
                     if (neighbor.Y < 0 || neighbor.Y >= lines.Count || neighbor.X < 0 || neighbor.X >= line.Length)
@@ -56,10 +57,10 @@ public class Challenge03
         var lines = await _inputReader.ReadLinesAsync(3).ToListAsync();
 
         var sum = 0;
-        for (int y = 0; y < lines.Count; y++)
-            for (int x = 0; x < lines[y].Length; x++)
-                if (lines[y][x] == '*')
-                    sum += FindGearRatio(lines, x, y);
+        for (var y = 0; y < lines.Count; y++)
+        for (var x = 0; x < lines[y].Length; x++)
+            if (lines[y][x] == '*')
+                sum += FindGearRatio(lines, x, y);
 
         return sum.ToString();
     }
@@ -69,7 +70,6 @@ public class Challenge03
         var numPosCheck = new HashSet<Point2>();
         var numbers = new List<int>();
         foreach (var neighbor in new Point2(x, y).GetNeighbors(true))
-        {
             if (char.IsDigit(lines[neighbor.Y][neighbor.X]))
             {
                 var (index, length) = ExpandNumber(lines, neighbor.X, neighbor.Y);
@@ -80,7 +80,6 @@ public class Challenge03
                     numbers.Add(int.Parse(lines[neighbor.Y].Substring(index, length)));
                 }
             }
-        }
 
         if (numbers.Count != 2)
             return 0;

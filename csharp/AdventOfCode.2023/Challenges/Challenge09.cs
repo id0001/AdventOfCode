@@ -37,7 +37,7 @@ public class Challenge09
         if (sequence.All(x => x == 0))
             return 0;
 
-        var newSequence = sequence.Windowed(2).Select(pair => pair[1]-pair[0]).ToArray();
+        var newSequence = sequence.Windowed(2).Select(pair => pair[1] - pair[0]).ToArray();
         var next = NextNumber(newSequence);
         return next + sequence[^1];
     }
