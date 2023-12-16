@@ -21,11 +21,9 @@ public class Challenge14
         var map = new SparseSpatialMap<Point2, char>();
 
         await foreach (var points in _inputReader.ParseLinesAsync(14, ParseLine))
-        {
-            foreach (var (current, next) in points.CurrentAndNext())
-            foreach (var p in Point2.BresenhamLine(current, next))
-                map.Set(p, '#');
-        }
+        foreach (var (current, next) in points.CurrentAndNext())
+        foreach (var p in Point2.BresenhamLine(current, next))
+            map.Set(p, '#');
 
         var down = new Point2(0, 1);
         var downLeft = new Point2(-1, 1);
@@ -33,7 +31,7 @@ public class Challenge14
         var start = new Point2(500, 0);
 
         var s = 0;
-        var bottomBound = map.Bounds.GetMax(1);
+        var bottomBound = map.Bounds.GetMax(1) + 1;
         var curr = start;
 
         while (curr.Y < bottomBound)
@@ -70,11 +68,9 @@ public class Challenge14
         var map = new SparseSpatialMap<Point2, char>();
 
         await foreach (var points in _inputReader.ParseLinesAsync(14, ParseLine))
-        {
-            foreach (var (current, next) in points.CurrentAndNext())
-            foreach (var p in Point2.BresenhamLine(current, next))
-                map.Set(p, '#');
-        }
+        foreach (var (current, next) in points.CurrentAndNext())
+        foreach (var p in Point2.BresenhamLine(current, next))
+            map.Set(p, '#');
 
         var down = new Point2(0, 1);
         var downLeft = new Point2(-1, 1);
@@ -82,7 +78,7 @@ public class Challenge14
         var start = new Point2(500, 0);
 
         var s = 0;
-        var bottomBound = map.Bounds.GetMax(1) + 1;
+        var bottomBound = map.Bounds.GetMax(1) + 2;
         var curr = start;
 
         while (true)

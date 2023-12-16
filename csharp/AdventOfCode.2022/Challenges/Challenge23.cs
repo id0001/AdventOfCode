@@ -75,8 +75,8 @@ public class Challenge23
         }
 
         var emptySpaces = 0;
-        for (var y = state.Bounds.GetMin(1); y < state.Bounds.GetMax(1); y++)
-        for (var x = state.Bounds.GetMin(0); x < state.Bounds.GetMax(0); x++)
+        for (var y = state.Bounds.GetMin(1); y <= state.Bounds.GetMax(1); y++)
+        for (var x = state.Bounds.GetMin(0); x <= state.Bounds.GetMax(0); x++)
             if (!state.Contains(new Point2(x, y)))
                 emptySpaces++;
 

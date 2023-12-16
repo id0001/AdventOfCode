@@ -42,9 +42,9 @@ public class Challenge20
         var map = StitchImage();
 
         var l = map.Bounds.GetMin(0);
-        var r = map.Bounds.GetMax(0) - 1;
+        var r = map.Bounds.GetMax(0);
         var t = map.Bounds.GetMin(1);
-        var b = map.Bounds.GetMax(1) - 1;
+        var b = map.Bounds.GetMax(1);
 
         return (map[new Point2(l, t)]!.Id * map[new Point2(r, t)]!.Id * map[new Point2(l, b)]!.Id *
                 map[new Point2(r, b)]!.Id).ToString();
@@ -56,11 +56,11 @@ public class Challenge20
         var map = StitchImage();
 
         var lake = new List<string> { "Tile 0000:" };
-        for (var mapY = map.Bounds.GetMin(1); mapY < map.Bounds.GetMax(1); mapY++)
+        for (var mapY = map.Bounds.GetMin(1); mapY <= map.Bounds.GetMax(1); mapY++)
         for (var lineY = 1; lineY < 9; lineY++)
         {
             var sb = new StringBuilder();
-            for (var mapX = map.Bounds.GetMin(0); mapX < map.Bounds.GetMax(0); mapX++)
+            for (var mapX = map.Bounds.GetMin(0); mapX <= map.Bounds.GetMax(0); mapX++)
             {
                 var p = new Point2(mapX, mapY);
 

@@ -1,11 +1,11 @@
-﻿namespace AdventOfCode.Lib;
+﻿namespace AdventOfCode.Lib.Collections.Helpers;
 
 public class BoundingBox<T> where T : IPoint, new()
 {
     private int[] _min;
     private int[] _max;
 
-    public BoundingBox()
+    internal BoundingBox()
     {
         Dimensions = new T().Dimensions;
         _min = Enumerable.Repeat(int.MaxValue, Dimensions).ToArray();
@@ -58,7 +58,7 @@ public class BoundingBox<T> where T : IPoint, new()
         if (dimension < 0 || dimension >= Dimensions)
             throw new ArgumentOutOfRangeException(nameof(dimension));
 
-        return _max[dimension] + 1;
+        return _max[dimension];
     }
 
     public bool Contains(IPoint point, int inflateBy = 0)

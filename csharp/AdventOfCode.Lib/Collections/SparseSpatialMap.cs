@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using AdventOfCode.Lib.Collections.Helpers;
 
 namespace AdventOfCode.Lib.Collections;
 
