@@ -39,13 +39,6 @@ public class SparseSpatialMap<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TVa
 
     public TValue? Get(TKey p, TValue defaultValue) => !_map.ContainsKey(p) ? defaultValue : _map[p];
 
-    public IEnumerable<KeyValuePair<TKey, TValue?>> GetNeighbors(TKey p, bool includeDiagonal = false)
-    {
-        foreach (TKey neighbor in p.GetNeighbors(includeDiagonal))
-            if (_map.TryGetValue(neighbor, out var value))
-                yield return new KeyValuePair<TKey, TValue?>(neighbor, value);
-    }
-
     public bool ContainsKey(TKey key) => _map.ContainsKey(key);
 
     private void Add(TKey key, TValue? value)
