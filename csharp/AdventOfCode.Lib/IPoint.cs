@@ -1,11 +1,11 @@
 ﻿using System.Numerics;
 namespace AdventOfCode.Lib;
 
-public interface IPoint<T> : IEquatable<IPoint<T>> where T : IBinaryInteger<T>, IMinMaxValue<T>
+public interface IPoint<TNumber> : IEquatable<IPoint<TNumber>> where TNumber : IBinaryInteger<TNumber>
 {
-    T this[int index] { get; }
+    TNumber this[int index] { get; }
 
     int Dimensions { get; }
 
-    IEnumerable<IPoint<T>> GetNeighbors(bool includeDiagonal = false);
+    IEnumerable<IPoint<TNumber>> GetNeighbors(bool includeDiagonal = false);
 }

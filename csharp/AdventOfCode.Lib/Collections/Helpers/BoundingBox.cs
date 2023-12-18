@@ -2,8 +2,8 @@
 
 namespace AdventOfCode.Lib.Collections.Helpers;
 
-public class BoundingBox<T, TNumber>
-    where T : IPoint<TNumber>, new()
+public class BoundingBox<TPoint, TNumber>
+    where TPoint : IPoint<TNumber>, new()
     where TNumber : IBinaryInteger<TNumber>, IMinMaxValue<TNumber>
 {
     private TNumber[] _min;
@@ -11,14 +11,14 @@ public class BoundingBox<T, TNumber>
 
     internal BoundingBox()
     {
-        Dimensions = new T().Dimensions;
+        Dimensions = new TPoint().Dimensions;
         _min = Enumerable.Repeat(TNumber.MaxValue, Dimensions).ToArray();
         _max = Enumerable.Repeat(TNumber.MinValue, Dimensions).ToArray();
     }
 
     public int Dimensions { get; }
 
-    public void Inflate(T added)
+    public void Inflate(TPoint added)
     {
         for (var d = 0; d < Dimensions; d++)
         {
@@ -30,7 +30,7 @@ public class BoundingBox<T, TNumber>
         }
     }
 
-    public void Deflate(IEnumerable<T> points, T removed)
+    public void Deflate(IEnumerable<TPoint> points, TPoint removed)
     {
         var shouldUpdate = false;
         for (var d = 0; d < Dimensions; d++)

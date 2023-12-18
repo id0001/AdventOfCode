@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2023.Challenges;
 
@@ -39,35 +40,35 @@ public class Challenge18
     [Part1]
     public async Task<string> Part1Async()
     {
-        var vertices = new List<LongPoint>();
-        var current = new LongPoint(0, 0);
-        var circumference = 0L;
+        var vertices = new List<LongPoint2>();
+        var current = new LongPoint2(0, 0);
+        var pointsInBorder = 0L;
         await foreach (var instruction in _inputReader.ParseLinesAsync(18, ParseLine))
         {
-            circumference += instruction.Amount;
+            pointsInBorder += instruction.Amount;
             var face = GetDirection(instruction.Direction);
-            current = new LongPoint(current.X + (face.X * instruction.Amount), current.Y + (face.Y * instruction.Amount));
+            current = new LongPoint2(current.X + (face.X * instruction.Amount), current.Y + (face.Y * instruction.Amount));
             vertices.Add(current);
         }
-        
-        return (GetArea(vertices) + circumference / 2 + 1).ToString();
+
+        return (Polygon.CountInteriorPoints((long)Polygon.ShoelaceArea(vertices), pointsInBorder) + pointsInBorder).ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        var vertices = new List<LongPoint>();
-        var current = new LongPoint(0, 0);
-        var circumference = 0L;
+        var vertices = new List<LongPoint2>();
+        var current = new LongPoint2(0, 0);
+        var pointsInBorder = 0L;
         await foreach (var instruction in _inputReader.ParseLinesAsync(18, ParseLine2))
         {
-            circumference += instruction.Amount;
+            pointsInBorder += instruction.Amount;
             var face = GetDirection(instruction.Direction);
-            current = new LongPoint(current.X + (face.X * instruction.Amount), current.Y + (face.Y * instruction.Amount));
+            current = new LongPoint2(current.X + (face.X * instruction.Amount), current.Y + (face.Y * instruction.Amount));
             vertices.Add(current);
         }
 
-        return (GetArea(vertices) + circumference / 2 + 1).ToString();
+        return (Polygon.CountInteriorPoints((long)Polygon.ShoelaceArea(vertices), pointsInBorder) + pointsInBorder).ToString();
     }
 
     private static Point2 GetDirection(char c) => c switch
@@ -78,24 +79,6 @@ public class Challenge18
         'L' => Point2.Left,
         _ => throw new ArgumentOutOfRangeException()
     };
-
-    private double GetArea(IList<LongPoint> vertices)
-    {
-        var vcount = vertices.Count;
-        var sum1 = 0L;
-        var sum2 = 0L;
-
-        for (var i = 0; i < vcount - 1; i++)
-        {
-            sum1 += vertices[i].X * vertices[i + 1].Y;
-            sum2 += vertices[i].Y * vertices[i + 1].X;
-        }
-
-        sum1 += vertices[vcount - 1].X * vertices[0].Y;
-        sum2 += vertices[vcount - 1].Y * vertices[0].X;
-
-        return Math.Abs(sum1 - sum2) / 2d;
-    }
 
     private static Instruction ParseLine(string line)
     {
@@ -123,6 +106,4 @@ public class Challenge18
     }
 
     private record Instruction(char Direction, long Amount);
-
-    private record LongPoint(long X, long Y);
 }
