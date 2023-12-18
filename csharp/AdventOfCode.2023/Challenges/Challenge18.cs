@@ -40,14 +40,14 @@ public class Challenge18
     [Part1]
     public async Task<string> Part1Async()
     {
-        var vertices = new List<LongPoint2>();
-        var current = new LongPoint2(0, 0);
+        var vertices = new List<Point2L>();
+        var current = new Point2L(0, 0);
         var pointsInBorder = 0L;
         await foreach (var instruction in _inputReader.ParseLinesAsync(18, ParseLine))
         {
             pointsInBorder += instruction.Amount;
             var face = GetDirection(instruction.Direction);
-            current = new LongPoint2(current.X + (face.X * instruction.Amount), current.Y + (face.Y * instruction.Amount));
+            current = new Point2L(current.X + (face.X * instruction.Amount), current.Y + (face.Y * instruction.Amount));
             vertices.Add(current);
         }
 
@@ -57,14 +57,14 @@ public class Challenge18
     [Part2]
     public async Task<string> Part2Async()
     {
-        var vertices = new List<LongPoint2>();
-        var current = new LongPoint2(0, 0);
+        var vertices = new List<Point2L>();
+        var current = new Point2L(0, 0);
         var pointsInBorder = 0L;
         await foreach (var instruction in _inputReader.ParseLinesAsync(18, ParseLine2))
         {
             pointsInBorder += instruction.Amount;
             var face = GetDirection(instruction.Direction);
-            current = new LongPoint2(current.X + (face.X * instruction.Amount), current.Y + (face.Y * instruction.Amount));
+            current = new Point2L(current.X + (face.X * instruction.Amount), current.Y + (face.Y * instruction.Amount));
             vertices.Add(current);
         }
 

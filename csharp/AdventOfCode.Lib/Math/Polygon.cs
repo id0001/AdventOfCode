@@ -38,7 +38,7 @@ namespace AdventOfCode.Lib.Math
         /// </summary>
         /// <param name="vertices"></param>
         /// <returns></returns>
-        public static double ShoelaceArea(IList<LongPoint2> vertices) => ShoelaceArea<LongPoint2, long>(vertices);
+        public static double ShoelaceArea(IList<Point2L> vertices) => ShoelaceArea<Point2L, long>(vertices);
 
         private static double ShoelaceArea<TPoint, TNumber>(IList<TPoint> vertices)
             where TPoint : IPoint<TNumber>

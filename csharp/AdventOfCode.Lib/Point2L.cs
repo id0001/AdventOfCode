@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Lib
 {
-    public readonly record struct LongPoint2(long X, long Y) : IPoint<long>
+    public readonly record struct Point2L(long X, long Y) : IPoint<long>
     {
         long IPoint<long>.this[int index] => index switch
         {
@@ -30,7 +30,7 @@
 
         IEnumerable<IPoint<long>> IPoint<long>.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint<long>>();
 
-        public IEnumerable<LongPoint2> GetNeighbors(bool includeDiagonal = false)
+        public IEnumerable<Point2L> GetNeighbors(bool includeDiagonal = false)
         {
             for (var y = -1; y <= 1; y++)
                 for (var x = -1; x <= 1; x++)
@@ -41,7 +41,7 @@
                     if (x == 0 && y == 0)
                         continue;
 
-                    yield return new LongPoint2(X + x, Y + y);
+                    yield return new Point2L(X + x, Y + y);
                 }
         }
     }
