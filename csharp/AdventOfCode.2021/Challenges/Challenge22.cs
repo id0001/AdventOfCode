@@ -41,7 +41,7 @@ public class Challenge22
     [Part1]
     public string Part1()
     {
-        var map = new SparseSpatialMap<Point3, bool>();
+        var map = new SparseSpatialMap<Point3, int, bool>();
 
         var bounds = new Cube(-50, -50, -50, 101, 101, 101);
 

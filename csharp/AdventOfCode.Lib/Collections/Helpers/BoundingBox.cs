@@ -1,15 +1,19 @@
-﻿namespace AdventOfCode.Lib.Collections.Helpers;
+﻿using System.Numerics;
 
-public class BoundingBox<T> where T : IPoint, new()
+namespace AdventOfCode.Lib.Collections.Helpers;
+
+public class BoundingBox<T, TNumber>
+    where T : IPoint<TNumber>, new()
+    where TNumber : IBinaryInteger<TNumber>, IMinMaxValue<TNumber>
 {
-    private int[] _min;
-    private int[] _max;
+    private TNumber[] _min;
+    private TNumber[] _max;
 
     internal BoundingBox()
     {
         Dimensions = new T().Dimensions;
-        _min = Enumerable.Repeat(int.MaxValue, Dimensions).ToArray();
-        _max = Enumerable.Repeat(int.MinValue, Dimensions).ToArray();
+        _min = Enumerable.Repeat(TNumber.MaxValue, Dimensions).ToArray();
+        _max = Enumerable.Repeat(TNumber.MinValue, Dimensions).ToArray();
     }
 
     public int Dimensions { get; }
@@ -39,13 +43,13 @@ public class BoundingBox<T> where T : IPoint, new()
 
         if (!shouldUpdate) return;
 
-        _min = Enumerable.Repeat(int.MaxValue, Dimensions).ToArray();
-        _max = Enumerable.Repeat(int.MinValue, Dimensions).ToArray();
+        _min = Enumerable.Repeat(TNumber.MaxValue, Dimensions).ToArray();
+        _max = Enumerable.Repeat(TNumber.MinValue, Dimensions).ToArray();
 
         foreach (var point in points) Inflate(point);
     }
 
-    public int GetMin(int dimension)
+    public TNumber GetMin(int dimension)
     {
         if (dimension < 0 || dimension >= Dimensions)
             throw new ArgumentOutOfRangeException(nameof(dimension));
@@ -53,7 +57,7 @@ public class BoundingBox<T> where T : IPoint, new()
         return _min[dimension];
     }
 
-    public int GetMax(int dimension)
+    public TNumber GetMax(int dimension)
     {
         if (dimension < 0 || dimension >= Dimensions)
             throw new ArgumentOutOfRangeException(nameof(dimension));
@@ -61,7 +65,9 @@ public class BoundingBox<T> where T : IPoint, new()
         return _max[dimension];
     }
 
-    public bool Contains(IPoint point, int inflateBy = 0)
+    public bool Contains(IPoint<TNumber> point) => Contains(point, TNumber.Zero);
+
+    public bool Contains(IPoint<TNumber> point, TNumber inflateBy)
     {
         for (var d = 0; d < Dimensions; d++)
             if (point[d] < _min[d] - inflateBy || point[d] > _max[d] + inflateBy)

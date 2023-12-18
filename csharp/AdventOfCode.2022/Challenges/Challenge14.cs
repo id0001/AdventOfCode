@@ -18,7 +18,7 @@ public class Challenge14
     [Part1]
     public async Task<string> Part1Async()
     {
-        var map = new SparseSpatialMap<Point2, char>();
+        var map = new SparseSpatialMap<Point2, int, char>();
 
         await foreach (var points in _inputReader.ParseLinesAsync(14, ParseLine))
         foreach (var (current, next) in points.CurrentAndNext())
@@ -65,7 +65,7 @@ public class Challenge14
     [Part2]
     public async Task<string> Part2Async()
     {
-        var map = new SparseSpatialMap<Point2, char>();
+        var map = new SparseSpatialMap<Point2, int, char>();
 
         await foreach (var points in _inputReader.ParseLinesAsync(14, ParseLine))
         foreach (var (current, next) in points.CurrentAndNext())

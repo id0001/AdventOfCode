@@ -29,27 +29,27 @@ public class Challenge23
     {
         var map = await _inputReader.ReadGridAsync<char>(23);
 
-        var state = new PointCloud<Point2>();
+        var state = new PointCloud<Point2, int>();
         for (var y = 0; y < map.GetLength(0); y++)
-        for (var x = 0; x < map.GetLength(1); x++)
-            if (map[y, x] == '#')
-                state.Set(new Point2(x, y));
+            for (var x = 0; x < map.GetLength(1); x++)
+                if (map[y, x] == '#')
+                    state.Set(new Point2(x, y));
 
-        var directions = new[] {NW_N_NE, SW_S_SE, NW_W_SW, NE_E_SE};
-        var movement = new[] {new Point2(0, -1), new Point2(0, 1), new Point2(-1, 0), new Point2(1, 0)};
+        var directions = new[] { NW_N_NE, SW_S_SE, NW_W_SW, NE_E_SE };
+        var movement = new[] { new Point2(0, -1), new Point2(0, 1), new Point2(-1, 0), new Point2(1, 0) };
         var dirIndex = 0;
 
         for (var round = 0; round < 10; round++)
         {
             var proposedMoves = state.ToDictionary(kv => kv);
-            var newState = new PointCloud<Point2>();
+            var newState = new PointCloud<Point2, int>();
 
             foreach (var elf in state)
             {
                 var bits = elf.GetNeighbors(true)
-                    .Select((n, i) => new {Neighbor = n, Index = i})
-                    .Aggregate((byte) 0,
-                        (bits, item) => bits |= state.Contains(item.Neighbor) ? (byte) (1 << item.Index) : (byte)0);
+                    .Select((n, i) => new { Neighbor = n, Index = i })
+                    .Aggregate((byte)0,
+                        (bits, item) => bits |= state.Contains(item.Neighbor) ? (byte)(1 << item.Index) : (byte)0);
 
                 if (bits == 0)
                     continue;
@@ -76,9 +76,9 @@ public class Challenge23
 
         var emptySpaces = 0;
         for (var y = state.Bounds.GetMin(1); y <= state.Bounds.GetMax(1); y++)
-        for (var x = state.Bounds.GetMin(0); x <= state.Bounds.GetMax(0); x++)
-            if (!state.Contains(new Point2(x, y)))
-                emptySpaces++;
+            for (var x = state.Bounds.GetMin(0); x <= state.Bounds.GetMax(0); x++)
+                if (!state.Contains(new Point2(x, y)))
+                    emptySpaces++;
 
         return emptySpaces.ToString();
     }
@@ -88,14 +88,14 @@ public class Challenge23
     {
         var map = await _inputReader.ReadGridAsync<char>(23);
 
-        var state = new PointCloud<Point2>();
+        var state = new PointCloud<Point2, int>();
         for (var y = 0; y < map.GetLength(0); y++)
-        for (var x = 0; x < map.GetLength(1); x++)
-            if (map[y, x] == '#')
-                state.Set(new Point2(x, y));
+            for (var x = 0; x < map.GetLength(1); x++)
+                if (map[y, x] == '#')
+                    state.Set(new Point2(x, y));
 
-        var directions = new[] {NW_N_NE, SW_S_SE, NW_W_SW, NE_E_SE};
-        var movement = new[] {new Point2(0, -1), new Point2(0, 1), new Point2(-1, 0), new Point2(1, 0)};
+        var directions = new[] { NW_N_NE, SW_S_SE, NW_W_SW, NE_E_SE };
+        var movement = new[] { new Point2(0, -1), new Point2(0, 1), new Point2(-1, 0), new Point2(1, 0) };
         var dirIndex = 0;
 
         var round = 0;
@@ -104,14 +104,14 @@ public class Challenge23
         {
             moved = false;
             var proposedMoves = state.ToDictionary(kv => kv);
-            var newState = new PointCloud<Point2>();
+            var newState = new PointCloud<Point2, int>();
 
             foreach (var elf in state)
             {
                 var bits = elf.GetNeighbors(true)
-                    .Select((n, i) => new {Neighbor = n, Index = i})
-                    .Aggregate((byte) 0,
-                        (bits, item) => bits |= state.Contains(item.Neighbor) ? (byte) (1 << item.Index) : (byte)0);
+                    .Select((n, i) => new { Neighbor = n, Index = i })
+                    .Aggregate((byte)0,
+                        (bits, item) => bits |= state.Contains(item.Neighbor) ? (byte)(1 << item.Index) : (byte)0);
 
                 if (bits == 0)
                     continue;

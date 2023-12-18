@@ -21,7 +21,7 @@ public class Challenge17
     {
         var dirs = await _inputReader.ReadLineAsync(17).ToListAsync();
 
-        var result = SimulateUntil(new PointCloud<Point2>(), dirs, 0, 0, 0, 0, state => state.FallenRocks == 2022);
+        var result = SimulateUntil(new PointCloud<Point2, int>(), dirs, 0, 0, 0, 0, state => state.FallenRocks == 2022);
         return result.CurrentHeight.ToString();
     }
 
@@ -34,7 +34,7 @@ public class Challenge17
         var cache = new Dictionary<StateKey, State>();
 
         // Detect cycle
-        var cycleEnd = SimulateUntil(new PointCloud<Point2>(), dirs, 0, 0, 0, 0, state =>
+        var cycleEnd = SimulateUntil(new PointCloud<Point2, int>(), dirs, 0, 0, 0, 0, state =>
         {
             if (cache.ContainsKey(state.Key)) return true;
 
@@ -59,14 +59,14 @@ public class Challenge17
         var remainingRocks = targetRocks - fallenRocks;
 
         // Simulate again from the given state until the desired amount of fallen rocks is reached
-        var rest = SimulateUntil(new PointCloud<Point2>(), dirs, cycleEnd.Key.DirIndex, cycleEnd.Key.ShapeIndex + 1, 0,
+        var rest = SimulateUntil(new PointCloud<Point2, int>(), dirs, cycleEnd.Key.DirIndex, cycleEnd.Key.ShapeIndex + 1, 0,
             0, state => state.FallenRocks == remainingRocks);
 
         // Add the remaining height to the height after the last cycle
         return (heightAfterLastCycle + rest.CurrentHeight).ToString();
     }
 
-    private Point2 MoveHorizontal(PointCloud<Point2> cloud, Point2 position, char direction, Shape shape)
+    private Point2 MoveHorizontal(PointCloud<Point2, int> cloud, Point2 position, char direction, Shape shape)
     {
         switch (direction)
         {
@@ -85,7 +85,7 @@ public class Challenge17
         return position;
     }
 
-    private bool TryMoveDown(PointCloud<Point2> cloud, Point2 position, Shape shape, out Point2 newPosition)
+    private bool TryMoveDown(PointCloud<Point2, int> cloud, Point2 position, Shape shape, out Point2 newPosition)
     {
         newPosition = position;
         if (Collides(cloud, new Point2(position.X, position.Y - 1), shape))
@@ -95,13 +95,13 @@ public class Challenge17
         return true;
     }
 
-    private bool TryMove(PointCloud<Point2> cloud, Point2 position, char direction, Shape shape, out Point2 newPosition)
+    private bool TryMove(PointCloud<Point2, int> cloud, Point2 position, char direction, Shape shape, out Point2 newPosition)
     {
         newPosition = MoveHorizontal(cloud, position, direction, shape);
         return TryMoveDown(cloud, newPosition, shape, out newPosition);
     }
 
-    private bool Collides(PointCloud<Point2> cloud, Point2 position, Shape shape)
+    private bool Collides(PointCloud<Point2, int> cloud, Point2 position, Shape shape)
     {
         // Detect boundaries
         if (position.X < 0 || position.X + shape.Width > 7 || position.Y < 0)
@@ -119,7 +119,7 @@ public class Challenge17
         return false;
     }
 
-    private void BakeShape(PointCloud<Point2> cloud, Point2 position, Shape shape)
+    private void BakeShape(PointCloud<Point2, int> cloud, Point2 position, Shape shape)
     {
         for (var ly = 0; ly < shape.Height; ly++)
         for (var lx = 0; lx < shape.Width; lx++)
@@ -130,7 +130,7 @@ public class Challenge17
         }
     }
 
-    private short Hash(PointCloud<Point2> cloud, int currentHeight)
+    private short Hash(PointCloud<Point2, int> cloud, int currentHeight)
     {
         short code = 0;
         for (var x = 0; x < 7; x++)
@@ -140,7 +140,7 @@ public class Challenge17
         return code;
     }
 
-    private State SimulateUntil(PointCloud<Point2> cloud, List<char> dirs, int dirIndex, int shapeIndex,
+    private State SimulateUntil(PointCloud<Point2, int> cloud, List<char> dirs, int dirIndex, int shapeIndex,
         int currentHeight, int fallenRocks, Func<State, bool> predicate)
     {
         var shape1 = new Shape(4, 1, new[,] {{true, true, true, true}}); // -

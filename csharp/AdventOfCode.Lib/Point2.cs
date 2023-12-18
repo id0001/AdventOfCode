@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly record struct Point2(int X, int Y) : IPoint
+public readonly record struct Point2(int X, int Y) : IPoint<int>
 {
     public static readonly Point2 Zero = new();
     public static readonly Point2 Up = new(0, -1);
@@ -8,23 +8,23 @@ public readonly record struct Point2(int X, int Y) : IPoint
     public static readonly Point2 Down = new(0, 1);
     public static readonly Point2 Left = new(-1, 0);
 
-    int IPoint.this[int index] => index switch
+    int IPoint<int>.this[int index] => index switch
     {
         0 => X,
         1 => Y,
         _ => throw new NotSupportedException()
     };
 
-    int IPoint.Dimensions => 2;
+    int IPoint<int>.Dimensions => 2;
 
-    IEnumerable<IPoint> IPoint.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint>();
+    IEnumerable<IPoint<int>> IPoint<int>.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
 
-    public bool Equals(IPoint? other)
+    public bool Equals(IPoint<int>? other)
     {
         if (other is null)
             return false;
 
-        var instance = (IPoint) this;
+        var instance = (IPoint<int>) this;
 
         if (other.Dimensions != instance.Dimensions)
             return false;

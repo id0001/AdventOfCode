@@ -1,13 +1,16 @@
 ﻿using System.Collections;
+using System.Numerics;
 using AdventOfCode.Lib.Collections.Helpers;
 
 namespace AdventOfCode.Lib.Collections;
 
-public class SparseSpatialMap<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TKey : IPoint, new()
+public class SparseSpatialMap<TKey, TNumber, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
+    where TKey : IPoint<TNumber>, new()
+    where TNumber : IBinaryInteger<TNumber>, IMinMaxValue<TNumber>
 {
     private readonly Dictionary<TKey, TValue?> _map = new();
 
-    public BoundingBox<TKey> Bounds { get; } = new();
+    public BoundingBox<TKey, TNumber> Bounds { get; } = new();
 
     public TValue? this[TKey key]
     {

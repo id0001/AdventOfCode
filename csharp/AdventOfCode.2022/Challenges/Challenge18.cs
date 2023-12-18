@@ -29,7 +29,7 @@ public class Challenge18
     {
         var points = await _inputReader.ParseLinesAsync(18, ParseLine).ToHashSetAsync();
 
-        var cloud = new PointCloud<Point3>(points);
+        var cloud = new PointCloud<Point3, int>(points);
         var outsideAir = new HashSet<Point3>();
         FloodFill(new Point3(cloud.Bounds.GetMin(0) - 1, cloud.Bounds.GetMin(1) - 1, cloud.Bounds.GetMin(2) - 1), cloud,
             outsideAir);
@@ -38,7 +38,7 @@ public class Challenge18
         return surfaceCount.ToString();
     }
 
-    private static void FloodFill(Point3 start, PointCloud<Point3> cloud, ISet<Point3> points)
+    private static void FloodFill(Point3 start, PointCloud<Point3, int> cloud, ISet<Point3> points)
     {
         var stack = new Stack<Point3>();
         stack.Push(start);

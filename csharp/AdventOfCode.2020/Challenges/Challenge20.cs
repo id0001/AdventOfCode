@@ -57,18 +57,18 @@ public class Challenge20
 
         var lake = new List<string> { "Tile 0000:" };
         for (var mapY = map.Bounds.GetMin(1); mapY <= map.Bounds.GetMax(1); mapY++)
-        for (var lineY = 1; lineY < 9; lineY++)
-        {
-            var sb = new StringBuilder();
-            for (var mapX = map.Bounds.GetMin(0); mapX <= map.Bounds.GetMax(0); mapX++)
+            for (var lineY = 1; lineY < 9; lineY++)
             {
-                var p = new Point2(mapX, mapY);
+                var sb = new StringBuilder();
+                for (var mapX = map.Bounds.GetMin(0); mapX <= map.Bounds.GetMax(0); mapX++)
+                {
+                    var p = new Point2(mapX, mapY);
 
-                for (var lineX = 1; lineX < 9; lineX++) sb.Append(map[p]![lineY, lineX]);
+                    for (var lineX = 1; lineX < 9; lineX++) sb.Append(map[p]![lineY, lineX]);
+                }
+
+                lake.Add(sb.ToString());
             }
-
-            lake.Add(sb.ToString());
-        }
 
         var monster = new[]
         {
@@ -84,14 +84,14 @@ public class Challenge20
         {
             lakeImg.Orientation = orientation;
             for (var y = 0; y < lakeImg.Height - 3; y++)
-            for (var x = 0; x < lakeImg.Width - monster[0].Length; x++)
-            {
-                if (IsMonster(lakeImg, monster, x, y))
+                for (var x = 0; x < lakeImg.Width - monster[0].Length; x++)
                 {
-                    monsterCount++;
-                    MarkMonster(lakeImg, monster, x, y);
+                    if (IsMonster(lakeImg, monster, x, y))
+                    {
+                        monsterCount++;
+                        MarkMonster(lakeImg, monster, x, y);
+                    }
                 }
-            }
 
             if (monsterCount > 0)
                 break;
@@ -99,11 +99,11 @@ public class Challenge20
 
         var foamCount = 0;
         for (var y = 0; y < lakeImg.Height; y++)
-        for (var x = 0; x < lakeImg.Width; x++)
-        {
-            if (lakeImg[y, x] == '#')
-                foamCount++;
-        }
+            for (var x = 0; x < lakeImg.Width; x++)
+            {
+                if (lakeImg[y, x] == '#')
+                    foamCount++;
+            }
 
         return foamCount.ToString();
     }
@@ -111,11 +111,11 @@ public class Challenge20
     private static bool IsMonster(Image lake, IReadOnlyList<string> monster, int lx, int ly)
     {
         for (var my = 0; my < monster.Count; my++)
-        for (var mx = 0; mx < monster[my].Length; mx++)
-        {
-            if (monster[my][mx] == '#' && lake[ly + my, lx + mx] != '#')
-                return false;
-        }
+            for (var mx = 0; mx < monster[my].Length; mx++)
+            {
+                if (monster[my][mx] == '#' && lake[ly + my, lx + mx] != '#')
+                    return false;
+            }
 
         return true;
     }
@@ -123,16 +123,16 @@ public class Challenge20
     private static void MarkMonster(Image lake, IReadOnlyList<string> monster, int lx, int ly)
     {
         for (var my = 0; my < monster.Count; my++)
-        for (var mx = 0; mx < monster[my].Length; mx++)
-        {
-            if (monster[my][mx] == '#' && lake[ly + my, lx + mx] == '#')
-                lake[ly + my, lx + mx] = 'O';
-        }
+            for (var mx = 0; mx < monster[my].Length; mx++)
+            {
+                if (monster[my][mx] == '#' && lake[ly + my, lx + mx] == '#')
+                    lake[ly + my, lx + mx] = 'O';
+            }
     }
 
-    private SparseSpatialMap<Point2, Image> StitchImage()
+    private SparseSpatialMap<Point2, int, Image> StitchImage()
     {
-        var map = new SparseSpatialMap<Point2, Image>();
+        var map = new SparseSpatialMap<Point2, int, Image>();
         var list = _images.ToList();
         map.Set(Point2.Zero, list[0]);
         list.Remove(map[Point2.Zero]!);
@@ -152,42 +152,42 @@ public class Challenge20
 
             var toRemove = new List<Image>();
             foreach (var img in list)
-            foreach (var orientation in Image.PossibleOrientations)
-            {
-                img.Orientation = orientation;
-
-                if (!map.ContainsKey(neighbors[0]) && img.Bottom == map[coord]!.Top)
+                foreach (var orientation in Image.PossibleOrientations)
                 {
-                    map.Set(neighbors[0], img);
-                    toRemove.Add(img);
-                    stack.Push(neighbors[0]);
-                    break;
-                }
+                    img.Orientation = orientation;
 
-                if (!map.ContainsKey(neighbors[1]) && img.Left == map[coord]!.Right)
-                {
-                    map.Set(neighbors[1], img);
-                    toRemove.Add(img);
-                    stack.Push(neighbors[1]);
-                    break;
-                }
+                    if (!map.ContainsKey(neighbors[0]) && img.Bottom == map[coord]!.Top)
+                    {
+                        map.Set(neighbors[0], img);
+                        toRemove.Add(img);
+                        stack.Push(neighbors[0]);
+                        break;
+                    }
 
-                if (!map.ContainsKey(neighbors[2]) && img.Top == map[coord]!.Bottom)
-                {
-                    map.Set(neighbors[2], img);
-                    toRemove.Add(img);
-                    stack.Push(neighbors[2]);
-                    break;
-                }
+                    if (!map.ContainsKey(neighbors[1]) && img.Left == map[coord]!.Right)
+                    {
+                        map.Set(neighbors[1], img);
+                        toRemove.Add(img);
+                        stack.Push(neighbors[1]);
+                        break;
+                    }
 
-                if (!map.ContainsKey(neighbors[3]) && img.Right == map[coord]!.Left)
-                {
-                    map.Set(neighbors[3], img);
-                    toRemove.Add(img);
-                    stack.Push(neighbors[3]);
-                    break;
+                    if (!map.ContainsKey(neighbors[2]) && img.Top == map[coord]!.Bottom)
+                    {
+                        map.Set(neighbors[2], img);
+                        toRemove.Add(img);
+                        stack.Push(neighbors[2]);
+                        break;
+                    }
+
+                    if (!map.ContainsKey(neighbors[3]) && img.Right == map[coord]!.Left)
+                    {
+                        map.Set(neighbors[3], img);
+                        toRemove.Add(img);
+                        stack.Push(neighbors[3]);
+                        break;
+                    }
                 }
-            }
 
             foreach (var item in toRemove)
                 list.Remove(item);

@@ -19,7 +19,7 @@ public class Challenge17
     [Part1]
     public async Task<string> Part1Async()
     {
-        var state = new PointCloud<Point3>();
+        var state = new PointCloud<Point3, int>();
 
         var lines = await _inputReader.ReadLinesAsync(17).ToArrayAsync();
         for (var y = 0; y < lines.Length; y++)
@@ -31,7 +31,7 @@ public class Challenge17
 
         for (var i = 0; i < 6; i++)
         {
-            var newState = new PointCloud<Point3>();
+            var newState = new PointCloud<Point3, int>();
 
             for (var z = state.Bounds.GetMin(2) - 1; z <= state.Bounds.GetMax(2) + 1; z++)
             for (var y = state.Bounds.GetMin(1) - 1; y <= state.Bounds.GetMax(1) + 1; y++)
@@ -62,7 +62,7 @@ public class Challenge17
     [Part2]
     public async Task<string> Part2Async()
     {
-        var state = new PointCloud<Point4>();
+        var state = new PointCloud<Point4, int>();
 
         var lines = await _inputReader.ReadLinesAsync(17).ToArrayAsync();
         for (var y = 0; y < lines.Length; y++)
@@ -74,7 +74,7 @@ public class Challenge17
 
         for (var i = 0; i < 6; i++)
         {
-            var newState = new PointCloud<Point4>();
+            var newState = new PointCloud<Point4, int>();
 
             for (var w = state.Bounds.GetMin(3) - 1; w <= state.Bounds.GetMax(3) + 1; w++)
             for (var z = state.Bounds.GetMin(2) - 1; z <= state.Bounds.GetMax(2) + 1; z++)
