@@ -90,80 +90,52 @@ public class Challenge19
         switch (rule.Component)
         {
             case 'x':
-                var xFrom = ranges.XFrom;
-                var xTo = ranges.XTo;
-
                 if (rule.Operator == '<')
                 {
-                    if (xFrom < rule.Value)
                         combinations += Analyze(workflows, ranges with { XTo = rule.Value - 1 }, rule.Truthy);
-                    if (xTo >= rule.Value)
                         combinations += Analyze(workflows, ranges with { XFrom = rule.Value }, rule.Falsy);
                 }
                 else if (rule.Operator == '>')
                 {
-                    if (xTo > rule.Value)
                         combinations += Analyze(workflows, ranges with { XFrom = rule.Value + 1 }, rule.Truthy);
-                    if (xFrom <= rule.Value)
                         combinations += Analyze(workflows, ranges with { XTo = rule.Value }, rule.Falsy);
                 }
 
                 break;
             case 'm':
-                var mFrom = ranges.MFrom;
-                var mTo = ranges.MTo;
-
                 if (rule.Operator == '<')
                 {
-                    if (mFrom < rule.Value)
                         combinations += Analyze(workflows, ranges with { MTo = rule.Value - 1 }, rule.Truthy);
-                    if (mTo >= rule.Value)
                         combinations += Analyze(workflows, ranges with { MFrom = rule.Value }, rule.Falsy);
                 }
                 else if (rule.Operator == '>')
                 {
-                    if (mTo > rule.Value)
                         combinations += Analyze(workflows, ranges with { MFrom = rule.Value + 1 }, rule.Truthy);
-                    if (mFrom <= rule.Value)
                         combinations += Analyze(workflows, ranges with { MTo = rule.Value }, rule.Falsy);
                 }
                 break;
             case 'a':
-                var aFrom = ranges.AFrom;
-                var aTo = ranges.ATo;
-
                 if (rule.Operator == '<')
                 {
-                    if (aFrom < rule.Value)
                         combinations += Analyze(workflows, ranges with { ATo = rule.Value - 1 }, rule.Truthy);
-                    if (aTo >= rule.Value)
                         combinations += Analyze(workflows, ranges with { AFrom = rule.Value }, rule.Falsy);
                 }
                 else if (rule.Operator == '>')
                 {
-                    if (aTo > rule.Value)
                         combinations += Analyze(workflows, ranges with { AFrom = rule.Value + 1 }, rule.Truthy);
-                    if (aFrom <= rule.Value)
                         combinations += Analyze(workflows, ranges with { ATo = rule.Value }, rule.Falsy);
                 }
 
                 break;
             case 's':
-                var sFrom = ranges.SFrom;
-                var sTo = ranges.STo;
-
                 if (rule.Operator == '<')
                 {
-                    if (sFrom < rule.Value)
                         combinations += Analyze(workflows, ranges with { STo = rule.Value - 1 }, rule.Truthy);
-                    if (sTo >= rule.Value)
                         combinations += Analyze(workflows, ranges with { SFrom = rule.Value }, rule.Falsy);
                 }
                 else if (rule.Operator == '>')
                 {
-                    if (sTo > rule.Value)
                         combinations += Analyze(workflows, ranges with { SFrom = rule.Value + 1 }, rule.Truthy);
-                    if (sFrom <= rule.Value)
                         combinations += Analyze(workflows, ranges with { STo = rule.Value }, rule.Falsy);
                 }
                 break;
@@ -173,18 +145,6 @@ public class Challenge19
 
         return combinations;
     }
-
-    //public Ranges GetRanges(char component ,char op, int limit, Ranges ranges)
-    //{
-
-    //}
-
-    //private static (int, int) GetRange(char op, int limit, int from, int to) => op switch
-    //{
-    //    '>' => (Math.Max(from, limit + 1), to),
-    //    '<' => (from, Math.Min(limit - 1, to)),
-    //    _ => throw new ArgumentOutOfRangeException(nameof(op))
-    //};
 
     private static int GetComponent(Part input, char component) => component switch
     {
