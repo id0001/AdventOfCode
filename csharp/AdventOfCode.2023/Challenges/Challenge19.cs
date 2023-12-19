@@ -1,9 +1,11 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode2023.Challenges;
 
-//[Challenge(19)]
+[Challenge(19)]
 public class Challenge19
 {
     private readonly IInputReader _inputReader;
@@ -16,12 +18,250 @@ public class Challenge19
     [Part1]
     public async Task<string> Part1Async()
     {
-        return string.Empty;
+        var (workflows, parts) = ParseInput(await _inputReader.ReadAllTextAsync(19));
+
+        var accepted = new List<Part>();
+
+        foreach (var part in parts)
+        {
+            var workflow = workflows["in"];
+            while (true)
+            {
+                var result = Evaluate(part, workflow);
+                if (result.IsAccepted)
+                {
+                    accepted.Add(part);
+                    break;
+                }
+
+                if (result.IsRejected)
+                    break;
+
+                workflow = workflows[result.Jump];
+            }
+        }
+
+        return accepted.Select(a => a.X + a.M + a.A + a.S).Sum().ToString();
     }
 
-    // [Part2]
+    [Part2]
     public async Task<string> Part2Async()
     {
-        return string.Empty;
+        var (workflows, _) = ParseInput(await _inputReader.ReadAllTextAsync(19));
+
+        var input = new Ranges(1, 4000, 1, 4000, 1, 4000, 1, 4000);
+
+        var combinations = Analyze(workflows, input, workflows["in"]);
+        return combinations.ToString();
+    }
+
+    private Result Evaluate(Part input, string line)
+    {
+        if (!TryParseRule(line, out var rule))
+            return new Result(line == "A", line == "R", line);
+
+        var value = GetComponent(input, rule.Component);
+        switch (rule.Operator)
+        {
+            case '>' when (value > rule.Value):
+                return Evaluate(input, rule.Truthy);
+            case '<' when (value < rule.Value):
+                return Evaluate(input, rule.Truthy);
+            default:
+                return Evaluate(input, rule.Falsy);
+        }
+    }
+
+    private long Analyze(Dictionary<string, string> workflows, Ranges ranges, string line)
+    {
+        if (ranges.XFrom >= ranges.XTo || ranges.MFrom >= ranges.MTo || ranges.AFrom >= ranges.ATo || ranges.SFrom >= ranges.STo)
+            return 0;
+
+        if (line == "A")
+            return ranges.Combinations;
+
+        if (line == "R")
+            return 0;
+
+        if (!TryParseRule(line, out var rule))
+            return Analyze(workflows, ranges, workflows[line]);
+
+        long combinations = 0;
+        switch (rule.Component)
+        {
+            case 'x':
+                var xFrom = ranges.XFrom;
+                var xTo = ranges.XTo;
+
+                if (rule.Operator == '<')
+                {
+                    if (xFrom < rule.Value)
+                        combinations += Analyze(workflows, ranges with { XTo = rule.Value - 1 }, rule.Truthy);
+                    if (xTo >= rule.Value)
+                        combinations += Analyze(workflows, ranges with { XFrom = rule.Value }, rule.Falsy);
+                }
+                else if (rule.Operator == '>')
+                {
+                    if (xTo > rule.Value)
+                        combinations += Analyze(workflows, ranges with { XFrom = rule.Value + 1 }, rule.Truthy);
+                    if (xFrom <= rule.Value)
+                        combinations += Analyze(workflows, ranges with { XTo = rule.Value }, rule.Falsy);
+                }
+
+                break;
+            case 'm':
+                var mFrom = ranges.MFrom;
+                var mTo = ranges.MTo;
+
+                if (rule.Operator == '<')
+                {
+                    if (mFrom < rule.Value)
+                        combinations += Analyze(workflows, ranges with { MTo = rule.Value - 1 }, rule.Truthy);
+                    if (mTo >= rule.Value)
+                        combinations += Analyze(workflows, ranges with { MFrom = rule.Value }, rule.Falsy);
+                }
+                else if (rule.Operator == '>')
+                {
+                    if (mTo > rule.Value)
+                        combinations += Analyze(workflows, ranges with { MFrom = rule.Value + 1 }, rule.Truthy);
+                    if (mFrom <= rule.Value)
+                        combinations += Analyze(workflows, ranges with { MTo = rule.Value }, rule.Falsy);
+                }
+                break;
+            case 'a':
+                var aFrom = ranges.AFrom;
+                var aTo = ranges.ATo;
+
+                if (rule.Operator == '<')
+                {
+                    if (aFrom < rule.Value)
+                        combinations += Analyze(workflows, ranges with { ATo = rule.Value - 1 }, rule.Truthy);
+                    if (aTo >= rule.Value)
+                        combinations += Analyze(workflows, ranges with { AFrom = rule.Value }, rule.Falsy);
+                }
+                else if (rule.Operator == '>')
+                {
+                    if (aTo > rule.Value)
+                        combinations += Analyze(workflows, ranges with { AFrom = rule.Value + 1 }, rule.Truthy);
+                    if (aFrom <= rule.Value)
+                        combinations += Analyze(workflows, ranges with { ATo = rule.Value }, rule.Falsy);
+                }
+
+                break;
+            case 's':
+                var sFrom = ranges.SFrom;
+                var sTo = ranges.STo;
+
+                if (rule.Operator == '<')
+                {
+                    if (sFrom < rule.Value)
+                        combinations += Analyze(workflows, ranges with { STo = rule.Value - 1 }, rule.Truthy);
+                    if (sTo >= rule.Value)
+                        combinations += Analyze(workflows, ranges with { SFrom = rule.Value }, rule.Falsy);
+                }
+                else if (rule.Operator == '>')
+                {
+                    if (sTo > rule.Value)
+                        combinations += Analyze(workflows, ranges with { SFrom = rule.Value + 1 }, rule.Truthy);
+                    if (sFrom <= rule.Value)
+                        combinations += Analyze(workflows, ranges with { STo = rule.Value }, rule.Falsy);
+                }
+                break;
+            default:
+                throw new NotImplementedException();
+        }
+
+        return combinations;
+    }
+
+    //public Ranges GetRanges(char component ,char op, int limit, Ranges ranges)
+    //{
+
+    //}
+
+    //private static (int, int) GetRange(char op, int limit, int from, int to) => op switch
+    //{
+    //    '>' => (Math.Max(from, limit + 1), to),
+    //    '<' => (from, Math.Min(limit - 1, to)),
+    //    _ => throw new ArgumentOutOfRangeException(nameof(op))
+    //};
+
+    private static int GetComponent(Part input, char component) => component switch
+    {
+        'x' => input.X,
+        'm' => input.M,
+        'a' => input.A,
+        's' => input.S,
+        _ => throw new ArgumentOutOfRangeException(nameof(component))
+    };
+
+    private static (Dictionary<string, string>, List<Part>) ParseInput(string text)
+    {
+        var nl = Environment.NewLine;
+        var split = text.SplitBy($"{nl}{nl}");
+
+        var workflows = split.First()
+            .SplitBy(nl)
+            .Select(ParseWorkflow)
+            .ToDictionary(kv => kv.Item1, kv => kv.Item2);
+
+        var parts = split
+            .Second()
+            .SplitBy(nl)
+            .Select(line => Regex.Match(line, @"\{x=(\d+),m=(\d+),a=(\d+),s=(\d+)\}")
+                .Groups.Values
+                .Skip(1)
+                .Select(g => int.Parse(g.Value))
+                .ToList()
+                .Transform(group => new Part(group[0], group[1], group[2], group[3]))
+            ).ToList();
+
+        return (workflows, parts);
+    }
+
+    private static (string, string) ParseWorkflow(string line)
+    {
+        return Regex.Match(line, @"(\w+)\{(.+)\}")
+            .Groups.Values
+            .Skip(1)
+            .Select(g => g.Value)
+            .ToList()
+            .Transform(group => (group[0], group[1]));
+    }
+
+    private bool TryParseRule(string line, out Rule rule)
+    {
+        if (!line.Contains(':'))
+        {
+            rule = new Rule('-', '-', 0, string.Empty, string.Empty);
+            return false;
+        }
+
+        var indexOfTrue = line.IndexOf(":");
+        var indexOfFalse = line.IndexOf(",");
+
+        var condition = line[0..indexOfTrue];
+        var truthy = line[(indexOfTrue + 1)..indexOfFalse];
+        var falsy = line[(indexOfFalse + 1)..];
+
+        rule = Regex.Match(condition, @"(\w)([\<\>])(\d+)")
+            .Groups.Values
+            .Skip(1)
+            .Select(x => x.Value)
+            .ToList()
+            .Transform(group => new Rule(char.Parse(group[0]), char.Parse(group[1]), int.Parse(group[2]), truthy, falsy));
+
+        return true;
+    }
+
+    public record Part(int X, int M, int A, int S);
+
+    public record Rule(char Component, char Operator, int Value, string Truthy, string Falsy);
+
+    public record Result(bool IsAccepted, bool IsRejected, string Jump);
+
+    public record Ranges(int XFrom, int XTo, int MFrom, int MTo, int AFrom, int ATo, int SFrom, int STo)
+    {
+        public long Combinations => (long)(XTo - XFrom + 1) * (MTo - MFrom + 1) * (ATo - AFrom + 1) * (STo - SFrom + 1);
     }
 }
