@@ -19,7 +19,8 @@ public class Challenge20
     {
         var modules = await _inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
         var flipflops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, kv => false);
-        var conjunctions = modules.Values.Where(m => m.Type == "&").ToDictionary(kv => kv.Name, kv => modules.Values.Where(m => m.Destinations.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
+        var conjunctions = modules.Values.Where(m => m.Type == "&")
+            .ToDictionary(kv => kv.Name, kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
 
         var rxPresses = conjunctions["bn"].ToDictionary(kv => kv.Key, kv => 0L);
 
@@ -37,7 +38,8 @@ public class Challenge20
     {
         var modules = await _inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
         var flipflops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, kv => false);
-        var conjunctions = modules.Values.Where(m => m.Type == "&").ToDictionary(kv => kv.Name, kv => modules.Values.Where(m => m.Destinations.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
+        var conjunctions = modules.Values.Where(m => m.Type == "&")
+            .ToDictionary(kv => kv.Name, kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
 
         var rxPresses = conjunctions["bn"].ToDictionary(kv => kv.Key, kv => 0L);
 
@@ -54,14 +56,21 @@ public class Challenge20
         throw new InvalidOperationException();
     }
 
-    private void Process(Dictionary<string, Module> modules, Dictionary<string, bool> flipflops, Dictionary<string, Dictionary<string, bool>> conjunctions, Dictionary<string, long> rxPresses, ref long presses, ref long lows, ref long highs)
+    private void Process(
+        Dictionary<string, Module> modules, 
+        Dictionary<string, bool> flipflops, 
+        Dictionary<string, Dictionary<string, bool>> conjunctions, 
+        Dictionary<string, long> rxPresses, 
+        ref long presses, 
+        ref long lows, 
+        ref long highs)
     {
         presses++;
 
         var queue = new Queue<Signal>();
 
         lows++;
-        foreach (var d in modules["broadcaster"].Destinations)
+        foreach (var d in modules["broadcaster"].Outputs)
             queue.Enqueue(new Signal("broadcaster", d, false));
 
         while (queue.Count > 0)
@@ -76,7 +85,7 @@ public class Challenge20
             if (!modules.ContainsKey(dest))
                 continue;
 
-            var (type, _, next) = modules[dest];
+            var (type, _, output) = modules[dest];
             var pulseOut = (type, pulseIn) switch
             {
                 ("broadcaster", _) => pulseIn,
@@ -88,12 +97,12 @@ public class Challenge20
             if (!pulseOut.HasValue)
                 continue;
 
-            if (type == "&" && modules[dest].Destinations.Contains("rx"))
+            if (type == "&" && output.Contains("rx"))
                 foreach (var kv in conjunctions[dest])
                     if (kv.Value)
                         rxPresses[kv.Key] = presses;
 
-            foreach (var d in modules[dest].Destinations)
+            foreach (var d in output)
                 queue.Enqueue(new Signal(dest, d, pulseOut.Value));
         }
     }
@@ -116,7 +125,7 @@ public class Challenge20
             });
     }
 
-    private record Module(string Type, string Name, string[] Destinations);
+    private record Module(string Type, string Name, string[] Outputs);
 
     private record Signal(string Source, string Destination, bool PulseIn);
 }
