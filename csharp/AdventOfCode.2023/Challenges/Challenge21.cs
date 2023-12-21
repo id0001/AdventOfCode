@@ -43,8 +43,13 @@ public class Challenge21
             var newOn = new HashSet<Point2>();
             foreach (var p in on)
             {
-                foreach (var neighbor in p.GetNeighbors().Where(n => !newOn.Contains(n) && grid[Euclid.Modulus(n.Y, grid.GetLength(0)), Euclid.Modulus(n.X, grid.GetLength(1))] != '#'))
-                    newOn.Add(neighbor);
+                foreach (var n in p.GetNeighbors())
+                {
+                    if (grid[Euclid.Modulus(n.Y, grid.GetLength(0)), Euclid.Modulus(n.X, grid.GetLength(1))] == '#')
+                        continue;
+
+                    newOn.Add(n);
+                }
             }
 
             on = newOn;
