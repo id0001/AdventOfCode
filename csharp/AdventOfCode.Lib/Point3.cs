@@ -3,6 +3,7 @@
 public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>
 {
     public static readonly Point3 Zero = new();
+    public static readonly Point3 One = new(1, 1, 1);
 
     int IPoint<int>.this[int index] => index switch
     {
