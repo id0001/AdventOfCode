@@ -123,10 +123,6 @@ public class Challenge23
         var next = start + new Point2(0, 1);
         TraverseEdge(graph, grid, end, start, next, true, ignoreSlopes);
 
-        var prune = graph.Vertices.Where(v => v != end && graph.OutEdges(v).Count == 0).ToList();
-        foreach (var v in prune)
-            graph.RemoveVertex(v);
-
         return graph;
     }
 
