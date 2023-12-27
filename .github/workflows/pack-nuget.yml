@@ -49,8 +49,6 @@ jobs:
       uses: GitTools/actions/gitversion/execute@v0
       with:
        useConfigFile: true
-       configFilePath: './GitVersion.yml'
-       additionalArguments: '/showConfig'
        
     - name: Display GitVersion variables (without prefix)
       run: |
