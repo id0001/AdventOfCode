@@ -46,7 +46,6 @@ jobs:
       uses: GitTools/actions/gitversion/execute@v0.10.2
       with:
         useConfigFile: true
-        additionalArguments: '/showConfig'
        
     - name: Pack
       run: dotnet pack --no-build --configuration Release -p:Version=${{ env.GitVersion_SemVer }}
