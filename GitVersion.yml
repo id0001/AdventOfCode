@@ -1,4 +1,2 @@
 mode: mainline
-increment: Patch
-assembly-versioning-scheme: Major
-assembly-file-versioning-scheme: MajorMinorPatch
+increment: Minor
