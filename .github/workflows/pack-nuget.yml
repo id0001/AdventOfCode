@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: csharp
+        working-directory: csharp/AdventOfCode\.Lib
 
     env:
       NUGET_AUTH_TOKEN: ${{ github.token }}
@@ -40,5 +40,5 @@ jobs:
     - name: Pack
       run: dotnet pack --no-build --configuration Release
 
-    - name: PushGithub
-      run: dotnet nuget push **/*.nupkg --no-symbols --skip-duplicate
+    #- name: PushGithub
+    #  run: dotnet nuget push **/*.nupkg --no-symbols --skip-duplicate
