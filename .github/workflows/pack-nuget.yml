@@ -38,7 +38,8 @@ jobs:
       
     - name: GitTools
       uses: GitTools/actions/gitversion/setup@v0.10.2
-      
+      with:
+        versionSpec: '0.10.x'
     
        
     - name: Display GitVersion variables (without prefix)
