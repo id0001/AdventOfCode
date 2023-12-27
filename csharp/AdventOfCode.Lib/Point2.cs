@@ -3,10 +3,6 @@
 public readonly record struct Point2(int X, int Y) : IPoint<int>
 {
     public static readonly Point2 Zero = new();
-    public static readonly Point2 Up = new(0, -1);
-    public static readonly Point2 Right = new(1, 0);
-    public static readonly Point2 Down = new(0, 1);
-    public static readonly Point2 Left = new(-1, 0);
 
     int IPoint<int>.this[int index] => index switch
     {
@@ -16,6 +12,14 @@ public readonly record struct Point2(int X, int Y) : IPoint<int>
     };
 
     int IPoint<int>.Dimensions => 2;
+
+    public Point2 Up => new(X, Y - 1);
+
+    public Point2 Right => new(X + 1, Y);
+
+    public Point2 Down => new(X, Y + 1);
+
+    public Point2 Left => new(X - 1, Y);
 
     IEnumerable<IPoint<int>> IPoint<int>.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
 

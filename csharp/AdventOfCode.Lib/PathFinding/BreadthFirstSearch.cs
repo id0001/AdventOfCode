@@ -12,6 +12,31 @@ public class BreadthFirstSearch<T> where T : notnull
     public bool TryPath(T start, Func<T, bool> isFinished, out IEnumerable<T> path) =>
         TryPath(start, _getAdjacent, isFinished, out path);
 
+    public IEnumerable<(T Value, int Distance)> FloodFill(T start)
+    {
+        var queue = new Queue<T>();
+        var visited = new Dictionary<T, int> { {start, 0} };
+
+        queue.Enqueue(start);
+        
+        while (queue.Count > 0)
+        {
+            var currentNode = queue.Dequeue();
+            var distance = visited[currentNode];
+
+            yield return (currentNode, distance);
+
+            foreach (var adjacent in _getAdjacent(currentNode))
+            {
+                if (visited.ContainsKey(adjacent)) 
+                    continue;
+                
+                visited.Add(adjacent, distance + 1);
+                queue.Enqueue(adjacent);
+            }
+        }
+    }
+
     private static bool TryPath(T start, Func<T, IEnumerable<T>> getAdjacent, Func<T, bool> isFinished, out IEnumerable<T> path)
     {
         var queue = new Queue<T>();
