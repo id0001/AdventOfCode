@@ -1,0 +1,4 @@
+mode: mainline
+assembly-versioning-scheme: MajorMinor
+assembly-file-versioning-scheme: MajorMinor
+increment: Minor
