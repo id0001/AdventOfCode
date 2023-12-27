@@ -2,6 +2,7 @@ using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Graphs;
+using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode2023.Challenges;
 
@@ -28,8 +29,10 @@ public class Challenge25
         graph.RemoveEdge("rnx", "ddj");
         graph.RemoveEdge("mmr", "znk");
 
-        var left = Visit(graph, "lxb").Count();
-        var right = Visit(graph, "rnx").Count();
+        var bfs = new BreadthFirstSearch<string>(n => graph.OutEdges(n).Keys);
+
+        var left = bfs.FloodFill("lxb").Count();
+        var right = bfs.FloodFill("rnx").Count();
 
         return (left * right).ToString();
     }

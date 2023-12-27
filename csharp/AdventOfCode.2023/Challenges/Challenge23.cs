@@ -103,10 +103,10 @@ public class Challenge23
 
             downhill = grid[n.Y, n.X] switch
             {
-                'v' when n - to == Point2.Down => true,
-                '>' when n - to == Point2.Right => true,
-                '<' when n - to == Point2.Left => true,
-                '^' when n - to == Point2.Up => true,
+                'v' when n - to == Face2.Down => true,
+                '>' when n - to == Face2.Right => true,
+                '<' when n - to == Face2.Left => true,
+                '^' when n - to == Face2.Up => true,
                 _ => false
             };
 

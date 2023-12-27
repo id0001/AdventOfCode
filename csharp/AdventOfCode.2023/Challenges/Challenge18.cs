@@ -73,10 +73,10 @@ public class Challenge18
 
     private static Point2 GetDirection(char c) => c switch
     {
-        'U' => Point2.Up,
-        'R' => Point2.Right,
-        'D' => Point2.Down,
-        'L' => Point2.Left,
+        'U' => Face2.Up,
+        'R' => Face2.Right,
+        'D' => Face2.Down,
+        'L' => Face2.Left,
         _ => throw new ArgumentOutOfRangeException()
     };
 

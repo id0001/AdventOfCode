@@ -1,6 +1,8 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
+using AdventOfCode.Lib.Math;
+using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode2023.Challenges;
 
@@ -18,19 +20,21 @@ public class Challenge10
     public async Task<string> Part1Async()
     {
         var grid = await _inputReader.ReadGridAsync(10);
-        var start = FindStart(grid);
+        var start = grid.FindPosition(c => c == 'S');
         grid[start.Y, start.X] = GetStartType(grid, start);
-        return GetLoop(grid, start).Values.Max().ToString();
+        var bfs = new BreadthFirstSearch<Point2>(n => GetConnectingPipes(grid, n));
+        return bfs.FloodFill(start).MaxBy(x => x.Distance).Distance.ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
         var grid = await _inputReader.ReadGridAsync(10);
-        var start = FindStart(grid);
+        var start = grid.FindPosition(c => c == 'S');
         grid[start.Y, start.X] = GetStartType(grid, start);
+        var bfs = new BreadthFirstSearch<Point2>(n => GetConnectingPipes(grid, n));
 
-        var pipeSegments = GetLoop(grid, start).Keys.ToHashSet();
+        var pipeSegments = bfs.FloodFill(start).Select(x => x.Value).ToList();
 
         // Loop over every row and column and count how many vertical borders are crossed.
         // A point is inside the polygon when the amount of crossed borders is uneven.
@@ -99,18 +103,18 @@ public class Challenge10
     private static IEnumerable<Point2> GetConnectingPipes(char[,] grid, Point2 p) =>
         grid[p.Y, p.X] switch
         {
-            '|' => new[] {new Point2(p.X, p.Y - 1), new Point2(p.X, p.Y + 1)},
-            '-' => new[] {new Point2(p.X - 1, p.Y), new Point2(p.X + 1, p.Y)},
-            'L' => new[] {new Point2(p.X, p.Y - 1), new Point2(p.X + 1, p.Y)},
-            'J' => new[] {new Point2(p.X - 1, p.Y), new Point2(p.X, p.Y - 1)},
-            '7' => new[] {new Point2(p.X - 1, p.Y), new Point2(p.X, p.Y + 1)},
-            'F' => new[] {new Point2(p.X, p.Y + 1), new Point2(p.X + 1, p.Y)},
+            '|' => new[] {p.Up, p.Down},
+            '-' => new[] {p.Left, p.Right},
+            'L' => new[] {p.Up, p.Right},
+            'J' => new[] {p.Up, p.Left},
+            '7' => new[] {p.Left, p.Down},
+            'F' => new[] {p.Right, p.Down},
             _ => throw new NotImplementedException()
         };
 
     private static char GetStartType(char[,] grid, Point2 start)
     {
-        var bounds = new Rectangle(0, 0, grid.GetLength(1), grid.GetLength(0));
+        var bounds = grid.Bounds();
         var pipes = start
             .GetNeighbors()
             .Where(n => bounds.Contains(n) && grid[n.Y, n.X] != '.')
@@ -134,15 +138,5 @@ public class Challenge10
             10 => '7',
             _ => throw new NotImplementedException()
         };
-    }
-
-    private static Point2 FindStart(char[,] grid)
-    {
-        for (var y = 0; y < grid.GetLength(0); y++)
-        for (var x = 0; x < grid.GetLength(1); x++)
-            if (grid[y, x] == 'S')
-                return new Point2(x, y);
-
-        throw new InvalidOperationException("Starting point not found");
     }
 }

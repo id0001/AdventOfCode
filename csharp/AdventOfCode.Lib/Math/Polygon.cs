@@ -7,7 +7,7 @@ namespace AdventOfCode.Lib.Math
         /// <summary>
         /// https://en.wikipedia.org/wiki/Pick's_theorem
         /// </summary>
-        /// <param name="area"></param>
+        /// <param name="interiorPoints"></param>
         /// <param name="pointsOnBoundary"></param>
         /// <returns></returns>
         public static TNumber PicksArea<TNumber>(TNumber interiorPoints, TNumber pointsOnBoundary)
