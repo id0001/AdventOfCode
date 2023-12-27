@@ -106,4 +106,33 @@ public class Challenge18
     }
 
     private record Instruction(char Direction, long Amount);
+
+    private record Point2L(long X, long Y) : IPoint<long>
+    {
+        long IPoint<long>.this[int index] => index switch
+        {
+            0 => X,
+            1 => Y,
+            _ => throw new ArgumentOutOfRangeException(nameof(index))
+        };
+
+        int IPoint<long>.Dimensions => 2;
+
+        bool IEquatable<IPoint<long>>.Equals(IPoint<long>? other)
+        {
+            if (other is null)
+                return false;
+
+            var instance = (IPoint<long>)this;
+
+            if (other.Dimensions != instance.Dimensions)
+                return false;
+
+            for (var d = 0; d < instance.Dimensions; d++)
+                if (instance[d] != other[d])
+                    return false;
+
+            return true;
+        }
+    }
 }

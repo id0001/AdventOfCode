@@ -31,31 +31,47 @@ namespace AdventOfCode.Lib.Math
         /// </summary>
         /// <param name="vertices"></param>
         /// <returns></returns>
-        public static double ShoelaceArea(IList<Point2> vertices) => ShoelaceArea<Point2, int>(vertices);
+        public static double ShoelaceArea(IEnumerable<Point2> vertices) => ShoelaceArea(vertices.Select(p => (p.X, p.Y)));
 
         /// <summary>
         /// https://en.wikipedia.org/wiki/Shoelace_formula
         /// </summary>
         /// <param name="vertices"></param>
         /// <returns></returns>
-        public static double ShoelaceArea(IList<Point2L> vertices) => ShoelaceArea<Point2L, long>(vertices);
+        public static double ShoelaceArea<TNumber>(IEnumerable<IPoint<TNumber>> vertices)
+            where TNumber : IBinaryInteger<TNumber>
+            => ShoelaceArea(vertices.Select(p => (p[0], p[1])));
 
-        private static double ShoelaceArea<TPoint, TNumber>(IList<TPoint> vertices)
-            where TPoint : IPoint<TNumber>
+        /// <summary>
+        /// https://en.wikipedia.org/wiki/Shoelace_formula
+        /// </summary>
+        /// <param name="vertices"></param>
+        /// <returns></returns>
+        public static double ShoelaceArea<TNumber>(IEnumerable<(TNumber X, TNumber Y)> vertices)
             where TNumber : IBinaryInteger<TNumber>
         {
-            var vcount = vertices.Count;
             var sum1 = TNumber.Zero;
             var sum2 = TNumber.Zero;
 
-            for (var i = 0; i < vcount - 1; i++)
+            var first = ((TNumber X, TNumber Y)?)null;
+            var last = ((TNumber X, TNumber Y)?)null;
+
+            if (!vertices.Any())
+                return 0d;
+
+            foreach (var window in vertices.Windowed(2))
             {
-                sum1 += vertices[i][0] * vertices[i + 1][1];
-                sum2 += vertices[i][1] * vertices[i + 1][0];
+                if (first is null)
+                    first = window[0];
+
+                sum1 += window[0].X * window[1].Y;
+                sum2 += window[0].Y * window[1].X;
+
+                last = window[1];
             }
 
-            sum1 += vertices[vcount - 1][0] * vertices[0][1];
-            sum2 += vertices[vcount - 1][1] * vertices[0][0];
+            sum1 += last.Value.X * first.Value.Y;
+            sum2 += last.Value.Y * first.Value.X;
 
             return double.CreateChecked(TNumber.Abs(sum1 - sum2)) / 2d;
         }

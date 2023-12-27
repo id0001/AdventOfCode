@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Lib;
 
-public readonly record struct Point4(int X, int Y, int Z, int W) : IPoint<int>
+public readonly record struct Point4(int X, int Y, int Z, int W) : IPoint<int>, INeighbors<int>
 {
     public static readonly Point3 Zero = new();
 
@@ -15,7 +15,7 @@ public readonly record struct Point4(int X, int Y, int Z, int W) : IPoint<int>
 
     int IPoint<int>.Dimensions => 4;
 
-    IEnumerable<IPoint<int>> IPoint<int>.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
+    IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
 
     public bool Equals(IPoint<int>? other)
     {

@@ -6,6 +6,10 @@ public interface IPoint<TNumber> : IEquatable<IPoint<TNumber>> where TNumber : I
     TNumber this[int index] { get; }
 
     int Dimensions { get; }
+}
 
+public interface INeighbors<TNumber>
+    where TNumber : IBinaryInteger<TNumber>
+{
     IEnumerable<IPoint<TNumber>> GetNeighbors(bool includeDiagonal = false);
 }
