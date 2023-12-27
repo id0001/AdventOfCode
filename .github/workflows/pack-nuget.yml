@@ -1,0 +1,39 @@
+# This workflow will build, pack and publish AdventofCode.Lib to github packages
+
+name: .NET Publish AdventOfCode.Lib
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: csharp/AdventofCode.Lib
+    env:
+      NUGET_AUTH_TOKEN: ${{ github.token }}
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.x
+        source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Pack
+      run: dotnet pack --no-build --configuration Release
+
+    - name: PushGithub
+      run: dotnet nuget push **/*.nupkg --no-symbols --skip-duplicate
