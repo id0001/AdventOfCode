@@ -1,5 +1,12 @@
 assembly-versioning-scheme: MajorMinorPatch
 mode: Mainline
-increment: Minor
+branches:
+  master:
+    tag: ""
+    is-mainline: true
+    increment: Minor
+    is-source-branch-for: ['feature']
+  feature:
+    increment: Minor
 ignore:
   sha: []
