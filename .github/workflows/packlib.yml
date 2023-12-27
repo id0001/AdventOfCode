@@ -17,6 +17,10 @@ jobs:
       with:
         sparse-checkout: |
           csharp/AdventofCode.Lib
+          
+    - check:
+      run: |
+        ls
       
     - name: Setup .NET 8.x
       uses: actions/setup-dotnet@v4
