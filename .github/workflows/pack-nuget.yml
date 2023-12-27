@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: csharp/AdventofCode.Lib
+        working-directory: csharp
 
     env:
       NUGET_AUTH_TOKEN: ${{ github.token }}
