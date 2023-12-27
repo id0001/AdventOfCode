@@ -41,6 +41,10 @@ jobs:
       with:
         versionSpec: '5.x'
     
+    - name: Determine version
+      uses: GitTools/actions/gitversion/execute@v0.10.2
+      with:
+        useConfigFile: true
        
     - name: Display GitVersion variables (without prefix)
       run: |
