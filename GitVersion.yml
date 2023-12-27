@@ -1,4 +1,6 @@
-mode: mainline
-assembly-versioning-scheme: MajorMinor
-assembly-file-versioning-scheme: MajorMinor
-increment: Minor
+assembly-versioning-scheme: MajorMinorPatch
+mode: Mainline
+is-mainline: true
+increase: Minor
+ignore:
+  sha: []
