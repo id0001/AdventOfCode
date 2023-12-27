@@ -36,19 +36,10 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
       
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0
-      with:
-        versionSpec: '5.x'
-        
-    - name: Log
-      run: |
-        ls
-
-    - name: Determine Version
-      uses: GitTools/actions/gitversion/execute@v0
-      with:
-       useConfigFile: true
+    - name: GitTools
+      uses: GitTools/actions@v0.10.2
+      
+    
        
     - name: Display GitVersion variables (without prefix)
       run: |
