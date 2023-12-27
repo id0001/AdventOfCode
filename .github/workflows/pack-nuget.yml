@@ -40,6 +40,10 @@ jobs:
       uses: gittools/actions/gitversion/setup@v0
       with:
         versionSpec: '5.x'
+        
+    - name: Log
+      run: |
+        ls
 
     - name: Determine Version
       uses: GitTools/actions/gitversion/execute@v0
