@@ -37,7 +37,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
       
     - name: GitTools
-      uses: GitTools/actions@v0.10.2
+      uses: GitTools/actions/gitversion/setup@v0.10.2
       
     
        
