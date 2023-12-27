@@ -17,7 +17,7 @@
 		<PackageDescription>Utilities library for Advent of Code</PackageDescription>
 		<RepositoryUrl>https://github.com/id0001/AdventOfCode</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Title>Advent of Code utilities library</Title>
 		<Description>A utilities library for Advent of Code</Description>
 	</PropertyGroup>
