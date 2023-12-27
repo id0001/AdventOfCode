@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         sparse-checkout: |
-          csharp/AdventofCode.Lib
+          csharp/AdventofCode.Lib/*
           
     - name: Log dir
       run: |
