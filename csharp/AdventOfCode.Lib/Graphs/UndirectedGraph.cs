@@ -9,7 +9,7 @@ where TEdge : notnull
 
     public int VertexCount => _vertexEdges.Count;
 
-    public int EdgeCount => _edges.Count / 2; // _edges always contains 2 entries for each edge. (a->b, b->a)
+    public int EdgeCount => _edges.Count / 2; // _edges always contains 2 entries for each edge: (a->b, b->a)
 
     public IEnumerable<TVertex> Vertices => _vertexEdges.Keys;
 
