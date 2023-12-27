@@ -19,7 +19,10 @@ jobs:
       NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
         
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -33,8 +36,10 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
       
-    - name: GitTools
-      uses: GitTools/actions@v0.10.2
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0
+      with:
+        versionSpec: '5.x'
 
     - name: Determine Version
       uses: GitTools/actions/gitversion/execute@v0
