@@ -60,7 +60,7 @@ public class Challenge08
         var text = await _inputReader.ReadAllTextAsync(day);
         return text
             .SplitBy($"{nl}{nl}")
-            .Transform(parts =>
+            .Into(parts =>
             {
                 return new Input(parts.First(),
                     parts.Second()

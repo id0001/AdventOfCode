@@ -40,9 +40,9 @@ public class Challenge07
 
     private Hand ParseLine(string line) =>
         line.SplitBy(" ")
-            .Transform(parts => new Hand(
+            .Into(parts => new Hand(
                 parts.First(),
-                int.Parse(parts.Second())
+                parts.Second().As<int>()
             ));
 
     private static int Strength(char c, bool useJokers)

@@ -76,7 +76,6 @@ public class Challenge20
         while (queue.Count > 0)
         {
             var (source, dest, pulseIn) = queue.Dequeue();
-            //Console.WriteLine($"{source} -{(pulseIn ? "high" : "low")}-> {dest}");
             if (pulseIn)
                 highs++;
             else
@@ -117,7 +116,7 @@ public class Challenge20
     {
         return line
             .SplitBy("->")
-            .Transform(parts =>
+            .Into(parts =>
             {
                 int strip = parts.First()[0] is '%' or '&' ? 1 : 0;
                 string type = strip > 0 ? parts.First()[0].ToString() : parts.First();

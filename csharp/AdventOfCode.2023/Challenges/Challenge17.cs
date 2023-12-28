@@ -19,7 +19,7 @@ public class Challenge17
     public async Task<string> Part1Async()
     {
         var graph = await _inputReader.ReadGridAsync<int>(17);
-        var start = new Pose2(Point2.Zero, Face2.Right);
+        var start = new Pose2(Point2.Zero, Face.Right);
         var end = new Point2(graph.GetUpperBound(1), graph.GetUpperBound(0));
 
         var bounds = new Rectangle(0, 0, graph.GetLength(1), graph.GetLength(0));
@@ -34,7 +34,7 @@ public class Challenge17
     public async Task<string> Part2Async()
     {
         var graph = await _inputReader.ReadGridAsync<int>(17);
-        var start = new Pose2(Point2.Zero, Face2.Right);
+        var start = new Pose2(Point2.Zero, Face.Right);
         var end = new Point2(graph.GetUpperBound(1), graph.GetUpperBound(0));
 
         var bounds = new Rectangle(0, 0, graph.GetLength(1), graph.GetLength(0));

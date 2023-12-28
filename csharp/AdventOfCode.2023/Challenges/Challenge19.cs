@@ -171,9 +171,9 @@ public class Challenge19
             .Select(line => Regex.Match(line, @"\{x=(\d+),m=(\d+),a=(\d+),s=(\d+)\}")
                 .Groups.Values
                 .Skip(1)
-                .Select(g => int.Parse(g.Value))
+                .Select(g => g.Value.As<int>())
                 .ToList()
-                .Transform(group => new Part(group[0], group[1], group[2], group[3]))
+                .Into(group => new Part(group[0], group[1], group[2], group[3]))
             ).ToList();
 
         return (workflows, parts);
@@ -186,7 +186,7 @@ public class Challenge19
             .Skip(1)
             .Select(g => g.Value)
             .ToList()
-            .Transform(group => (group[0], group[1]));
+            .Into(group => (group[0], group[1]));
     }
 
     private bool TryParseRule(string line, out Rule rule)
@@ -209,7 +209,7 @@ public class Challenge19
             .Skip(1)
             .Select(x => x.Value)
             .ToList()
-            .Transform(group => new Rule(char.Parse(group[0]), char.Parse(group[1]), int.Parse(group[2]), truthy, falsy));
+            .Into(group => new Rule(group[0].As<char>(), group[1].As<char>(), group[2].As<int>(), truthy, falsy));
 
         return true;
     }

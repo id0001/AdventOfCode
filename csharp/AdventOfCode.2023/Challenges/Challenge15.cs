@@ -29,7 +29,7 @@ public class Challenge15
             if (part.Contains('='))
             {
                 var lens = part.SplitBy("=")
-                    .Transform(parts => new Lens(parts.First(), int.Parse(parts.Second())));
+                    .Into(parts => new Lens(parts.First(), parts.Second().As<int>()));
                 var hash = Hash(lens.Label);
                 var index = boxes[hash].IndexOf(lens);
                 if (index < 0)

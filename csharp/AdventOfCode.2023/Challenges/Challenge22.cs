@@ -91,19 +91,19 @@ public class Challenge22
     private static Cube ParseLine(string line)
     {
         return line.SplitBy("~")
-            .Transform(parts =>
+            .Into(parts =>
             {
                 var start = parts
                     .First()
                     .SplitBy(",")
                     .As<int>()
-                    .Transform(p => new Point3(p[0], p[1], p[2]));
+                    .Into(p => new Point3(p[0], p[1], p[2]));
 
                 var end = parts
                     .Second()
                     .SplitBy(",")
                     .As<int>()
-                    .Transform(p => new Point3(p[0], p[1], p[2]));
+                    .Into(p => new Point3(p[0], p[1], p[2]));
 
                 return new Cube(start, end - start + Point3.One);
             });

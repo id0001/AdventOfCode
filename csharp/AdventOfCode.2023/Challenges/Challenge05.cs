@@ -41,9 +41,9 @@ public class Challenge05
         var nl = Environment.NewLine;
         return input
             .SplitBy($"{nl}{nl}")
-            .Transform(parts =>
+            .Into(parts =>
             {
-                var seeds = parts[0].SplitBy(":").Second().SplitBy(" ").Select(long.Parse).ToArray();
+                var seeds = parts[0].SplitBy(":").Second().SplitBy(" ").As<long>().ToArray();
                 var seedsToSoil = ParsePart(parts[1]);
                 var soilToFertilizer = ParsePart(parts[2]);
                 var fertilizerToWater = ParsePart(parts[3]);
@@ -72,12 +72,12 @@ public class Challenge05
             .SplitBy(":")
             .Second()
             .SplitBy("\r\n")
-            .Select(x => x.SplitBy(" ").Transform(parts =>
+            .Select(x => x.SplitBy(" ").Into(parts =>
                 new
                 {
-                    DestStart = long.Parse(parts.First()),
-                    SourceStart = long.Parse(parts.Second()),
-                    Length = long.Parse(parts.Third())
+                    DestStart = parts.First().As<long>(),
+                    SourceStart = parts.Second().As<long>(),
+                    Length = parts.Third().As<long>()
                 }))
             .Select(kv => new Mapping(new LongRange(kv.SourceStart, kv.SourceStart + kv.Length - 1),
                 new LongRange(kv.DestStart, kv.DestStart + kv.Length - 1)))

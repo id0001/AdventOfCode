@@ -73,19 +73,19 @@ public class Challenge18
 
     private static Point2 GetDirection(char c) => c switch
     {
-        'U' => Face2.Up,
-        'R' => Face2.Right,
-        'D' => Face2.Down,
-        'L' => Face2.Left,
+        'U' => Face.Up,
+        'R' => Face.Right,
+        'D' => Face.Down,
+        'L' => Face.Left,
         _ => throw new ArgumentOutOfRangeException()
     };
 
     private static Instruction ParseLine(string line)
     {
         return line.SplitBy(" ")
-            .Transform(parts => new Instruction(
-                char.Parse(parts.First()),
-                int.Parse(parts.Second()))
+            .Into(parts => new Instruction(
+                parts.First().As<char>(),
+                parts.Second().As<int>())
             );
     }
 
@@ -94,11 +94,11 @@ public class Challenge18
         var dirs = new[] { 'R', 'D', 'L', 'U' };
 
         return line.SplitBy(" ")
-            .Transform(parts =>
+            .Into(parts =>
                 {
                     var match = Regex.Match(parts.Third(), @"\(#([\da-z]{5})(\d)\)");
                     return new Instruction(
-                        dirs[int.Parse(match.Groups[2].Value)],
+                        dirs[match.Groups[2].Value.As<int>()],
                         Convert.ToInt64($"0x{match.Groups[1].Value}", 16)
                     );
                 }

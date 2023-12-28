@@ -29,7 +29,7 @@ public class Challenge25
         graph.RemoveEdge("rnx", "ddj");
         graph.RemoveEdge("mmr", "znk");
 
-        var bfs = new BreadthFirstSearch<string>(n => graph.OutEdges(n).Keys);
+        var bfs = new BreadthFirstSearch<string>(n => graph.Edges(n).Keys);
 
         var left = bfs.FloodFill("lxb").Count();
         var right = bfs.FloodFill("rnx").Count();
@@ -37,40 +37,16 @@ public class Challenge25
         return (left * right).ToString();
     }
 
-    private static IEnumerable<string> Visit(BidirectionalGraph<string, int> graph, string start)
-    {
-        var queue = new Queue<string>();
-        var visited = new HashSet<string> { start };
-
-        queue.Enqueue(start);
-        
-        while (queue.Count > 0)
-        {
-            var currentNode = queue.Dequeue();
-
-            foreach (var adjacent in graph.OutEdges(currentNode).Keys)
-            {
-                if (visited.Contains(adjacent)) 
-                    continue;
-                
-                visited.Add(adjacent);
-                queue.Enqueue(adjacent);
-            }
-        }
-
-        return visited;
-    }
-
-    private static BidirectionalGraph<string,int> ParseInput(string text)
+    private static UndirectedGraph<string,int> ParseInput(string text)
     {
         var nl = Environment.NewLine;
 
         var dict = text.SplitBy(nl)
             .Select(line => line.SplitBy(":")
-                .Transform(parts => (parts.First(), parts.Second().SplitBy(" "))))
+                .Into(parts => (parts.First(), parts.Second().SplitBy(" "))))
             .ToDictionary(kv => kv.Item1, kv => kv.Item2);
 
-        var graph = new BidirectionalGraph<string,int>();
+        var graph = new UndirectedGraph<string,int>();
 
         foreach (var kv in dict)
         {

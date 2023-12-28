@@ -61,7 +61,7 @@ public class Challenge12
     private (string, int[]) ParseLine(string line)
     {
         return line.SplitBy(" ")
-            .Transform(parts => (
+            .Into(parts => (
                 parts.First(),
                 parts.Second().SplitBy(",").Select(int.Parse).ToArray()
             ));

@@ -25,7 +25,7 @@ public class Challenge01
             .ReadLinesAsync(1)
             .SumAsync(line => Regex
                 .Matches(line, @"(\d)")
-                .Transform(m => int.Parse($"{m[0].Groups[1].Value}{m[^1].Groups[1].Value}")))
+                .Into(m => $"{m[0].Groups[1].Value}{m[^1].Groups[1].Value}".As<int>()))
             .ToStringAsync();
     }
 
@@ -37,7 +37,7 @@ public class Challenge01
             .ReadLinesAsync(1)
             .SumAsync(line => pattern
                 .Matches(line)
-                .Transform(m => int.Parse($"{ToDigit(m.First().Groups[1].Value)}{ToDigit(m[^1].Groups[1].Value)}")))
+                .Into(m => $"{ToDigit(m.First().Groups[1].Value)}{ToDigit(m[^1].Groups[1].Value)}".As<int>()))
             .ToStringAsync();
     }
 

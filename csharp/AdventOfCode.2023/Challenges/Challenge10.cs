@@ -32,83 +32,39 @@ public class Challenge10
         var grid = await _inputReader.ReadGridAsync(10);
         var start = grid.FindPosition(c => c == 'S');
         grid[start.Y, start.X] = GetStartType(grid, start);
-        var bfs = new BreadthFirstSearch<Point2>(n => GetConnectingPipes(grid, n));
+        var pipeSegments = WalkPath(grid, start).ToList();
 
-        var pipeSegments = bfs.FloodFill(start).Select(x => x.Value).ToList();
-
-        // Loop over every row and column and count how many vertical borders are crossed.
-        // A point is inside the polygon when the amount of crossed borders is uneven.
-        var inside = 0;
-        var prev = '.';
-        for (var y = 0; y < grid.GetLength(0); y++)
-        {
-            var bordersCrossed = 0;
-            for (var x = 0; x < grid.GetLength(1); x++)
-            {
-                var p = new Point2(x, y);
-                if (pipeSegments.Contains(p))
-                {
-                    if (grid[y, x] == '7' && prev == 'L') // Special case L7 does not cross borders twice
-                    {
-                        prev = grid[y, x];
-                        continue;
-                    }
-
-                    if (grid[y, x] == 'J' && prev == 'F') // Special case FJ does not cross borders twice
-                    {
-                        prev = grid[y, x];
-                        continue;
-                    }
-
-                    if (grid[y, x] == '-') // Special case - does not cross any border
-                        continue;
-
-                    prev = grid[y, x];
-                    bordersCrossed++;
-                    continue;
-                }
-
-                if (bordersCrossed % 2 == 1)
-                    inside++;
-            }
-        }
-
-        return inside.ToString();
+        return (Polygon.CountInteriorPoints((long)Polygon.ShoelaceArea(pipeSegments), pipeSegments.Count)).ToString();
     }
 
-    private Dictionary<Point2, int> GetLoop(char[,] grid, Point2 start)
+    private static IEnumerable<Point2> WalkPath(char[,] grid, Point2 start)
     {
-        var queue = new Queue<Point2>();
-        var visited = new Dictionary<Point2, int> {{start, 0}};
-        queue.Enqueue(start);
+        var (next, end) = GetConnectingPipes(grid, start).ToArray().Into(x => (x[0], x[1]));
+        var visited = new HashSet<Point2>();
 
-        while (queue.Count > 0)
+        yield return start;
+
+        var current = next;
+        while(current != end)
         {
-            var currentNode = queue.Dequeue();
-            var currentDistance = visited[currentNode];
+            yield return current;
+            visited.Add(current);
 
-            foreach (var adjacent in GetConnectingPipes(grid, currentNode))
-            {
-                if (visited.ContainsKey(adjacent))
-                    continue;
-
-                visited.Add(adjacent, currentDistance + 1);
-                queue.Enqueue(adjacent);
-            }
+            current = GetConnectingPipes(grid, current).Where(n => !visited.Contains(n)).First();
         }
 
-        return visited;
+        yield return end;
     }
 
     private static IEnumerable<Point2> GetConnectingPipes(char[,] grid, Point2 p) =>
         grid[p.Y, p.X] switch
         {
-            '|' => new[] {p.Up, p.Down},
-            '-' => new[] {p.Left, p.Right},
-            'L' => new[] {p.Up, p.Right},
-            'J' => new[] {p.Up, p.Left},
-            '7' => new[] {p.Left, p.Down},
-            'F' => new[] {p.Right, p.Down},
+            '|' => [p.Up, p.Down],
+            '-' => [p.Left, p.Right],
+            'L' => [p.Up, p.Right],
+            'J' => [p.Up, p.Left],
+            '7' => [p.Left, p.Down],
+            'F' => [p.Right, p.Down],
             _ => throw new NotImplementedException()
         };
 

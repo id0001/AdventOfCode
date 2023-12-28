@@ -18,7 +18,7 @@ public class Challenge09
     public async Task<string?> Part1Async()
     {
         return await _inputReader.ReadLinesAsync(9)
-            .Select(line => NextNumber(line.SplitBy(" ").Select(int.Parse).ToArray()))
+            .Select(line => NextNumber(line.SplitBy(" ").As<int>().ToArray()))
             .SumAsync()
             .ToStringAsync();
     }
@@ -27,7 +27,7 @@ public class Challenge09
     public async Task<string?> Part2Async()
     {
         return await _inputReader.ReadLinesAsync(9)
-            .Select(line => NextNumber(line.SplitBy(" ").Select(int.Parse).Reverse().ToArray()))
+            .Select(line => NextNumber(line.SplitBy(" ").As<int>().Reverse().ToArray()))
             .SumAsync()
             .ToStringAsync();
     }

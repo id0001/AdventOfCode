@@ -30,14 +30,14 @@ public class Challenge16
         var max = 0;
         for (var y = 0; y < grid.GetLength(0); y++)
         {
-            max = Math.Max(max, Energize(grid, new Pose2(new Point2(0, y), Face2.Right)));
-            max = Math.Max(max, Energize(grid, new Pose2(new Point2(grid.GetLength(1) - 1, y), Face2.Left)));
+            max = Math.Max(max, Energize(grid, new Pose2(new Point2(0, y), Face.Right)));
+            max = Math.Max(max, Energize(grid, new Pose2(new Point2(grid.GetLength(1) - 1, y), Face.Left)));
         }
 
         for (var x = 0; x < grid.GetLength(1); x++)
         {
-            max = Math.Max(max, Energize(grid, new Pose2(new Point2(x, 0), Face2.Down)));
-            max = Math.Max(max, Energize(grid, new Pose2(new Point2(x, grid.GetLength(0) - 1), Face2.Up)));
+            max = Math.Max(max, Energize(grid, new Pose2(new Point2(x, 0), Face.Down)));
+            max = Math.Max(max, Energize(grid, new Pose2(new Point2(x, grid.GetLength(0) - 1), Face.Up)));
         }
 
         return max.ToString();

@@ -134,11 +134,11 @@ public class Challenge24
     private static Hailstone ParseLine(string line)
     {
         return line.SplitBy("@")
-            .Transform(parts =>
+            .Into(parts =>
             {
                 return new Hailstone(
-                    parts.First().SplitBy(",").As<long>().Transform(p => new Point3L(p[0], p[1], p[2])),
-                    parts.Second().SplitBy(",").As<long>().Transform(p => new Point3L(p[0], p[1], p[2]))
+                    parts.First().SplitBy(",").As<long>().Into(p => new Point3L(p[0], p[1], p[2])),
+                    parts.Second().SplitBy(",").As<long>().Into(p => new Point3L(p[0], p[1], p[2]))
                     );
             });
     }

@@ -70,6 +70,9 @@ namespace AdventOfCode.Lib.Math
                 last = window[1];
             }
 
+            if (first is null || last is null)
+                return 0d;
+
             sum1 += last.Value.X * first.Value.Y;
             sum2 += last.Value.Y * first.Value.X;
 

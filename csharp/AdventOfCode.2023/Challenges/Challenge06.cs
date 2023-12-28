@@ -45,9 +45,9 @@ public class Challenge06
         var nl = Environment.NewLine;
         return input
             .SplitBy(nl)
-            .Transform(parts => (
-                parts.First().SplitBy(":").Second().SplitBy(" ").Select(long.Parse).ToArray(),
-                parts.Second().SplitBy(":").Second().SplitBy(" ").Select(long.Parse).ToArray()
+            .Into(parts => (
+                parts.First().SplitBy(":").Second().SplitBy(" ").As<long>().ToArray(),
+                parts.Second().SplitBy(":").Second().SplitBy(" ").As<long>().ToArray()
             ));
     }
 
@@ -55,9 +55,9 @@ public class Challenge06
     {
         var nl = Environment.NewLine;
         return input.SplitBy(nl)
-            .Transform(parts => (
-                int.Parse(parts.First().SplitBy(":").Second().Replace(" ", "")),
-                long.Parse(parts.Second().SplitBy(":").Second().Replace(" ", ""))
+            .Into(parts => (
+                parts.First().SplitBy(":").Second().Replace(" ", "").As<int>(),
+                parts.Second().SplitBy(":").Second().Replace(" ", "").As<long>()
             ));
     }
 }
