@@ -5,24 +5,18 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(19)]
-public class Challenge19
+public class Challenge19(IInputReader inputReader)
 {
     private readonly List<string> _input = new();
-    private readonly IInputReader _inputReader;
     private readonly Dictionary<int, string> _rules = new();
 
-
-    public Challenge19(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
         var state = 0; // 0 = rules, 1 = input
 
-        await foreach (var line in _inputReader.ReadLinesAsync(19))
+        await foreach (var line in inputReader.ReadLinesAsync(19))
         {
             if (string.IsNullOrEmpty(line))
                 state++;

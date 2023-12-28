@@ -1,8 +1,8 @@
 ﻿namespace AdventOfCode.Lib.Graphs;
 
 public class UndirectedGraph<TVertex, TEdge>
-where TVertex : notnull
-where TEdge : notnull
+    where TVertex : notnull
+    where TEdge : notnull
 {
     private readonly Dictionary<(TVertex, TVertex), TEdge> _edges = new();
     private readonly Dictionary<TVertex, List<TVertex>> _vertexEdges = new();
@@ -59,7 +59,8 @@ where TEdge : notnull
 
     public bool ContainsVertex(TVertex vertex) => _vertexEdges.ContainsKey(vertex);
 
-    public bool ContainsEdge(TVertex source, TVertex target) => _edges.ContainsKey((source, target)) || _edges.ContainsKey((target, source));
+    public bool ContainsEdge(TVertex source, TVertex target) =>
+        _edges.ContainsKey((source, target)) || _edges.ContainsKey((target, source));
 
     public bool HasEdges(TVertex vertex) => _vertexEdges.TryGetValue(vertex, out var edges) && edges.Count > 0;
 
@@ -126,7 +127,7 @@ where TEdge : notnull
     private static int FindSubset(Subset[] subset, int v)
     {
         if (subset[v].Parent != v)
-            subset[v] = subset[v] with { Parent = FindSubset(subset, subset[v].Parent) };
+            subset[v] = subset[v] with {Parent = FindSubset(subset, subset[v].Parent)};
 
         return subset[v].Parent;
     }
@@ -137,13 +138,17 @@ where TEdge : notnull
         var yroot = FindSubset(subsets, y);
 
         if (subsets[xroot].Rank < subsets[yroot].Rank)
-            subsets[xroot] = subsets[xroot] with { Parent = yroot };
+        {
+            subsets[xroot] = subsets[xroot] with {Parent = yroot};
+        }
         else if (subsets[xroot].Rank > subsets[yroot].Rank)
-            subsets[yroot] = subsets[yroot] with { Parent = xroot };
+        {
+            subsets[yroot] = subsets[yroot] with {Parent = xroot};
+        }
         else
         {
-            subsets[yroot] = subsets[yroot] with { Parent = xroot };
-            subsets[xroot] = subsets[xroot] with { Rank = subsets[xroot].Rank + 1 };
+            subsets[yroot] = subsets[yroot] with {Parent = xroot};
+            subsets[xroot] = subsets[xroot] with {Rank = subsets[xroot].Rank + 1};
         }
     }
 

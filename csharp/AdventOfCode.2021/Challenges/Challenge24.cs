@@ -7,8 +7,8 @@ namespace AdventOfCode2021.Challenges;
 public class Challenge24
 {
     private readonly Func<int, int, int>[] _funcsInOrder;
-    private readonly int[] _listOfBValues;
     private readonly int[] _listOfAValues;
+    private readonly int[] _listOfBValues;
 
     public Challenge24()
     {
@@ -27,9 +27,9 @@ public class Challenge24
         var f13 = new Func<int, int, int>((w, z) => Calculate(26, -12, 4, w, z));
         var f14 = new Func<int, int, int>((w, z) => Calculate(26, -13, 11, w, z));
 
-        _funcsInOrder = new[] { f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14 };
-        _listOfBValues = new[] { 10, 13, 15, -12, 14, -2, 13, -12, 15, 11, -3, -13, -12, -13 };
-        _listOfAValues = new[] { 1, 1, 1, 26, 1, 26, 1, 26, 1, 1, 26, 26, 26, 26 };
+        _funcsInOrder = new[] {f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14};
+        _listOfBValues = new[] {10, 13, 15, -12, 14, -2, 13, -12, 15, 11, -3, -13, -12, -13};
+        _listOfAValues = new[] {1, 1, 1, 26, 1, 26, 1, 26, 1, 1, 26, 26, 26, 26};
     }
 
     private static ImmutableArray<int> FindBiggestNumber(IReadOnlyList<Func<int, int, int>> funcs,
@@ -65,7 +65,7 @@ public class Challenge24
         for (var w = 1; w <= 9; w++)
         {
             if (alist[funci] != 1 && z % 26 != w - blist[funci]) continue;
-            
+
             var nz = funcs[funci](w, z);
             var newResult = result.Add(w);
             recResult = FindSmallestNumber(funcs, blist, alist, funci + 1, nz, newResult);
@@ -100,7 +100,7 @@ public class Challenge24
         z /= a; // 1 or 26
 
         if (!x) return z;
-        
+
         z *= 26;
         z += w + c;
 

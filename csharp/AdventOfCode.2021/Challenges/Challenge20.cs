@@ -1,25 +1,19 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(20)]
-public class Challenge20
+public class Challenge20(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private char[] _enhancement = Array.Empty<char>();
     private Dictionary<Point2, bool> _image = new();
-
-    public Challenge20(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await _inputReader.ReadLinesAsync(20).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(20).ToArrayAsync();
         _enhancement = lines[0].ToCharArray();
 
         lines = lines.Skip(2).ToArray();
@@ -64,12 +58,10 @@ public class Challenge20
         var bottom = image.Max(x => x.Key.Y);
 
         for (var y = top - 1; y <= bottom + 1; y++)
+        for (var x = left - 1; x <= right + 1; x++)
         {
-            for (var x = left - 1; x <= right + 1; x++)
-            {
-                var index = ToIndex(GetBits(x, y, image, outsideLit));
-                newImage.Add(new Point2(x, y), enhancementAlgorithm[index] == '#');
-            }
+            var index = ToIndex(GetBits(x, y, image, outsideLit));
+            newImage.Add(new Point2(x, y), enhancementAlgorithm[index] == '#');
         }
 
         return newImage;
@@ -78,9 +70,8 @@ public class Challenge20
     private static IEnumerable<Point2> GetSquare3X3(Point2 center)
     {
         for (var y = -1; y <= 1; y++)
-        {
-            for (var x = -1; x <= 1; x++) yield return new Point2(center.X + x, center.Y + y);
-        }
+        for (var x = -1; x <= 1; x++)
+            yield return new Point2(center.X + x, center.Y + y);
     }
 
     private static IEnumerable<char> GetBits(int x, int y, IReadOnlyDictionary<Point2, bool> image, bool outsideLit)

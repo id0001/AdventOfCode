@@ -4,18 +4,11 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(1)]
-public class Challenge01
+public class Challenge01(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge01(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async() =>
-        (await _inputReader.ReadLineAsync(1)
+        (await inputReader.ReadLineAsync(1)
             .SumAsync(b => b == '(' ? 1 : -1))
         .ToString();
 
@@ -24,7 +17,7 @@ public class Challenge01
     {
         var floor = 0;
         var position = 0;
-        await foreach (var c in _inputReader.ReadLineAsync(1))
+        await foreach (var c in inputReader.ReadLineAsync(1))
         {
             position++;
             floor += c == '(' ? 1 : -1;

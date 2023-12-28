@@ -1,20 +1,13 @@
-﻿using AdventOfCode.Lib;
-using System.Text;
+﻿using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(16)]
-public class Challenge16
+public class Challenge16(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge16(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
@@ -59,7 +52,7 @@ public class Challenge16
         const int fromBase = 16;
         const int toBase = 2;
 
-        var input = (await _inputReader.ReadLineAsync(16)
+        var input = (await inputReader.ReadLineAsync(16)
                 .ToArrayAsync())
             .SelectMany(c => Convert.ToString(Convert.ToInt32(c.ToString(), fromBase), toBase).PadLeft(4, '0'))
             .ToArray();

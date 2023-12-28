@@ -1,18 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <PackageReference Include="docopt.net" Version="0.8.1" />
-    <PackageReference Include="Spectre.Console" Version="0.48.0" />
-    <PackageReference Include="TextCopy" Version="6.2.1" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\docopt.txt" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Update="Scripts\CreateInputs.sh">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="docopt.net" Version="0.8.1"/>
+        <PackageReference Include="Spectre.Console" Version="0.48.0"/>
+        <PackageReference Include="TextCopy" Version="6.2.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\docopt.txt"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Scripts\CreateInputs.sh">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>

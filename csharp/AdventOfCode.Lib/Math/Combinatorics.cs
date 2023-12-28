@@ -3,7 +3,7 @@
 namespace AdventOfCode.Lib.Math;
 
 /// <summary>
-/// Partly derived from MathNet: https://github.com/mathnet/mathnet-numerics/blob/master/src/Numerics/Combinatorics.cs
+///     Partly derived from MathNet: https://github.com/mathnet/mathnet-numerics/blob/master/src/Numerics/Combinatorics.cs
 /// </summary>
 public static class Combinatorics
 {
@@ -57,7 +57,7 @@ public static class Combinatorics
                 for (var i = 0; i < k; i++)
                     a[i] = c[i];
 
-                yield return (int[])a.Clone();
+                yield return (int[]) a.Clone();
 
                 int x;
                 if (j > 0)
@@ -112,7 +112,7 @@ public static class Combinatorics
                 for (var i = 0; i < k; i++)
                     a[i] = list[c[i]];
 
-                yield return (T[])a.Clone();
+                yield return (T[]) a.Clone();
 
                 int x;
                 if (j > 0)
@@ -208,7 +208,7 @@ public static class Combinatorics
     public static double Partitions(int n, int k) => SpecialFunctions.Binomial(n + k - 1, k - 1);
 
     /// <summary>
-    /// Partition number n from 0 to n into an array of size k
+    ///     Partition number n from 0 to n into an array of size k
     /// </summary>
     /// <param name="n">Amount of items to distribute</param>
     /// <param name="k">Amount of containers to distribute over</param>
@@ -221,7 +221,7 @@ public static class Combinatorics
 
         if (k == 1)
         {
-            yield return new[] { n };
+            yield return new[] {n};
             yield break;
         }
 
@@ -231,7 +231,7 @@ public static class Combinatorics
         {
             distribution[0] = n - distribution.Skip(1).Sum();
 
-            yield return (int[])distribution.Clone();
+            yield return (int[]) distribution.Clone();
 
             distribution[1]++;
             distribution[0] = 0;

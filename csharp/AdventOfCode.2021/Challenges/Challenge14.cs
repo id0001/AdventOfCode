@@ -4,22 +4,16 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(14)]
-public class Challenge14
+public class Challenge14(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-    private readonly Dictionary<string, char> _insertionMap = new();
     private readonly Dictionary<char, int> _indexes = new();
+    private readonly Dictionary<string, char> _insertionMap = new();
     private string _template = string.Empty;
-
-    public Challenge14(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await _inputReader.ReadLinesAsync(14).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(14).ToArrayAsync();
 
         _template = lines[0];
 
@@ -73,8 +67,8 @@ public class Challenge14
             return counts;
         }
 
-        var pair1 = new string(new[] { pair[0], inserted });
-        var pair2 = new string(new[] { inserted, pair[1] });
+        var pair1 = new string(new[] {pair[0], inserted});
+        var pair2 = new string(new[] {inserted, pair[1]});
         var c0 = CountInserted(pair1, depth + 1, maxDepth, cache);
         var c1 = CountInserted(pair2, depth + 1, maxDepth, cache);
 
@@ -88,8 +82,7 @@ public class Challenge14
         return counts;
     }
 
-    private int GetCharIndex(char c) => _indexes[c];
+    private int GetCharIndex(char c) => _indexes[c]; // ReSharper disable NotAccessedPositionalProperty.Local
 
-    // ReSharper disable NotAccessedPositionalProperty.Local
     private record StateKey(string Pair, int Depth);
 }

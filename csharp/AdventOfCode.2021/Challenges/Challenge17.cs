@@ -23,10 +23,8 @@ public class Challenge17
         var count = 0;
         for (var y = TargetYMax; y <= -TargetYMax - 1; y++)
         for (var x = Euclid.InverseTriangleNumber(TargetXMin); x <= TargetXMax; x++)
-        {
             if (Simulate(x, y, TargetXMin, TargetXMax, TargetYMin, TargetYMax))
                 count++;
-        }
 
         return count.ToString();
     }

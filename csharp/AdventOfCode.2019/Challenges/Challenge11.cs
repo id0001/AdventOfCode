@@ -1,26 +1,19 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode2019.IntCode.Core;
-using System.Text;
+﻿using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
+using AdventOfCode2019.IntCode.Core;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(11)]
-public class Challenge11
+public class Challenge11(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge11(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
 
         var locationHistory = new Dictionary<Point2, long>();
         var currentLocation = new Point2();
@@ -62,7 +55,7 @@ public class Challenge11
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
 
         var locationHistory = new Dictionary<Point2, long>();
         var currentLocation = new Point2();
@@ -131,12 +124,10 @@ public class Challenge11
         for (var y = 0; y < rows; y++)
         {
             for (var x = 0; x < cols; x++)
-            {
                 if (locations.TryGetValue(new Point2(x + leftMost, y + topMost), out var pvalue))
                     sb.Append(pvalue == 1 ? '#' : '.');
                 else
                     sb.Append('.');
-            }
 
             sb.AppendLine();
         }

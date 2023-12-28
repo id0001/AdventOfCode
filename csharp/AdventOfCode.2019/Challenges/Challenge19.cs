@@ -1,29 +1,22 @@
-﻿using AdventOfCode2019.IntCode.Core;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode2019.IntCode.Core;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(19)]
-public class Challenge19
+public class Challenge19(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge19(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(19, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(19, ',').ToArrayAsync();
         var cpu = new Cpu();
 
         var beamCount = 0;
 
         cpu.SetProgram(program);
-        cpu.RegisterOutput(x => { beamCount += (int)x; });
+        cpu.RegisterOutput(x => { beamCount += (int) x; });
 
         for (var y = 0; y < 50; y++)
         for (var x = 0; x < 50; x++)
@@ -35,7 +28,7 @@ public class Challenge19
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(19, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(19, ',').ToArrayAsync();
         var cpu = new Cpu();
 
         var x = 0;
@@ -43,7 +36,7 @@ public class Challenge19
 
         var output = -1;
         cpu.SetProgram(program);
-        cpu.RegisterOutput(p => { output = (int)p; });
+        cpu.RegisterOutput(p => { output = (int) p; });
 
         while (true)
         {

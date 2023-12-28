@@ -6,23 +6,16 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(15)]
-public class Challenge15
+public class Challenge15(IInputReader inputReader)
 {
     private static readonly Regex LinePattern =
         new(@"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)");
-
-    private readonly IInputReader _inputReader;
-
-    public Challenge15(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Part1]
     public async Task<string> Part1Async()
     {
         var sensorsWithNearestBeacon = new Dictionary<Point2, Point2>();
-        await foreach (var (sensor, beacon) in _inputReader.ParseLinesAsync(15, ParseLine))
+        await foreach (var (sensor, beacon) in inputReader.ParseLinesAsync(15, ParseLine))
             if (Covers(sensor, beacon, new Point2(sensor.X, 2000000)))
                 sensorsWithNearestBeacon.Add(sensor, beacon);
 
@@ -37,7 +30,7 @@ public class Challenge15
     public async Task<string> Part2Async()
     {
         var sensorsWithNearestBeacon = new Dictionary<Point2, Point2>();
-        await foreach (var (sensor, beacon) in _inputReader.ParseLinesAsync(15, ParseLine))
+        await foreach (var (sensor, beacon) in inputReader.ParseLinesAsync(15, ParseLine))
             sensorsWithNearestBeacon.Add(sensor, beacon);
 
         var borders = new HashSet<Point2>();

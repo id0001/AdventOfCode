@@ -32,15 +32,15 @@ public class InputReader : IInputReader
     {
         using var stream = File.OpenText(GetPath(challenge));
         while (!stream.EndOfStream)
-            yield return (T)Convert.ChangeType((await stream.ReadLineAsync())!, typeof(T));
+            yield return (T) Convert.ChangeType((await stream.ReadLineAsync())!, typeof(T));
     }
 
     public async IAsyncEnumerable<string> ReadLineAsync(int challenge, char separator)
     {
         using var stream = File.OpenText(GetPath(challenge));
 
-        char[] buffer = new char[1024];
-        StringBuilder sb = new StringBuilder();
+        var buffer = new char[1024];
+        var sb = new StringBuilder();
         while (!stream.EndOfStream)
         {
             var readCount = await stream.ReadAsync(buffer, 0, buffer.Length);
@@ -74,7 +74,7 @@ public class InputReader : IInputReader
             {
                 if (buffer[i] == separator)
                 {
-                    yield return (T)Convert.ChangeType(sb.ToString(), typeof(T));
+                    yield return (T) Convert.ChangeType(sb.ToString(), typeof(T));
                     sb.Clear();
                     continue;
                 }
@@ -84,7 +84,7 @@ public class InputReader : IInputReader
         }
 
         if (sb.Length > 0)
-            yield return (T)Convert.ChangeType(sb.ToString(), typeof(T));
+            yield return (T) Convert.ChangeType(sb.ToString(), typeof(T));
     }
 
     public async Task<char[,]> ReadGridAsync(int challenge)
@@ -97,8 +97,8 @@ public class InputReader : IInputReader
 
         var map = new char[lines.Count, lines[0].Length];
         for (var y = 0; y < map.GetLength(0); y++)
-            for (var x = 0; x < map.GetLength(1); x++)
-                map[y, x] = lines[y][x];
+        for (var x = 0; x < map.GetLength(1); x++)
+            map[y, x] = lines[y][x];
 
         return map;
     }
@@ -113,8 +113,8 @@ public class InputReader : IInputReader
 
         var map = new T[lines.Count, lines[0].Length];
         for (var y = 0; y < map.GetLength(0); y++)
-            for (var x = 0; x < map.GetLength(1); x++)
-                map[y, x] = (T)Convert.ChangeType(lines[y][x].ToString(), typeof(T));
+        for (var x = 0; x < map.GetLength(1); x++)
+            map[y, x] = (T) Convert.ChangeType(lines[y][x].ToString(), typeof(T));
 
         return map;
     }

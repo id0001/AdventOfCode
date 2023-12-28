@@ -4,23 +4,21 @@ namespace AdventOfCode2019.IntCode.Core;
 
 public partial class Cpu
 {
-    private readonly IDictionary<OpCode, Action> _instructions;
     private readonly ConcurrentQueue<long> _inputBuffer;
+    private readonly IDictionary<OpCode, Action> _instructions;
     private readonly Memory _memory;
-
-    private long[]? _program;
+    private Action? _inputCallback;
     private long _ip;
-    private long _relativeBase;
     private bool _isRunning;
-    private bool _waitingForInput;
     private bool _manualMode;
 
     private Action<long>? _outputCallback;
-    private Action? _inputCallback;
+
+    private long[]? _program;
+    private long _relativeBase;
 
     private TaskCompletionSource<long> _taskCompletionSource;
-
-    public long Result { get; private set; }
+    private bool _waitingForInput;
 
     public Cpu()
     {
@@ -29,6 +27,8 @@ public partial class Cpu
         _instructions = InitializeInstructions();
         _taskCompletionSource = new TaskCompletionSource<long>();
     }
+
+    public long Result { get; private set; }
 
     public void RegisterOutput(Action<long> callback)
     {
@@ -143,19 +143,19 @@ public partial class Cpu
         }
     }
 
-    private OpCode GetOpCode() => (OpCode)(_memory.Read(_ip) % 100);
+    private OpCode GetOpCode() => (OpCode) (_memory.Read(_ip) % 100);
 
     private ParameterMode GetParameterMode(int offset)
     {
         var m = _memory.Read(_ip);
         m = (m - m % 100) / 100;
 
-        return (ParameterMode)(Math.Floor(m / Math.Pow(10, offset)) % 10);
+        return (ParameterMode) (Math.Floor(m / Math.Pow(10, offset)) % 10);
     }
 
     //-----------------------------------------------------------------------------------------
     /// <summary>
-    /// Get the parameter value at the given offset assuming it is an address.
+    ///     Get the parameter value at the given offset assuming it is an address.
     /// </summary>
     /// <param name="offset">The offset</param>
     /// <returns>An address</returns>
@@ -174,8 +174,8 @@ public partial class Cpu
     }
 
     /// <summary>
-    /// Get the parameter value at the given offset.
-    /// Read from memory if it's a pointer.
+    ///     Get the parameter value at the given offset.
+    ///     Read from memory if it's a pointer.
     /// </summary>
     /// <param name="offset">The offset</param>
     /// <returns>A value</returns>
@@ -197,14 +197,14 @@ public partial class Cpu
 
     private IDictionary<OpCode, Action> InitializeInstructions() => new Dictionary<OpCode, Action>
     {
-        { OpCode.Add, Add },
-        { OpCode.Multiply, Multiply },
-        { OpCode.Input, Input },
-        { OpCode.Output, Output },
-        { OpCode.JumpIfTrue, JumpIfTrue },
-        { OpCode.JumpIfFalse, JumpIfFalse },
-        { OpCode.LessThan, LessThan },
-        { OpCode.Equals, Equals },
-        { OpCode.AdjustRelativeBase, AjustRelativeBase }
+        {OpCode.Add, Add},
+        {OpCode.Multiply, Multiply},
+        {OpCode.Input, Input},
+        {OpCode.Output, Output},
+        {OpCode.JumpIfTrue, JumpIfTrue},
+        {OpCode.JumpIfFalse, JumpIfFalse},
+        {OpCode.LessThan, LessThan},
+        {OpCode.Equals, Equals},
+        {OpCode.AdjustRelativeBase, AjustRelativeBase}
     };
 }

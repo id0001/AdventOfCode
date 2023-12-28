@@ -13,8 +13,8 @@ public class Challenge21
     public string Part1()
     {
         var die = 1;
-        int[] pos = { Player1 - 1, Player2 - 1 };
-        int[] score = { 0, 0 };
+        int[] pos = {Player1 - 1, Player2 - 1};
+        int[] score = {0, 0};
         var i = 0;
         var totalRolls = 0;
 
@@ -54,36 +54,30 @@ public class Challenge21
 
         winner = new Score(0, 0);
         for (var z = 1; z < 4; z++)
+        for (var y = 1; y < 4; y++)
+        for (var x = 1; x < 4; x++)
         {
-            for (var y = 1; y < 4; y++)
+            var roll = x + y + z;
+            Position newPosition;
+            Score newScore;
+            if (player == 0)
             {
-                for (var x = 1; x < 4; x++)
-                {
-                    var roll = x + y + z;
-                    Position newPosition;
-                    Score newScore;
-                    if (player == 0)
-                    {
-                        newPosition = new Position(Euclid.Modulus(position.Player1 + roll, 10), position.Player2);
-                        newScore = new Score(score.Player1 + newPosition.Player1 + 1, score.Player2);
-                    }
-                    else
-                    {
-                        newPosition = new Position(position.Player1, Euclid.Modulus(position.Player2 + roll, 10));
-                        newScore = new Score(score.Player1, score.Player2 + newPosition.Player2 + 1);
-                    }
-
-                    var delta = PlayTurn(newPosition, newScore, Euclid.Modulus(player + 1, 2), winCache);
-                    winner = new Score(winner.Player1 + delta.Player1, winner.Player2 + delta.Player2);
-                }
+                newPosition = new Position(Euclid.Modulus(position.Player1 + roll, 10), position.Player2);
+                newScore = new Score(score.Player1 + newPosition.Player1 + 1, score.Player2);
             }
+            else
+            {
+                newPosition = new Position(position.Player1, Euclid.Modulus(position.Player2 + roll, 10));
+                newScore = new Score(score.Player1, score.Player2 + newPosition.Player2 + 1);
+            }
+
+            var delta = PlayTurn(newPosition, newScore, Euclid.Modulus(player + 1, 2), winCache);
+            winner = new Score(winner.Player1 + delta.Player1, winner.Player2 + delta.Player2);
         }
 
         winCache.Add(key, winner);
         return winner;
-    }
-
-    // ReSharper disable NotAccessedPositionalProperty.Local
+    } // ReSharper disable NotAccessedPositionalProperty.Local
     private record StateKey(Position Position, Score Score, int Player);
 
     private record Position(int Player1, int Player2);

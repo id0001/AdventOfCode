@@ -4,15 +4,6 @@ public readonly record struct Point2(int X, int Y) : IPoint<int>, INeighbors<int
 {
     public static readonly Point2 Zero = new();
 
-    int IPoint<int>.this[int index] => index switch
-    {
-        0 => X,
-        1 => Y,
-        _ => throw new NotSupportedException()
-    };
-
-    int IPoint<int>.Dimensions => 2;
-
     public Point2 Up => new(X, Y - 1);
 
     public Point2 Right => new(X + 1, Y);
@@ -21,7 +12,17 @@ public readonly record struct Point2(int X, int Y) : IPoint<int>, INeighbors<int
 
     public Point2 Left => new(X - 1, Y);
 
-    IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
+    IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) =>
+        GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
+
+    int IPoint<int>.this[int index] => index switch
+    {
+        0 => X,
+        1 => Y,
+        _ => throw new NotSupportedException()
+    };
+
+    int IPoint<int>.Dimensions => 2;
 
     public bool Equals(IPoint<int>? other)
     {

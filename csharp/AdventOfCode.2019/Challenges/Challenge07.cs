@@ -1,25 +1,18 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode2019.IntCode.Core;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
+using AdventOfCode2019.IntCode.Core;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(7)]
-public class Challenge07
+public class Challenge07(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge07(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
         var perms = Combinatorics.GenerateAllPermutations(5);
 
         var highest = int.MinValue;
@@ -30,7 +23,7 @@ public class Challenge07
             {
                 var cpu = new Cpu();
                 cpu.SetProgram(program);
-                cpu.RegisterOutput(o => signal = (int)o);
+                cpu.RegisterOutput(o => signal = (int) o);
                 await cpu.StartAsync(phase, signal);
             }
 
@@ -44,7 +37,7 @@ public class Challenge07
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
         var perms = Enumerable.Range(5, 5).Permutations();
 
         var highest = int.MinValue;
@@ -93,7 +86,7 @@ public class Challenge07
         {
             _cpu.RegisterOutput(o =>
             {
-                LastSignal = (int)o;
+                LastSignal = (int) o;
                 _pipeTo?._cpu.WriteInput(o);
             });
 

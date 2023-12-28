@@ -6,19 +6,12 @@ using AdventOfCode.Lib.Collections;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(18)]
-public class Challenge18
+public class Challenge18(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge18(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var points = await _inputReader.ParseLinesAsync(18, ParseLine).ToHashSetAsync();
+        var points = await inputReader.ParseLinesAsync(18, ParseLine).ToHashSetAsync();
 
         var surfaceCount = points.Sum(p => p.GetNeighbors().Count(n => !points.Contains(n)));
         return surfaceCount.ToString();
@@ -27,7 +20,7 @@ public class Challenge18
     [Part2]
     public async Task<string> Part2Async()
     {
-        var points = await _inputReader.ParseLinesAsync(18, ParseLine).ToHashSetAsync();
+        var points = await inputReader.ParseLinesAsync(18, ParseLine).ToHashSetAsync();
 
         var cloud = new PointCloud<Point3, int>(points);
         var outsideAir = new HashSet<Point3>();
@@ -49,7 +42,7 @@ public class Challenge18
             points.Add(p);
 
             foreach (var neighbor in p.GetNeighbors().Where(n =>
-                         !points.Contains(n) && !cloud.Contains(n) && cloud.Bounds.Contains(n, inflateBy: 1)))
+                         !points.Contains(n) && !cloud.Contains(n) && cloud.Bounds.Contains(n, 1)))
                 stack.Push(neighbor);
         }
     }

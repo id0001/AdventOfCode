@@ -5,19 +5,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(20)]
-public class Challenge20
+public class Challenge20(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge20(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var numbers = await _inputReader.ReadLinesAsync<int>(20).ToListAsync();
+        var numbers = await inputReader.ReadLinesAsync<int>(20).ToListAsync();
         var indices = Enumerable.Range(0, numbers.Count).ToList();
 
         for (var i = 0; i < numbers.Count; i++)
@@ -48,7 +41,7 @@ public class Challenge20
     [Part2]
     public async Task<string> Part2Async()
     {
-        var numbers = await _inputReader.ReadLinesAsync<int>(20).Select(x => x * 811589153L).ToListAsync();
+        var numbers = await inputReader.ReadLinesAsync<int>(20).Select(x => x * 811589153L).ToListAsync();
         var indices = Enumerable.Range(0, numbers.Count).ToList();
 
         for (var j = 0; j < 10; j++)

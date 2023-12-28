@@ -1,30 +1,23 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(9)]
-public class Challenge09
+public class Challenge09(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge09(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await _inputReader.ReadGridAsync<int>(9);
+        var grid = await inputReader.ReadGridAsync<int>(9);
         return CalculateRiskLevel(grid).ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await _inputReader.ReadGridAsync<int>(9);
+        var grid = await inputReader.ReadGridAsync<int>(9);
 
         var basins = new List<Point2[]>();
         foreach (var lowestPoint in LowestPoints(grid))

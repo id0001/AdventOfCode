@@ -9,7 +9,7 @@ public static class ResourceHelper
         using var reader = OpenStream(resourceName);
         return reader.ReadToEnd();
     }
-    
+
     public static async Task<string> ReadAsync(string resourceName)
     {
         using var reader = OpenStream(resourceName);
@@ -20,10 +20,10 @@ public static class ResourceHelper
     {
         var assembly = Assembly.GetExecutingAssembly();
         var stream = assembly.GetManifestResourceStream(resourceName);
-        
+
         if (stream is null)
             throw new InvalidOperationException($"Something went wrong while reading the resource: {resourceName}");
-        
+
         return new StreamReader(stream);
     }
 }

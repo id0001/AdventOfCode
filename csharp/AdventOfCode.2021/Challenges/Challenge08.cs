@@ -5,20 +5,13 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(8)]
-public class Challenge08
+public class Challenge08(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge08(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async()
     {
-        var lengths = new[] { 2, 3, 4, 7 };
-        return await _inputReader
+        var lengths = new[] {2, 3, 4, 7};
+        return await inputReader
             .ParseLinesAsync(8, ParseLine)
             .SelectMany(x => x.Output.Values.ToAsyncEnumerable())
             .CountAsync(x => lengths.Contains(x.Length))
@@ -28,7 +21,7 @@ public class Challenge08
     [Part2]
     public async Task<string?> Part2Async()
     {
-        return await _inputReader
+        return await inputReader
             .ParseLinesAsync(8, ParseLine)
             .Select(FindNumberForSignal)
             .SumAsync()
@@ -36,7 +29,8 @@ public class Challenge08
     }
 
     private static IoPair ParseLine(string line)
-        => line.SplitBy("|").Transform(parts => new IoPair(new Input(parts.First().SplitBy(" ").ToArray()), new Output(parts.Second().SplitBy(" ").ToArray())));
+        => line.SplitBy("|").Transform(parts => new IoPair(new Input(parts.First().SplitBy(" ").ToArray()),
+            new Output(parts.Second().SplitBy(" ").ToArray())));
 
     private static int FindNumberForSignal(IoPair io)
     {
@@ -45,7 +39,7 @@ public class Challenge08
         for (var i = 0; i < io.Output.Values.Length; i++)
         {
             var num = Array.IndexOf(mapping, mapping.Single(x => x.SetEquals(io.Output.Values[i])));
-            value += num * (int)Math.Pow(10, io.Output.Values.Length - i - 1);
+            value += num * (int) Math.Pow(10, io.Output.Values.Length - i - 1);
         }
 
         return value;

@@ -4,6 +4,9 @@ public readonly record struct Point4(int X, int Y, int Z, int W) : IPoint<int>, 
 {
     public static readonly Point3 Zero = new();
 
+    IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) =>
+        GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
+
     int IPoint<int>.this[int index] => index switch
     {
         0 => X,
@@ -14,8 +17,6 @@ public readonly record struct Point4(int X, int Y, int Z, int W) : IPoint<int>, 
     };
 
     int IPoint<int>.Dimensions => 4;
-
-    IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
 
     public bool Equals(IPoint<int>? other)
     {

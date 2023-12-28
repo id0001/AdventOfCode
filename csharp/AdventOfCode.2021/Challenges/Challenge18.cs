@@ -6,23 +6,16 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(18)]
-public class Challenge18
+public class Challenge18(IInputReader inputReader)
 {
     private const string NumberNumberPattern = @"^\[(\d),(\d)\]$";
     private const string NumberPairPattern = @"^\[(\d),(.+)\]$";
     private const string PairNumberPattern = @"^\[(.+),(\d)\]$";
 
-    private readonly IInputReader _inputReader;
-
-    public Challenge18(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var lines = await _inputReader.ReadLinesAsync(18).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(18).ToArrayAsync();
         var number = lines[0];
         for (var i = 1; i < lines.Length; i++)
         {
@@ -36,7 +29,7 @@ public class Challenge18
     [Part2]
     public async Task<string> Part2Async()
     {
-        var lines = await _inputReader.ReadLinesAsync(18).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(18).ToArrayAsync();
         var maxMagnitude = 0;
         for (var y = 0; y < lines.Length; y++)
         {
@@ -69,10 +62,8 @@ public class Challenge18
     {
         var result = line;
         while (true)
-        {
             if (!TryExplode(result, out result) && !TrySplit(result, out result))
                 return result;
-        }
     }
 
     private bool TryExplode(string line, out string result)
@@ -81,7 +72,6 @@ public class Challenge18
         var lastNumberIndex = -1;
         var lastNumberLength = 0;
         for (var i = 0; i < line.Length; i++)
-        {
             switch (line[i])
             {
                 case '[' when depth == 4:
@@ -125,7 +115,6 @@ public class Challenge18
                     i += lastNumberLength - 1;
                     break;
             }
-        }
 
         result = line;
         return false;
@@ -134,7 +123,6 @@ public class Challenge18
     private bool TrySplit(string line, out string result)
     {
         for (var i = 0; i < line.Length; i++)
-        {
             switch (line[i])
             {
                 case var c when char.IsDigit(c):
@@ -155,7 +143,6 @@ public class Challenge18
 
                     break;
             }
-        }
 
         result = line;
         return false;
@@ -188,7 +175,6 @@ public class Challenge18
     {
         var bracket = 0;
         for (var i = 0; i < line.Length; i++)
-        {
             switch (line[i])
             {
                 case ',' when bracket == 1:
@@ -200,7 +186,6 @@ public class Challenge18
                     bracket--;
                     break;
             }
-        }
 
         return -1;
     }

@@ -1,29 +1,23 @@
-﻿using AdventOfCode.Lib;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(12)]
-public class Challenge12
+public class Challenge12(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-    private Point3 _io;
+    private Point3 _callisto;
     private Point3 _europe;
     private Point3 _ganymede;
-    private Point3 _callisto;
-
-    public Challenge12(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
+    private Point3 _io;
 
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await _inputReader.ReadLinesAsync(12).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(12).ToArrayAsync();
         _io = ConvertLineToVector(lines[0]);
         _europe = ConvertLineToVector(lines[1]);
         _ganymede = ConvertLineToVector(lines[2]);
@@ -115,17 +109,11 @@ public class Challenge12
         return new Point3(x, y, z);
     }
 
-    private class Moon
+    private class Moon(Point3 position)
     {
-        public Moon(Point3 position)
-        {
-            Position = position;
-            InitialPosition = position;
-        }
+        public Point3 InitialPosition { get; } = position;
 
-        public Point3 InitialPosition { get; }
-
-        public Point3 Position { get; set; }
+        public Point3 Position { get; set; } = position;
 
         public Point3 Velocity { get; set; } = Point3.Zero;
 
@@ -149,13 +137,13 @@ public class Challenge12
             {
                 if (a.Position.X < b.Position.X)
                 {
-                    va = va with { X = va.X + 1 };
-                    vb = vb with { X = vb.X - 1 };
+                    va = va with {X = va.X + 1};
+                    vb = vb with {X = vb.X - 1};
                 }
                 else
                 {
-                    va = va with { X = va.X - 1 };
-                    vb = vb with { X = vb.X + 1 };
+                    va = va with {X = va.X - 1};
+                    vb = vb with {X = vb.X + 1};
                 }
             }
 
@@ -163,13 +151,13 @@ public class Challenge12
             {
                 if (a.Position.Y < b.Position.Y)
                 {
-                    va = va with { Y = va.Y + 1 };
-                    vb = vb with { Y = vb.Y - 1 };
+                    va = va with {Y = va.Y + 1};
+                    vb = vb with {Y = vb.Y - 1};
                 }
                 else
                 {
-                    va = va with { Y = va.Y - 1 };
-                    vb = vb with { Y = vb.Y + 1 };
+                    va = va with {Y = va.Y - 1};
+                    vb = vb with {Y = vb.Y + 1};
                 }
             }
 
@@ -177,13 +165,13 @@ public class Challenge12
             {
                 if (a.Position.Z < b.Position.Z)
                 {
-                    va = va with { Z = va.Z + 1 };
-                    vb = vb with { Z = vb.Z - 1 };
+                    va = va with {Z = va.Z + 1};
+                    vb = vb with {Z = vb.Z - 1};
                 }
                 else
                 {
-                    va = va with { Z = va.Z - 1 };
-                    vb = vb with { Z = vb.Z + 1 };
+                    va = va with {Z = va.Z - 1};
+                    vb = vb with {Z = vb.Z + 1};
                 }
             }
 

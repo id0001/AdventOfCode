@@ -2,51 +2,37 @@ using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using Microsoft.Z3;
-using System.Drawing;
-using System.Net.Mime;
-using System.Runtime.InteropServices;
 
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(24)]
-public class Challenge24
+public class Challenge24(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge24(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
         var min = 200000000000000L;
-        var max =  400000000000000L;
+        var max = 400000000000000L;
 
-        var hailstones = await _inputReader.ParseLinesAsync(24, ParseLine).ToArrayAsync();
+        var hailstones = await inputReader.ParseLinesAsync(24, ParseLine).ToArrayAsync();
 
         var c = 0;
         for (var i = 0; i < hailstones.Length - 1; i++)
-        {
-            for (var j = i + 1; j < hailstones.Length; j++)
+        for (var j = i + 1; j < hailstones.Length; j++)
+            if (TryIntersects(hailstones[i], hailstones[j], out var ix, out var iy))
             {
-                if (TryIntersects(hailstones[i], hailstones[j], out var ix, out var iy))
-                {
-                    var h1 = hailstones[i];
-                    var h2 = hailstones[j];
+                var h1 = hailstones[i];
+                var h2 = hailstones[j];
 
-                    if ((ix < h1.Position.X && h1.Velocity.X > 0) || (ix > h1.Position.X && h1.Velocity.X < 0))
-                        continue;
+                if ((ix < h1.Position.X && h1.Velocity.X > 0) || (ix > h1.Position.X && h1.Velocity.X < 0))
+                    continue;
 
-                    if ((ix < h2.Position.X && h2.Velocity.X > 0) || (ix > h2.Position.X && h2.Velocity.X < 0))
-                        continue;
-                    
-                    if (ix >= min && iy >= min && ix <= max && iy <= max)
-                        c++;
-                }
+                if ((ix < h2.Position.X && h2.Velocity.X > 0) || (ix > h2.Position.X && h2.Velocity.X < 0))
+                    continue;
+
+                if (ix >= min && iy >= min && ix <= max && iy <= max)
+                    c++;
             }
-        }
 
 
         return c.ToString();
@@ -55,7 +41,7 @@ public class Challenge24
     [Part2]
     public async Task<string> Part2Async()
     {
-        var hailstones = await _inputReader.ParseLinesAsync(24, ParseLine).ToListAsync();
+        var hailstones = await inputReader.ParseLinesAsync(24, ParseLine).ToListAsync();
 
         return Solve(hailstones).ToString();
     }
@@ -73,7 +59,7 @@ public class Challenge24
         if (x1 * y2 - x2 * y1 == 0)
             return false;
 
-        var t = ((x2a - x1a) * y2 - (y2a - y1a) * x2) / (double)(x1 * y2 - x2 * y1);
+        var t = ((x2a - x1a) * y2 - (y2a - y1a) * x2) / (double) (x1 * y2 - x2 * y1);
         ix = x1a + t * x1;
         iy = y1a + t * y1;
 
@@ -139,7 +125,7 @@ public class Challenge24
                 return new Hailstone(
                     parts.First().SplitBy(",").As<long>().Into(p => new Point3L(p[0], p[1], p[2])),
                     parts.Second().SplitBy(",").As<long>().Into(p => new Point3L(p[0], p[1], p[2]))
-                    );
+                );
             });
     }
 

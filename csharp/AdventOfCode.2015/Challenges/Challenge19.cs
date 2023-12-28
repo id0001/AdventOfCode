@@ -1,19 +1,12 @@
+using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
-using System.Text;
 
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(19)]
-public class Challenge19
+public class Challenge19(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge19(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
@@ -21,24 +14,20 @@ public class Challenge19
 
         var set = new HashSet<string>();
         foreach (var kv in input.Replacements)
-        {
-            foreach (var repl in kv.Value)
-            {
-                for (var i = 0; i < input.Sequence.Length; i++)
+        foreach (var repl in kv.Value)
+            for (var i = 0; i < input.Sequence.Length; i++)
+                if (input.Sequence[i] == kv.Key)
                 {
-                    if (input.Sequence[i] == kv.Key)
-                    {
-                        var s = string.Join("", input.Sequence.Take(i - 1)) + repl + string.Join("", input.Sequence.Skip(i + 1));
-                        set.Add(s);
-                    }
+                    var s = string.Join("", input.Sequence.Take(i - 1)) + repl +
+                            string.Join("", input.Sequence.Skip(i + 1));
+                    set.Add(s);
                 }
-            }
-        }
 
         return set.Count.ToString();
     }
 
-    private void Replace(Dictionary<string, List<string>> replacements, string node, int i, string[] sequence, HashSet<(string, int)> parts, HashSet<string> results)
+    private void Replace(Dictionary<string, List<string>> replacements, string node, int i, string[] sequence,
+        HashSet<(string, int)> parts, HashSet<string> results)
     {
         if (parts.Contains((node, i)))
             return;
@@ -74,12 +63,12 @@ public class Challenge19
 
     private async Task<Input> ParseInput()
     {
-        var lines = await _inputReader.ReadLinesAsync(19).ToListAsync();
+        var lines = await inputReader.ReadLinesAsync(19).ToListAsync();
         var p1 = lines.Take(lines.Count - 2);
         var p2 = lines[^1];
 
         var sequence = new List<string>();
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         foreach (var c in p2)
         {
             if (char.IsUpper(c) && sb.Length > 0)

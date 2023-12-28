@@ -7,19 +7,12 @@ using AdventOfCode.Lib.PathFinding;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(10)]
-public class Challenge10
+public class Challenge10(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge10(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await _inputReader.ReadGridAsync(10);
+        var grid = await inputReader.ReadGridAsync(10);
         var start = grid.FindPosition(c => c == 'S');
         grid[start.Y, start.X] = GetStartType(grid, start);
         var bfs = new BreadthFirstSearch<Point2>(n => GetConnectingPipes(grid, n));
@@ -29,12 +22,12 @@ public class Challenge10
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await _inputReader.ReadGridAsync(10);
+        var grid = await inputReader.ReadGridAsync(10);
         var start = grid.FindPosition(c => c == 'S');
         grid[start.Y, start.X] = GetStartType(grid, start);
         var pipeSegments = WalkPath(grid, start).ToList();
 
-        return (Polygon.CountInteriorPoints((long)Polygon.ShoelaceArea(pipeSegments), pipeSegments.Count)).ToString();
+        return Polygon.CountInteriorPoints((long) Polygon.ShoelaceArea(pipeSegments), pipeSegments.Count).ToString();
     }
 
     private static IEnumerable<Point2> WalkPath(char[,] grid, Point2 start)
@@ -45,7 +38,7 @@ public class Challenge10
         yield return start;
 
         var current = next;
-        while(current != end)
+        while (current != end)
         {
             yield return current;
             visited.Add(current);

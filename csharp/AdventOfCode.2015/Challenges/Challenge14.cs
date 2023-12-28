@@ -6,26 +6,19 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(14)]
-public class Challenge14
+public class Challenge14(IInputReader inputReader)
 {
     private static readonly Regex Pattern =
         new(@"(\w+) can fly (\d+) km/s for (\d+) seconds, but then must rest for (\d+) seconds.");
 
-    private readonly IInputReader _inputReader;
-
-    public Challenge14(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
-    public async Task<string?> Part1Async() => await _inputReader.ParseLinesAsync(14, ParseLine)
+    public async Task<string?> Part1Async() => await inputReader.ParseLinesAsync(14, ParseLine)
         .Select(r => r.DistanceTraveledAfter(2503)).MaxAsync().ToStringAsync();
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        var reindeer = await _inputReader.ParseLinesAsync(14, ParseLine).ToListAsync();
+        var reindeer = await inputReader.ParseLinesAsync(14, ParseLine).ToListAsync();
 
         var score = reindeer.ToDictionary(kv => kv, _ => 0);
         var distanceTraveled = reindeer.ToDictionary(kv => kv, _ => 0);

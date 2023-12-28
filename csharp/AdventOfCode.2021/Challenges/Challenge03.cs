@@ -4,19 +4,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(3)]
-public class Challenge03
+public class Challenge03(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge03(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var data = await _inputReader.ReadLinesAsync(3).ToArrayAsync();
+        var data = await inputReader.ReadLinesAsync(3).ToArrayAsync();
         var len = data[0].Length;
         var counts = Enumerable.Range(0, len)
             .Select(i => data
@@ -30,10 +23,8 @@ public class Challenge03
         var gamma = 0;
 
         for (var i = 0; i < counts.Count; i++)
-        {
             if (counts[i][1] > counts[i][0])
                 gamma += 1 << (len - 1 - i);
-        }
 
         var epsilon = ~gamma & 0xFFF;
 
@@ -43,7 +34,7 @@ public class Challenge03
     [Part2]
     public async Task<string> Part2Async()
     {
-        var data = await _inputReader.ReadLinesAsync(3).ToArrayAsync();
+        var data = await inputReader.ReadLinesAsync(3).ToArrayAsync();
         var oxygenList = data.ToList();
         var co2List = data.ToList();
 

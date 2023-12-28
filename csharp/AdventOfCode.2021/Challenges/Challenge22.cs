@@ -1,27 +1,21 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Collections;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
+using AdventOfCode.Lib.Collections;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(22)]
-public class Challenge22
+public class Challenge22(IInputReader inputReader)
 {
     private const string InputPattern = @"^(on|off) x=(-?\d+)..(-?\d+),y=(-?\d+)..(-?\d+),z=(-?\d+)..(-?\d+)$";
-    private readonly IInputReader _inputReader;
     private readonly List<Instruction> _instructions = new();
-
-    public Challenge22(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in _inputReader.ReadLinesAsync(22))
+        await foreach (var line in inputReader.ReadLinesAsync(22))
         {
             var match = Regex.Match(line, InputPattern);
 
@@ -33,7 +27,7 @@ public class Challenge22
             var zFrom = int.Parse(match.Groups[6].Value);
             var zTo = int.Parse(match.Groups[7].Value);
 
-            var cuboid = new Cube(xFrom, yFrom, zFrom,xTo - xFrom + 1, yTo - yFrom + 1, zTo - zFrom + 1);
+            var cuboid = new Cube(xFrom, yFrom, zFrom, xTo - xFrom + 1, yTo - yFrom + 1, zTo - zFrom + 1);
             _instructions.Add(new Instruction(turnOn, cuboid));
         }
     }

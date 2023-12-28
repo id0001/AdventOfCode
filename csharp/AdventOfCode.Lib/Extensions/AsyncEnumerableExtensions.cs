@@ -6,7 +6,6 @@ public static class AsyncEnumerableExtensions
     {
         var list = new List<T>();
         await foreach (var item in source)
-        {
             if (!EqualityComparer<T>.Default.Equals(item, separator))
             {
                 list.Add(item);
@@ -16,9 +15,8 @@ public static class AsyncEnumerableExtensions
                 yield return list;
                 list = new List<T>();
             }
-        }
     }
-    
+
     public static async IAsyncEnumerable<IList<T>> Windowed<T>(this IAsyncEnumerable<T> source, int windowSize)
     {
         var windows = Enumerable.Range(0, windowSize)

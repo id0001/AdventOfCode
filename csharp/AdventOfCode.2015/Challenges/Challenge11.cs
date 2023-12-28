@@ -37,10 +37,8 @@ public class Challenge11
     private static bool Validate3AscendingCharactersRule(string input)
     {
         for (var i = 0; i < input.Length - 2; i++)
-        {
             if (input[i + 2] - input[i + 1] == 1 && input[i + 1] - input[i] == 1)
                 return true;
-        }
 
         return false;
     }
@@ -52,18 +50,16 @@ public class Challenge11
     {
         var firstType = '-';
         for (var i = 0; i < input.Length - 1; i++)
-        {
-            if (input[i] == input[i + 1] && (i + 2 == input.Length || input[i] != input[+2])) firstType = input[i];
-        }
+            if (input[i] == input[i + 1] && (i + 2 == input.Length || input[i] != input[+2]))
+                firstType = input[i];
 
         if (firstType == '-')
             return false;
 
         for (var i = 0; i < input.Length - 1; i++)
-        {
             if (input[i] != firstType && input[i] == input[i + 1] &&
-                (i + 2 == input.Length || input[i] != input[+2])) return true;
-        }
+                (i + 2 == input.Length || input[i] != input[+2]))
+                return true;
 
         return false;
     }
@@ -78,7 +74,7 @@ public class Challenge11
             stack.Push(newChar);
             if (newChar == 'a') continue;
 
-            sb.Append(input[0..n]);
+            sb.Append(input[..n]);
             break;
         }
 
@@ -87,5 +83,5 @@ public class Challenge11
         return sb.ToString();
     }
 
-    private static char NextChar(char input) => (char)('a' + (input - 'a' + 1) % 26);
+    private static char NextChar(char input) => (char) ('a' + (input - 'a' + 1) % 26);
 }

@@ -1,12 +1,7 @@
 namespace AdventOfCode.Core;
 
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-public class ChallengeAttribute : Attribute
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+public class ChallengeAttribute(int day) : Attribute
 {
-    public ChallengeAttribute(int day)
-    {
-        Day = day;
-    }
-    
-    public int Day { get; set; }
+    public int Day { get; set; } = day;
 }

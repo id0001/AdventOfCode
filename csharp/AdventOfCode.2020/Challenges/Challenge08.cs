@@ -4,19 +4,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(8)]
-public class Challenge08
+public class Challenge08(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge08(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async()
     {
-        var input = await _inputReader.ReadLinesAsync(8)
+        var input = await inputReader.ReadLinesAsync(8)
             .Select(line => new Instruction(line[..3], int.Parse(line[4..]))).ToListAsync();
 
         ISet<int> history = new HashSet<int>();
@@ -50,7 +43,7 @@ public class Challenge08
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = await _inputReader.ReadLinesAsync(8)
+        var input = await inputReader.ReadLinesAsync(8)
             .Select(line => new Instruction(line[..3], int.Parse(line[4..]))).ToListAsync();
 
         var closedList = new HashSet<int>();

@@ -5,19 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(1)]
-public class Challenge01
+public class Challenge01(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge01(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async()
     {
-        return await _inputReader
+        return await inputReader
             .ReadLinesAsync(1)
             .ChunkBy(string.Empty)
             .Select(x => x
@@ -30,7 +23,7 @@ public class Challenge01
     [Part2]
     public async Task<string?> Part2Async()
     {
-        return await _inputReader
+        return await inputReader
             .ReadLinesAsync(1)
             .ChunkBy(string.Empty)
             .Select(x => x

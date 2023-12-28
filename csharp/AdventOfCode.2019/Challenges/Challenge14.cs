@@ -4,20 +4,14 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(14)]
-public class Challenge14
+public class Challenge14(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly Dictionary<string, Reaction> _reactions = new();
-
-    public Challenge14(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in _inputReader.ReadLinesAsync(14))
+        await foreach (var line in inputReader.ReadLinesAsync(14))
         {
             var inputs = new Dictionary<string, int>();
 
@@ -61,7 +55,7 @@ public class Challenge14
 
         while (hi - lo > 1L)
         {
-            var mid = (long)Math.Floor((hi + lo) / 2d);
+            var mid = (long) Math.Floor((hi + lo) / 2d);
             var cost = Request("FUEL", mid, new Dictionary<string, long>());
             if (cost > expected)
                 hi = mid;
@@ -93,7 +87,7 @@ public class Challenge14
 
         var reaction = _reactions[component];
 
-        var amountOfReactionsNeeded = (long)Math.Ceiling(amount / (double)reaction.Output.Value);
+        var amountOfReactionsNeeded = (long) Math.Ceiling(amount / (double) reaction.Output.Value);
         var oreNeeded = reaction.Input.Sum(input => Request(input.Key, amountOfReactionsNeeded * input.Value, supply));
         var leftover = amountOfReactionsNeeded * reaction.Output.Value - amount;
         supply[component] += leftover;

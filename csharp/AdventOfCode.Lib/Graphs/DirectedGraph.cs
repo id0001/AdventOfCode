@@ -7,8 +7,8 @@ public class DirectedGraph<TVertex, TEdge>
     where TEdge : notnull
 {
     private readonly Dictionary<(TVertex, TVertex), TEdge> _edges = new();
-    private readonly Dictionary<TVertex, List<TVertex>> _vertexOutEdges = new();
     private readonly Dictionary<TVertex, List<TVertex>> _vertexInEdges = new();
+    private readonly Dictionary<TVertex, List<TVertex>> _vertexOutEdges = new();
 
     public int VertexCount => _vertexOutEdges.Count;
 

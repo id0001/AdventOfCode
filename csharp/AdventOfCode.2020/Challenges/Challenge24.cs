@@ -1,38 +1,31 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(24)]
-public class Challenge24
+public class Challenge24(IInputReader inputReader)
 {
-    private static readonly IReadOnlyDictionary<string, Point3> Neighbors = new Dictionary<string, Point3>()
+    private static readonly IReadOnlyDictionary<string, Point3> Neighbors = new Dictionary<string, Point3>
     {
-        { "nw", new Point3(0, +1, -1) },
-        { "ne", new Point3(1, 0, -1) },
-        { "e", new Point3(1, -1, 0) },
-        { "se", new Point3(0, -1, 1) },
-        { "sw", new Point3(-1, 0, 1) },
-        { "w", new Point3(-1, 1, 0) }
+        {"nw", new Point3(0, +1, -1)},
+        {"ne", new Point3(1, 0, -1)},
+        {"e", new Point3(1, -1, 0)},
+        {"se", new Point3(0, -1, 1)},
+        {"sw", new Point3(-1, 0, 1)},
+        {"w", new Point3(-1, 1, 0)}
     };
 
-    private readonly IInputReader _inputReader;
     private readonly List<List<string>> _input = new();
-
-    public Challenge24(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in _inputReader.ReadLinesAsync(24))
+        await foreach (var line in inputReader.ReadLinesAsync(24))
         {
             var steps = new List<string>();
             for (var i = 0; i < line.Length; i++)
-            {
                 if (line[i] == 'n' || line[i] == 's')
                 {
                     steps.Add(line.Substring(i, 2));
@@ -42,7 +35,6 @@ public class Challenge24
                 {
                     steps.Add(line[i].ToString());
                 }
-            }
 
             _input.Add(steps);
         }

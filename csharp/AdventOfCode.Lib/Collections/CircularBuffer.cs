@@ -3,20 +3,18 @@ using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode.Lib.Collections;
 
-public class CircularBuffer<T> : IEnumerable<T?>
+public class CircularBuffer<T>(int capacity) : IEnumerable<T?>
 {
-    private readonly T?[] _array;
+    private readonly T?[] _array = new T[capacity];
     private int _head;
-
-    public CircularBuffer(int capacity)
-    {
-        _array = new T[capacity];
-        Count = capacity;
-    }
 
     public T? this[int index] => _array[Euclid.Modulus(_head + index, Count)];
 
-    public int Count { get; }
+    public int Count { get; } = capacity;
+
+    public IEnumerator<T?> GetEnumerator() => _array.Skip(_head).Union(_array.Take(_head)).GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public void Push(T item) => _array[GetCurrentPositionAndMoveNext()] = item;
 
@@ -26,8 +24,4 @@ public class CircularBuffer<T> : IEnumerable<T?>
         _head = (_head + 1) % Count;
         return p;
     }
-
-    public IEnumerator<T?> GetEnumerator() => _array.Skip(_head).Union(_array.Take(_head)).GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

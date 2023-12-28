@@ -4,23 +4,16 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(1)]
-public class Challenge01
+public class Challenge01(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge01(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
-    public async Task<string> Part1Async() => (await _inputReader.ReadLinesAsync(1)
+    public async Task<string> Part1Async() => (await inputReader.ReadLinesAsync(1)
             .Select(int.Parse)
             .AggregateAsync(0, (a, b) => a + (b / 3 - 2)))
         .ToString();
 
     [Part2]
-    public async Task<string> Part2Async() => (await _inputReader.ReadLinesAsync(1)
+    public async Task<string> Part2Async() => (await inputReader.ReadLinesAsync(1)
             .Select(int.Parse)
             .AggregateAsync(0, (a, b) => a + CalculateFuelRequirement(b)))
         .ToString();

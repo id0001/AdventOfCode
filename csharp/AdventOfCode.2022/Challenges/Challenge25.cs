@@ -5,19 +5,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(25)]
-public class Challenge25
+public class Challenge25(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge25(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        return Encode(await _inputReader.ParseLinesAsync(25, Decode).SumAsync());
+        return Encode(await inputReader.ParseLinesAsync(25, Decode).SumAsync());
     }
 
     private static long Decode(string line)

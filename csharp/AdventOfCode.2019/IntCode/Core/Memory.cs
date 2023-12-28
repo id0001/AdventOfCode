@@ -1,27 +1,20 @@
 ﻿namespace AdventOfCode2019.IntCode.Core;
 
-public class Memory
+public class Memory(int size = 100000)
 {
-    private long[] _memory;
-    private readonly int _size;
-
-    public Memory(int size = 100000)
-    {
-        _size = size;
-        _memory = Array.Empty<long>();
-    }
+    private long[] _memory = Array.Empty<long>();
 
     public void Clear()
     {
-        _memory = new long[_size];
+        _memory = new long[size];
     }
 
     public void LoadProgram(long[] program)
     {
-        if (program.Length > _size)
+        if (program.Length > size)
             throw new ArgumentException("Program is larger than available memory.");
 
-        _memory = new long[_size];
+        _memory = new long[size];
         Array.Copy(program, 0, _memory, 0, program.Length);
     }
 

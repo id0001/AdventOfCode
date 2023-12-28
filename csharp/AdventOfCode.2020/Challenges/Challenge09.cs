@@ -1,26 +1,19 @@
-﻿using AdventOfCode.Lib.Collections;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Collections;
 
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(9)]
-public class Challenge09
+public class Challenge09(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge09(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async()
     {
         var buffer = new CircularBuffer<long>(25);
         var index = 0;
 
-        await foreach (var value in _inputReader.ReadLinesAsync<long>(9))
+        await foreach (var value in inputReader.ReadLinesAsync<long>(9))
         {
             if (index >= 25)
                 if (!Validate(buffer, value))
@@ -41,7 +34,7 @@ public class Challenge09
         var buffer = new CircularBuffer<long>(25);
         var index = 0;
 
-        await foreach (var value in _inputReader.ReadLinesAsync<long>(9))
+        await foreach (var value in inputReader.ReadLinesAsync<long>(9))
         {
             if (index >= 25)
             {
@@ -61,10 +54,8 @@ public class Challenge09
     {
         for (var y = 0; y < buffer.Count; y++)
         for (var x = y; x < buffer.Count; x++)
-        {
             if (value == buffer[x] + buffer[y])
                 return true;
-        }
 
         return false;
     }

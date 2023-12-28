@@ -5,20 +5,13 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(2)]
-public class Challenge02
+public class Challenge02(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge02(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
         var sum = 0;
-        await foreach (var game in _inputReader.ParseLinesAsync(2, ParseLine))
+        await foreach (var game in inputReader.ParseLinesAsync(2, ParseLine))
             if (IsPossible(game))
                 sum += game.Number;
 
@@ -29,7 +22,7 @@ public class Challenge02
     public async Task<string> Part2Async()
     {
         var sum = 0;
-        await foreach (var game in _inputReader.ParseLinesAsync(2, ParseLine))
+        await foreach (var game in inputReader.ParseLinesAsync(2, ParseLine))
             sum += GetPowerOfMinimumNumberOfCubes(game);
 
         return sum.ToString();
@@ -37,7 +30,7 @@ public class Challenge02
 
     private bool IsPossible(Game game)
     {
-        int[] max = { 12, 13, 14 };
+        int[] max = {12, 13, 14};
         foreach (var set in game.Sets)
             if (set.Zip(max).Any(x => x.First > x.Second))
                 return false;
@@ -48,7 +41,7 @@ public class Challenge02
     private int GetPowerOfMinimumNumberOfCubes(Game game)
     {
         return game.Sets.Aggregate(new int[3],
-                (a, b) => new[] { Math.Max(a[0], b[0]), Math.Max(a[1], b[1]), Math.Max(a[2], b[2]) })
+                (a, b) => new[] {Math.Max(a[0], b[0]), Math.Max(a[1], b[1]), Math.Max(a[2], b[2])})
             .Product();
     }
 

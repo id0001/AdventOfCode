@@ -9,47 +9,38 @@ using static AdventOfCode.Lib.Misc.CubeWalker;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(22)]
-public class Challenge22
+public class Challenge22(IInputReader inputReader)
 {
-    private readonly Edge[] _edges;
-    private readonly IDictionary<Face, Point2> _faceOffset;
-    private readonly IInputReader _inputReader;
-
-    public Challenge22(IInputReader inputReader)
+    private readonly Edge[] _edges =
     {
-        _inputReader = inputReader;
+        new(Face.Top, Face.Right, Side.Right, Side.Left),
+        new(Face.Top, Face.Front, Side.Bottom, Side.Top),
+        new(Face.Top, Face.Left, Side.Left, Side.Left),
+        new(Face.Top, Face.Back, Side.Top, Side.Left),
+        new(Face.Front, Face.Right, Side.Right, Side.Bottom),
+        new(Face.Front, Face.Left, Side.Left, Side.Top),
+        new(Face.Front, Face.Bottom, Side.Bottom, Side.Top),
+        new(Face.Right, Face.Bottom, Side.Right, Side.Right),
+        new(Face.Right, Face.Back, Side.Top, Side.Bottom),
+        new(Face.Left, Face.Back, Side.Bottom, Side.Top),
+        new(Face.Left, Face.Bottom, Side.Right, Side.Left),
+        new(Face.Bottom, Face.Back, Side.Bottom, Side.Right)
+    };
 
-        _faceOffset = new Dictionary<Face, Point2>
-        {
-            {Face.Top, new Point2(50, 0)},
-            {Face.Right, new Point2(100, 0)},
-            {Face.Front, new Point2(50, 50)},
-            {Face.Left, new Point2(0, 100)},
-            {Face.Bottom, new Point2(50, 100)},
-            {Face.Back, new Point2(0, 150)}
-        };
-
-        _edges = new Edge[]
-        {
-            new(Face.Top, Face.Right, Side.Right, Side.Left),
-            new(Face.Top, Face.Front, Side.Bottom, Side.Top),
-            new(Face.Top, Face.Left, Side.Left, Side.Left),
-            new(Face.Top, Face.Back, Side.Top, Side.Left),
-            new(Face.Front, Face.Right, Side.Right, Side.Bottom),
-            new(Face.Front, Face.Left, Side.Left, Side.Top),
-            new(Face.Front, Face.Bottom, Side.Bottom, Side.Top),
-            new(Face.Right, Face.Bottom, Side.Right, Side.Right),
-            new(Face.Right, Face.Back, Side.Top, Side.Bottom),
-            new(Face.Left, Face.Back, Side.Bottom, Side.Top),
-            new(Face.Left, Face.Bottom, Side.Right, Side.Left),
-            new(Face.Bottom, Face.Back, Side.Bottom, Side.Right)
-        };
-    }
+    private readonly IDictionary<Face, Point2> _faceOffset = new Dictionary<Face, Point2>
+    {
+        {Face.Top, new Point2(50, 0)},
+        {Face.Right, new Point2(100, 0)},
+        {Face.Front, new Point2(50, 50)},
+        {Face.Left, new Point2(0, 100)},
+        {Face.Bottom, new Point2(50, 100)},
+        {Face.Back, new Point2(0, 150)}
+    };
 
     [Part1]
     public async Task<string> Part1Async()
     {
-        var lines = await _inputReader.ReadLinesAsync(22).ToListAsync();
+        var lines = await inputReader.ReadLinesAsync(22).ToListAsync();
         var (map, line) = ReadGridWithInstructions(lines);
 
         var position = FindLeftMostOpenTile(map);
@@ -75,7 +66,7 @@ public class Challenge22
     [Part2]
     public async Task<string> Part2Async()
     {
-        var lines = await _inputReader.ReadLinesAsync(22).ToListAsync();
+        var lines = await inputReader.ReadLinesAsync(22).ToListAsync();
         var (map, line) = ReadGridWithInstructions(lines);
 
         var position = new CubeCoord(Face.Top, Point2.Zero);
@@ -102,7 +93,8 @@ public class Challenge22
         return (rows + cols + facing).ToString();
     }
 
-    private static (TPosition, TDirection) AppendSteps<TPosition, TDirection>(TPosition position, TDirection direction, StringBuilder moveAmount, char c)
+    private static (TPosition, TDirection) AppendSteps<TPosition, TDirection>(TPosition position, TDirection direction,
+        StringBuilder moveAmount, char c)
     {
         moveAmount.Append(c);
         return (position, direction);

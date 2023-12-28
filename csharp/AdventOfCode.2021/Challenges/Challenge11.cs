@@ -1,23 +1,16 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(11)]
-public class Challenge11
+public class Challenge11(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge11(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var input = await _inputReader.ReadGridAsync<int>(11);
+        var input = await inputReader.ReadGridAsync<int>(11);
 
         var totalFlashCount = 0;
 
@@ -40,7 +33,7 @@ public class Challenge11
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = await _inputReader.ReadGridAsync<int>(11);
+        var input = await inputReader.ReadGridAsync<int>(11);
 
         var step = 0;
         while (true)

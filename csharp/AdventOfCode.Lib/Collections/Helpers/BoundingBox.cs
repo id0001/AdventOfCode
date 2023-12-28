@@ -6,8 +6,8 @@ public class BoundingBox<TPoint, TNumber>
     where TPoint : IPoint<TNumber>, new()
     where TNumber : IBinaryInteger<TNumber>, IMinMaxValue<TNumber>
 {
-    private TNumber[] _min;
     private TNumber[] _max;
+    private TNumber[] _min;
 
     internal BoundingBox()
     {

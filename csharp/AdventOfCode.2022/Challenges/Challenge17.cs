@@ -7,19 +7,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(17)]
-public class Challenge17
+public class Challenge17(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge17(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var dirs = await _inputReader.ReadLineAsync(17).ToListAsync();
+        var dirs = await inputReader.ReadLineAsync(17).ToListAsync();
 
         var result = SimulateUntil(new PointCloud<Point2, int>(), dirs, 0, 0, 0, 0, state => state.FallenRocks == 2022);
         return result.CurrentHeight.ToString();
@@ -28,7 +21,7 @@ public class Challenge17
     [Part2]
     public async Task<string> Part2Async()
     {
-        var dirs = await _inputReader.ReadLineAsync(17).ToListAsync();
+        var dirs = await inputReader.ReadLineAsync(17).ToListAsync();
 
         var targetRocks = 1_000_000_000_000;
         var cache = new Dictionary<StateKey, State>();
@@ -59,7 +52,8 @@ public class Challenge17
         var remainingRocks = targetRocks - fallenRocks;
 
         // Simulate again from the given state until the desired amount of fallen rocks is reached
-        var rest = SimulateUntil(new PointCloud<Point2, int>(), dirs, cycleEnd.Key.DirIndex, cycleEnd.Key.ShapeIndex + 1, 0,
+        var rest = SimulateUntil(new PointCloud<Point2, int>(), dirs, cycleEnd.Key.DirIndex,
+            cycleEnd.Key.ShapeIndex + 1, 0,
             0, state => state.FallenRocks == remainingRocks);
 
         // Add the remaining height to the height after the last cycle
@@ -95,7 +89,8 @@ public class Challenge17
         return true;
     }
 
-    private bool TryMove(PointCloud<Point2, int> cloud, Point2 position, char direction, Shape shape, out Point2 newPosition)
+    private bool TryMove(PointCloud<Point2, int> cloud, Point2 position, char direction, Shape shape,
+        out Point2 newPosition)
     {
         newPosition = MoveHorizontal(cloud, position, direction, shape);
         return TryMoveDown(cloud, newPosition, shape, out newPosition);

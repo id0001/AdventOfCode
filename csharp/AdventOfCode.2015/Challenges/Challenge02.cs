@@ -5,25 +5,18 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(2)]
-public class Challenge02
+public class Challenge02(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge02(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async() =>
-        (await _inputReader
+        (await inputReader
             .ParseLinesAsync(2, ParseLine)
             .SumAsync(TotalPaperNeeded))
         .ToString();
 
     [Part2]
     public async Task<string?> Part2Async() =>
-        (await _inputReader
+        (await inputReader
             .ParseLinesAsync(2, ParseLine)
             .SumAsync(TotalRibbonNeeded))
         .ToString();

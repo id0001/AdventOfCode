@@ -6,25 +6,18 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(11)]
-public class Challenge11
+public class Challenge11(IInputReader inputReader)
 {
     private static readonly Regex OperationPattern = new(@"new = old ([*+]) (old|\d+)");
     private static readonly Regex TestPattern = new(@"divisible by (\d+)");
     private static readonly Regex ActionPattern = new(@"throw to monkey (\d+)");
-
-    private readonly IInputReader _inputReader;
-
-    public Challenge11(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Part1]
     public async Task<string> Part1Async()
     {
         var monkeys = new List<Monkey>();
         var lines = new List<string>();
-        await foreach (var line in _inputReader.ReadLinesAsync(11))
+        await foreach (var line in inputReader.ReadLinesAsync(11))
         {
             if (string.IsNullOrEmpty(line))
             {
@@ -63,7 +56,7 @@ public class Challenge11
     {
         var monkeys = new List<Monkey>();
         var lines = new List<string>();
-        await foreach (var line in _inputReader.ReadLinesAsync(11))
+        await foreach (var line in inputReader.ReadLinesAsync(11))
         {
             if (string.IsNullOrEmpty(line))
             {

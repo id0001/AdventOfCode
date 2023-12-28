@@ -1,26 +1,20 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(24)]
-public class Challenge24
+public class Challenge24(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly char[] _data = new char[5 * 5];
-
-    public Challenge24(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
         var i = 0;
-        await foreach (var line in _inputReader.ReadLinesAsync(24))
+        await foreach (var line in inputReader.ReadLinesAsync(24))
         foreach (var c in line)
             _data[i++] = c;
     }
@@ -87,9 +81,9 @@ public class Challenge24
 
         var current = new Dictionary<int, char[]>
         {
-            { 0, _data },
-            { -1, EmptyGrid() },
-            { 1, EmptyGrid() }
+            {0, _data},
+            {-1, EmptyGrid()},
+            {1, EmptyGrid()}
         };
 
         var emptyGridString = new string(EmptyGrid());
@@ -204,10 +198,8 @@ public class Challenge24
     {
         var diversity = 0;
         for (var i = 0; i < data.Count; i++)
-        {
             if (data[i] == '#')
-                diversity += (int)Math.Pow(2, i);
-        }
+                diversity += (int) Math.Pow(2, i);
 
         return diversity;
     }

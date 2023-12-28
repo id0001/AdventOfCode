@@ -1,7 +1,7 @@
 ﻿namespace AdventOfCode.Lib.Math;
 
 /// <summary>
-/// Math functions related to integers
+///     Math functions related to integers
 /// </summary>
 public static partial class Euclid
 {
@@ -10,7 +10,7 @@ public static partial class Euclid
         if (a == 0 || b == 0)
             return 0;
 
-        return System.Math.Abs((a / GreatestCommonDivisor(a, b)) * b);
+        return System.Math.Abs(a / GreatestCommonDivisor(a, b) * b);
     }
 
     public static long LeastCommonMultiple(params long[] integers)
@@ -41,12 +41,12 @@ public static partial class Euclid
     public static bool IsPowerOfTwo(long number) => number > 0 && (number & (number - 1)) == 0x0;
 
     /// <summary>
-    /// Calculates the triangular number of the given number.
-    /// https://en.wikipedia.org/wiki/Triangular_number
+    ///     Calculates the triangular number of the given number.
+    ///     https://en.wikipedia.org/wiki/Triangular_number
     /// </summary>
     /// <param name="number"></param>
     /// <returns></returns>
-    public static int TriangularNumber(int number) => (number * (number + 1)) / 2;
+    public static int TriangularNumber(int number) => number * (number + 1) / 2;
 
-    public static int InverseTriangleNumber(int number) => (int)System.Math.Sqrt(number * 2);
+    public static int InverseTriangleNumber(int number) => (int) System.Math.Sqrt(number * 2);
 }

@@ -5,23 +5,15 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(2)]
-public class Challenge02
+public class Challenge02(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge02(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
         var x = 0;
         var y = 0;
 
-        await foreach (var movement in _inputReader.ParseLinesAsync(2, ParseLine))
-        {
+        await foreach (var movement in inputReader.ParseLinesAsync(2, ParseLine))
             switch (movement.Direction)
             {
                 case "forward":
@@ -34,7 +26,6 @@ public class Challenge02
                     y -= movement.Amount;
                     break;
             }
-        }
 
         return (x * y).ToString();
     }
@@ -46,8 +37,7 @@ public class Challenge02
         var y = 0;
         var aim = 0;
 
-        await foreach (var movement in _inputReader.ParseLinesAsync(2, ParseLine))
-        {
+        await foreach (var movement in inputReader.ParseLinesAsync(2, ParseLine))
             switch (movement.Direction)
             {
                 case "forward":
@@ -61,12 +51,12 @@ public class Challenge02
                     aim -= movement.Amount;
                     break;
             }
-        }
 
         return (x * y).ToString();
     }
 
-    private Movement ParseLine(string line) => line.SplitBy(" ").Transform(parts => new Movement(parts.First(), int.Parse(parts.Second())));
+    private Movement ParseLine(string line) =>
+        line.SplitBy(" ").Transform(parts => new Movement(parts.First(), int.Parse(parts.Second())));
 
     private record Movement(string Direction, int Amount);
 }

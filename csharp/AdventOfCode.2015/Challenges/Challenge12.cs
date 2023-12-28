@@ -5,23 +5,16 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(12)]
-public class Challenge12
+public class Challenge12(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge12(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var json = await _inputReader.ReadAllTextAsync(12);
+        var json = await inputReader.ReadAllTextAsync(12);
         var doc = JsonDocument.Parse(json);
 
         var sum = 0;
-        var stack = new Stack<JsonElement>(new[] { doc.RootElement });
+        var stack = new Stack<JsonElement>(new[] {doc.RootElement});
         while (stack.Count > 0)
         {
             var current = stack.Pop();
@@ -55,7 +48,7 @@ public class Challenge12
     [Part2]
     public async Task<string?> Part2Async()
     {
-        var json = await _inputReader.ReadAllTextAsync(12);
+        var json = await inputReader.ReadAllTextAsync(12);
         var doc = JsonDocument.Parse(json);
 
         var queue = new Queue<JsonElement>();

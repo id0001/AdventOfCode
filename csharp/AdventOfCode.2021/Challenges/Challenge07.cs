@@ -5,19 +5,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(7)]
-public class Challenge07
+public class Challenge07(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge07(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var data = await _inputReader.ReadLineAsync<int>(7, ',').ToArrayAsync();
+        var data = await inputReader.ReadLineAsync<int>(7, ',').ToArrayAsync();
 
         var min = data.Min();
         var max = data.Max();
@@ -36,7 +29,7 @@ public class Challenge07
     [Part2]
     public async Task<string> Part2Async()
     {
-        var data = await _inputReader.ReadLineAsync<int>(7, ',').ToArrayAsync();
+        var data = await inputReader.ReadLineAsync<int>(7, ',').ToArrayAsync();
 
         var min = data.Min();
         var max = data.Max();

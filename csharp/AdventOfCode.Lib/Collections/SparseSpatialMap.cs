@@ -20,9 +20,13 @@ public class SparseSpatialMap<TKey, TNumber, TValue> : IEnumerable<KeyValuePair<
 
     public int Count => _map.Count;
 
+    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => _map.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => _map.GetEnumerator();
+
     public void Set(TKey key, TValue? value)
     {
-        bool unset = EqualityComparer<TValue>.Default.Equals(value, default);
+        var unset = EqualityComparer<TValue>.Default.Equals(value, default);
 
         if (!_map.ContainsKey(key) && !unset)
             Add(key, value);
@@ -55,8 +59,4 @@ public class SparseSpatialMap<TKey, TNumber, TValue> : IEnumerable<KeyValuePair<
     {
         _map[key] = value;
     }
-
-    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => _map.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => _map.GetEnumerator();
 }

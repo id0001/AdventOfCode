@@ -4,15 +4,8 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(7)]
-public class Challenge07
+public class Challenge07(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge07(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async()
     {
@@ -35,7 +28,7 @@ public class Challenge07
     private async Task<IDictionary<string, Instruction>> CreateInstructionSetAsync()
     {
         var instructionSet = new Dictionary<string, Instruction>();
-        await foreach (var (key, instruction) in _inputReader.ParseLinesAsync(7, ParseInstruction))
+        await foreach (var (key, instruction) in inputReader.ParseLinesAsync(7, ParseInstruction))
             instructionSet.Add(key, instruction);
 
         return instructionSet;

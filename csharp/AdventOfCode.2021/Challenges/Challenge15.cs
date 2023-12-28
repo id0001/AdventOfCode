@@ -1,24 +1,17 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(15)]
-public class Challenge15
+public class Challenge15(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge15(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await _inputReader.ReadGridAsync<int>(15);
+        var grid = await inputReader.ReadGridAsync<int>(15);
 
         var start = Point2.Zero;
         var end = new Point2(grid.GetLength(0) - 1, grid.GetLength(1) - 1);
@@ -33,7 +26,7 @@ public class Challenge15
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await _inputReader.ReadGridAsync<int>(15);
+        var grid = await inputReader.ReadGridAsync<int>(15);
 
         var start = Point2.Zero;
         var end = new Point2(grid.GetLength(0) * 5 - 1, grid.GetLength(1) * 5 - 1);

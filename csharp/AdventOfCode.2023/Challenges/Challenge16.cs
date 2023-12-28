@@ -5,19 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(16)]
-public class Challenge16
+public class Challenge16(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge16(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await _inputReader.ReadGridAsync(16);
+        var grid = await inputReader.ReadGridAsync(16);
         var start = new Pose2(Point2.Zero, new Point2(1, 0));
         return Energize(grid, start).ToString();
     }
@@ -25,7 +18,7 @@ public class Challenge16
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await _inputReader.ReadGridAsync(16);
+        var grid = await inputReader.ReadGridAsync(16);
 
         var max = 0;
         for (var y = 0; y < grid.GetLength(0); y++)

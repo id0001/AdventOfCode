@@ -6,7 +6,7 @@ namespace AdventOfCode2020.Challenges;
 [Challenge(23)]
 public class Challenge23
 {
-    private readonly int[] _input = { 2, 1, 9, 3, 4, 7, 8, 6, 5 };
+    private readonly int[] _input = {2, 1, 9, 3, 4, 7, 8, 6, 5};
 
     [Part1]
     public string Part1()
@@ -81,7 +81,7 @@ public class Challenge23
             list.Remove(p3!);
 
             // Determine insert position
-            var set = new[] { p1.Value, p2.Value, p3!.Value };
+            var set = new[] {p1.Value, p2.Value, p3!.Value};
 
             var n = 1000000;
             if (current.Value - 1 >= 1 && !set.Contains(current.Value - 1))
@@ -101,7 +101,7 @@ public class Challenge23
         var node1 = dict[1].Next;
         var node2 = node1!.Next;
 
-        return ((long)node1.Value * node2!.Value).ToString();
+        return ((long) node1.Value * node2!.Value).ToString();
     }
 
     private static IEnumerable<LinkedListNode<int>> RemoveItemsAfter(LinkedListNode<int> node, int amount)

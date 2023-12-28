@@ -1,20 +1,10 @@
 ﻿namespace AdventOfCode.Lib.PathFinding;
 
-public class AStar<T> where T : notnull
+public class AStar<T>(Func<T, IEnumerable<T>> adjecent, Func<T, T, int> weight, Func<T, int> heuristic)
+    where T : notnull
 {
-    private readonly Func<T, IEnumerable<T>> _adjacent;
-    private readonly Func<T, T, int> _weight;
-    private readonly Func<T, int> _heuristic;
-
     public AStar(Func<T, IEnumerable<T>> adjecent, Func<T, T, int> weight) : this(adjecent, weight, _ => 0)
     {
-    }
-
-    public AStar(Func<T, IEnumerable<T>> adjecent, Func<T, T, int> weight, Func<T, int> heuristic)
-    {
-        _adjacent = adjecent;
-        _weight = weight;
-        _heuristic = heuristic;
     }
 
     public bool TryPath(
@@ -22,8 +12,8 @@ public class AStar<T> where T : notnull
         Func<T, bool> isFinished,
         out IEnumerable<T> path,
         out int totalCost
-        )
-        => TryPath(start, _adjacent, _weight, _heuristic, isFinished, out path, out totalCost);
+    )
+        => TryPath(start, adjecent, weight, heuristic, isFinished, out path, out totalCost);
 
     private static bool TryPath(
         T start,
@@ -33,11 +23,11 @@ public class AStar<T> where T : notnull
         Func<T, bool> isFinished,
         out IEnumerable<T> path,
         out int totalCost
-        )
+    )
     {
         var queue = new PriorityQueue<T, int>();
         var cameFrom = new Dictionary<T, T>();
-        var costSoFar = new Dictionary<T, int> { { start, 0 } };
+        var costSoFar = new Dictionary<T, int> {{start, 0}};
 
         queue.Enqueue(start, 0);
 

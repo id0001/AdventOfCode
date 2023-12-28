@@ -1,32 +1,24 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Comparers;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
+using AdventOfCode.Lib.Comparers;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(10)]
-public class Challenge10
+public class Challenge10(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly List<Point2> _asteroids = new();
-
-    public Challenge10(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
         var y = 0;
-        await foreach (var line in _inputReader.ReadLinesAsync(10))
+        await foreach (var line in inputReader.ReadLinesAsync(10))
         {
             for (var x = 0; x < line.Length; x++)
-            {
                 if (line[x] == '#')
                     _asteroids.Add(new Point2(x, y));
-            }
 
             y++;
         }
@@ -83,7 +75,7 @@ public class Challenge10
         _asteroids.Remove(center);
         var comparer = new DoubleEqualityComparer();
 
-        var list = _asteroids.Select(p => new { Point = p, Angle = Angle(center, p), Distance = Distance(center, p) })
+        var list = _asteroids.Select(p => new {Point = p, Angle = Angle(center, p), Distance = Distance(center, p)})
             .GroupBy(t => t.Angle, comparer)
             .OrderBy(g => g.Key)
             .Select(g => g.OrderBy(x => x.Distance).Select(x => x.Point).ToList())

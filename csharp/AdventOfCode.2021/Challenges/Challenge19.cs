@@ -1,25 +1,19 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(19)]
-public class Challenge19
+public class Challenge19(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly List<Scanner> _scanners = new();
-
-    public Challenge19(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
         var temp = new HashSet<Point3>();
-        await foreach (var line in _inputReader.ReadLinesAsync(19))
+        await foreach (var line in inputReader.ReadLinesAsync(19))
         {
             if (string.IsNullOrEmpty(line))
             {
@@ -73,7 +67,7 @@ public class Challenge19
     private ISet<Scanner> OrientScanners(List<Scanner> scanners)
     {
         var queue = new Queue<Scanner>();
-        var result = new HashSet<Scanner> { scanners[0] };
+        var result = new HashSet<Scanner> {scanners[0]};
 
         queue.Enqueue(scanners[0]);
         scanners.Remove(scanners[0]);
@@ -100,7 +94,6 @@ public class Challenge19
         var beacons0 = scanner0.TransformedBeacons;
 
         foreach (var beacon0 in beacons0)
-        {
             for (var r = 0; r < 24; r++)
             {
                 scanner1 = scanner1.Rotate();
@@ -113,31 +106,23 @@ public class Challenge19
                     if (overlappedBeacons.Count >= 12) return scanner1.Move(delta);
                 }
             }
-        }
 
         return null;
     }
 
-    private class Scanner
+    private class Scanner(ISet<Point3> beacons, int rotation, Point3 origin)
     {
-        public Scanner(ISet<Point3> beacons, int rotation, Point3 origin)
-        {
-            Beacons = beacons;
-            Rotation = rotation;
-            Origin = origin;
-        }
+        public ISet<Point3> Beacons { get; } = beacons;
 
-        public ISet<Point3> Beacons { get; }
+        public int Rotation { get; } = rotation;
 
-        public int Rotation { get; }
+        public Point3 Origin { get; } = origin;
 
-        public Point3 Origin { get; }
+        public ISet<Point3> TransformedBeacons => Beacons.Select(p => Origin + Rotate(p)).ToHashSet();
 
         public Scanner Move(Point3 offset) => new(Beacons, Rotation, offset);
 
         public Scanner Rotate() => new(Beacons, (Rotation + 1) % 24, Origin);
-
-        public ISet<Point3> TransformedBeacons => Beacons.Select(p => Origin + Rotate(p)).ToHashSet();
 
         private Point3 Rotate(Point3 p)
         {

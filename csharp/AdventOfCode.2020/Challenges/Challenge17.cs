@@ -1,33 +1,23 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Lib.Collections;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
+using AdventOfCode.Lib.Collections;
 
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(17)]
-public class Challenge17
+public class Challenge17(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge17(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
-
     [Part1]
     public async Task<string> Part1Async()
     {
         var state = new PointCloud<Point3, int>();
 
-        var lines = await _inputReader.ReadLinesAsync(17).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(17).ToArrayAsync();
         for (var y = 0; y < lines.Length; y++)
         for (var x = 0; x < lines[y].Length; x++)
-        {
             if (lines[y][x] == '#')
                 state.Set(new Point3(x, y, 0));
-        }
 
         for (var i = 0; i < 6; i++)
         {
@@ -64,13 +54,11 @@ public class Challenge17
     {
         var state = new PointCloud<Point4, int>();
 
-        var lines = await _inputReader.ReadLinesAsync(17).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(17).ToArrayAsync();
         for (var y = 0; y < lines.Length; y++)
         for (var x = 0; x < lines[y].Length; x++)
-        {
             if (lines[y][x] == '#')
                 state.Set(new Point4(x, y, 0, 0));
-        }
 
         for (var i = 0; i < 6; i++)
         {

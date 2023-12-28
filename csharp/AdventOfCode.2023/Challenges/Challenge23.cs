@@ -6,19 +6,12 @@ using AdventOfCode.Lib.Graphs;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(23)]
-public class Challenge23
+public class Challenge23(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge23(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await _inputReader.ReadGridAsync(23);
+        var grid = await inputReader.ReadGridAsync(23);
         var start = new Point2(1, 0);
         var end = new Point2(grid.GetUpperBound(1) - 1, grid.GetUpperBound(0));
 
@@ -29,10 +22,10 @@ public class Challenge23
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await _inputReader.ReadGridAsync(23);
+        var grid = await inputReader.ReadGridAsync(23);
         var start = new Point2(1, 0);
         var end = new Point2(grid.GetUpperBound(1) - 1, grid.GetUpperBound(0));
-        
+
         var graph = CreateGraph(grid, start, end, true);
         return LongestPath(graph, start, end).ToString();
     }
@@ -54,11 +47,11 @@ public class Challenge23
             }
 
             var newVisited = visited.Concat(new[] {current}).ToList();
-            foreach(var n in graph.OutEdges(current))
+            foreach (var n in graph.OutEdges(current))
             {
-                if(visited.Contains(n.Key))
+                if (visited.Contains(n.Key))
                     continue;
-                
+
                 queue.Enqueue((n.Key, newVisited, length + n.Value));
             }
         }
@@ -86,7 +79,7 @@ public class Challenge23
 
         if (to == end)
             return;
-        
+
         if (ignoreSlopes)
             graph.AddEdge(to, from, visited.Count);
 

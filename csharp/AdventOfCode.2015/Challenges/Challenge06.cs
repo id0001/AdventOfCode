@@ -6,22 +6,16 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(6)]
-public class Challenge06
+public class Challenge06(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly Regex _pattern = new(@"(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)");
-
-    public Challenge06(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Part1]
     public async Task<string?> Part1Async()
     {
         var grid = new bool[1000 * 1000];
 
-        await foreach (var action in _inputReader.ParseLinesAsync(6, ParseLine))
+        await foreach (var action in inputReader.ParseLinesAsync(6, ParseLine))
         {
             var rect = new Rectangle(action.From, action.To - action.From);
 
@@ -46,7 +40,7 @@ public class Challenge06
     {
         var grid = new int[1000 * 1000];
 
-        await foreach (var action in _inputReader.ParseLinesAsync(6, ParseLine))
+        await foreach (var action in inputReader.ParseLinesAsync(6, ParseLine))
         {
             var rect = new Rectangle(action.From, action.To - action.From);
 

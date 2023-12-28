@@ -1,23 +1,16 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(6)]
-public class Challenge06
+public class Challenge06(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge06(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var data = await _inputReader.ReadLineAsync<int>(6, ',').ToListAsync();
+        var data = await inputReader.ReadLineAsync<int>(6, ',').ToListAsync();
 
         var groups = new ulong[9];
         foreach (var i in data)
@@ -29,7 +22,7 @@ public class Challenge06
     [Part2]
     public async Task<string> Part2Async()
     {
-        var data = await _inputReader.ReadLineAsync<int>(6, ',').ToListAsync();
+        var data = await inputReader.ReadLineAsync<int>(6, ',').ToListAsync();
 
         var groups = new ulong[9];
         foreach (var i in data)

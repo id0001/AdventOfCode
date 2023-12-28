@@ -5,26 +5,19 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(5)]
-public class Challenge05
+public class Challenge05(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge05(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var almanac = MapInput(await _inputReader.ReadAllTextAsync(5));
+        var almanac = MapInput(await inputReader.ReadAllTextAsync(5));
         return almanac.Seeds.Select(almanac.FindBySeed).Min(x => x.Location).ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        var almanac = MapInput(await _inputReader.ReadAllTextAsync(5));
+        var almanac = MapInput(await inputReader.ReadAllTextAsync(5));
         var seedRanges = almanac.Seeds.Chunk(2).Select(chunk => new LongRange(chunk[0], chunk[0] + chunk[1] - 1))
             .ToList();
         var largestLocation = almanac.HumidityToLocation.Max(x => x.Dest.End);

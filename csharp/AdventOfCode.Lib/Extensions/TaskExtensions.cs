@@ -6,7 +6,7 @@ public static class TaskExtensions
     {
         return (await task)?.ToString();
     }
-    
+
     public static async ValueTask<string?> ToStringAsync<T>(this ValueTask<T> task)
     {
         return (await task)?.ToString();

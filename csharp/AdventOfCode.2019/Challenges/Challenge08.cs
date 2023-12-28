@@ -5,19 +5,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(8)]
-public class Challenge08
+public class Challenge08(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge08(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var rawInput = await _inputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
+        var rawInput = await inputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
         const int width = 25;
         const int height = 6;
         const int ppl = width * height;
@@ -41,7 +34,7 @@ public class Challenge08
     [Part2]
     public async Task<string> Part2Async()
     {
-        var rawInput = await _inputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
+        var rawInput = await inputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
         const int width = 25;
         const int height = 6;
         const int ppl = width * height;
@@ -52,10 +45,8 @@ public class Challenge08
         var image = Enumerable.Range(0, ppl).Select(i =>
         {
             for (var si = 0; si < segments.Length; si++)
-            {
                 if (segments[si][i] != 2)
                     return segments[si][i];
-            }
 
             return -1;
         }).ToArray();

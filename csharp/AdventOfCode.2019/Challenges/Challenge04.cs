@@ -16,10 +16,8 @@ public class Challenge04
 
         var matches = new List<int>();
         for (var pwd = min; pwd < max; pwd++)
-        {
             if (MatchAdjacent(pwd.ToString()) && MatchNeverDecrease(pwd.ToString()))
                 matches.Add(pwd);
-        }
 
         return matches.Count.ToString();
     }
@@ -32,10 +30,8 @@ public class Challenge04
 
         var matches = new List<int>();
         for (var pwd = min; pwd < max; pwd++)
-        {
             if (MatchAdjacent2(pwd.ToString()) && MatchNeverDecrease(pwd.ToString()))
                 matches.Add(pwd);
-        }
 
         return matches.Count.ToString();
     }

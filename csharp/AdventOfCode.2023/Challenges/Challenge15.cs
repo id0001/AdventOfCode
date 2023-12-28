@@ -5,19 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(15)]
-public class Challenge15
+public class Challenge15(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge15(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async()
     {
-        return await _inputReader.ReadLineAsync(15, ',').SumAsync(Hash).ToStringAsync();
+        return await inputReader.ReadLineAsync(15, ',').SumAsync(Hash).ToStringAsync();
     }
 
     [Part2]
@@ -25,7 +18,7 @@ public class Challenge15
     {
         var boxes = Enumerable.Range(0, 256).Select(_ => new List<Lens>()).ToArray();
 
-        await foreach (var part in _inputReader.ReadLineAsync(15, ','))
+        await foreach (var part in inputReader.ReadLineAsync(15, ','))
             if (part.Contains('='))
             {
                 var lens = part.SplitBy("=")

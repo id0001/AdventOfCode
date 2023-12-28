@@ -1,27 +1,21 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(13)]
-public class Challenge13
+public class Challenge13(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly IDictionary<long, long> _offsets = new SortedDictionary<long, long>();
-    private long _earliestDepartureTime;
     private long[] _busses = Array.Empty<long>();
-
-    public Challenge13(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
+    private long _earliestDepartureTime;
 
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await _inputReader.ReadLinesAsync(13).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(13).ToArrayAsync();
         _earliestDepartureTime = long.Parse(lines[0]);
         _busses = lines[1].Split(',').Where(e => e != "x").Select(long.Parse).ToArray();
 
@@ -37,7 +31,7 @@ public class Challenge13
     public string Part1()
     {
         var ordered = _busses
-            .ToDictionary(kv => kv, kv => (int)(Math.Ceiling(_earliestDepartureTime / (double)kv) * kv))
+            .ToDictionary(kv => kv, kv => (int) (Math.Ceiling(_earliestDepartureTime / (double) kv) * kv))
             .OrderBy(kv => kv.Value).ToArray();
         return (ordered[0].Key * (ordered[0].Value - _earliestDepartureTime)).ToString();
     }

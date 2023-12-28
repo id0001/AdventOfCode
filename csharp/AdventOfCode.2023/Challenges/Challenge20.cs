@@ -5,29 +5,23 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(20)]
-public class Challenge20
+public class Challenge20(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge20(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var modules = await _inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
+        var modules = await inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
         var flipflops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, kv => false);
         var conjunctions = modules.Values.Where(m => m.Type == "&")
-            .ToDictionary(kv => kv.Name, kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
+            .ToDictionary(kv => kv.Name,
+                kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
 
         var rxPresses = conjunctions["bn"].ToDictionary(kv => kv.Key, kv => 0L);
 
         var lows = 0L;
         var highs = 0L;
         var presses = 0L;
-        while(presses < 1000L)
+        while (presses < 1000L)
             Process(modules, flipflops, conjunctions, rxPresses, ref presses, ref lows, ref highs);
 
         return (lows * highs).ToString();
@@ -36,10 +30,11 @@ public class Challenge20
     [Part2]
     public async Task<string> Part2Async()
     {
-        var modules = await _inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
+        var modules = await inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
         var flipflops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, kv => false);
         var conjunctions = modules.Values.Where(m => m.Type == "&")
-            .ToDictionary(kv => kv.Name, kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
+            .ToDictionary(kv => kv.Name,
+                kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
 
         var rxPresses = conjunctions["bn"].ToDictionary(kv => kv.Key, kv => 0L);
 
@@ -57,12 +52,12 @@ public class Challenge20
     }
 
     private void Process(
-        Dictionary<string, Module> modules, 
-        Dictionary<string, bool> flipflops, 
-        Dictionary<string, Dictionary<string, bool>> conjunctions, 
-        Dictionary<string, long> rxPresses, 
-        ref long presses, 
-        ref long lows, 
+        Dictionary<string, Module> modules,
+        Dictionary<string, bool> flipflops,
+        Dictionary<string, Dictionary<string, bool>> conjunctions,
+        Dictionary<string, long> rxPresses,
+        ref long presses,
+        ref long lows,
         ref long highs)
     {
         presses++;
@@ -90,7 +85,7 @@ public class Challenge20
                 ("broadcaster", _) => pulseIn,
                 ("%", false) => flipflops[dest] = !flipflops[dest],
                 ("&", _) => Conjuction(conjunctions, source, dest, pulseIn),
-                _ => (bool?)null
+                _ => (bool?) null
             };
 
             if (!pulseOut.HasValue)
@@ -106,7 +101,8 @@ public class Challenge20
         }
     }
 
-    private static bool Conjuction(Dictionary<string, Dictionary<string, bool>> conjunctions, string source, string dest, bool pulseIn)
+    private static bool Conjuction(Dictionary<string, Dictionary<string, bool>> conjunctions, string source,
+        string dest, bool pulseIn)
     {
         conjunctions[dest][source] = pulseIn;
         return !conjunctions[dest].Values.All(s => s);
@@ -118,8 +114,8 @@ public class Challenge20
             .SplitBy("->")
             .Into(parts =>
             {
-                int strip = parts.First()[0] is '%' or '&' ? 1 : 0;
-                string type = strip > 0 ? parts.First()[0].ToString() : parts.First();
+                var strip = parts.First()[0] is '%' or '&' ? 1 : 0;
+                var type = strip > 0 ? parts.First()[0].ToString() : parts.First();
                 return new Module(type, parts.First()[strip..], parts.Second().SplitBy(","));
             });
     }

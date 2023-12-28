@@ -1,23 +1,16 @@
-﻿using AdventOfCode2019.IntCode.Core;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode2019.IntCode.Core;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(13)]
-public class Challenge13
+public class Challenge13(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge13(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
 
         var screenBuffer = new int[64, 64];
         var outputBuffer = new Queue<int>();
@@ -30,7 +23,7 @@ public class Challenge13
 
         cpu.RegisterOutput(o =>
         {
-            outputBuffer.Enqueue((int)o);
+            outputBuffer.Enqueue((int) o);
 
             if (outputBuffer.Count != 3) return;
 
@@ -78,7 +71,7 @@ public class Challenge13
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(13, ',').ToArrayAsync();
 
         var screenBuffer = new int[64, 64];
         var outputBuffer = new Queue<int>();
@@ -92,7 +85,7 @@ public class Challenge13
 
         cpu.RegisterOutput(o =>
         {
-            outputBuffer.Enqueue((int)o);
+            outputBuffer.Enqueue((int) o);
 
             if (outputBuffer.Count != 3) return;
 

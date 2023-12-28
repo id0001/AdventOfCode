@@ -1,24 +1,17 @@
-﻿using AdventOfCode.Lib;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(13)]
-public class Challenge13
+public class Challenge13(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge13(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     private async Task<(HashSet<Point2>, List<string>)> ReadInputAsync()
     {
-        var lines = await _inputReader.ReadLinesAsync(13).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(13).ToArrayAsync();
         var indexOfNewline = Array.IndexOf(lines, string.Empty);
 
         var points = lines.Take(indexOfNewline).Select(x =>
@@ -59,12 +52,10 @@ public class Challenge13
         for (var y = 0; y <= ymax; y++)
         {
             for (var x = 0; x <= xmax; x++)
-            {
                 if (output.Contains(new Point2(x, y)))
                     sb.Append("#");
                 else
                     sb.Append(".");
-            }
 
             sb.AppendLine();
         }
@@ -82,7 +73,6 @@ public class Challenge13
     {
         var newPoints = new HashSet<Point2>();
         foreach (var point in points)
-        {
             if (axis == "x")
             {
                 if (point.X < index)
@@ -107,7 +97,6 @@ public class Challenge13
                     newPoints.Add(new Point2(point.X, point.Y - 2 * diff));
                 }
             }
-        }
 
         return newPoints;
     }

@@ -1,6 +1,6 @@
 namespace AdventOfCode.Core;
 
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Method)]
 public class SetupAttribute : Attribute
 {
 }

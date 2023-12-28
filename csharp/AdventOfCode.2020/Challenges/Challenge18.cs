@@ -1,26 +1,19 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(18)]
-public class Challenge18
+public class Challenge18(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge18(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async() =>
-        await _inputReader.ReadLinesAsync(18).SumAsync(line => EvaluateExpression(line)).ToStringAsync();
+        await inputReader.ReadLinesAsync(18).SumAsync(line => EvaluateExpression(line)).ToStringAsync();
 
     [Part2]
-    public async Task<string?> Part2Async() => await _inputReader.ReadLinesAsync(18)
-        .SumAsync(line => EvaluateExpression(line, new HashSet<char> { '*' })).ToStringAsync();
+    public async Task<string?> Part2Async() => await inputReader.ReadLinesAsync(18)
+        .SumAsync(line => EvaluateExpression(line, new HashSet<char> {'*'})).ToStringAsync();
 
     private static long EvaluateExpression(string expr, ICollection<char>? lowestPrecedence = null)
     {

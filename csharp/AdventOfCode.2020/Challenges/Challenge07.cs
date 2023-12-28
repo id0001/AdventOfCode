@@ -1,25 +1,19 @@
-﻿using AdventOfCode.Lib.Graphs;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Graphs;
 
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(7)]
-public class Challenge07
+public class Challenge07(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly DirectedGraph<string, int> _bagGraph = new();
-
-    public Challenge07(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in _inputReader.ReadLinesAsync(7))
+        await foreach (var line in inputReader.ReadLinesAsync(7))
         {
             var split = line.Split("contain");
             var m = Regex.Match(split[0].Trim(), @"([a-z]+ [a-z]+) bags");
@@ -59,10 +53,8 @@ public class Challenge07
             count++;
 
             foreach (var target in _bagGraph.InEdges(source).Keys)
-            {
                 if (!closedSet.Contains(target))
                     openSet.Push(target);
-            }
         }
 
         return count.ToString();

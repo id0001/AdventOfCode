@@ -6,21 +6,14 @@ using AdventOfCode.Lib.Collections;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(14)]
-public class Challenge14
+public class Challenge14(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge14(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
         var map = new SparseSpatialMap<Point2, int, char>();
 
-        await foreach (var points in _inputReader.ParseLinesAsync(14, ParseLine))
+        await foreach (var points in inputReader.ParseLinesAsync(14, ParseLine))
         foreach (var (current, next) in points.CurrentAndNext())
         foreach (var p in Point2.BresenhamLine(current, next))
             map.Set(p, '#');
@@ -67,7 +60,7 @@ public class Challenge14
     {
         var map = new SparseSpatialMap<Point2, int, char>();
 
-        await foreach (var points in _inputReader.ParseLinesAsync(14, ParseLine))
+        await foreach (var points in inputReader.ParseLinesAsync(14, ParseLine))
         foreach (var (current, next) in points.CurrentAndNext())
         foreach (var p in Point2.BresenhamLine(current, next))
             map.Set(p, '#');

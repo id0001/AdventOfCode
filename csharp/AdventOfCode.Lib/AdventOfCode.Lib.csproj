@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.8.8" />
-      <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+        <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.8.8"/>
+        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
     </ItemGroup>
 
-	<ItemGroup>
-		<None Include="README.md" Pack="True" PackagePath="\" />
-	</ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="True" PackagePath="\"/>
+    </ItemGroup>
 
-	<PropertyGroup>
-		<PackageId>AdventOfCode.Lib</PackageId>
-		<Version>0.1.0</Version>
-		<Authors>Yorrick Spierings</Authors>
-		<Company>-</Company>
-		<PackageDescription>Utilities library for Advent of Code</PackageDescription>
-		<RepositoryUrl>https://github.com/id0001/AdventOfCode</RepositoryUrl>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Title>Advent of Code utilities library</Title>
-		<Description>A utilities library for Advent of Code</Description>
-	</PropertyGroup>
+    <PropertyGroup>
+        <PackageId>AdventOfCode.Lib</PackageId>
+        <Version>0.1.0</Version>
+        <Authors>Yorrick Spierings</Authors>
+        <Company>-</Company>
+        <PackageDescription>Utilities library for Advent of Code</PackageDescription>
+        <RepositoryUrl>https://github.com/id0001/AdventOfCode</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <Title>Advent of Code utilities library</Title>
+        <Description>A utilities library for Advent of Code</Description>
+    </PropertyGroup>
 
 </Project>

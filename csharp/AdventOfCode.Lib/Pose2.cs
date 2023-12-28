@@ -15,7 +15,7 @@ public readonly record struct Pose2(Point2 Position, Point2 Face)
     public Pose2 TurnRight() => this with {Face = new Point2(-Face.Y, Face.X)};
 
     public Pose2 TurnLeft() => this with {Face = new Point2(Face.Y, -Face.X)};
-    
+
     public Pose2 Turn(double angle)
     {
         var sin = System.Math.Sin(angle);

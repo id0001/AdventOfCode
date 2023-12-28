@@ -1,25 +1,18 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode2019.IntCode.Core;
-using System.Text;
+﻿using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
+using AdventOfCode2019.IntCode.Core;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(17)]
-public class Challenge17
+public class Challenge17(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge17(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(17, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(17, ',').ToArrayAsync();
 
         var map = new Dictionary<Point2, int>();
 
@@ -38,7 +31,7 @@ public class Challenge17
             }
 
             var p = new Point2(x, y);
-            map.Add(p, (int)o);
+            map.Add(p, (int) o);
             x++;
         });
 
@@ -60,7 +53,7 @@ public class Challenge17
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(17, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(17, ',').ToArrayAsync();
 
         program[0] = 2;
 
@@ -77,7 +70,7 @@ public class Challenge17
         var settings = new[]
         {
             Encoding.ASCII.GetBytes(main), Encoding.ASCII.GetBytes(a), Encoding.ASCII.GetBytes(b),
-            Encoding.ASCII.GetBytes(c), new byte[] { 110 }
+            Encoding.ASCII.GetBytes(c), new byte[] {110}
         };
         var i = 0;
         var j = 0;
@@ -102,7 +95,7 @@ public class Challenge17
 
     private static bool IsIntersection(IReadOnlyDictionary<Point2, int> map, Point2 p)
     {
-        var neighborDeltas = new[] { new Point2(0, -1), new Point2(1, 0), new Point2(0, 1), new Point2(-1, 0) };
+        var neighborDeltas = new[] {new Point2(0, -1), new Point2(1, 0), new Point2(0, 1), new Point2(-1, 0)};
         for (var i = 0; i < 4; i++)
         {
             var np = p + neighborDeltas[i];
@@ -120,7 +113,7 @@ public class Challenge17
 
         for (var y = 0; y < ylen; y++)
         {
-            for (var x = 0; x < xlen; x++) Console.Write((char)map[new Point2(x, y)]);
+            for (var x = 0; x < xlen; x++) Console.Write((char) map[new Point2(x, y)]);
 
             Console.WriteLine();
         }

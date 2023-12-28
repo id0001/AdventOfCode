@@ -7,19 +7,12 @@ using AdventOfCode.Lib.PathFinding;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(24)]
-public class Challenge24
+public class Challenge24(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge24(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await _inputReader.ReadGridAsync(24);
+        var grid = await inputReader.ReadGridAsync(24);
 
         var start = new Point2(1, 0);
         var goal = new Point2(120, 26);
@@ -41,7 +34,7 @@ public class Challenge24
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await _inputReader.ReadGridAsync(24);
+        var grid = await inputReader.ReadGridAsync(24);
 
         var start = new Point2(1, 0);
         var goal = new Point2(120, 26);

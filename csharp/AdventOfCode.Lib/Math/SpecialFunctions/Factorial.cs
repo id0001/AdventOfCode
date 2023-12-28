@@ -50,7 +50,7 @@ public static partial class SpecialFunctions
     };
 
     /// <summary>
-    /// Compute the factorial of x where x is an integer greater or equal to zero
+    ///     Compute the factorial of x where x is an integer greater or equal to zero
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
@@ -62,15 +62,15 @@ public static partial class SpecialFunctions
     }
 
     /// <summary>
-    /// Compute the factorial of x where x is an integer greater or equal to zero
+    ///     Compute the factorial of x where x is an integer greater or equal to zero
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
     public static BigInteger Factorial(BigInteger x)
     {
         Requires.Range(x >= 0, "Value must be greater or equal to zero", nameof(x));
-        
-        if(x == 0)
+
+        if (x == 0)
             return BigInteger.One;
 
         var result = x;
@@ -81,7 +81,7 @@ public static partial class SpecialFunctions
     }
 
     /// <summary>
-    /// Compute the binomial coefficient of n and k
+    ///     Compute the binomial coefficient of n and k
     /// </summary>
     /// <param name="n"></param>
     /// <param name="k"></param>

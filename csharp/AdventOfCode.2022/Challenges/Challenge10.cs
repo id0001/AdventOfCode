@@ -7,15 +7,8 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(10)]
-public class Challenge10
+public class Challenge10(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge10(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
@@ -25,7 +18,7 @@ public class Challenge10
         var totalSum = 0;
         var check = new HashSet<int> {20, 60, 100, 140, 180, 220};
 
-        await foreach (var (opcode, value) in _inputReader.ParseLinesAsync(10, ParseLine))
+        await foreach (var (opcode, value) in inputReader.ParseLinesAsync(10, ParseLine))
         {
             Cycle1(ref cycle, x, ref totalSum, check);
 
@@ -48,7 +41,7 @@ public class Challenge10
 
         var crt = new char[40 * 6];
 
-        await foreach (var (opcode, value) in _inputReader.ParseLinesAsync(10, ParseLine))
+        await foreach (var (opcode, value) in inputReader.ParseLinesAsync(10, ParseLine))
         {
             Cycle2(ref cycle, r, crt);
 

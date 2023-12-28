@@ -9,7 +9,7 @@ public class GeneralTree<T>
         get => _root;
         set
         {
-            if(value != null)
+            if (value != null)
                 MakeRoot(value);
             _root = value;
         }

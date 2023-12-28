@@ -7,19 +7,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(19)]
-public class Challenge19
+public class Challenge19(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge19(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var blueprints = await _inputReader.ParseLinesAsync(19, ParseLine).ToListAsync();
+        var blueprints = await inputReader.ParseLinesAsync(19, ParseLine).ToListAsync();
         var result = await Task.WhenAll(blueprints.Select(async bp => await FindHighestAmountOfGeodes(bp, 24) * bp.Id));
         return result.Sum().ToString();
     }
@@ -27,7 +20,7 @@ public class Challenge19
     [Part2]
     public async Task<string> Part2Async()
     {
-        var blueprints = await _inputReader.ParseLinesAsync(19, ParseLine).ToListAsync();
+        var blueprints = await inputReader.ParseLinesAsync(19, ParseLine).ToListAsync();
         var result = await Task.WhenAll(blueprints.Take(3).Select(async bp => await FindHighestAmountOfGeodes(bp, 32)));
         return result.Product().ToString();
     }
@@ -114,9 +107,23 @@ public class Challenge19
             int.Parse(match.Groups[6].Value), int.Parse(match.Groups[7].Value));
     }
 
-    private record Blueprint(int Id, int OreCost, int ClayCost, int ObsidianOreCost, int ObsidianClayCost,
-        int GeodeOreCost, int GeodeObsidianCost);
+    private record Blueprint(
+        int Id,
+        int OreCost,
+        int ClayCost,
+        int ObsidianOreCost,
+        int ObsidianClayCost,
+        int GeodeOreCost,
+        int GeodeObsidianCost);
 
-    private record State(int TimeLeft, int Geodes, int Obsidian, int Clay, int Ore, int GeodeBots, int ObsidianBots,
-        int ClayBots, int OreBots);
+    private record State(
+        int TimeLeft,
+        int Geodes,
+        int Obsidian,
+        int Clay,
+        int Ore,
+        int GeodeBots,
+        int ObsidianBots,
+        int ClayBots,
+        int OreBots);
 }

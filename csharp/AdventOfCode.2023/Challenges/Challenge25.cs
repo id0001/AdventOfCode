@@ -6,27 +6,19 @@ using AdventOfCode.Lib.Graphs;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(25)]
-public class Challenge25
+public class Challenge25(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge25(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var graph = ParseInput(await _inputReader.ReadAllTextAsync(25));
+        var graph = ParseInput(await inputReader.ReadAllTextAsync(25));
 
         List<string>[] partitions;
         List<(string, string)> cutEdges;
         do
         {
             (partitions, cutEdges) = graph.MinCut();
-        }
-        while (cutEdges.Count != 3);
+        } while (cutEdges.Count != 3);
 
         return partitions.Select(x => x.Count).Product().ToString();
     }

@@ -1,5 +1,5 @@
-﻿using AdventOfCode.Lib.Math;
-using System.Numerics;
+﻿using System.Numerics;
+using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode.Lib;
 
@@ -33,7 +33,6 @@ public static class EnumerableExtensions
     {
         var list = new List<T>();
         foreach (var item in source)
-        {
             if (!EqualityComparer<T>.Default.Equals(item, separator))
             {
                 list.Add(item);
@@ -43,7 +42,6 @@ public static class EnumerableExtensions
                 yield return list;
                 list = new List<T>();
             }
-        }
     }
 
     public static IEnumerable<IList<T>> Windowed<T>(this IEnumerable<T> source, int windowSize)
@@ -79,7 +77,8 @@ public static class EnumerableExtensions
 
     public static ulong Product(this IEnumerable<ulong> source) => source.Aggregate(1UL, (a, b) => a * b);
 
-    public static BigInteger Product(this IEnumerable<BigInteger> source) => source.Aggregate(BigInteger.One, (a, b) => a * b);
+    public static BigInteger Product(this IEnumerable<BigInteger> source) =>
+        source.Aggregate(BigInteger.One, (a, b) => a * b);
 
     public static long Product<T>(this IEnumerable<T> source, Func<T, long> selector) =>
         source.Aggregate(1L, (a, b) => a * selector(b));

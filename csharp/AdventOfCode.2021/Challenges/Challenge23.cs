@@ -8,8 +8,8 @@ public class Challenge23
     // ==============================================
     // Could not figure this one out. Did it by hand.
     // ==============================================
-    
-    
+
+
     // private readonly IInputReader _inputReader;
     // private char[,] _map = new char[0,0];
     // private State? _initialState;

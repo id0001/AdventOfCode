@@ -4,21 +4,14 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(6)]
-public class Challenge06
+public class Challenge06(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge06(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
         var yesCount = 0;
         ISet<char> answers = new HashSet<char>();
-        await foreach (var line in _inputReader.ReadLinesAsync(6))
+        await foreach (var line in inputReader.ReadLinesAsync(6))
         {
             if (string.IsNullOrEmpty(line))
             {
@@ -41,7 +34,7 @@ public class Challenge06
         var yesCount = 0;
         var groupCount = 0;
         IDictionary<char, int> answers = new Dictionary<char, int>();
-        await foreach (var line in _inputReader.ReadLinesAsync(6))
+        await foreach (var line in inputReader.ReadLinesAsync(6))
         {
             if (string.IsNullOrEmpty(line))
             {

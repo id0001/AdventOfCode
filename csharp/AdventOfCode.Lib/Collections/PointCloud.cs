@@ -1,10 +1,10 @@
-﻿using AdventOfCode.Lib.Collections.Helpers;
-using System.Collections;
+﻿using System.Collections;
 using System.Numerics;
+using AdventOfCode.Lib.Collections.Helpers;
 
 namespace AdventOfCode.Lib.Collections;
 
-public class PointCloud<TPoint, TNumber> : IEnumerable<TPoint> 
+public class PointCloud<TPoint, TNumber> : IEnumerable<TPoint>
     where TPoint : IPoint<TNumber>, new()
     where TNumber : IBinaryInteger<TNumber>, IMinMaxValue<TNumber>
 {
@@ -20,7 +20,7 @@ public class PointCloud<TPoint, TNumber> : IEnumerable<TPoint>
             Set(point);
     }
 
-    public BoundingBox<TPoint,TNumber> Bounds { get; } = new();
+    public BoundingBox<TPoint, TNumber> Bounds { get; } = new();
 
     public int Count => _points.Count;
 

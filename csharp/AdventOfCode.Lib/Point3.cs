@@ -5,6 +5,9 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighb
     public static readonly Point3 Zero = new();
     public static readonly Point3 One = new(1, 1, 1);
 
+    IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) =>
+        GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
+
     int IPoint<int>.this[int index] => index switch
     {
         0 => X,
@@ -14,8 +17,6 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighb
     };
 
     int IPoint<int>.Dimensions => 3;
-
-    IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) => GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
 
     public bool Equals(IPoint<int>? other)
     {
@@ -79,5 +80,4 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighb
     public static Point3 operator -(Point3 left, Point2 right) => Subtract(left, right);
 
     public static Point3 operator *(Point3 left, int right) => Multiply(left, right);
-
 }

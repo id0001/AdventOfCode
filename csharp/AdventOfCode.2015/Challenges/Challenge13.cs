@@ -6,22 +6,15 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(13)]
-public class Challenge13
+public class Challenge13(IInputReader inputReader)
 {
     private static readonly Regex Pattern =
         new(@"(\w+) would (gain|lose) (\d+) happiness units by sitting next to (\w+)\.");
 
-    private readonly IInputReader _inputReader;
-
-    public Challenge13(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async()
     {
-        var map = await _inputReader.ParseLinesAsync(13, ParseLine)
+        var map = await inputReader.ParseLinesAsync(13, ParseLine)
             .ToDictionaryAsync(kv => (kv.From, kv.To), kv => kv.Units);
 
         var people = map.Select(x => x.Key.From).ToHashSet();
@@ -42,7 +35,7 @@ public class Challenge13
     [Part2]
     public async Task<string?> Part2Async()
     {
-        var map = await _inputReader.ParseLinesAsync(13, ParseLine)
+        var map = await inputReader.ParseLinesAsync(13, ParseLine)
             .ToDictionaryAsync(kv => (kv.From, kv.To), kv => kv.Units);
         var people = map.Select(x => x.Key.From).ToHashSet();
         foreach (var person in people)

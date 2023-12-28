@@ -7,7 +7,7 @@ public static class StringExtensions
         return source.Split(new[] {separator},
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
     }
-    
+
     public static string[] SplitBy(this string source, params string[] separators)
     {
         return source.Split(separators,

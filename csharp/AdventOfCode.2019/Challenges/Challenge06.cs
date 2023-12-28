@@ -1,25 +1,19 @@
-﻿using AdventOfCode.Lib.Collections.Trees;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib.Collections.Trees;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(6)]
-public class Challenge06
+public class Challenge06(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly GeneralTree<string> _tree = new();
-
-    public Challenge06(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Setup]
     public async Task SetupAsync()
     {
         var nodeDict = new Dictionary<string, GeneralTreeNode<string>>();
-        await foreach (var line in _inputReader.ReadLinesAsync(6))
+        await foreach (var line in inputReader.ReadLinesAsync(6))
         {
             var parent = line[..line.IndexOf(")", StringComparison.Ordinal)];
             var child = line[(line.IndexOf(")", StringComparison.Ordinal) + 1)..];

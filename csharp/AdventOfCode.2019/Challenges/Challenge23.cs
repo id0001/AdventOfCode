@@ -1,23 +1,16 @@
-﻿using AdventOfCode2019.IntCode.Core;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode2019.IntCode.Core;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(23)]
-public class Challenge23
+public class Challenge23(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge23(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(23, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(23, ',').ToArrayAsync();
 
         var cpus = new Cpu[50];
         var packetQueues = new Queue<long>[50];
@@ -38,7 +31,7 @@ public class Challenge23
 
                 if (outputBuffers[id].Count < 3) return;
 
-                var dest = (int)outputBuffers[id].Dequeue();
+                var dest = (int) outputBuffers[id].Dequeue();
                 var x = outputBuffers[id].Dequeue();
                 var y = outputBuffers[id].Dequeue();
 
@@ -68,10 +61,8 @@ public class Challenge23
             cpus[i].Start(i);
 
         while (result == -1)
-        {
             foreach (var cpu in cpus)
                 cpu.Next();
-        }
 
         return result.ToString();
     }
@@ -79,7 +70,7 @@ public class Challenge23
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await _inputReader.ReadLineAsync<long>(23, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(23, ',').ToArrayAsync();
 
         var cpus = new Cpu[50];
         var packetQueues = new Queue<long>[50];
@@ -104,7 +95,7 @@ public class Challenge23
 
                 if (outputBuffers[id].Count < 3) return;
 
-                var dest = (int)outputBuffers[id].Dequeue();
+                var dest = (int) outputBuffers[id].Dequeue();
                 var x = outputBuffers[id].Dequeue();
                 var y = outputBuffers[id].Dequeue();
 

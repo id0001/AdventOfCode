@@ -1,20 +1,13 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(12)]
-public class Challenge12
+public class Challenge12(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge12(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
@@ -22,7 +15,7 @@ public class Challenge12
         var y = 0;
         var a = 0; // east
 
-        await foreach (var line in _inputReader.ReadLinesAsync(12))
+        await foreach (var line in inputReader.ReadLinesAsync(12))
         {
             var action = line[0];
             var value = int.Parse(line[1..]);
@@ -49,8 +42,8 @@ public class Challenge12
                     break;
                 case 'F':
                     var r = Trigonometry.DegreeToRadian(a);
-                    x += (int)Math.Cos(r) * value;
-                    y += (int)Math.Sin(r) * value;
+                    x += (int) Math.Cos(r) * value;
+                    y += (int) Math.Sin(r) * value;
                     break;
             }
         }
@@ -64,7 +57,7 @@ public class Challenge12
         var s = new Point2(0, 0);
         var w = new Point2(10, -1);
 
-        await foreach (var line in _inputReader.ReadLinesAsync(12))
+        await foreach (var line in inputReader.ReadLinesAsync(12))
         {
             var action = line[0];
             var value = int.Parse(line[1..]);
@@ -72,16 +65,16 @@ public class Challenge12
             switch (action)
             {
                 case 'N':
-                    w = w with { Y = w.Y - value };
+                    w = w with {Y = w.Y - value};
                     break;
                 case 'E':
-                    w = w with { X = w.X + value };
+                    w = w with {X = w.X + value};
                     break;
                 case 'S':
-                    w = w with { Y = w.Y + value };
+                    w = w with {Y = w.Y + value};
                     break;
                 case 'W':
-                    w = w with { X = w.X - value };
+                    w = w with {X = w.X - value};
                     break;
                 case 'L':
                     w = Point2.Turn(w, s, -Trigonometry.DegreeToRadian(value));
@@ -93,7 +86,7 @@ public class Challenge12
                     var r = Math.Atan2(w.Y - s.Y, w.X - s.X);
                     var dist = Point2.Distance(s, w);
 
-                    var d = new Point2((int)Math.Round(Math.Cos(r) * dist), (int)Math.Round(Math.Sin(r) * dist));
+                    var d = new Point2((int) Math.Round(Math.Cos(r) * dist), (int) Math.Round(Math.Sin(r) * dist));
                     s += d * value;
                     w += d * value;
                     break;

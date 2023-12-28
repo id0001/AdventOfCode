@@ -1,21 +1,14 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode2019.IntCode.Core;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.PathFinding;
+using AdventOfCode2019.IntCode.Core;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(15)]
-public class Challenge15
+public class Challenge15(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge15(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
@@ -79,7 +72,7 @@ public class Challenge15
 
     private async Task<IDictionary<Point2, int>> MapSpaceAsync()
     {
-        var program = await _inputReader.ReadLineAsync<long>(15, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(15, ',').ToArrayAsync();
 
         var visited = new Dictionary<Point2, int>();
         var currentLocation = Point2.Zero;
@@ -99,7 +92,7 @@ public class Challenge15
         cpu.SetProgram(program);
         cpu.RegisterOutput(o =>
         {
-            visited.TryAdd(nextLocation, (int)o);
+            visited.TryAdd(nextLocation, (int) o);
 
             switch (o)
             {
@@ -182,10 +175,8 @@ public class Challenge15
         };
 
         for (var i = 0; i < 4; i++)
-        {
             if (!visited.ContainsKey(moves[i]))
                 discovery.Push(new Move(source, moves[i]));
-        }
     }
 
     private record Move(Point2 Source, Point2 Target);

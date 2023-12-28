@@ -5,15 +5,9 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(12)]
-public class Challenge12
+public class Challenge12(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
     private readonly Dictionary<string, HashSet<string>> _edges = new();
-
-    public Challenge12(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
 
     [Part1]
     public async Task<string> Part1Async()
@@ -50,7 +44,7 @@ public class Challenge12
 
     private async Task FillEdgesAsync()
     {
-        await foreach (var line in _inputReader.ReadLinesAsync(12))
+        await foreach (var line in inputReader.ReadLinesAsync(12))
         {
             var splitPath = line.Split('-');
 

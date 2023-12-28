@@ -1,30 +1,23 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(20)]
-public class Challenge20
+public class Challenge20(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge20(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string?> Part1Async()
     {
-        var maze = await _inputReader.ReadGridAsync(20);
+        var maze = await inputReader.ReadGridAsync(20);
 
         var mazeData = AnalyzeMaze(maze);
         var bfs = new BreadthFirstSearch<Point2>(p => GetNeighborsPart1(maze, mazeData.Portals.Values.ToList(), p));
 
         return bfs.TryPath(mazeData.Start.ToPoint2(), t => t == mazeData.End.ToPoint2(), out var path)
-            ? (path.Count()-1).ToString()
+            ? (path.Count() - 1).ToString()
             : null;
     }
 
@@ -35,16 +28,14 @@ public class Challenge20
             yield return portal.Inner == p ? portal.Outer : portal.Inner;
 
         foreach (var neighbor in p.GetNeighbors().Where(o => o.X == p.X || o.Y == p.Y))
-        {
             if (maze[neighbor.Y, neighbor.X] == '.')
                 yield return neighbor;
-        }
     }
 
     [Part2]
     public async Task<string?> Part2Async()
     {
-        var maze = await _inputReader.ReadGridAsync(20);
+        var maze = await inputReader.ReadGridAsync(20);
 
         var mazeData = AnalyzeMaze(maze);
 
@@ -77,10 +68,8 @@ public class Challenge20
         }
 
         foreach (var neighbor in p2d.GetNeighbors().Where(o => o.X == p2d.X || o.Y == p2d.Y))
-        {
             if (maze[neighbor.Y, neighbor.X] == '.')
                 yield return new Point3(neighbor.X, neighbor.Y, p.Z);
-        }
     }
 
     private static MazeData AnalyzeMaze(char[,] maze)
@@ -98,7 +87,6 @@ public class Challenge20
 
             var p = new Point2(x, y);
             foreach (var neighbor in p.GetNeighbors())
-            {
                 if (char.IsUpper(maze[neighbor.Y, neighbor.X]))
                 {
                     var direction = neighbor - p;
@@ -133,7 +121,6 @@ public class Challenge20
                         }
                     }
                 }
-            }
         }
 
         return new MazeData(start, end, portals);

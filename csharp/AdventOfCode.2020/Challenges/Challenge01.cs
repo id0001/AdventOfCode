@@ -4,19 +4,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(1)]
-public class Challenge01
+public class Challenge01(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge01(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var input = await _inputReader.ReadLinesAsync<int>(1).ToArrayAsync();
+        var input = await inputReader.ReadLinesAsync<int>(1).ToArrayAsync();
 
         for (var y = 0; y < input.Length; y++)
         for (var x = 0; x < input.Length; x++)
@@ -34,7 +27,7 @@ public class Challenge01
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = await _inputReader.ReadLinesAsync<int>(1).ToArrayAsync();
+        var input = await inputReader.ReadLinesAsync<int>(1).ToArrayAsync();
 
         for (var y = 0; y < input.Length; y++)
         for (var x = 0; x < input.Length; x++)

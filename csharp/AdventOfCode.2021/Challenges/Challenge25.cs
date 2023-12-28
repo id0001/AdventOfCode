@@ -1,23 +1,16 @@
-﻿using AdventOfCode.Lib;
-using AdventOfCode.Core;
+﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(25)]
-public class Challenge25
+public class Challenge25(IInputReader inputReader)
 {
-    private readonly IInputReader _inputReader;
-
-    public Challenge25(IInputReader inputReader)
-    {
-        _inputReader = inputReader;
-    }
-
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await _inputReader.ReadGridAsync(25);
+        var grid = await inputReader.ReadGridAsync(25);
 
         var width = grid.GetLength(1);
         var height = grid.GetLength(0);
@@ -56,7 +49,9 @@ public class Challenge25
         return step.ToString();
     }
 
-    private static Point2 GetPointEastOf(Point2 p, int width) => p.X + 1 == width ? new Point2(0, p.Y) : new Point2(p.X + 1, p.Y);
+    private static Point2 GetPointEastOf(Point2 p, int width) =>
+        p.X + 1 == width ? new Point2(0, p.Y) : new Point2(p.X + 1, p.Y);
 
-    private static Point2 GetPointSouthOf(Point2 p, int height) => p.Y + 1 == height ? new Point2(p.X, 0) : new Point2(p.X, p.Y + 1);
+    private static Point2 GetPointSouthOf(Point2 p, int height) =>
+        p.Y + 1 == height ? new Point2(p.X, 0) : new Point2(p.X, p.Y + 1);
 }

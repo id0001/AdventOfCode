@@ -5,7 +5,7 @@ namespace AdventOfCode2020.Challenges;
 [Challenge(15)]
 public class Challenge15
 {
-    private static readonly int[] StartingNumbers = { 6, 13, 1, 15, 2, 0 };
+    private static readonly int[] StartingNumbers = {6, 13, 1, 15, 2, 0};
 
     [Part1]
     public string Part1()
@@ -29,7 +29,6 @@ public class Challenge15
         var last = 0;
 
         for (var i = startingNumbers.Count; i < turns; i++)
-        {
             if (!lookup.ContainsKey(last))
             {
                 lookup.Add(last, i - 1);
@@ -41,7 +40,6 @@ public class Challenge15
                 lookup[last] = i - 1;
                 last = diff;
             }
-        }
 
         return last;
     }
