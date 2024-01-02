@@ -19,18 +19,18 @@ public class Challenge24(IInputReader inputReader)
         var c = 0;
         for (var i = 0; i < hailstones.Length - 1; i++)
         for (var j = i + 1; j < hailstones.Length; j++)
-            if (TryIntersects(hailstones[i], hailstones[j], out var ix, out var iy))
+            if (Line2.TryIntersect(hailstones[i].ToLine2(), hailstones[j].ToLine2(), out var intersection))
             {
                 var h1 = hailstones[i];
                 var h2 = hailstones[j];
 
-                if ((ix < h1.Position.X && h1.Velocity.X > 0) || (ix > h1.Position.X && h1.Velocity.X < 0))
+                if ((intersection.X < h1.Intercept.X && h1.Slope.X > 0) || (intersection.X > h1.Intercept.X && h1.Slope.X < 0))
                     continue;
 
-                if ((ix < h2.Position.X && h2.Velocity.X > 0) || (ix > h2.Position.X && h2.Velocity.X < 0))
+                if ((intersection.X < h2.Intercept.X && h2.Slope.X > 0) || (intersection.X > h2.Intercept.X && h2.Slope.X < 0))
                     continue;
 
-                if (ix >= min && iy >= min && ix <= max && iy <= max)
+                if (intersection.X >= min && intersection.Y >= min && intersection.X <= max && intersection.Y <= max)
                     c++;
             }
 
@@ -46,27 +46,7 @@ public class Challenge24(IInputReader inputReader)
         return Solve(hailstones).ToString();
     }
 
-    private static bool TryIntersects(Hailstone p1, Hailstone p2, out double ix, out double iy)
-    {
-        ix = 0L;
-        iy = 0L;
-
-        var (x1a, y1a, _) = p1.Position;
-        var (x2a, y2a, _) = p2.Position;
-        var (x1, y1, _) = p1.Velocity;
-        var (x2, y2, _) = p2.Velocity;
-
-        if (x1 * y2 - x2 * y1 == 0)
-            return false;
-
-        var t = ((x2a - x1a) * y2 - (y2a - y1a) * x2) / (double) (x1 * y2 - x2 * y1);
-        ix = x1a + t * x1;
-        iy = y1a + t * y1;
-
-        return true;
-    }
-
-    private static long Solve(List<Hailstone> hailstones)
+    private static long Solve(List<Line3> hailstones)
     {
         var context = new Context();
         var solver = context.MkSolver();
@@ -84,13 +64,13 @@ public class Challenge24(IInputReader inputReader)
             var t = context.MkIntConst($"t{i}");
             var hailstone = hailstones[i];
 
-            var px = context.MkInt(hailstone.Position.X);
-            var py = context.MkInt(hailstone.Position.Y);
-            var pz = context.MkInt(hailstone.Position.Z);
+            var px = context.MkInt((long)hailstone.Intercept.X);
+            var py = context.MkInt((long)hailstone.Intercept.Y);
+            var pz = context.MkInt((long)hailstone.Intercept.Z);
 
-            var pvx = context.MkInt(hailstone.Velocity.X);
-            var pvy = context.MkInt(hailstone.Velocity.Y);
-            var pvz = context.MkInt(hailstone.Velocity.Z);
+            var pvx = context.MkInt((long)hailstone.Slope.X);
+            var pvy = context.MkInt((long)hailstone.Slope.Y);
+            var pvz = context.MkInt((long)hailstone.Slope.Z);
 
             var xl = context.MkAdd(x, context.MkMul(t, vx));
             var yl = context.MkAdd(y, context.MkMul(t, vy));
@@ -117,19 +97,15 @@ public class Challenge24(IInputReader inputReader)
     }
 
 
-    private static Hailstone ParseLine(string line)
+    private static Line3 ParseLine(string line)
     {
         return line.SplitBy("@")
             .Into(parts =>
             {
-                return new Hailstone(
-                    parts.First().SplitBy(",").As<long>().Into(p => new Point3L(p[0], p[1], p[2])),
-                    parts.Second().SplitBy(",").As<long>().Into(p => new Point3L(p[0], p[1], p[2]))
+                return new Line3(
+                    parts.First().SplitBy(",").As<long>().Into(p => new Vector3(p[0], p[1], p[2])),
+                    parts.Second().SplitBy(",").As<long>().Into(p => new Vector3(p[0], p[1], p[2]))
                 );
             });
     }
-
-    private record Point3L(long X, long Y, long Z);
-
-    private record Hailstone(Point3L Position, Point3L Velocity);
 }

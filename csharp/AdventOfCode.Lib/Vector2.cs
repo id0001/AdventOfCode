@@ -21,13 +21,25 @@ public readonly record struct Vector2(double X, double Y)
 
     public override string ToString() => $"({X},{Y})";
 
-    public void Deconstruct(out double x, out double y) => (x, y) = (X, Y);
+    public static double Cross(Vector2 v1, Vector2 v2) => v1.X * v2.Y - v1.Y * v2.X;
+
+    public static double Dot(Vector2 v1, Vector2 v2) => v1.X * v2.X + v1.Y * v2.Y;
 
     public static Vector2 Subtract(Vector2 left, Vector2 right) => new(left.X - right.X, left.Y - right.Y);
 
     public static Vector2 Add(Vector2 left, Vector2 right) => new(left.X + right.X, left.Y + right.Y);
 
+    public static Vector2 Multiply(Vector2 vector, double scalar) => new(vector.X * scalar, vector.Y * scalar);
+
     public static Vector2 operator +(Vector2 left, Vector2 right) => Add(left, right);
 
     public static Vector2 operator -(Vector2 left, Vector2 right) => Subtract(left, right);
+
+    public static Vector2 operator *(Vector2 vector, double scalar) => Multiply(vector, scalar);
+
+    public static Vector2 operator *(double scalar, Vector2 vector) => Multiply(vector, scalar);
+
+    public bool Equals(Vector2 other) => X.MarginalEquals(other.X) && Y.MarginalEquals(other.Y);
+
+    public override int GetHashCode() => HashCode.Combine(X, Y);
 }
