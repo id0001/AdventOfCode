@@ -2,6 +2,9 @@ using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Graphs;
+using AdventOfCode.Lib.Math;
+using AdventOfCode.Lib.PathFinding;
+using System.Collections;
 
 namespace AdventOfCode2023.Challenges;
 
@@ -32,8 +35,10 @@ public class Challenge23(IInputReader inputReader)
 
     private static int LongestPath(DirectedGraph<Point2, int> graph, Point2 start, Point2 end)
     {
-        var queue = new Queue<(Point2, List<Point2>, int)>();
-        queue.Enqueue((start, new List<Point2>(), 0));
+        var queue = new Queue<(Point2, BitArray, int)>();
+        queue.Enqueue((start, new BitArray(graph.VertexCount), 0));
+
+        var vLookup = graph.Vertices.Select((v, i) => (v, i)).ToDictionary(kv => kv.v, kv => kv.i);
 
         var longestPath = 0;
 
@@ -46,10 +51,11 @@ public class Challenge23(IInputReader inputReader)
                 continue;
             }
 
-            var newVisited = visited.Concat(new[] {current}).ToList();
+            var newVisited = new BitArray(visited);
+            newVisited.Set(vLookup[current], true);
             foreach (var n in graph.OutEdges(current))
             {
-                if (visited.Contains(n.Key))
+                if (visited[vLookup[n.Key]])
                     continue;
 
                 queue.Enqueue((n.Key, newVisited, length + n.Value));
@@ -63,7 +69,7 @@ public class Challenge23(IInputReader inputReader)
         bool downhill, bool ignoreSlopes)
     {
         var bounds = grid.Bounds();
-        var visited = new HashSet<Point2> {from};
+        var visited = new HashSet<Point2> { from };
         while (!IsFork(grid, to) && to != end)
         {
             visited.Add(to);
@@ -109,7 +115,6 @@ public class Challenge23(IInputReader inputReader)
 
     private static DirectedGraph<Point2, int> CreateGraph(char[,] grid, Point2 start, Point2 end, bool ignoreSlopes)
     {
-        var bounds = grid.Bounds();
         var graph = new DirectedGraph<Point2, int>();
         graph.AddVertex(start);
 

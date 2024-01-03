@@ -8,6 +8,13 @@ public static class EnumerableExtensions
     public static IEnumerable<T[]> Permutations<T>(this IEnumerable<T> source) =>
         Combinatorics.SelectAllPermutations(source);
 
+    /// <summary>
+    /// Returns all combinations of k elements where the order does not matter
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="k"></param>
+    /// <returns></returns>
     public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> source, int k) =>
         Combinatorics.SelectAllCombinations(source, k);
 
