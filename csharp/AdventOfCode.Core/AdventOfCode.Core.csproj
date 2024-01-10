@@ -1,13 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <PackageReference Include="docopt.net" Version="0.8.1"/>
-        <PackageReference Include="Spectre.Console" Version="0.48.0"/>
-        <PackageReference Include="TextCopy" Version="6.2.1"/>
+      <None Remove="Resources\alphabet_s.txt" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\docopt.txt"/>
+        <PackageReference Include="docopt.net" Version="0.8.1" />
+        <PackageReference Include="Spectre.Console" Version="0.48.0" />
+        <PackageReference Include="TextCopy" Version="6.2.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\alphabet_s.txt" />
+        <EmbeddedResource Include="Resources\docopt.txt" />
     </ItemGroup>
 
     <ItemGroup>

@@ -60,7 +60,7 @@ public class Challenge13(IInputReader inputReader)
             sb.AppendLine();
         }
 
-        return sb.ToString();
+        return sb.ToString().Ocr();
     }
 
     private static (string, int) ReadFold(string fold)

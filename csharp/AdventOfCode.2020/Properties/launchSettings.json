@@ -2,7 +2,7 @@
   "profiles": {
     "AdventOfCode.2020": {
       "commandName": "Project",
-      "commandLineArgs": "-d 20"
+      "commandLineArgs": "-d 13"
     }
   }
 }

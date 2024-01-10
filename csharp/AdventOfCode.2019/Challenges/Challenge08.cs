@@ -60,6 +60,6 @@ public class Challenge08(IInputReader inputReader)
             sb.AppendLine();
         }
 
-        return sb.ToString();
+        return sb.ToString().Ocr();
     }
 }
