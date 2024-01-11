@@ -5,12 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(18)]
-public class Challenge18(IInputReader inputReader)
+public class Challenge18(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var state1 = await inputReader.ReadGridAsync(18);
+        var state1 = await InputReader.ReadGridAsync(18);
         var bounds = new Rectangle(0, 0, 100, 100);
 
         for (var i = 0; i < 100; i++)
@@ -38,7 +38,7 @@ public class Challenge18(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var state1 = await inputReader.ReadGridAsync(18);
+        var state1 = await InputReader.ReadGridAsync(18);
         var bounds = new Rectangle(0, 0, 100, 100);
 
         for (var i = 0; i < 100; i++)

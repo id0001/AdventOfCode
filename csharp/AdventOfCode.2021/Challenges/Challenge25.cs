@@ -5,12 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(25)]
-public class Challenge25(IInputReader inputReader)
+public class Challenge25(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await inputReader.ReadGridAsync(25);
+        var grid = await InputReader.ReadGridAsync(25);
 
         var width = grid.GetLength(1);
         var height = grid.GetLength(0);

@@ -5,14 +5,14 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(9)]
-public class Challenge09(IInputReader inputReader)
+public class Challenge09(IInputReader InputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
     {
         var lookup = new Dictionary<(string, string), int>();
 
-        await foreach (var (a, b, distance) in inputReader.ParseLinesAsync(9, ParseLine))
+        await foreach (var (a, b, distance) in InputReader.ParseLinesAsync(9, ParseLine))
         {
             lookup.Add((a, b), distance);
             lookup.Add((b, a), distance);
@@ -29,7 +29,7 @@ public class Challenge09(IInputReader inputReader)
     {
         var lookup = new Dictionary<(string, string), int>();
 
-        await foreach (var (a, b, distance) in inputReader.ParseLinesAsync(9, ParseLine))
+        await foreach (var (a, b, distance) in InputReader.ParseLinesAsync(9, ParseLine))
         {
             lookup.Add((a, b), distance);
             lookup.Add((b, a), distance);

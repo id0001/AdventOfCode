@@ -5,12 +5,12 @@ using AdventOfCode2019.IntCode.Core;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(21)]
-public class Challenge21(IInputReader inputReader)
+public class Challenge21(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await inputReader.ReadLineAsync<long>(21, ',').ToArrayAsync();
+        var program = await InputReader.ReadLineAsync<long>(21, ',').ToArrayAsync();
 
         long result = -1;
 
@@ -51,7 +51,7 @@ public class Challenge21(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await inputReader.ReadLineAsync<long>(21, ',').ToArrayAsync();
+        var program = await InputReader.ReadLineAsync<long>(21, ',').ToArrayAsync();
 
         long result = -1;
 

@@ -5,7 +5,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(16)]
-public class Challenge16(IInputReader inputReader)
+public class Challenge16(IInputReader InputReader)
 {
     private static readonly (string, int, Func<int, int, bool>)[] Signature =
     {
@@ -25,12 +25,12 @@ public class Challenge16(IInputReader inputReader)
 
     [Part1]
     public async Task<string?> Part1Async() =>
-        (await inputReader.ParseLinesAsync(16, ParseLine)
+        (await InputReader.ParseLinesAsync(16, ParseLine)
             .OrderByDescending(s => MatchCount(s, Signature.Select(x => x.Item2))).FirstAsync())
         .Number.ToString();
 
     [Part2]
-    public async Task<string?> Part2Async() => (await inputReader.ParseLinesAsync(16, ParseLine)
+    public async Task<string?> Part2Async() => (await InputReader.ParseLinesAsync(16, ParseLine)
             .OrderByDescending(s => MatchCount2(s, Signature)).FirstAsync())
         .Number.ToString();
 

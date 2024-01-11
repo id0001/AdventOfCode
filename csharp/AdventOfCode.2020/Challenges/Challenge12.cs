@@ -6,7 +6,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(12)]
-public class Challenge12(IInputReader inputReader)
+public class Challenge12(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -15,7 +15,7 @@ public class Challenge12(IInputReader inputReader)
         var y = 0;
         var a = 0; // east
 
-        await foreach (var line in inputReader.ReadLinesAsync(12))
+        await foreach (var line in InputReader.ReadLinesAsync(12))
         {
             var action = line[0];
             var value = int.Parse(line[1..]);
@@ -57,7 +57,7 @@ public class Challenge12(IInputReader inputReader)
         var s = new Point2(0, 0);
         var w = new Point2(10, -1);
 
-        await foreach (var line in inputReader.ReadLinesAsync(12))
+        await foreach (var line in InputReader.ReadLinesAsync(12))
         {
             var action = line[0];
             var value = int.Parse(line[1..]);

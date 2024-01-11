@@ -6,12 +6,12 @@ using AdventOfCode.Lib.PathFinding;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(17)]
-public class Challenge17(IInputReader inputReader)
+public class Challenge17(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var graph = await inputReader.ReadGridAsync<int>(17);
+        var graph = await InputReader.ReadGridAsync<int>(17);
         var start = new Pose2(Point2.Zero, Face.Right);
         var end = new Point2(graph.GetUpperBound(1), graph.GetUpperBound(0));
 
@@ -26,7 +26,7 @@ public class Challenge17(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var graph = await inputReader.ReadGridAsync<int>(17);
+        var graph = await InputReader.ReadGridAsync<int>(17);
         var start = new Pose2(Point2.Zero, Face.Right);
         var end = new Point2(graph.GetUpperBound(1), graph.GetUpperBound(0));
 

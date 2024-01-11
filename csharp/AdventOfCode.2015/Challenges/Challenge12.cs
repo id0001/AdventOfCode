@@ -5,12 +5,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(12)]
-public class Challenge12(IInputReader inputReader)
+public class Challenge12(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var json = await inputReader.ReadAllTextAsync(12);
+        var json = await InputReader.ReadAllTextAsync(12);
         var doc = JsonDocument.Parse(json);
 
         var sum = 0;
@@ -48,7 +48,7 @@ public class Challenge12(IInputReader inputReader)
     [Part2]
     public async Task<string?> Part2Async()
     {
-        var json = await inputReader.ReadAllTextAsync(12);
+        var json = await InputReader.ReadAllTextAsync(12);
         var doc = JsonDocument.Parse(json);
 
         var queue = new Queue<JsonElement>();

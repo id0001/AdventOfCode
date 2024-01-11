@@ -7,7 +7,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(16)]
-public class Challenge16(IInputReader inputReader)
+public class Challenge16(IInputReader InputReader)
 {
     private readonly List<HashSet<int>> _ticketRules = new();
     private readonly List<int[]> _tickets = new();
@@ -18,7 +18,7 @@ public class Challenge16(IInputReader inputReader)
     {
         var state = 0;
 
-        await foreach (var line in inputReader.ReadLinesAsync(16))
+        await foreach (var line in InputReader.ReadLinesAsync(16))
         {
             if (string.IsNullOrEmpty(line))
             {

@@ -1,27 +1,28 @@
 using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(19)]
-public class Challenge19(IInputReader inputReader)
+public class Challenge19(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var input = await ParseInput();
+        var input = ParseInput(await InputReader.ReadAllTextAsync(19));
 
         var set = new HashSet<string>();
         foreach (var kv in input.Replacements)
-        foreach (var repl in kv.Value)
-            for (var i = 0; i < input.Sequence.Length; i++)
-                if (input.Sequence[i] == kv.Key)
-                {
-                    var s = string.Join("", input.Sequence.Take(i - 1)) + repl +
-                            string.Join("", input.Sequence.Skip(i + 1));
-                    set.Add(s);
-                }
+            foreach (var repl in kv.Value)
+                for (var i = 0; i < input.Sequence.Length; i++)
+                    if (input.Sequence[i] == kv.Key)
+                    {
+                        var s = string.Join("", input.Sequence.Take(i - 1)) + repl +
+                                string.Join("", input.Sequence.Skip(i + 1));
+                        set.Add(s);
+                    }
 
         return set.Count.ToString();
     }
@@ -61,42 +62,35 @@ public class Challenge19(IInputReader inputReader)
         return string.Empty;
     }
 
-    private async Task<Input> ParseInput()
+    private static Input ParseInput(string text)
     {
-        var lines = await inputReader.ReadLinesAsync(19).ToListAsync();
-        var p1 = lines.Take(lines.Count - 2);
-        var p2 = lines[^1];
-
-        var sequence = new List<string>();
-        var sb = new StringBuilder();
-        foreach (var c in p2)
-        {
-            if (char.IsUpper(c) && sb.Length > 0)
+        var nl = Environment.NewLine;
+        return text.SplitBy($"{nl}{nl}")
+            .Into(parts =>
             {
-                sequence.Add(sb.ToString());
-                sb.Clear();
-            }
+                return new Input(
+                    parts
+                    .First()
+                    .SplitBy(nl)
+                    .Select(x => x.SplitBy("=>"))
+                    .GroupBy(x => x.First(), x => x.Second())
+                    .ToDictionary(kv => kv.Key, kv => kv.ToList()),
+                    ParseSequence(parts.Second()).ToArray());
+            });
+    }
 
-            sb.Append(c);
-        }
-
-        if (sb.Length > 0)
+    private static IEnumerable<string> ParseSequence(string sequence)
+    {
+        foreach (var w in sequence.Windowed(2))
         {
-            sequence.Add(sb.ToString());
-            sb.Clear();
+            if (char.IsLower(w[0]))
+                continue;
+
+            if (char.IsUpper(w[1]))
+                yield return w[0].ToString();
+            else
+                yield return new string(w.ToArray());
         }
-
-        var replacements = new Dictionary<string, List<string>>();
-        foreach (var rep in p1)
-        {
-            var split = rep.Split(" => ", StringSplitOptions.RemoveEmptyEntries);
-            if (!replacements.ContainsKey(split[0]))
-                replacements.Add(split[0], new List<string>());
-
-            replacements[split[0]].Add(split[1]);
-        }
-
-        return new Input(replacements, sequence.ToArray());
     }
 
     private record Input(Dictionary<string, List<string>> Replacements, string[] Sequence);

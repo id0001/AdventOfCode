@@ -6,19 +6,19 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(6)]
-public class Challenge06(IInputReader inputReader)
+public class Challenge06(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var (time, distance) = ParseInput(await inputReader.ReadAllTextAsync(6));
+        var (time, distance) = ParseInput(await InputReader.ReadAllTextAsync(6));
         return time.Zip(distance).Select(zip => CalculateWinningSpeeds(zip.First, zip.Second)).Product().ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        var (time, distance) = ParseInput2(await inputReader.ReadAllTextAsync(6));
+        var (time, distance) = ParseInput2(await InputReader.ReadAllTextAsync(6));
         return CalculateWinningSpeeds(time, distance).ToString();
     }
 

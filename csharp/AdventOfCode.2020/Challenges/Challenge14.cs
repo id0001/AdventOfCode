@@ -6,7 +6,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(14)]
-public class Challenge14(IInputReader inputReader)
+public class Challenge14(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -14,7 +14,7 @@ public class Challenge14(IInputReader inputReader)
         var memory = new Dictionary<ulong, ulong>();
 
         string? mask = null;
-        await foreach (var line in inputReader.ReadLinesAsync(14))
+        await foreach (var line in InputReader.ReadLinesAsync(14))
             if (line.StartsWith("mask = "))
             {
                 mask = line["mask = ".Length..];
@@ -39,7 +39,7 @@ public class Challenge14(IInputReader inputReader)
         var memory = new Dictionary<ulong, ulong>();
 
         string? mask = null;
-        await foreach (var line in inputReader.ReadLinesAsync(14))
+        await foreach (var line in InputReader.ReadLinesAsync(14))
             if (line.StartsWith("mask = "))
             {
                 mask = line["mask = ".Length..];

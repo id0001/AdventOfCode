@@ -6,7 +6,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(13)]
-public class Challenge13(IInputReader inputReader)
+public class Challenge13(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -50,7 +50,7 @@ public class Challenge13(IInputReader inputReader)
     {
         var parts = new string[2];
         var i = 0;
-        await foreach (var line in inputReader.ReadLinesAsync(challenge))
+        await foreach (var line in InputReader.ReadLinesAsync(challenge))
         {
             if (string.IsNullOrEmpty(line))
             {

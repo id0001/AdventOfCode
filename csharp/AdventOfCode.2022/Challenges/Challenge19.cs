@@ -7,12 +7,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(19)]
-public class Challenge19(IInputReader inputReader)
+public class Challenge19(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var blueprints = await inputReader.ParseLinesAsync(19, ParseLine).ToListAsync();
+        var blueprints = await InputReader.ParseLinesAsync(19, ParseLine).ToListAsync();
         var result = await Task.WhenAll(blueprints.Select(async bp => await FindHighestAmountOfGeodes(bp, 24) * bp.Id));
         return result.Sum().ToString();
     }
@@ -20,7 +20,7 @@ public class Challenge19(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var blueprints = await inputReader.ParseLinesAsync(19, ParseLine).ToListAsync();
+        var blueprints = await InputReader.ParseLinesAsync(19, ParseLine).ToListAsync();
         var result = await Task.WhenAll(blueprints.Take(3).Select(async bp => await FindHighestAmountOfGeodes(bp, 32)));
         return result.Product().ToString();
     }

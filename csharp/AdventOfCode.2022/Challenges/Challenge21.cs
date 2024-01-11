@@ -5,12 +5,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(21)]
-public class Challenge21(IInputReader inputReader)
+public class Challenge21(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var lines = await inputReader.ReadLinesAsync(21)
+        var lines = await InputReader.ReadLinesAsync(21)
             .Select(line => line.Split(':', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
             .ToDictionaryAsync(kv => kv[0], kv => kv[1]);
 
@@ -20,7 +20,7 @@ public class Challenge21(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var lines = await inputReader.ReadLinesAsync(21)
+        var lines = await InputReader.ReadLinesAsync(21)
             .Select(line => line.Split(':', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
             .ToDictionaryAsync(kv => kv[0], kv => kv[1]);
 

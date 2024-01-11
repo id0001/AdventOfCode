@@ -6,7 +6,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(18)]
-public class Challenge18(IInputReader inputReader)
+public class Challenge18(IInputReader InputReader)
 {
     private const string NumberNumberPattern = @"^\[(\d),(\d)\]$";
     private const string NumberPairPattern = @"^\[(\d),(.+)\]$";
@@ -15,7 +15,7 @@ public class Challenge18(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        var lines = await inputReader.ReadLinesAsync(18).ToArrayAsync();
+        var lines = await InputReader.ReadLinesAsync(18).ToArrayAsync();
         var number = lines[0];
         for (var i = 1; i < lines.Length; i++)
         {
@@ -29,7 +29,7 @@ public class Challenge18(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var lines = await inputReader.ReadLinesAsync(18).ToArrayAsync();
+        var lines = await InputReader.ReadLinesAsync(18).ToArrayAsync();
         var maxMagnitude = 0;
         for (var y = 0; y < lines.Length; y++)
         {

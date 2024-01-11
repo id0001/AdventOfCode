@@ -7,12 +7,12 @@ using AdventOfCode2019.IntCode.Core;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(7)]
-public class Challenge07(IInputReader inputReader)
+public class Challenge07(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+        var program = await InputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
         var perms = Combinatorics.GenerateAllPermutations(5);
 
         var highest = int.MinValue;
@@ -37,7 +37,7 @@ public class Challenge07(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await inputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
+        var program = await InputReader.ReadLineAsync<long>(7, ',').ToArrayAsync();
         var perms = Enumerable.Range(5, 5).Permutations();
 
         var highest = int.MinValue;

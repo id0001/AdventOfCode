@@ -7,12 +7,12 @@ using AdventOfCode2019.IntCode.Core;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(17)]
-public class Challenge17(IInputReader inputReader)
+public class Challenge17(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await inputReader.ReadLineAsync<long>(17, ',').ToArrayAsync();
+        var program = await InputReader.ReadLineAsync<long>(17, ',').ToArrayAsync();
 
         var map = new Dictionary<Point2, int>();
 
@@ -53,7 +53,7 @@ public class Challenge17(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await inputReader.ReadLineAsync<long>(17, ',').ToArrayAsync();
+        var program = await InputReader.ReadLineAsync<long>(17, ',').ToArrayAsync();
 
         program[0] = 2;
 

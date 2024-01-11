@@ -25,9 +25,9 @@ public class Challenge23
     // };
     //
     //
-    // public Challenge23(IInputReader inputReader)
+    // public Challenge23(IInputReader InputReader)
     // {
-    //     _inputReader = inputReader;
+    //     _inputReader = InputReader;
     // }
     //
     // [Setup]

@@ -4,7 +4,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(4)]
-public class Challenge04(IInputReader inputReader)
+public class Challenge04(IInputReader InputReader)
 {
     private const int BoardLength = 5;
     private readonly List<int[]> _boards = new();
@@ -14,7 +14,7 @@ public class Challenge04(IInputReader inputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await inputReader.ReadLinesAsync(4).ToArrayAsync();
+        var lines = await InputReader.ReadLinesAsync(4).ToArrayAsync();
         foreach (var item in lines[0].Split(',').Select(int.Parse))
             _numbers.Enqueue(item);
 

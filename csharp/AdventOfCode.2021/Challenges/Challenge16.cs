@@ -6,7 +6,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(16)]
-public class Challenge16(IInputReader inputReader)
+public class Challenge16(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -52,7 +52,7 @@ public class Challenge16(IInputReader inputReader)
         const int fromBase = 16;
         const int toBase = 2;
 
-        var input = (await inputReader.ReadLineAsync(16)
+        var input = (await InputReader.ReadLineAsync(16)
                 .ToArrayAsync())
             .SelectMany(c => Convert.ToString(Convert.ToInt32(c.ToString(), fromBase), toBase).PadLeft(4, '0'))
             .ToArray();

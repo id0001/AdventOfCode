@@ -5,14 +5,14 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(2)]
-public class Challenge02(IInputReader inputReader)
+public class Challenge02(IInputReader InputReader)
 {
     private InputLine[]? _input;
 
     [Setup]
     public async Task SetupAsync()
     {
-        _input = await inputReader.ReadLinesAsync(2).Select(line =>
+        _input = await InputReader.ReadLinesAsync(2).Select(line =>
         {
             var m = Regex.Match(line, @"^(\d+)-(\d+) (\w): (\w+)$");
             if (!m.Success)

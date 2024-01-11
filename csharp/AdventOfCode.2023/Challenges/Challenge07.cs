@@ -5,10 +5,10 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(7)]
-public class Challenge07(IInputReader inputReader)
+public class Challenge07(IInputReader InputReader)
 {
     [Part1]
-    public async Task<string?> Part1Async() => await inputReader.ParseLinesAsync(7, ParseLine)
+    public async Task<string?> Part1Async() => await InputReader.ParseLinesAsync(7, ParseLine)
         .OrderBy(x => Strength(x.Cards[4], false))
         .OrderBy(x => Strength(x.Cards[3], false))
         .OrderBy(x => Strength(x.Cards[2], false))
@@ -20,7 +20,7 @@ public class Challenge07(IInputReader inputReader)
         .ToStringAsync();
 
     [Part2]
-    public async Task<string?> Part2Async() => await inputReader.ParseLinesAsync(7, ParseLine)
+    public async Task<string?> Part2Async() => await InputReader.ParseLinesAsync(7, ParseLine)
         .OrderBy(x => Strength(x.Cards[4], true))
         .OrderBy(x => Strength(x.Cards[3], true))
         .OrderBy(x => Strength(x.Cards[2], true))

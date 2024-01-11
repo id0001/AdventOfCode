@@ -5,13 +5,13 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(8)]
-public class Challenge08(IInputReader inputReader)
+public class Challenge08(IInputReader InputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
     {
         var lengths = new[] {2, 3, 4, 7};
-        return await inputReader
+        return await InputReader
             .ParseLinesAsync(8, ParseLine)
             .SelectMany(x => x.Output.Values.ToAsyncEnumerable())
             .CountAsync(x => lengths.Contains(x.Length))
@@ -21,7 +21,7 @@ public class Challenge08(IInputReader inputReader)
     [Part2]
     public async Task<string?> Part2Async()
     {
-        return await inputReader
+        return await InputReader
             .ParseLinesAsync(8, ParseLine)
             .Select(FindNumberForSignal)
             .SumAsync()

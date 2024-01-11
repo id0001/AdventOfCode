@@ -6,14 +6,14 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(5)]
-public class Challenge05(IInputReader inputReader)
+public class Challenge05(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
         var overlapDict = new Dictionary<Point2, int>();
 
-        await foreach (var segment in inputReader.ParseLinesAsync(5, ParseLine))
+        await foreach (var segment in InputReader.ParseLinesAsync(5, ParseLine))
         {
             if (segment.Start.X != segment.End.X && segment.Start.Y != segment.End.Y)
                 continue;
@@ -31,7 +31,7 @@ public class Challenge05(IInputReader inputReader)
     {
         var overlapDict = new Dictionary<Point2, int>();
 
-        await foreach (var segment in inputReader.ParseLinesAsync(5, ParseLine))
+        await foreach (var segment in InputReader.ParseLinesAsync(5, ParseLine))
             UpdateOverlapFromSegment(overlapDict, segment);
 
         var overlapCount = overlapDict.Count(x => x.Value >= 2);

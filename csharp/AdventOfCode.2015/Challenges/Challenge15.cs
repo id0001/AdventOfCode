@@ -6,7 +6,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(15)]
-public class Challenge15(IInputReader inputReader)
+public class Challenge15(IInputReader InputReader)
 {
     private static readonly Regex Pattern =
         new(@"\w+: capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)");
@@ -14,7 +14,7 @@ public class Challenge15(IInputReader inputReader)
     [Part1]
     public async Task<string?> Part1Async()
     {
-        var list = await inputReader.ParseLinesAsync(15, ParseLine).ToListAsync();
+        var list = await InputReader.ParseLinesAsync(15, ParseLine).ToListAsync();
 
         var score = 0;
         foreach (var distribution in Combinatorics.GenerateAllPartitions(100, list.Count))
@@ -33,7 +33,7 @@ public class Challenge15(IInputReader inputReader)
     [Part2]
     public async Task<string?> Part2Async()
     {
-        var list = await inputReader.ParseLinesAsync(15, ParseLine).ToListAsync();
+        var list = await InputReader.ParseLinesAsync(15, ParseLine).ToListAsync();
 
         var score = 0;
         foreach (var distribution in Combinatorics.GenerateAllPartitions(100, list.Count))

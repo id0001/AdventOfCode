@@ -6,12 +6,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(3)]
-public class Challenge03(IInputReader inputReader)
+public class Challenge03(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var lines = await inputReader.ReadLinesAsync(3).ToListAsync();
+        var lines = await InputReader.ReadLinesAsync(3).ToListAsync();
 
         var sum = 0;
         var numberPattern = new Regex(@"(\d+)", RegexOptions.Compiled);
@@ -47,7 +47,7 @@ public class Challenge03(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var lines = await inputReader.ReadLinesAsync(3).ToListAsync();
+        var lines = await InputReader.ReadLinesAsync(3).ToListAsync();
 
         var sum = 0;
         for (var y = 0; y < lines.Count; y++)

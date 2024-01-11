@@ -5,12 +5,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(17)]
-public class Challenge17(IInputReader inputReader)
+public class Challenge17(IInputReader InputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
     {
-        var items = await inputReader.ReadLinesAsync<int>(17).ToArrayAsync();
+        var items = await InputReader.ReadLinesAsync<int>(17).ToArrayAsync();
 
         var combinations = Enumerable
             .Range(1, items.Length + 1)
@@ -23,7 +23,7 @@ public class Challenge17(IInputReader inputReader)
     [Part2]
     public async Task<string?> Part2Async()
     {
-        var items = await inputReader.ReadLinesAsync<int>(17).ToArrayAsync();
+        var items = await InputReader.ReadLinesAsync<int>(17).ToArrayAsync();
 
         for (var i = 1; i <= items.Length; i++)
         {

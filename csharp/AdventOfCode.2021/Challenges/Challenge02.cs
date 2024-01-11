@@ -5,7 +5,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(2)]
-public class Challenge02(IInputReader inputReader)
+public class Challenge02(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -13,7 +13,7 @@ public class Challenge02(IInputReader inputReader)
         var x = 0;
         var y = 0;
 
-        await foreach (var movement in inputReader.ParseLinesAsync(2, ParseLine))
+        await foreach (var movement in InputReader.ParseLinesAsync(2, ParseLine))
             switch (movement.Direction)
             {
                 case "forward":
@@ -37,7 +37,7 @@ public class Challenge02(IInputReader inputReader)
         var y = 0;
         var aim = 0;
 
-        await foreach (var movement in inputReader.ParseLinesAsync(2, ParseLine))
+        await foreach (var movement in InputReader.ParseLinesAsync(2, ParseLine))
             switch (movement.Direction)
             {
                 case "forward":

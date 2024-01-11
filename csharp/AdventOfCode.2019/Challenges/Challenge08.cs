@@ -5,12 +5,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(8)]
-public class Challenge08(IInputReader inputReader)
+public class Challenge08(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var rawInput = await inputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
+        var rawInput = await InputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
         const int width = 25;
         const int height = 6;
         const int ppl = width * height;
@@ -34,7 +34,7 @@ public class Challenge08(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var rawInput = await inputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
+        var rawInput = await InputReader.ReadLineAsync(8).Select(x => int.Parse(x.ToString())).ToArrayAsync();
         const int width = 25;
         const int height = 6;
         const int ppl = width * height;

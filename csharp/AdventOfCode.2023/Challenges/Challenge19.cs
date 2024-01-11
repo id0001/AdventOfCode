@@ -6,12 +6,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(19)]
-public class Challenge19(IInputReader inputReader)
+public class Challenge19(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var (workflows, parts) = ParseInput(await inputReader.ReadAllTextAsync(19));
+        var (workflows, parts) = ParseInput(await InputReader.ReadAllTextAsync(19));
 
         var accepted = new List<Part>();
 
@@ -40,7 +40,7 @@ public class Challenge19(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var (workflows, _) = ParseInput(await inputReader.ReadAllTextAsync(19));
+        var (workflows, _) = ParseInput(await InputReader.ReadAllTextAsync(19));
 
         var input = new Ranges(1, 4000, 1, 4000, 1, 4000, 1, 4000);
 

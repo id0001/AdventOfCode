@@ -5,7 +5,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(9)]
-internal class Challenge09(IInputReader inputReader)
+internal class Challenge09(IInputReader InputReader)
 {
     private static readonly Dictionary<char, Point2> Directions = new()
     {
@@ -25,7 +25,7 @@ internal class Challenge09(IInputReader inputReader)
             tailPos
         };
 
-        await foreach (var (direction, amount) in inputReader.ParseLinesAsync(9, ParseLine))
+        await foreach (var (direction, amount) in InputReader.ParseLinesAsync(9, ParseLine))
             for (var i = 0; i < amount; i++)
             {
                 headPos += Directions[direction];
@@ -62,7 +62,7 @@ internal class Challenge09(IInputReader inputReader)
             knots[9]
         };
 
-        await foreach (var (direction, amount) in inputReader.ParseLinesAsync(9, ParseLine))
+        await foreach (var (direction, amount) in InputReader.ParseLinesAsync(9, ParseLine))
             for (var i = 0; i < amount; i++)
             {
                 knots[0] += Directions[direction];

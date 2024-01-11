@@ -4,14 +4,14 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(8)]
-public class Challenge08(IInputReader inputReader)
+public class Challenge08(IInputReader InputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
     {
         var c1 = 0;
         var c2 = 0;
-        await foreach (var (a, b) in inputReader.ParseLinesAsync(8, ParseLine))
+        await foreach (var (a, b) in InputReader.ParseLinesAsync(8, ParseLine))
         {
             c1 += a;
             c2 += b;
@@ -25,7 +25,7 @@ public class Challenge08(IInputReader inputReader)
     {
         var c1 = 0;
         var c2 = 0;
-        await foreach (var line in inputReader.ReadLinesAsync(8))
+        await foreach (var line in InputReader.ReadLinesAsync(8))
         {
             c1 += line.Length + line.Count(c => c is '"' or '\\') + 2;
             c2 += line.Length;

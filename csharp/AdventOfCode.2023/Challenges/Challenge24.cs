@@ -6,7 +6,7 @@ using Microsoft.Z3;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(24)]
-public class Challenge24(IInputReader inputReader)
+public class Challenge24(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -14,7 +14,7 @@ public class Challenge24(IInputReader inputReader)
         var min = 200000000000000L;
         var max = 400000000000000L;
 
-        var hailstones = await inputReader.ParseLinesAsync(24, ParseLine).ToArrayAsync();
+        var hailstones = await InputReader.ParseLinesAsync(24, ParseLine).ToArrayAsync();
 
         var c = 0;
         for (var i = 0; i < hailstones.Length - 1; i++)
@@ -41,7 +41,7 @@ public class Challenge24(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var hailstones = await inputReader.ParseLinesAsync(24, ParseLine).ToListAsync();
+        var hailstones = await InputReader.ParseLinesAsync(24, ParseLine).ToListAsync();
 
         return Solve(hailstones).ToString();
     }

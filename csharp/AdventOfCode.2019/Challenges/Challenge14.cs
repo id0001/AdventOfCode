@@ -4,14 +4,14 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(14)]
-public class Challenge14(IInputReader inputReader)
+public class Challenge14(IInputReader InputReader)
 {
     private readonly Dictionary<string, Reaction> _reactions = new();
 
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in inputReader.ReadLinesAsync(14))
+        await foreach (var line in InputReader.ReadLinesAsync(14))
         {
             var inputs = new Dictionary<string, int>();
 

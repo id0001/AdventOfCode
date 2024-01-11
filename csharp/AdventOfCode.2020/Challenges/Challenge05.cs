@@ -5,12 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(5)]
-public class Challenge05(IInputReader inputReader)
+public class Challenge05(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var input = await inputReader.ReadLinesAsync(5).ToArrayAsync();
+        var input = await InputReader.ReadLinesAsync(5).ToArrayAsync();
 
         var highestSeatId = input.Select(query => Search(8, 128, query)).Select(p => p.Y * 8 + p.X).Prepend(0).Max();
 
@@ -20,7 +20,7 @@ public class Challenge05(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = await inputReader.ReadLinesAsync(5).ToArrayAsync();
+        var input = await InputReader.ReadLinesAsync(5).ToArrayAsync();
 
         var seatIds = new HashSet<int>();
         foreach (var query in input)

@@ -5,7 +5,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(5)]
-public class Challenge05(IInputReader inputReader)
+public class Challenge05(IInputReader InputReader)
 {
     private static readonly Regex Pattern = new(@"move (\d+) from (\d) to (\d)", RegexOptions.Compiled);
 
@@ -25,7 +25,7 @@ public class Challenge05(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        await foreach (var (x, from, to) in inputReader.ParseLinesAsync(5, ParseLine))
+        await foreach (var (x, from, to) in InputReader.ParseLinesAsync(5, ParseLine))
         {
             if (x == 0)
                 continue;
@@ -40,7 +40,7 @@ public class Challenge05(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        await foreach (var (x, from, to) in inputReader.ParseLinesAsync(5, ParseLine))
+        await foreach (var (x, from, to) in InputReader.ParseLinesAsync(5, ParseLine))
         {
             if (x == 0)
                 continue;

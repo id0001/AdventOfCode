@@ -4,7 +4,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(11)]
-public class Challenge11(IInputReader inputReader)
+public class Challenge11(IInputReader InputReader)
 {
     private int _height;
     private char[] _input = Array.Empty<char>();
@@ -13,7 +13,7 @@ public class Challenge11(IInputReader inputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await inputReader.ReadLinesAsync(11).ToArrayAsync();
+        var lines = await InputReader.ReadLinesAsync(11).ToArrayAsync();
         _height = lines.Length;
         _width = lines[0].Length;
         _input = lines.SelectMany(line => line.ToCharArray()).ToArray();

@@ -5,7 +5,7 @@ using AdventOfCode.Lib.Collections.Trees;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(6)]
-public class Challenge06(IInputReader inputReader)
+public class Challenge06(IInputReader InputReader)
 {
     private readonly GeneralTree<string> _tree = new();
 
@@ -13,7 +13,7 @@ public class Challenge06(IInputReader inputReader)
     public async Task SetupAsync()
     {
         var nodeDict = new Dictionary<string, GeneralTreeNode<string>>();
-        await foreach (var line in inputReader.ReadLinesAsync(6))
+        await foreach (var line in InputReader.ReadLinesAsync(6))
         {
             var parent = line[..line.IndexOf(")", StringComparison.Ordinal)];
             var child = line[(line.IndexOf(")", StringComparison.Ordinal) + 1)..];

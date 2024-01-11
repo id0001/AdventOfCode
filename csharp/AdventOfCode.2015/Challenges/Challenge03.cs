@@ -5,7 +5,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(3)]
-public class Challenge03(IInputReader inputReader)
+public class Challenge03(IInputReader InputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
@@ -13,7 +13,7 @@ public class Challenge03(IInputReader inputReader)
         var map = new Dictionary<Point2, int>();
         var location = Point2.Zero;
 
-        await foreach (var c in inputReader.ReadLineAsync(3))
+        await foreach (var c in InputReader.ReadLineAsync(3))
         {
             map.TryAdd(location, 0);
             map[location]++;
@@ -37,7 +37,7 @@ public class Challenge03(IInputReader inputReader)
         Point2[] locations = [Point2.Zero, Point2.Zero];
         var index = 0;
 
-        await foreach (var c in inputReader.ReadLineAsync(3))
+        await foreach (var c in InputReader.ReadLineAsync(3))
         {
             map.TryAdd(locations[index], 0);
             map[locations[index]]++;

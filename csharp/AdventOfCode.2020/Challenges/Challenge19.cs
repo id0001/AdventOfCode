@@ -5,7 +5,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(19)]
-public class Challenge19(IInputReader inputReader)
+public class Challenge19(IInputReader InputReader)
 {
     private readonly List<string> _input = new();
     private readonly Dictionary<int, string> _rules = new();
@@ -16,7 +16,7 @@ public class Challenge19(IInputReader inputReader)
     {
         var state = 0; // 0 = rules, 1 = input
 
-        await foreach (var line in inputReader.ReadLinesAsync(19))
+        await foreach (var line in InputReader.ReadLinesAsync(19))
         {
             if (string.IsNullOrEmpty(line))
                 state++;

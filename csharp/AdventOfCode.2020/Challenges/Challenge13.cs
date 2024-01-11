@@ -6,7 +6,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(13)]
-public class Challenge13(IInputReader inputReader)
+public class Challenge13(IInputReader InputReader)
 {
     private readonly IDictionary<long, long> _offsets = new SortedDictionary<long, long>();
     private long[] _busses = Array.Empty<long>();
@@ -15,7 +15,7 @@ public class Challenge13(IInputReader inputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await inputReader.ReadLinesAsync(13).ToArrayAsync();
+        var lines = await InputReader.ReadLinesAsync(13).ToArrayAsync();
         _earliestDepartureTime = long.Parse(lines[0]);
         _busses = lines[1].Split(',').Where(e => e != "x").Select(long.Parse).ToArray();
 

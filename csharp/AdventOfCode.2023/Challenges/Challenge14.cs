@@ -6,12 +6,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(14)]
-public class Challenge14(IInputReader inputReader)
+public class Challenge14(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await inputReader.ReadGridAsync(14);
+        var grid = await InputReader.ReadGridAsync(14);
         var (round, cubes) = Extract(grid);
         round = MoveUp(round, cubes);
 
@@ -21,7 +21,7 @@ public class Challenge14(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await inputReader.ReadGridAsync(14);
+        var grid = await InputReader.ReadGridAsync(14);
         var (round, cubes) = Extract(grid);
 
         var totalCycles = 1_000_000_000;

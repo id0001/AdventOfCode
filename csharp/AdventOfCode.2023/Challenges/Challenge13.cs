@@ -5,12 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(13)]
-public class Challenge13(IInputReader inputReader)
+public class Challenge13(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var text = await inputReader.ReadAllTextAsync(13);
+        var text = await InputReader.ReadAllTextAsync(13);
         var nl = Environment.NewLine;
 
         var cols = 0;
@@ -29,7 +29,7 @@ public class Challenge13(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var text = await inputReader.ReadAllTextAsync(13);
+        var text = await InputReader.ReadAllTextAsync(13);
         var nl = Environment.NewLine;
 
         var cols = 0;

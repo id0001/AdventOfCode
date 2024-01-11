@@ -11,7 +11,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(23)]
-public class Challenge23(IInputReader inputReader)
+public class Challenge23(IInputReader InputReader)
 {
     private const byte NW_N_NE = 0x07;
     private const byte SW_S_SE = 0xE0;
@@ -21,7 +21,7 @@ public class Challenge23(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        var map = await inputReader.ReadGridAsync<char>(23);
+        var map = await InputReader.ReadGridAsync<char>(23);
 
         var state = new PointCloud<Point2, int>();
         for (var y = 0; y < map.GetLength(0); y++)
@@ -80,7 +80,7 @@ public class Challenge23(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var map = await inputReader.ReadGridAsync<char>(23);
+        var map = await InputReader.ReadGridAsync<char>(23);
 
         var state = new PointCloud<Point2, int>();
         for (var y = 0; y < map.GetLength(0); y++)

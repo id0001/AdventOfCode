@@ -6,12 +6,12 @@ using AdventOfCode.Lib.PathFinding;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(12)]
-public class Challenge12(IInputReader inputReader)
+public class Challenge12(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var (map, start, end) = ExtractInformation(await inputReader.ReadGridAsync(12));
+        var (map, start, end) = ExtractInformation(await InputReader.ReadGridAsync(12));
 
         var bfs = new BreadthFirstSearch<Point2>(p => GetNeighbors(map, p));
 
@@ -24,7 +24,7 @@ public class Challenge12(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var (map, starts, end) = ExtractInformation2(await inputReader.ReadGridAsync(12));
+        var (map, starts, end) = ExtractInformation2(await InputReader.ReadGridAsync(12));
 
         var bfs = new BreadthFirstSearch<Point2>(p => GetNeighbors(map, p));
 

@@ -5,19 +5,19 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(12)]
-public class Challenge12(IInputReader inputReader)
+public class Challenge12(IInputReader InputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
     {
-        return await inputReader.ParseLinesAsync(12, ParseLine).SumAsync(x =>
+        return await InputReader.ParseLinesAsync(12, ParseLine).SumAsync(x =>
             CountPossibilities(new Dictionary<(int, int, int), long>(), x.Item1, x.Item2, 0, 0, 0)).ToStringAsync();
     }
 
     [Part2]
     public async Task<string?> Part2Async()
     {
-        return await inputReader.ParseLinesAsync(12, ParseLine2).SumAsync(x =>
+        return await InputReader.ParseLinesAsync(12, ParseLine2).SumAsync(x =>
             CountPossibilities(new Dictionary<(int, int, int), long>(), x.Item1, x.Item2, 0, 0, 0)).ToStringAsync();
     }
 

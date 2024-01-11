@@ -4,14 +4,14 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(16)]
-public class Challenge16(IInputReader inputReader)
+public class Challenge16(IInputReader InputReader)
 {
     private static readonly int[] BasePattern = {0, 1, 0, -1};
 
     [Part1]
     public async Task<string> Part1Async()
     {
-        var originalInput = await inputReader.ReadLineAsync(16).Select(x => int.Parse(x.ToString())).ToArrayAsync();
+        var originalInput = await InputReader.ReadLineAsync(16).Select(x => int.Parse(x.ToString())).ToArrayAsync();
         for (var phase = 0; phase < 100; phase++)
         {
             var newInput = new int[originalInput.Length];
@@ -28,7 +28,7 @@ public class Challenge16(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var originalInput = await inputReader.ReadLineAsync(16).Select(x => int.Parse(x.ToString())).ToArrayAsync();
+        var originalInput = await InputReader.ReadLineAsync(16).Select(x => int.Parse(x.ToString())).ToArrayAsync();
 
         var inputCount = originalInput.Length * 10000;
         var offset = int.Parse(string.Join("", originalInput.Take(7)));

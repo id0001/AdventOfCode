@@ -7,12 +7,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(17)]
-public class Challenge17(IInputReader inputReader)
+public class Challenge17(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var dirs = await inputReader.ReadLineAsync(17).ToListAsync();
+        var dirs = await InputReader.ReadLineAsync(17).ToListAsync();
 
         var result = SimulateUntil(new PointCloud<Point2, int>(), dirs, 0, 0, 0, 0, state => state.FallenRocks == 2022);
         return result.CurrentHeight.ToString();
@@ -21,7 +21,7 @@ public class Challenge17(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var dirs = await inputReader.ReadLineAsync(17).ToListAsync();
+        var dirs = await InputReader.ReadLineAsync(17).ToListAsync();
 
         var targetRocks = 1_000_000_000_000;
         var cache = new Dictionary<StateKey, State>();

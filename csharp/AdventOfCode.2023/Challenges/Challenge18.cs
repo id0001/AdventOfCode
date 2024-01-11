@@ -28,7 +28,7 @@ namespace AdventOfCode2023.Challenges;
  */
 
 [Challenge(18)]
-public class Challenge18(IInputReader inputReader)
+public class Challenge18(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -36,7 +36,7 @@ public class Challenge18(IInputReader inputReader)
         var vertices = new List<Point2L>();
         var current = new Point2L(0, 0);
         var pointsInBorder = 0L;
-        await foreach (var instruction in inputReader.ParseLinesAsync(18, ParseLine))
+        await foreach (var instruction in InputReader.ParseLinesAsync(18, ParseLine))
         {
             pointsInBorder += instruction.Amount;
             var face = GetDirection(instruction.Direction);
@@ -54,7 +54,7 @@ public class Challenge18(IInputReader inputReader)
         var vertices = new List<Point2L>();
         var current = new Point2L(0, 0);
         var pointsInBorder = 0L;
-        await foreach (var instruction in inputReader.ParseLinesAsync(18, ParseLine2))
+        await foreach (var instruction in InputReader.ParseLinesAsync(18, ParseLine2))
         {
             pointsInBorder += instruction.Amount;
             var face = GetDirection(instruction.Direction);

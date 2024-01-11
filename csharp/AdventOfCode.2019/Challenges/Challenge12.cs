@@ -7,7 +7,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(12)]
-public class Challenge12(IInputReader inputReader)
+public class Challenge12(IInputReader InputReader)
 {
     private Point3 _callisto;
     private Point3 _europe;
@@ -17,7 +17,7 @@ public class Challenge12(IInputReader inputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await inputReader.ReadLinesAsync(12).ToArrayAsync();
+        var lines = await InputReader.ReadLinesAsync(12).ToArrayAsync();
         _io = ConvertLineToVector(lines[0]);
         _europe = ConvertLineToVector(lines[1]);
         _ganymede = ConvertLineToVector(lines[2]);

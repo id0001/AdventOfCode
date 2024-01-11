@@ -5,12 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(6)]
-public class Challenge06(IInputReader inputReader)
+public class Challenge06(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var data = await inputReader.ReadLineAsync<int>(6, ',').ToListAsync();
+        var data = await InputReader.ReadLineAsync<int>(6, ',').ToListAsync();
 
         var groups = new ulong[9];
         foreach (var i in data)
@@ -22,7 +22,7 @@ public class Challenge06(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var data = await inputReader.ReadLineAsync<int>(6, ',').ToListAsync();
+        var data = await InputReader.ReadLineAsync<int>(6, ',').ToListAsync();
 
         var groups = new ulong[9];
         foreach (var i in data)

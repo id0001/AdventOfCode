@@ -4,12 +4,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(10)]
-public class Challenge10(IInputReader inputReader)
+public class Challenge10(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var input = await inputReader.ReadLinesAsync(10).ToArrayAsync();
+        var input = await InputReader.ReadLinesAsync(10).ToArrayAsync();
 
         return input
             .Select(line => Validate(line, new Stack<char>()) switch
@@ -24,7 +24,7 @@ public class Challenge10(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = await inputReader.ReadLinesAsync(10).ToArrayAsync();
+        var input = await InputReader.ReadLinesAsync(10).ToArrayAsync();
 
         var arr = input
             .Select(line =>

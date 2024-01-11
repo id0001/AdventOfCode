@@ -4,7 +4,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(7)]
-public class Challenge07(IInputReader inputReader)
+public class Challenge07(IInputReader InputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
@@ -28,7 +28,7 @@ public class Challenge07(IInputReader inputReader)
     private async Task<IDictionary<string, Instruction>> CreateInstructionSetAsync()
     {
         var instructionSet = new Dictionary<string, Instruction>();
-        await foreach (var (key, instruction) in inputReader.ParseLinesAsync(7, ParseInstruction))
+        await foreach (var (key, instruction) in InputReader.ParseLinesAsync(7, ParseInstruction))
             instructionSet.Add(key, instruction);
 
         return instructionSet;

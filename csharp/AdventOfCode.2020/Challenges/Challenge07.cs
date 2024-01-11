@@ -6,14 +6,14 @@ using AdventOfCode.Lib.Graphs;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(7)]
-public class Challenge07(IInputReader inputReader)
+public class Challenge07(IInputReader InputReader)
 {
     private readonly DirectedGraph<string, int> _bagGraph = new();
 
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in inputReader.ReadLinesAsync(7))
+        await foreach (var line in InputReader.ReadLinesAsync(7))
         {
             var split = line.Split("contain");
             var m = Regex.Match(split[0].Trim(), @"([a-z]+ [a-z]+) bags");

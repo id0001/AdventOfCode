@@ -6,12 +6,12 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(21)]
-public class Challenge21(IInputReader inputReader)
+public class Challenge21(IInputReader InputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await inputReader.ReadGridAsync(21);
+        var grid = await InputReader.ReadGridAsync(21);
         var start = grid.FindPosition(x => x == 'S');
         var bounds = grid.Bounds();
 
@@ -23,7 +23,7 @@ public class Challenge21(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await inputReader.ReadGridAsync(21);
+        var grid = await InputReader.ReadGridAsync(21);
         return Polynomial.LagrangeInterpolate(CalculateFirstThreeDataPoints(grid), (26_501_365 - 65) / 131).ToString();
     }
 
