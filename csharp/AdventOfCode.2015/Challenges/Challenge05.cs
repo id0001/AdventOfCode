@@ -43,10 +43,10 @@ public class Challenge05(IInputReader inputReader)
         return niceCount.ToString();
     }
 
-    private bool ContainsPairThatAppearsTwice(string value) =>
+    private static bool ContainsPairThatAppearsTwice(string value) =>
         FilterPairs(value).GroupBy(x => x).Any(x => x.Count() >= 2);
 
-    private bool ContainsRepeatingLetterWithOneLetterCap(string value)
+    private static bool ContainsRepeatingLetterWithOneLetterCap(string value)
     {
         for (var i = 2; i < value.Length; i++)
             if (value[i - 2] == value[i])
@@ -55,7 +55,7 @@ public class Challenge05(IInputReader inputReader)
         return false;
     }
 
-    private IEnumerable<string> FilterPairs(string value)
+    private static IEnumerable<string> FilterPairs(string value)
     {
         string? prevPair = null;
         var lastAddedIndex = -1;

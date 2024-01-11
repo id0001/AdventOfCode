@@ -19,10 +19,10 @@ public class Challenge03(IInputReader inputReader)
             map[location]++;
             location = c switch
             {
-                '^' => new Point2(location.X, location.Y - 1),
-                '>' => new Point2(location.X + 1, location.Y),
-                'v' => new Point2(location.X, location.Y + 1),
-                '<' => new Point2(location.X - 1, location.Y),
+                '^' => location.Up,
+                '>' => location.Right,
+                'v' => location.Down,
+                '<' => location.Left,
                 _ => throw new NotSupportedException()
             };
         }
@@ -34,7 +34,7 @@ public class Challenge03(IInputReader inputReader)
     public async Task<string?> Part2Async()
     {
         var map = new Dictionary<Point2, int>();
-        var locations = new[] {Point2.Zero, Point2.Zero};
+        Point2[] locations = [Point2.Zero, Point2.Zero];
         var index = 0;
 
         await foreach (var c in inputReader.ReadLineAsync(3))
@@ -43,10 +43,10 @@ public class Challenge03(IInputReader inputReader)
             map[locations[index]]++;
             locations[index] = c switch
             {
-                '^' => new Point2(locations[index].X, locations[index].Y - 1),
-                '>' => new Point2(locations[index].X + 1, locations[index].Y),
-                'v' => new Point2(locations[index].X, locations[index].Y + 1),
-                '<' => new Point2(locations[index].X - 1, locations[index].Y),
+                '^' => locations[index].Up,
+                '>' => locations[index].Right,
+                'v' => locations[index].Down,
+                '<' => locations[index].Left,
                 _ => throw new NotSupportedException()
             };
 

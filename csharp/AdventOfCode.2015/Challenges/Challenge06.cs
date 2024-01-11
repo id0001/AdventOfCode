@@ -8,7 +8,7 @@ namespace AdventOfCode2015.Challenges;
 [Challenge(6)]
 public class Challenge06(IInputReader inputReader)
 {
-    private readonly Regex _pattern = new(@"(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)");
+    private static readonly Regex Pattern = new(@"(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)");
 
     [Part1]
     public async Task<string?> Part1Async()
@@ -60,11 +60,11 @@ public class Challenge06(IInputReader inputReader)
         return grid.Sum().ToString();
     }
 
-    private LightAction ParseLine(string line)
+    private static LightAction ParseLine(string line)
     {
-        var match = _pattern.Match(line);
-        var from = new Point2(int.Parse(match.Groups[2].Value), int.Parse(match.Groups[3].Value));
-        var to = new Point2(int.Parse(match.Groups[4].Value) + 1, int.Parse(match.Groups[5].Value) + 1);
+        var match = Pattern.Match(line);
+        var from = new Point2(match.Groups[2].Value.As<int>(), match.Groups[3].Value.As<int>());
+        var to = new Point2(match.Groups[4].Value.As<int>() + 1, match.Groups[5].Value.As<int>() + 1);
 
         return new LightAction(match.Groups[1].Value, from, to);
     }

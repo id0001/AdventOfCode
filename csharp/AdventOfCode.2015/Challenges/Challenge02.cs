@@ -21,11 +21,12 @@ public class Challenge02(IInputReader inputReader)
             .SumAsync(TotalRibbonNeeded))
         .ToString();
 
-    private static Cube ParseLine(string line)
-    {
-        var split = line.Split('x').Select(int.Parse).OrderBy(x => x).ToArray();
-        return new Cube(0, 0, 0, split[0], split[1], split[2]);
-    }
+    private static Cube ParseLine(string line) => line
+        .SplitBy("x")
+        .As<int>()
+        .Order()
+        .ToArray()
+        .Into(x => new Cube(0, 0, 0, x.First(), x.Second(), x.Third()));
 
     private static int TotalPaperNeeded(Cube cube) => cube.TotalSurfaceArea + cube.SmallestArea;
 
