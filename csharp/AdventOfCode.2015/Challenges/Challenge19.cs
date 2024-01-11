@@ -14,52 +14,33 @@ public class Challenge19(IInputReader InputReader)
         var input = ParseInput(await InputReader.ReadAllTextAsync(19));
 
         var set = new HashSet<string>();
-        foreach (var kv in input.Replacements)
-            foreach (var repl in kv.Value)
+        foreach (var key in input.Replacements.Keys)
+        {
+            foreach (var repl in input.Replacements[key])
+            {
                 for (var i = 0; i < input.Sequence.Length; i++)
-                    if (input.Sequence[i] == kv.Key)
+                {
+                    if (input.Sequence[i] == key)
                     {
-                        var s = string.Join("", input.Sequence.Take(i - 1)) + repl +
-                                string.Join("", input.Sequence.Skip(i + 1));
+                        var s = string.Join(string.Empty, input.Sequence[0..i]) + repl + string.Join(string.Empty, input.Sequence[(i + 1)..]);
                         set.Add(s);
                     }
+                }
+            }
+        }
 
         return set.Count.ToString();
     }
 
-    private void Replace(Dictionary<string, List<string>> replacements, string node, int i, string[] sequence,
-        HashSet<(string, int)> parts, HashSet<string> results)
-    {
-        if (parts.Contains((node, i)))
-            return;
-
-        if (i == sequence.Length)
-        {
-            results.Add(node);
-            return;
-        }
-
-        if (!replacements.ContainsKey(sequence[i]))
-        {
-            node += sequence[i];
-            parts.Add((node, i));
-            Replace(replacements, node, i + 1, sequence, parts, results);
-        }
-        else
-        {
-            foreach (var replacement in replacements[sequence[i]])
-            {
-                node += replacement;
-                parts.Add((node, i));
-                Replace(replacements, node, i + 1, sequence, parts, results);
-            }
-        }
-    }
-
-    // [Part2]
+    [Part2]
     public async Task<string> Part2Async()
     {
-        return string.Empty;
+        var input = ParseInput(await InputReader.ReadAllTextAsync(19));
+        var total = input.Sequence.Length;
+        var arrn = input.Sequence.Count(x => x is "Ar" or "Rn");
+        var y = input.Sequence.Count(x => x == "Y");
+
+        return (total - arrn - (2 * y) - 1).ToString();
     }
 
     private static Input ParseInput(string text)
