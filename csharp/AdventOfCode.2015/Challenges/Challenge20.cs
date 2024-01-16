@@ -7,10 +7,6 @@ public class Challenge20
 {
     private const int Input = 29000000;
 
-    public Challenge20()
-    {
-    }
-
     [Part1]
     public string Part1()
     {
