@@ -42,8 +42,8 @@ public class Challenge21(IInputReader inputReader)
     {
         var boss = new Stats(109, 8, 2);
         return Weapons
-            .Combinations(Armor)
-            .Combinations(Rings.Combinations(2), (a, b) => new
+            .SelectMany(_ => Armor, (a,b) => new[] {a,b})
+            .SelectMany(_ => Rings.Combinations(2), (a, b) => new
             {
                 Cost = a.Sum(x => x.Cost) + b.Sum(x => x.Cost),
                 PlayerWins =
@@ -60,8 +60,8 @@ public class Challenge21(IInputReader inputReader)
     {
         var boss = new Stats(109, 8, 2);
         return Weapons
-            .Combinations(Armor)
-            .Combinations(Rings.Combinations(2), (a, b) => new
+            .SelectMany(_ => Armor, (a,b) => new[] {a,b})
+            .SelectMany(_ => Rings.Combinations(2), (a, b) => new
             {
                 Cost = a.Sum(x => x.Cost) + b.Sum(x => x.Cost),
                 PlayerWins =

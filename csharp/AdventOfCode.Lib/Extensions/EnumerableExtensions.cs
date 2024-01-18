@@ -36,12 +36,6 @@ public static class EnumerableExtensions
         if (wrapAround) yield return (previous, first);
     }
 
-    public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> source, IEnumerable<T> other) =>
-        source.SelectMany(_ => other, (a, b) => new[] {a, b});
-
-    public static IEnumerable<TResult> Combinations<T1, T2, TResult>(this IEnumerable<T1> source, IEnumerable<T2> other,
-        Func<T1, T2, TResult> selector) => source.SelectMany(_ => other, selector);
-
     public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, T separator)
     {
         var list = new List<T>();
