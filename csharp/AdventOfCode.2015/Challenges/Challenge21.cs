@@ -1,10 +1,10 @@
-﻿using AdventOfCode.Core;
+using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 
-namespace AdventOfCode{{year}}.Challenges;
+namespace AdventOfCode2015.Challenges;
 
-//[Challenge({{day}})]
-public class Challenge{{zeroday}}(IInputReader inputReader)
+[Challenge(21)]
+public class Challenge21(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
