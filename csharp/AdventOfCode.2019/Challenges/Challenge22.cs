@@ -6,14 +6,14 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(22)]
-public class Challenge22(IInputReader InputReader)
+public class Challenge22(IInputReader inputReader)
 {
     private readonly List<ShuffleType> _shuffleList = new();
 
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in InputReader.ReadLinesAsync(22))
+        await foreach (var line in inputReader.ReadLinesAsync(22))
             if (line == "deal into new stack")
             {
                 _shuffleList.Add(new ShuffleType(0, 0));

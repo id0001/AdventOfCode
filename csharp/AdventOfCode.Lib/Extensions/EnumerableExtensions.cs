@@ -9,7 +9,7 @@ public static class EnumerableExtensions
         Combinatorics.SelectAllPermutations(source);
 
     /// <summary>
-    /// Returns all combinations of k elements where the order does not matter
+    ///     Returns all combinations of k elements where the order does not matter
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>

@@ -5,12 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(20)]
-public class Challenge20(IInputReader InputReader)
+public class Challenge20(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var modules = await InputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
+        var modules = await inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
         var flipflops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, kv => false);
         var conjunctions = modules.Values.Where(m => m.Type == "&")
             .ToDictionary(kv => kv.Name,
@@ -30,7 +30,7 @@ public class Challenge20(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var modules = await InputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
+        var modules = await inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
         var flipflops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, kv => false);
         var conjunctions = modules.Values.Where(m => m.Type == "&")
             .ToDictionary(kv => kv.Name,

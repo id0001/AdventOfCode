@@ -4,13 +4,13 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(4)]
-public class Challenge04(IInputReader InputReader)
+public class Challenge04(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
         var sum = 0;
-        await foreach (var line in InputReader.ReadLinesAsync(4))
+        await foreach (var line in inputReader.ReadLinesAsync(4))
         {
             var pair = line.Split(',');
             var elf1 = pair[0].Split('-');
@@ -29,7 +29,7 @@ public class Challenge04(IInputReader InputReader)
     public async Task<string> Part2Async()
     {
         var sum = 0;
-        await foreach (var line in InputReader.ReadLinesAsync(4))
+        await foreach (var line in inputReader.ReadLinesAsync(4))
         {
             var pair = line.Split(',');
             var elf1 = pair[0].Split('-');

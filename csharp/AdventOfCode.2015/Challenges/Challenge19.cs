@@ -1,4 +1,3 @@
-using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
@@ -6,28 +5,23 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(19)]
-public class Challenge19(IInputReader InputReader)
+public class Challenge19(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var input = ParseInput(await InputReader.ReadAllTextAsync(19));
+        var input = ParseInput(await inputReader.ReadAllTextAsync(19));
 
         var set = new HashSet<string>();
         foreach (var key in input.Replacements.Keys)
-        {
-            foreach (var repl in input.Replacements[key])
-            {
-                for (var i = 0; i < input.Sequence.Length; i++)
+        foreach (var repl in input.Replacements[key])
+            for (var i = 0; i < input.Sequence.Length; i++)
+                if (input.Sequence[i] == key)
                 {
-                    if (input.Sequence[i] == key)
-                    {
-                        var s = string.Join(string.Empty, input.Sequence[0..i]) + repl + string.Join(string.Empty, input.Sequence[(i + 1)..]);
-                        set.Add(s);
-                    }
+                    var s = string.Join(string.Empty, input.Sequence[..i]) + repl +
+                            string.Join(string.Empty, input.Sequence[(i + 1)..]);
+                    set.Add(s);
                 }
-            }
-        }
 
         return set.Count.ToString();
     }
@@ -35,12 +29,12 @@ public class Challenge19(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = ParseInput(await InputReader.ReadAllTextAsync(19));
+        var input = ParseInput(await inputReader.ReadAllTextAsync(19));
         var total = input.Sequence.Length;
         var arrn = input.Sequence.Count(x => x is "Ar" or "Rn");
         var y = input.Sequence.Count(x => x == "Y");
 
-        return (total - arrn - (2 * y) - 1).ToString();
+        return (total - arrn - 2 * y - 1).ToString();
     }
 
     private static Input ParseInput(string text)
@@ -51,11 +45,11 @@ public class Challenge19(IInputReader InputReader)
             {
                 return new Input(
                     parts
-                    .First()
-                    .SplitBy(nl)
-                    .Select(x => x.SplitBy("=>"))
-                    .GroupBy(x => x.First(), x => x.Second())
-                    .ToDictionary(kv => kv.Key, kv => kv.ToList()),
+                        .First()
+                        .SplitBy(nl)
+                        .Select(x => x.SplitBy("=>"))
+                        .GroupBy(x => x.First(), x => x.Second())
+                        .ToDictionary(kv => kv.Key, kv => kv.ToList()),
                     ParseSequence(parts.Second()).ToArray());
             });
     }

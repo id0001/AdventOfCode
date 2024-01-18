@@ -8,12 +8,12 @@ using AdventOfCode2019.IntCode.Core;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(11)]
-public class Challenge11(IInputReader InputReader)
+public class Challenge11(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await InputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
 
         var locationHistory = new Dictionary<Point2, long>();
         var currentLocation = new Point2();
@@ -55,7 +55,7 @@ public class Challenge11(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await InputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(11, ',').ToArrayAsync();
 
         var locationHistory = new Dictionary<Point2, long>();
         var currentLocation = new Point2();

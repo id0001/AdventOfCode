@@ -5,12 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(3)]
-public class Challenge03(IInputReader InputReader)
+public class Challenge03(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var lines = await InputReader.ReadLinesAsync(3).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(3).ToArrayAsync();
 
         var wire1 = GetWire(lines[0].Split(','));
         var wire2 = GetWire(lines[1].Split(','));
@@ -23,7 +23,7 @@ public class Challenge03(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var lines = await InputReader.ReadLinesAsync(3).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(3).ToArrayAsync();
 
         var wire1 = GetWire(lines[0].Split(','));
         var wire2 = GetWire(lines[1].Split(','));

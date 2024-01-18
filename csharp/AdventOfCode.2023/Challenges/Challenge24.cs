@@ -6,7 +6,7 @@ using Microsoft.Z3;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(24)]
-public class Challenge24(IInputReader InputReader)
+public class Challenge24(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -14,7 +14,7 @@ public class Challenge24(IInputReader InputReader)
         var min = 200000000000000L;
         var max = 400000000000000L;
 
-        var hailstones = await InputReader.ParseLinesAsync(24, ParseLine).ToArrayAsync();
+        var hailstones = await inputReader.ParseLinesAsync(24, ParseLine).ToArrayAsync();
 
         var c = 0;
         for (var i = 0; i < hailstones.Length - 1; i++)
@@ -24,10 +24,12 @@ public class Challenge24(IInputReader InputReader)
                 var h1 = hailstones[i];
                 var h2 = hailstones[j];
 
-                if ((intersection.X < h1.Intercept.X && h1.Slope.X > 0) || (intersection.X > h1.Intercept.X && h1.Slope.X < 0))
+                if ((intersection.X < h1.Intercept.X && h1.Slope.X > 0) ||
+                    (intersection.X > h1.Intercept.X && h1.Slope.X < 0))
                     continue;
 
-                if ((intersection.X < h2.Intercept.X && h2.Slope.X > 0) || (intersection.X > h2.Intercept.X && h2.Slope.X < 0))
+                if ((intersection.X < h2.Intercept.X && h2.Slope.X > 0) ||
+                    (intersection.X > h2.Intercept.X && h2.Slope.X < 0))
                     continue;
 
                 if (intersection.X >= min && intersection.Y >= min && intersection.X <= max && intersection.Y <= max)
@@ -41,7 +43,7 @@ public class Challenge24(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var hailstones = await InputReader.ParseLinesAsync(24, ParseLine).ToListAsync();
+        var hailstones = await inputReader.ParseLinesAsync(24, ParseLine).ToListAsync();
 
         return Solve(hailstones).ToString();
     }
@@ -64,13 +66,13 @@ public class Challenge24(IInputReader InputReader)
             var t = context.MkIntConst($"t{i}");
             var hailstone = hailstones[i];
 
-            var px = context.MkInt((long)hailstone.Intercept.X);
-            var py = context.MkInt((long)hailstone.Intercept.Y);
-            var pz = context.MkInt((long)hailstone.Intercept.Z);
+            var px = context.MkInt((long) hailstone.Intercept.X);
+            var py = context.MkInt((long) hailstone.Intercept.Y);
+            var pz = context.MkInt((long) hailstone.Intercept.Z);
 
-            var pvx = context.MkInt((long)hailstone.Slope.X);
-            var pvy = context.MkInt((long)hailstone.Slope.Y);
-            var pvz = context.MkInt((long)hailstone.Slope.Z);
+            var pvx = context.MkInt((long) hailstone.Slope.X);
+            var pvy = context.MkInt((long) hailstone.Slope.Y);
+            var pvz = context.MkInt((long) hailstone.Slope.Z);
 
             var xl = context.MkAdd(x, context.MkMul(t, vx));
             var yl = context.MkAdd(y, context.MkMul(t, vy));

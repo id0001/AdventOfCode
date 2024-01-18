@@ -12,10 +12,8 @@ public class Challenge20
     {
         var arr = new int[Input / 10];
         for (var elf = 1; elf < Input / 10; elf++)
-        {
-            for (var house = elf; house < Input / 10; house += elf)
-                arr[house - 1] += elf * 10;
-        }
+        for (var house = elf; house < Input / 10; house += elf)
+            arr[house - 1] += elf * 10;
 
         for (var i = 0; i < arr.Length; i++)
             if (arr[i] >= Input)
@@ -29,15 +27,13 @@ public class Challenge20
     {
         var arr = new int[Input / 11];
         for (var elf = 1; elf < Input / 11; elf++)
+        for (var m = 0; m < 50; m++)
         {
-            for(var m = 0; m < 50; m++)
-            {
-                var house = elf + (m * elf);
-                if (house >= arr.Length)
-                    break;
+            var house = elf + m * elf;
+            if (house >= arr.Length)
+                break;
 
-                arr[house - 1] += elf * 11;
-            }
+            arr[house - 1] += elf * 11;
         }
 
         for (var i = 0; i < arr.Length; i++)

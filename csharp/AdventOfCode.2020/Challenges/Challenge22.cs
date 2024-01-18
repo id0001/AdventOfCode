@@ -4,7 +4,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(22)]
-public class Challenge22(IInputReader InputReader)
+public class Challenge22(IInputReader inputReader)
 {
     private readonly Queue<int> _deck1 = new();
     private readonly Queue<int> _deck2 = new();
@@ -15,7 +15,7 @@ public class Challenge22(IInputReader InputReader)
     {
         var state = 0;
 
-        await foreach (var line in InputReader.ReadLinesAsync(22))
+        await foreach (var line in inputReader.ReadLinesAsync(22))
         {
             if (line is "Player 1:" or "Player 2:")
                 continue;

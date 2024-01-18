@@ -5,7 +5,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(19)]
-public class Challenge19(IInputReader InputReader)
+public class Challenge19(IInputReader inputReader)
 {
     private readonly List<Scanner> _scanners = new();
 
@@ -13,7 +13,7 @@ public class Challenge19(IInputReader InputReader)
     public async Task SetupAsync()
     {
         var temp = new HashSet<Point3>();
-        await foreach (var line in InputReader.ReadLinesAsync(19))
+        await foreach (var line in inputReader.ReadLinesAsync(19))
         {
             if (string.IsNullOrEmpty(line))
             {

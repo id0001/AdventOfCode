@@ -5,14 +5,14 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(21)]
-public class Challenge21(IInputReader InputReader)
+public class Challenge21(IInputReader inputReader)
 {
     private readonly List<Food> _input = new();
 
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in InputReader.ReadLinesAsync(21))
+        await foreach (var line in inputReader.ReadLinesAsync(21))
         {
             var match = Regex.Match(line, @"^(.+) \(contains (.+)\)$");
             var ingredients = match.Groups[1].Value.Split(" ");

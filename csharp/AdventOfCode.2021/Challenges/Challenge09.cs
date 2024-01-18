@@ -5,19 +5,19 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(9)]
-public class Challenge09(IInputReader InputReader)
+public class Challenge09(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await InputReader.ReadGridAsync<int>(9);
+        var grid = await inputReader.ReadGridAsync<int>(9);
         return CalculateRiskLevel(grid).ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await InputReader.ReadGridAsync<int>(9);
+        var grid = await inputReader.ReadGridAsync<int>(9);
 
         var basins = new List<Point2[]>();
         foreach (var lowestPoint in LowestPoints(grid))

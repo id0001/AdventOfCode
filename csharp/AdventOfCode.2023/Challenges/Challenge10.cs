@@ -7,12 +7,12 @@ using AdventOfCode.Lib.PathFinding;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(10)]
-public class Challenge10(IInputReader InputReader)
+public class Challenge10(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await InputReader.ReadGridAsync(10);
+        var grid = await inputReader.ReadGridAsync(10);
         var start = grid.FindPosition(c => c == 'S');
         grid[start.Y, start.X] = GetStartType(grid, start);
         var bfs = new BreadthFirstSearch<Point2>(n => GetConnectingPipes(grid, n));
@@ -22,7 +22,7 @@ public class Challenge10(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await InputReader.ReadGridAsync(10);
+        var grid = await inputReader.ReadGridAsync(10);
         var start = grid.FindPosition(c => c == 'S');
         grid[start.Y, start.X] = GetStartType(grid, start);
         var pipeSegments = WalkPath(grid, start).ToList();

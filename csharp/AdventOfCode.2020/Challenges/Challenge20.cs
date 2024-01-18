@@ -7,7 +7,7 @@ using AdventOfCode.Lib.Collections;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(20)]
-public class Challenge20(IInputReader InputReader)
+public class Challenge20(IInputReader inputReader)
 {
     private readonly List<Image> _images = new();
 
@@ -15,7 +15,7 @@ public class Challenge20(IInputReader InputReader)
     public async Task SetupAsync()
     {
         var rawData = new List<string>();
-        await foreach (var line in InputReader.ReadLinesAsync(20))
+        await foreach (var line in inputReader.ReadLinesAsync(20))
         {
             if (string.IsNullOrEmpty(line))
             {

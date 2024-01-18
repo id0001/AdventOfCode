@@ -6,12 +6,12 @@ using AdventOfCode.Lib.Graphs;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(22)]
-public class Challenge22(IInputReader InputReader)
+public class Challenge22(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var bricks = await InputReader.ParseLinesAsync(22, ParseLine).Select((v, i) => new Brick(i, v)).ToListAsync();
+        var bricks = await inputReader.ParseLinesAsync(22, ParseLine).Select((v, i) => new Brick(i, v)).ToListAsync();
         var graph = CreateSupportGraph(bricks);
 
         return bricks.Count(b =>
@@ -21,7 +21,7 @@ public class Challenge22(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var bricks = await InputReader.ParseLinesAsync(22, ParseLine).Select((v, i) => new Brick(i, v)).ToListAsync();
+        var bricks = await inputReader.ParseLinesAsync(22, ParseLine).Select((v, i) => new Brick(i, v)).ToListAsync();
         var graph = CreateSupportGraph(bricks);
 
         var sum = 0;

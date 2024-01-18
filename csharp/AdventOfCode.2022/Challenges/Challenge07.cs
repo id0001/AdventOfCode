@@ -6,7 +6,7 @@ using Microsoft;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(7)]
-public class Challenge07(IInputReader InputReader)
+public class Challenge07(IInputReader inputReader)
 {
     private static readonly Regex InputPattern = new(@"\$ (\w+) ?(.+)?");
 
@@ -63,7 +63,7 @@ public class Challenge07(IInputReader InputReader)
     {
         var root = FsNode.CreateDirectory("/");
         var dirStack = new Stack<FsNode>(new[] {root});
-        await foreach (var line in InputReader.ReadLinesAsync(7))
+        await foreach (var line in inputReader.ReadLinesAsync(7))
             if (line.StartsWith("$"))
             {
                 var match = InputPattern.Match(line);

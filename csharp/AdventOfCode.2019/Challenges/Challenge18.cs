@@ -6,12 +6,12 @@ using AdventOfCode.Lib.PathFinding;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(18)]
-public class Challenge18(IInputReader InputReader)
+public class Challenge18(IInputReader inputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
     {
-        var maze = await InputReader.ReadGridAsync(18);
+        var maze = await inputReader.ReadGridAsync(18);
 
         var data = AnalyzeMaze(maze);
         var keyTotal = KeysToInt(data.Keys.Keys);
@@ -25,7 +25,7 @@ public class Challenge18(IInputReader InputReader)
     [Part2]
     public async Task<string?> Part2Async()
     {
-        var maze = await InputReader.ReadGridAsync(18);
+        var maze = await inputReader.ReadGridAsync(18);
 
         var data = AnalyzeMaze(maze);
         var keyTotal = KeysToInt(data.Keys.Keys);

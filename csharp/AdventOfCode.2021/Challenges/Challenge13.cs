@@ -7,11 +7,11 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(13)]
-public class Challenge13(IInputReader InputReader)
+public class Challenge13(IInputReader inputReader)
 {
     private async Task<(HashSet<Point2>, List<string>)> ReadInputAsync()
     {
-        var lines = await InputReader.ReadLinesAsync(13).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(13).ToArrayAsync();
         var indexOfNewline = Array.IndexOf(lines, string.Empty);
 
         var points = lines.Take(indexOfNewline).Select(x =>

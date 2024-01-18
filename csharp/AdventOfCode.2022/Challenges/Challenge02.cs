@@ -5,13 +5,13 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(2)]
-public class Challenge02(IInputReader InputReader)
+public class Challenge02(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
         var resultSum = 0;
-        await foreach (var line in InputReader.ReadLinesAsync(2))
+        await foreach (var line in inputReader.ReadLinesAsync(2))
         {
             var split = line.Split(' ');
             var (other, you) = (char.Parse(split[0]), char.Parse(split[1]));
@@ -25,7 +25,7 @@ public class Challenge02(IInputReader InputReader)
     public async Task<string> Part2Async()
     {
         var resultSum = 0;
-        await foreach (var line in InputReader.ReadLinesAsync(2))
+        await foreach (var line in inputReader.ReadLinesAsync(2))
         {
             var split = line.Split(' ');
             var (other, you) = (char.Parse(split[0]), char.Parse(split[1]));

@@ -6,7 +6,7 @@ using AdventOfCode.Lib.Comparers;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(10)]
-public class Challenge10(IInputReader InputReader)
+public class Challenge10(IInputReader inputReader)
 {
     private readonly List<Point2> _asteroids = new();
 
@@ -14,7 +14,7 @@ public class Challenge10(IInputReader InputReader)
     public async Task SetupAsync()
     {
         var y = 0;
-        await foreach (var line in InputReader.ReadLinesAsync(10))
+        await foreach (var line in inputReader.ReadLinesAsync(10))
         {
             for (var x = 0; x < line.Length; x++)
                 if (line[x] == '#')

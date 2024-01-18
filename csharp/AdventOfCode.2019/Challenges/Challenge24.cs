@@ -6,7 +6,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(24)]
-public class Challenge24(IInputReader InputReader)
+public class Challenge24(IInputReader inputReader)
 {
     private readonly char[] _data = new char[5 * 5];
 
@@ -14,7 +14,7 @@ public class Challenge24(IInputReader InputReader)
     public async Task SetupAsync()
     {
         var i = 0;
-        await foreach (var line in InputReader.ReadLinesAsync(24))
+        await foreach (var line in inputReader.ReadLinesAsync(24))
         foreach (var c in line)
             _data[i++] = c;
     }

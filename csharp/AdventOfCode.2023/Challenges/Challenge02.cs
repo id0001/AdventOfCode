@@ -5,13 +5,13 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(2)]
-public class Challenge02(IInputReader InputReader)
+public class Challenge02(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
         var sum = 0;
-        await foreach (var game in InputReader.ParseLinesAsync(2, ParseLine))
+        await foreach (var game in inputReader.ParseLinesAsync(2, ParseLine))
             if (IsPossible(game))
                 sum += game.Number;
 
@@ -22,7 +22,7 @@ public class Challenge02(IInputReader InputReader)
     public async Task<string> Part2Async()
     {
         var sum = 0;
-        await foreach (var game in InputReader.ParseLinesAsync(2, ParseLine))
+        await foreach (var game in inputReader.ParseLinesAsync(2, ParseLine))
             sum += GetPowerOfMinimumNumberOfCubes(game);
 
         return sum.ToString();

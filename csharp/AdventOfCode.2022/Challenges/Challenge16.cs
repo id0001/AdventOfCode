@@ -7,14 +7,14 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(16)]
-public class Challenge16(IInputReader InputReader)
+public class Challenge16(IInputReader inputReader)
 {
     private static readonly Regex Pattern = new(@"Valve (\w+) has flow rate=(\d+); tunnels? leads? to valves? ?(.+)");
 
     [Part1]
     public async Task<string> Part1Async()
     {
-        var valves = await InputReader.ParseLinesAsync(16, ParseLine).ToDictionaryAsync(x => x.Name);
+        var valves = await inputReader.ParseLinesAsync(16, ParseLine).ToDictionaryAsync(x => x.Name);
 
         var edges = valves.SelectMany(kv => kv.Value.LeadsTo.SelectMany(t => new[] {(kv.Key, t), (t, kv.Key)}))
             .ToList();
@@ -33,7 +33,7 @@ public class Challenge16(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var valves = await InputReader.ParseLinesAsync(16, ParseLine).ToDictionaryAsync(x => x.Name);
+        var valves = await inputReader.ParseLinesAsync(16, ParseLine).ToDictionaryAsync(x => x.Name);
 
         var edges = valves.SelectMany(kv => kv.Value.LeadsTo.SelectMany(t => new[] {(kv.Key, t), (t, kv.Key)}))
             .ToList();

@@ -4,6 +4,8 @@ public readonly record struct Vector2(double X, double Y)
 {
     public static readonly Vector2 Zero = new();
 
+    public bool Equals(Vector2 other) => X.MarginalEquals(other.X) && Y.MarginalEquals(other.Y);
+
     /// <summary>
     ///     Calculates the angle of the vector on a circle.
     /// </summary>
@@ -38,8 +40,6 @@ public readonly record struct Vector2(double X, double Y)
     public static Vector2 operator *(Vector2 vector, double scalar) => Multiply(vector, scalar);
 
     public static Vector2 operator *(double scalar, Vector2 vector) => Multiply(vector, scalar);
-
-    public bool Equals(Vector2 other) => X.MarginalEquals(other.X) && Y.MarginalEquals(other.Y);
 
     public override int GetHashCode() => HashCode.Combine(X, Y);
 }

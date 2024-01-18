@@ -5,12 +5,12 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(11)]
-public class Challenge11(IInputReader InputReader)
+public class Challenge11(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await InputReader.ReadGridAsync(11);
+        var grid = await inputReader.ReadGridAsync(11);
         var galaxies = GetGalaxies(grid, 1).ToList();
 
         var totalDistance = 0;
@@ -24,7 +24,7 @@ public class Challenge11(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await InputReader.ReadGridAsync(11);
+        var grid = await inputReader.ReadGridAsync(11);
         var galaxies = GetGalaxies(grid, 999999).ToList();
 
         long totalDistance = 0;

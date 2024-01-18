@@ -6,14 +6,14 @@ using AdventOfCode.Lib.Collections;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(17)]
-public class Challenge17(IInputReader InputReader)
+public class Challenge17(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
         var state = new PointCloud<Point3, int>();
 
-        var lines = await InputReader.ReadLinesAsync(17).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(17).ToArrayAsync();
         for (var y = 0; y < lines.Length; y++)
         for (var x = 0; x < lines[y].Length; x++)
             if (lines[y][x] == '#')
@@ -54,7 +54,7 @@ public class Challenge17(IInputReader InputReader)
     {
         var state = new PointCloud<Point4, int>();
 
-        var lines = await InputReader.ReadLinesAsync(17).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(17).ToArrayAsync();
         for (var y = 0; y < lines.Length; y++)
         for (var x = 0; x < lines[y].Length; x++)
             if (lines[y][x] == '#')

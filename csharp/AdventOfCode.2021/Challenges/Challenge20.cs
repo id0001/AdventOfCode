@@ -5,7 +5,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(20)]
-public class Challenge20(IInputReader InputReader)
+public class Challenge20(IInputReader inputReader)
 {
     private char[] _enhancement = Array.Empty<char>();
     private Dictionary<Point2, bool> _image = new();
@@ -13,7 +13,7 @@ public class Challenge20(IInputReader InputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await InputReader.ReadLinesAsync(20).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(20).ToArrayAsync();
         _enhancement = lines[0].ToCharArray();
 
         lines = lines.Skip(2).ToArray();

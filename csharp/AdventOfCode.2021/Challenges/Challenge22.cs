@@ -7,7 +7,7 @@ using AdventOfCode.Lib.Collections;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(22)]
-public class Challenge22(IInputReader InputReader)
+public class Challenge22(IInputReader inputReader)
 {
     private const string InputPattern = @"^(on|off) x=(-?\d+)..(-?\d+),y=(-?\d+)..(-?\d+),z=(-?\d+)..(-?\d+)$";
     private readonly List<Instruction> _instructions = new();
@@ -15,7 +15,7 @@ public class Challenge22(IInputReader InputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in InputReader.ReadLinesAsync(22))
+        await foreach (var line in inputReader.ReadLinesAsync(22))
         {
             var match = Regex.Match(line, InputPattern);
 

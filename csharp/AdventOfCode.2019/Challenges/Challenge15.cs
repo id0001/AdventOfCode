@@ -7,7 +7,7 @@ using AdventOfCode2019.IntCode.Core;
 namespace AdventOfCode2019.Challenges;
 
 [Challenge(15)]
-public class Challenge15(IInputReader InputReader)
+public class Challenge15(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -72,7 +72,7 @@ public class Challenge15(IInputReader InputReader)
 
     private async Task<IDictionary<Point2, int>> MapSpaceAsync()
     {
-        var program = await InputReader.ReadLineAsync<long>(15, ',').ToArrayAsync();
+        var program = await inputReader.ReadLineAsync<long>(15, ',').ToArrayAsync();
 
         var visited = new Dictionary<Point2, int>();
         var currentLocation = Point2.Zero;

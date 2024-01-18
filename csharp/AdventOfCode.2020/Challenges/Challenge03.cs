@@ -4,12 +4,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(3)]
-public class Challenge03(IInputReader InputReader)
+public class Challenge03(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var input = await InputReader.ReadLinesAsync(3).ToArrayAsync();
+        var input = await inputReader.ReadLinesAsync(3).ToArrayAsync();
 
         return TraverseSlope(input, 3, 1).ToString();
     }
@@ -17,7 +17,7 @@ public class Challenge03(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = await InputReader.ReadLinesAsync(3).ToArrayAsync();
+        var input = await inputReader.ReadLinesAsync(3).ToArrayAsync();
 
         return (TraverseSlope(input, 1, 1) * TraverseSlope(input, 3, 1) * TraverseSlope(input, 5, 1) *
                 TraverseSlope(input, 7, 1) *

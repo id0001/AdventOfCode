@@ -5,7 +5,7 @@ using AdventOfCode.Lib.Collections;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(9)]
-public class Challenge09(IInputReader InputReader)
+public class Challenge09(IInputReader inputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
@@ -13,7 +13,7 @@ public class Challenge09(IInputReader InputReader)
         var buffer = new CircularBuffer<long>(25);
         var index = 0;
 
-        await foreach (var value in InputReader.ReadLinesAsync<long>(9))
+        await foreach (var value in inputReader.ReadLinesAsync<long>(9))
         {
             if (index >= 25)
                 if (!Validate(buffer, value))
@@ -34,7 +34,7 @@ public class Challenge09(IInputReader InputReader)
         var buffer = new CircularBuffer<long>(25);
         var index = 0;
 
-        await foreach (var value in InputReader.ReadLinesAsync<long>(9))
+        await foreach (var value in inputReader.ReadLinesAsync<long>(9))
         {
             if (index >= 25)
             {

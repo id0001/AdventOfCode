@@ -1,20 +1,18 @@
+using System.Collections;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Graphs;
-using AdventOfCode.Lib.Math;
-using AdventOfCode.Lib.PathFinding;
-using System.Collections;
 
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(23)]
-public class Challenge23(IInputReader InputReader)
+public class Challenge23(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var grid = await InputReader.ReadGridAsync(23);
+        var grid = await inputReader.ReadGridAsync(23);
         var start = new Point2(1, 0);
         var end = new Point2(grid.GetUpperBound(1) - 1, grid.GetUpperBound(0));
 
@@ -25,7 +23,7 @@ public class Challenge23(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var grid = await InputReader.ReadGridAsync(23);
+        var grid = await inputReader.ReadGridAsync(23);
         var start = new Point2(1, 0);
         var end = new Point2(grid.GetUpperBound(1) - 1, grid.GetUpperBound(0));
 
@@ -69,7 +67,7 @@ public class Challenge23(IInputReader InputReader)
         bool downhill, bool ignoreSlopes)
     {
         var bounds = grid.Bounds();
-        var visited = new HashSet<Point2> { from };
+        var visited = new HashSet<Point2> {from};
         while (!IsFork(grid, to) && to != end)
         {
             visited.Add(to);

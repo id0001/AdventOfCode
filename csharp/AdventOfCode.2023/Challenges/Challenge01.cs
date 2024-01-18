@@ -6,7 +6,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(1)]
-public class Challenge01(IInputReader InputReader)
+public class Challenge01(IInputReader inputReader)
 {
     private static readonly string[] Numbers =
         {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
@@ -14,7 +14,7 @@ public class Challenge01(IInputReader InputReader)
     [Part1]
     public async Task<string?> Part1Async()
     {
-        return await InputReader
+        return await inputReader
             .ReadLinesAsync(1)
             .SumAsync(line => Regex
                 .Matches(line, @"(\d)")
@@ -26,7 +26,7 @@ public class Challenge01(IInputReader InputReader)
     public async Task<string?> Part2Async()
     {
         var pattern = new Regex(@"(?=(one|two|three|four|five|six|seven|eight|nine|\d))", RegexOptions.Compiled);
-        return await InputReader
+        return await inputReader
             .ReadLinesAsync(1)
             .SumAsync(line => pattern
                 .Matches(line)

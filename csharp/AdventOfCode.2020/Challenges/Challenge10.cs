@@ -4,12 +4,12 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(10)]
-public class Challenge10(IInputReader InputReader)
+public class Challenge10(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var input = await InputReader.ReadLinesAsync<int>(10).OrderBy(e => e).ToArrayAsync();
+        var input = await inputReader.ReadLinesAsync<int>(10).OrderBy(e => e).ToArrayAsync();
 
         var differences = new[] {0, 0, 1};
 
@@ -26,7 +26,7 @@ public class Challenge10(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = await InputReader.ReadLinesAsync<int>(10).OrderBy(e => e).ToArrayAsync();
+        var input = await inputReader.ReadLinesAsync<int>(10).OrderBy(e => e).ToArrayAsync();
 
         var max = input[^1] + 3;
         var set = input.Prepend(0).Append(max).ToArray();

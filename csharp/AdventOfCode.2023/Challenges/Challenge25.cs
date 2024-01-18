@@ -6,12 +6,12 @@ using AdventOfCode.Lib.Graphs;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(25)]
-public class Challenge25(IInputReader InputReader)
+public class Challenge25(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
     {
-        var graph = ParseInput(await InputReader.ReadAllTextAsync(25));
+        var graph = ParseInput(await inputReader.ReadAllTextAsync(25));
 
         List<string>[] partitions;
         List<(string, string)> cutEdges;

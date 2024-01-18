@@ -5,7 +5,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(24)]
-public class Challenge24(IInputReader InputReader)
+public class Challenge24(IInputReader inputReader)
 {
     private static readonly IReadOnlyDictionary<string, Point3> Neighbors = new Dictionary<string, Point3>
     {
@@ -22,7 +22,7 @@ public class Challenge24(IInputReader InputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        await foreach (var line in InputReader.ReadLinesAsync(24))
+        await foreach (var line in inputReader.ReadLinesAsync(24))
         {
             var steps = new List<string>();
             for (var i = 0; i < line.Length; i++)

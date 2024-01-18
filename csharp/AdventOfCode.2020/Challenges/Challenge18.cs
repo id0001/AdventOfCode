@@ -5,14 +5,14 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(18)]
-public class Challenge18(IInputReader InputReader)
+public class Challenge18(IInputReader inputReader)
 {
     [Part1]
     public async Task<string?> Part1Async() =>
-        await InputReader.ReadLinesAsync(18).SumAsync(line => EvaluateExpression(line)).ToStringAsync();
+        await inputReader.ReadLinesAsync(18).SumAsync(line => EvaluateExpression(line)).ToStringAsync();
 
     [Part2]
-    public async Task<string?> Part2Async() => await InputReader.ReadLinesAsync(18)
+    public async Task<string?> Part2Async() => await inputReader.ReadLinesAsync(18)
         .SumAsync(line => EvaluateExpression(line, new HashSet<char> {'*'})).ToStringAsync();
 
     private static long EvaluateExpression(string expr, ICollection<char>? lowestPrecedence = null)

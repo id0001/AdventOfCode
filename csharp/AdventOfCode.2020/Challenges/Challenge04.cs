@@ -5,7 +5,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2020.Challenges;
 
 [Challenge(4)]
-public class Challenge04(IInputReader InputReader)
+public class Challenge04(IInputReader inputReader)
 {
     private static readonly string[] EyeColors = {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
     private readonly List<IDictionary<string, string>> _input = new();
@@ -13,7 +13,7 @@ public class Challenge04(IInputReader InputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await InputReader.ReadLinesAsync(4).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(4).ToArrayAsync();
 
         var currentData = new List<KeyValuePair<string, string>>();
         foreach (var line in lines)

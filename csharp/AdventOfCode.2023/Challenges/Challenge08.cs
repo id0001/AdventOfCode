@@ -7,7 +7,7 @@ using AdventOfCode.Lib.Math;
 namespace AdventOfCode2023.Challenges;
 
 [Challenge(8)]
-public class Challenge08(IInputReader InputReader)
+public class Challenge08(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -50,7 +50,7 @@ public class Challenge08(IInputReader InputReader)
     private async Task<Input> ParseInputAsync(int day)
     {
         var nl = Environment.NewLine;
-        var text = await InputReader.ReadAllTextAsync(day);
+        var text = await inputReader.ReadAllTextAsync(day);
         return text
             .SplitBy($"{nl}{nl}")
             .Into(parts =>

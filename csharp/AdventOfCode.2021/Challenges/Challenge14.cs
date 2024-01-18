@@ -4,7 +4,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2021.Challenges;
 
 [Challenge(14)]
-public class Challenge14(IInputReader InputReader)
+public class Challenge14(IInputReader inputReader)
 {
     private readonly Dictionary<char, int> _indexes = new();
     private readonly Dictionary<string, char> _insertionMap = new();
@@ -13,7 +13,7 @@ public class Challenge14(IInputReader InputReader)
     [Setup]
     public async Task SetupAsync()
     {
-        var lines = await InputReader.ReadLinesAsync(14).ToArrayAsync();
+        var lines = await inputReader.ReadLinesAsync(14).ToArrayAsync();
 
         _template = lines[0];
 

@@ -9,7 +9,7 @@ using static AdventOfCode.Lib.Misc.CubeWalker;
 namespace AdventOfCode2022.Challenges;
 
 [Challenge(22)]
-public class Challenge22(IInputReader InputReader)
+public class Challenge22(IInputReader inputReader)
 {
     private readonly Edge[] _edges =
     {
@@ -40,7 +40,7 @@ public class Challenge22(IInputReader InputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        var lines = await InputReader.ReadLinesAsync(22).ToListAsync();
+        var lines = await inputReader.ReadLinesAsync(22).ToListAsync();
         var (map, line) = ReadGridWithInstructions(lines);
 
         var position = FindLeftMostOpenTile(map);
@@ -66,7 +66,7 @@ public class Challenge22(IInputReader InputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var lines = await InputReader.ReadLinesAsync(22).ToListAsync();
+        var lines = await inputReader.ReadLinesAsync(22).ToListAsync();
         var (map, line) = ReadGridWithInstructions(lines);
 
         var position = new CubeCoord(Face.Top, Point2.Zero);

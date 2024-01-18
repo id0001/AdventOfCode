@@ -5,7 +5,7 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(05)]
-public class Challenge05(IInputReader InputReader)
+public class Challenge05(IInputReader inputReader)
 {
     [Part1]
     public async Task<string?> Part1Async()
@@ -15,7 +15,7 @@ public class Challenge05(IInputReader InputReader)
         var pattern3 = new Regex(@"ab|cd|pq|xy");
 
         var niceCount = 0;
-        await foreach (var line in InputReader.ReadLinesAsync(5))
+        await foreach (var line in inputReader.ReadLinesAsync(5))
         {
             if (pattern1.Matches(line).Count < 3)
                 continue;
@@ -36,7 +36,7 @@ public class Challenge05(IInputReader InputReader)
     public async Task<string?> Part2Async()
     {
         var niceCount = 0;
-        await foreach (var line in InputReader.ReadLinesAsync(5))
+        await foreach (var line in inputReader.ReadLinesAsync(5))
             if (ContainsPairThatAppearsTwice(line) && ContainsRepeatingLetterWithOneLetterCap(line))
                 niceCount++;
 
