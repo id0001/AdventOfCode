@@ -143,7 +143,7 @@ public static class Combinatorics
                 j--;
             }
     }
-
+    
     public static double Permutations(int n)
     {
         Requires.Argument(n > 0, "Value must be greater than zero", nameof(n));
