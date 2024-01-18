@@ -2,6 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/fsharp
 # Edit at https://www.toptal.com/developers/gitignore?templates=fsharp
 
+# Don't share AoC input files
+Inputs/
+
 ### fsharp ###
 lib/debug
 lib/release
