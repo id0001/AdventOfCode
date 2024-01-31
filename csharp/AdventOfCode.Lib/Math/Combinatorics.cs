@@ -122,7 +122,7 @@ public static class Combinatorics
         }
     }
 
-    public static double Partitions(int n, int k) => SpecialFunctions.Binomial(n + k - 1, k - 1);
+    public static double Partitions(int n, int k, int minPartitionSize = 0) => SpecialFunctions.Binomial((n - (k * minPartitionSize)) + k - 1, k - 1);
 
     /// <summary>
     ///     Partition number n from 0 to n into an array of size k.
@@ -131,10 +131,12 @@ public static class Combinatorics
     /// <param name="k">Amount of containers to distribute over</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public static IEnumerable<int[]> GeneratePartitions(int n, int k, bool skipEmptyGroups = false)
+    public static IEnumerable<int[]> GeneratePartitions(int n, int k, int minPartitionSize = 0)
     {
-        Requires.Argument(n >= k, "Value must be greater or equal to k", nameof(n));
+        //Requires.Argument(n >= k, "Value must be greater or equal to k", nameof(n));
         Requires.Argument(k >= 1, "Value must be greater or equal to 1", nameof(k));
+        Requires.Argument(minPartitionSize >= 0, "Value must be greater or equal to 0", nameof(minPartitionSize));
+        Requires.Argument(minPartitionSize <= n / k, "Value less or equal to n/k", nameof(minPartitionSize));
 
         if (k == 1)
         {
@@ -143,8 +145,8 @@ public static class Combinatorics
         }
 
         var distribution = new int[k];
-        if (skipEmptyGroups)
-            Array.Fill(distribution, 1);
+        if (minPartitionSize > 0)
+            Array.Fill(distribution, minPartitionSize);
 
         while (true)
         {
@@ -153,7 +155,7 @@ public static class Combinatorics
             yield return (int[])distribution.Clone();
 
             distribution[^2]++;
-            distribution[^1] = skipEmptyGroups ? 1 : 0;
+            distribution[^1] = minPartitionSize;
 
             for (var i = k - 2; i >= 1; i--)
             {
@@ -161,7 +163,7 @@ public static class Combinatorics
                     continue;
 
                 distribution[i - 1]++;
-                distribution[i] = skipEmptyGroups ? 1 : 0;
+                distribution[i] = minPartitionSize;
             }
 
             if (distribution.Sum() > n)

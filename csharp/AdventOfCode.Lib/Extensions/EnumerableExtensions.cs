@@ -95,7 +95,7 @@ public static class EnumerableExtensions
             }
     }
 
-    public static IEnumerable<T[][]> Partitions<T>(this IEnumerable<T> source, int k, bool skipEmptyGroups = false)
+    public static IEnumerable<T[][]> Partitions<T>(this IEnumerable<T> source, int k, int minPartitionSize = 0)
     {
         Requires.Argument(k > 0, nameof(k), "Argument must be greater than 0");
 
@@ -108,7 +108,7 @@ public static class EnumerableExtensions
         var list = source.ToList();
         var n = list.Count;
 
-        foreach (var distribution in Combinatorics.GeneratePartitions(n, k, skipEmptyGroups))
+        foreach (var distribution in Combinatorics.GeneratePartitions(n, k, minPartitionSize))
         {
             var emptyPartition = new T[k].Select(x => Array.Empty<T>()).ToArray();
             foreach (var partition in PartitionRec(list, emptyPartition, distribution, 0))
@@ -177,9 +177,6 @@ public static class EnumerableExtensions
     public static int Product(this IEnumerable<int> source) => source.Aggregate(1, (a, b) => a * b);
 
     public static long Product(this IEnumerable<long> source) => source.Aggregate(1L, (a, b) => a * b);
-
-
-    
 
     private static IEnumerable<T[][]> PartitionRec<T>(IList<T> list, T[][] partitions, int[] distribution, int pi)
     {
