@@ -1,5 +1,6 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2015.Challenges;
@@ -14,7 +15,7 @@ public class Challenge17(IInputReader inputReader)
 
         var combinations = Enumerable
             .Range(1, items.Length + 1)
-            .SelectMany(k => Combinatorics.SelectAllCombinations(items, k))
+            .SelectMany(k => items.Combinations(k))
             .Count(c => c.Sum() == 150);
 
         return combinations.ToString();
@@ -27,9 +28,7 @@ public class Challenge17(IInputReader inputReader)
 
         for (var i = 1; i <= items.Length; i++)
         {
-            var combinations = Combinatorics
-                .SelectAllCombinations(items, i)
-                .Count(c => c.Sum() == 150);
+            var combinations = items.Combinations(i).Count(c => c.Sum() == 150);
 
             if (combinations > 0)
                 return combinations.ToString();

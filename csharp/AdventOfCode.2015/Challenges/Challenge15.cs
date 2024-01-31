@@ -17,7 +17,7 @@ public class Challenge15(IInputReader inputReader)
         var list = await inputReader.ParseLinesAsync(15, ParseLine).ToListAsync();
 
         var score = 0;
-        foreach (var distribution in Combinatorics.GenerateAllPartitions(100, list.Count))
+        foreach (var distribution in Combinatorics.GeneratePartitions(100, list.Count))
         {
             var zip = list.Zip(distribution).ToList();
             var cap = Math.Max(0, zip.Sum(x => x.First.Capacity * x.Second));
@@ -36,7 +36,7 @@ public class Challenge15(IInputReader inputReader)
         var list = await inputReader.ParseLinesAsync(15, ParseLine).ToListAsync();
 
         var score = 0;
-        foreach (var distribution in Combinatorics.GenerateAllPartitions(100, list.Count))
+        foreach (var distribution in Combinatorics.GeneratePartitions(100, list.Count))
         {
             var zip = list.Zip(distribution).ToList();
             var cap = Math.Max(0, zip.Sum(x => x.First.Capacity * x.Second));
