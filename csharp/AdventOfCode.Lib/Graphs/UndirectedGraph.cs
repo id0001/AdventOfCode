@@ -80,19 +80,19 @@ public class UndirectedGraph<TVertex, TEdge>
         var viLookup = new Dictionary<TVertex, int>();
         var subsets = new Subset[_vertexEdges.Keys.Count];
 
-        var v = 0;
+        var vi = 0;
         foreach (var vertex in _vertexEdges.Keys)
         {
-            subsets[v] = new Subset(v, 0);
-            vertices[v] = vertex;
-            viLookup.Add(vertex, v);
-            v++;
+            subsets[vi] = new Subset(vi, 0);
+            vertices[vi] = vertex;
+            viLookup.Add(vertex, vi);
+            vi++;
         }
 
-        var edges = _edges.Keys.Select(e => (viLookup[e.Item1]!, viLookup[e.Item2]!)).ToArray();
+        var edges = _edges.Keys.Select(e => (viLookup[e.Item1], viLookup[e.Item2])).ToArray();
 
-        var vcount = vertices.Length;
-        while (vcount > 2)
+        var vertexCount = vertices.Length;
+        while (vertexCount > 2)
         {
             var i = random.Next(edges.Length);
 
@@ -102,7 +102,7 @@ public class UndirectedGraph<TVertex, TEdge>
             if (subset1 == subset2)
                 continue;
 
-            vcount--;
+            vertexCount--;
             Union(subsets, subset1, subset2);
         }
 
@@ -111,12 +111,11 @@ public class UndirectedGraph<TVertex, TEdge>
         {
             var subset1 = FindSubset(subsets, edges[i].Item1);
             var subset2 = FindSubset(subsets, edges[i].Item2);
-            if (subset1 != subset2)
-            {
-                var v1 = vertices[edges[i].Item1];
-                var v2 = vertices[edges[i].Item2];
-                cutEdges.Add((v1, v2));
-            }
+            if (subset1 == subset2) continue;
+
+            var v1 = vertices[edges[i].Item1];
+            var v2 = vertices[edges[i].Item2];
+            cutEdges.Add((v1, v2));
         }
 
         var partitions = vertices.GroupBy(v => FindSubset(subsets, viLookup[v])).Select(e => e.ToList()).ToArray();
@@ -124,7 +123,7 @@ public class UndirectedGraph<TVertex, TEdge>
         return (partitions, cutEdges);
     }
 
-    private static int FindSubset(Subset[] subset, int v)
+    private static int FindSubset(IList<Subset> subset, int v)
     {
         if (subset[v].Parent != v)
             subset[v] = subset[v] with {Parent = FindSubset(subset, subset[v].Parent)};
@@ -132,23 +131,23 @@ public class UndirectedGraph<TVertex, TEdge>
         return subset[v].Parent;
     }
 
-    private static void Union(Subset[] subsets, int x, int y)
+    private static void Union(IList<Subset> subsets, int x, int y)
     {
-        var xroot = FindSubset(subsets, x);
-        var yroot = FindSubset(subsets, y);
+        var xRoot = FindSubset(subsets, x);
+        var yRoot = FindSubset(subsets, y);
 
-        if (subsets[xroot].Rank < subsets[yroot].Rank)
+        if (subsets[xRoot].Rank < subsets[yRoot].Rank)
         {
-            subsets[xroot] = subsets[xroot] with {Parent = yroot};
+            subsets[xRoot] = subsets[xRoot] with {Parent = yRoot};
         }
-        else if (subsets[xroot].Rank > subsets[yroot].Rank)
+        else if (subsets[xRoot].Rank > subsets[yRoot].Rank)
         {
-            subsets[yroot] = subsets[yroot] with {Parent = xroot};
+            subsets[yRoot] = subsets[yRoot] with {Parent = xRoot};
         }
         else
         {
-            subsets[yroot] = subsets[yroot] with {Parent = xroot};
-            subsets[xroot] = subsets[xroot] with {Rank = subsets[xroot].Rank + 1};
+            subsets[yRoot] = subsets[yRoot] with {Parent = xRoot};
+            subsets[xRoot] = subsets[xRoot] with {Rank = subsets[xRoot].Rank + 1};
         }
     }
 

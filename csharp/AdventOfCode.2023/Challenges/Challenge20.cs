@@ -11,18 +11,18 @@ public class Challenge20(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var modules = await inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
-        var flipflops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, kv => false);
+        var flipFlops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, _ => false);
         var conjunctions = modules.Values.Where(m => m.Type == "&")
             .ToDictionary(kv => kv.Name,
-                kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
+                kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv2 => kv2.Name, _ => false));
 
-        var rxPresses = conjunctions["bn"].ToDictionary(kv => kv.Key, kv => 0L);
+        var rxPresses = conjunctions["bn"].ToDictionary(kv => kv.Key, _ => 0L);
 
         var lows = 0L;
         var highs = 0L;
         var presses = 0L;
         while (presses < 1000L)
-            Process(modules, flipflops, conjunctions, rxPresses, ref presses, ref lows, ref highs);
+            Process(modules, flipFlops, conjunctions, rxPresses, ref presses, ref lows, ref highs);
 
         return (lows * highs).ToString();
     }
@@ -31,24 +31,22 @@ public class Challenge20(IInputReader inputReader)
     public async Task<string> Part2Async()
     {
         var modules = await inputReader.ParseLinesAsync(20, ParseLine).ToDictionaryAsync(kv => kv.Name);
-        var flipflops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, kv => false);
+        var flipFlops = modules.Values.Where(m => m.Type == "%").ToDictionary(kv => kv.Name, _ => false);
         var conjunctions = modules.Values.Where(m => m.Type == "&")
             .ToDictionary(kv => kv.Name,
-                kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv => kv.Name, kv => false));
+                kv => modules.Values.Where(m => m.Outputs.Contains(kv.Name)).ToDictionary(kv2 => kv2.Name, _ => false));
 
-        var rxPresses = conjunctions["bn"].ToDictionary(kv => kv.Key, kv => 0L);
+        var rxPresses = conjunctions["bn"].ToDictionary(kv => kv.Key, _ => 0L);
 
         var i = 0L;
         var lows = 0L;
         var highs = 0L;
         while (true)
         {
-            Process(modules, flipflops, conjunctions, rxPresses, ref i, ref lows, ref highs);
+            Process(modules, flipFlops, conjunctions, rxPresses, ref i, ref lows, ref highs);
             if (rxPresses.Values.All(s => s > 0))
                 return rxPresses.Values.Product().ToString();
         }
-
-        throw new InvalidOperationException();
     }
 
     private void Process(

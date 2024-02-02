@@ -25,7 +25,9 @@ public class Ocr
         var sb = new StringBuilder();
         for (var i = 0; i <= lines[0].Length / 5; i++)
         {
-            var s = string.Join(nl, lines.Select(l => l[(i * 5)..(i * 5 + 4)]));
+            var from = i * 5;
+            var to = i * 5 + 4;
+            var s = string.Join(nl, lines.Select(l => l[from..to]));
             if (letters.TryGetValue(s, out var letter))
                 sb.Append(letter);
         }

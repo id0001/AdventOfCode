@@ -63,7 +63,7 @@ public static class EnumerableExtensions
                 for (var i = 0; i < k; i++)
                     a[i] = list[c[i]];
 
-                yield return (T[])a.Clone();
+                yield return (T[]) a.Clone();
 
                 int x;
                 if (j > 0)
@@ -110,7 +110,7 @@ public static class EnumerableExtensions
 
         foreach (var distribution in Combinatorics.GeneratePartitions(n, k, minPartitionSize))
         {
-            var emptyPartition = new T[k].Select(x => Array.Empty<T>()).ToArray();
+            var emptyPartition = new T[k].Select(_ => Array.Empty<T>()).ToArray();
             foreach (var partition in PartitionRec(list, emptyPartition, distribution, 0))
                 yield return partition;
         }

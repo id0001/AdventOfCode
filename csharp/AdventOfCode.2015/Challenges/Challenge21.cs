@@ -1,11 +1,10 @@
 using AdventOfCode.Core;
-using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(21)]
-public class Challenge21(IInputReader inputReader)
+public class Challenge21
 {
     private static readonly Item[] Weapons =
     [
@@ -42,7 +41,7 @@ public class Challenge21(IInputReader inputReader)
     {
         var boss = new Stats(109, 8, 2);
         return Weapons
-            .SelectMany(_ => Armor, (a,b) => new[] {a,b})
+            .SelectMany(_ => Armor, (a, b) => new[] {a, b})
             .SelectMany(_ => Rings.Combinations(2), (a, b) => new
             {
                 Cost = a.Sum(x => x.Cost) + b.Sum(x => x.Cost),
@@ -60,7 +59,7 @@ public class Challenge21(IInputReader inputReader)
     {
         var boss = new Stats(109, 8, 2);
         return Weapons
-            .SelectMany(_ => Armor, (a,b) => new[] {a,b})
+            .SelectMany(_ => Armor, (a, b) => new[] {a, b})
             .SelectMany(_ => Rings.Combinations(2), (a, b) => new
             {
                 Cost = a.Sum(x => x.Cost) + b.Sum(x => x.Cost),

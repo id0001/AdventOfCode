@@ -12,8 +12,8 @@ public class Challenge23(IInputReader inputReader)
     {
         var registers = new Dictionary<char, int>
         {
-            {'a', 0 },
-            {'b', 0 }
+            {'a', 0},
+            {'b', 0}
         };
 
         var program = await inputReader.ParseLinesAsync(23, ParseInstruction).ToArrayAsync();
@@ -27,8 +27,8 @@ public class Challenge23(IInputReader inputReader)
     {
         var registers = new Dictionary<char, int>
         {
-            {'a', 1 },
-            {'b', 0 }
+            {'a', 1},
+            {'b', 0}
         };
 
         var program = await inputReader.ParseLinesAsync(23, ParseInstruction).ToArrayAsync();
@@ -68,7 +68,6 @@ public class Challenge23(IInputReader inputReader)
                 case "jio":
                     ip += registers[r] == 1 ? v : 1;
                     break;
-
             }
         }
     }
@@ -81,8 +80,7 @@ public class Challenge23(IInputReader inputReader)
             {
                 if (parts[1].Length == 1)
                     return (parts.First(), parts.Second().As<char>(), 0);
-                else
-                    return (parts.First(), 'x', parts.Second().Replace("+", string.Empty).As<int>());
+                return (parts.First(), 'x', parts.Second().Replace("+", string.Empty).As<int>());
             }
 
             return (parts.First(), parts.Second().As<char>(), parts.Third().Replace("+", string.Empty).As<int>());

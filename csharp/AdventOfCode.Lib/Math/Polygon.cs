@@ -57,13 +57,13 @@ public static class Polygon
         var first = ((TNumber X, TNumber Y)?) null;
         var last = ((TNumber X, TNumber Y)?) null;
 
-        if (!vertices.Any())
+        var vertexList = vertices.ToList();
+        if (vertexList.Count == 0)
             return 0d;
 
-        foreach (var window in vertices.Windowed(2))
+        foreach (var window in vertexList.Windowed(2))
         {
-            if (first is null)
-                first = window[0];
+            first ??= window[0];
 
             sum1 += window[0].X * window[1].Y;
             sum2 += window[0].Y * window[1].X;

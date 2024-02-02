@@ -1,28 +1,24 @@
 using AdventOfCode.Core;
-using AdventOfCode.Core.IO;
 using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2015.Challenges;
 
 [Challenge(25)]
-public class Challenge25(IInputReader inputReader)
+public class Challenge25
 {
     [Part1]
-    public async Task<string> Part1Async()
+    public string Part1()
     {
-        var r = 2978;
-        var c = 3083;
+        const int r = 2978;
+        const int c = 3083;
 
         var n = 20151125L;
 
-        var ix = GetIndex(r-1,c-1);
-        for (var i = 0; i < ix; i++)
-        {
-            n = Euclid.Modulus(n * 252533, 33554393);
-        }
+        var ix = GetIndex(r - 1, c - 1);
+        for (var i = 0; i < ix; i++) n = Euclid.Modulus(n * 252533, 33554393);
 
         return n.ToString();
     }
 
-    private int GetIndex(int r, int c) => Euclid.TriangularNumber(r + c) + c;
+    private static int GetIndex(int r, int c) => Euclid.TriangularNumber(r + c) + c;
 }

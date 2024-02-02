@@ -1,6 +1,4 @@
 namespace AdventOfCode.Core;
 
 [AttributeUsage(AttributeTargets.Method)]
-public class SetupAttribute : Attribute
-{
-}
+public class SetupAttribute : Attribute;

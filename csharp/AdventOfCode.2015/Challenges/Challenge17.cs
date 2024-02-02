@@ -1,7 +1,6 @@
 ﻿using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2015.Challenges;
 

@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 
 namespace AdventOfCode.Lib.Collections;
 
@@ -57,6 +56,7 @@ public class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue?>
 
     public void CopyTo(KeyValuePair<TKey, TValue?>[] array, int arrayIndex) => _dict.CopyTo(array, arrayIndex);
 
+    // ReSharper disable once NotDisposedResource
     public IEnumerator<KeyValuePair<TKey, TValue?>> GetEnumerator() => new Enumerator(_dict.GetEnumerator());
 
     public bool Remove(TKey key)
@@ -77,7 +77,7 @@ public class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue?>
         return true;
     }
 
-    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue? value)
+    public bool TryGetValue(TKey key, out TValue? value)
     {
         value = default;
         if (!ContainsKey(key))
@@ -93,7 +93,7 @@ public class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue?>
     {
         public KeyValuePair<TKey, TValue?> Current { get; private set; }
 
-        object IEnumerator.Current => throw new NotImplementedException();
+        object IEnumerator.Current => Current;
 
         public void Dispose()
         {

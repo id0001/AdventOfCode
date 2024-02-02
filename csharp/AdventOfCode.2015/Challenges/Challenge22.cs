@@ -36,7 +36,7 @@ public class Challenge22
     private IEnumerable<State> GetAdjacent(State current, bool hardMode)
     {
         if (hardMode)
-            current = current with { PlayerHp = current.PlayerHp - 1 };
+            current = current with {PlayerHp = current.PlayerHp - 1};
 
         if (current.PlayerHp <= 0) // No paths
             yield break;
@@ -49,7 +49,8 @@ public class Challenge22
 
         // Drain
         if (mana >= 73)
-            yield return EnemyTurn(new State(playerHp + 2, enemyHp - 2, mana - 73, spent + 73, shield, poison, recharge));
+            yield return EnemyTurn(
+                new State(playerHp + 2, enemyHp - 2, mana - 73, spent + 73, shield, poison, recharge));
 
         // Shield
         if (mana >= 113 && shield == 0)
@@ -67,13 +68,13 @@ public class Challenge22
     private State ApplyEffects(State current)
     {
         if (current.Poison > 0)
-            current = current with { EnemyHp = current.EnemyHp - 3, Poison = current.Poison - 1 };
+            current = current with {EnemyHp = current.EnemyHp - 3, Poison = current.Poison - 1};
 
         if (current.Recharge > 0)
-            current = current with { Mana = current.Mana + 101, Recharge = current.Recharge - 1 };
+            current = current with {Mana = current.Mana + 101, Recharge = current.Recharge - 1};
 
         if (current.Shield > 0)
-            current = current with { Shield = current.Shield - 1 };
+            current = current with {Shield = current.Shield - 1};
 
         return current;
     }
@@ -81,13 +82,13 @@ public class Challenge22
     private State EnemyTurn(State current)
     {
         // Get armor
-        int armor = current.Shield > 0 ? 7 : 0;
+        var armor = current.Shield > 0 ? 7 : 0;
 
         // Apply effects
         current = ApplyEffects(current);
 
         // Do damage
-        return current with { PlayerHp = current.PlayerHp - Math.Max(1, EnemyDamage - armor) };
+        return current with {PlayerHp = current.PlayerHp - Math.Max(1, EnemyDamage - armor)};
     }
 
     private record State(int PlayerHp, int EnemyHp, int Mana, int Spent, int Shield, int Poison, int Recharge);

@@ -193,8 +193,8 @@ public class Challenge19(IInputReader inputReader)
             return false;
         }
 
-        var indexOfTrue = line.IndexOf(":");
-        var indexOfFalse = line.IndexOf(",");
+        var indexOfTrue = line.IndexOf(':');
+        var indexOfFalse = line.IndexOf(',');
 
         var condition = line[..indexOfTrue];
         var truthy = line[(indexOfTrue + 1)..indexOfFalse];

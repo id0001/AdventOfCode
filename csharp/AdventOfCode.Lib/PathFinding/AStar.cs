@@ -16,7 +16,7 @@ public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, 
     {
         var queue = new PriorityQueue<T, int>();
         var cameFrom = new Dictionary<T, T>();
-        var costSoFar = new Dictionary<T, int> { { start, 0 } };
+        var costSoFar = new Dictionary<T, int> {{start, 0}};
 
         queue.Enqueue(start, 0);
 
@@ -50,12 +50,12 @@ public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, 
     }
 
     public bool All(
-         T start,
+        T start,
         Func<T, bool> shouldContinue
     )
     {
         var queue = new PriorityQueue<T, int>();
-        var costSoFar = new Dictionary<T, int> { { start, 0 } };
+        var costSoFar = new Dictionary<T, int> {{start, 0}};
 
         queue.Enqueue(start, 0);
 

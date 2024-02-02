@@ -17,7 +17,7 @@ public static class ListExtensions
         => source[2];
 
     public static IList<T> As<T>(this IList source)
-        where T : notnull, IConvertible
+        where T : IConvertible
     {
         return source.Cast<IConvertible>().Select(x => x.As<T>()).ToList();
     }

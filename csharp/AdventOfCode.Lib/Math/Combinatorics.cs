@@ -57,7 +57,7 @@ public static class Combinatorics
                 for (var i = 0; i < k; i++)
                     a[i] = c[i];
 
-                yield return (int[])a.Clone();
+                yield return (int[]) a.Clone();
 
                 int x;
                 if (j > 0)
@@ -122,13 +122,15 @@ public static class Combinatorics
         }
     }
 
-    public static double Partitions(int n, int k, int minPartitionSize = 0) => SpecialFunctions.Binomial((n - (k * minPartitionSize)) + k - 1, k - 1);
+    public static double Partitions(int n, int k, int minPartitionSize = 0) =>
+        SpecialFunctions.Binomial(n - k * minPartitionSize + k - 1, k - 1);
 
     /// <summary>
     ///     Partition number n from 0 to n into an array of size k.
     /// </summary>
     /// <param name="n">Amount of items to distribute</param>
     /// <param name="k">Amount of containers to distribute over</param>
+    /// <param name="minPartitionSize">The minimum partition size</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
     public static IEnumerable<int[]> GeneratePartitions(int n, int k, int minPartitionSize = 0)
@@ -140,7 +142,7 @@ public static class Combinatorics
 
         if (k == 1)
         {
-            yield return new[] { n };
+            yield return new[] {n};
             yield break;
         }
 
@@ -152,7 +154,7 @@ public static class Combinatorics
         {
             distribution[^1] = n - distribution.Take(k - 1).Sum();
 
-            yield return (int[])distribution.Clone();
+            yield return (int[]) distribution.Clone();
 
             distribution[^2]++;
             distribution[^1] = minPartitionSize;
