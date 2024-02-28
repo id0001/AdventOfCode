@@ -13,4 +13,9 @@ public static class StringExtensions
         return source.Split(separators,
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
     }
+
+    public static string CaesarShift(this string source, int shift)
+    {
+        return string.Join(string.Empty, source.ToLowerInvariant().Select(c => (char)('a' + (c - 'a' + shift) % 26)));
+    }
 }
