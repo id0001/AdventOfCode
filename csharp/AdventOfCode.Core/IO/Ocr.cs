@@ -6,6 +6,22 @@ namespace AdventOfCode.Core.IO;
 public static class OcrExtensions
 {
     public static string Ocr(this string source) => new Ocr().Parse(source);
+
+    public static string Ocr(this bool[,] source)
+    {
+        var sb = new StringBuilder();
+        for (int y = 0; y < source.GetLength(0); y++)
+        {
+            for (int x = 0; x < source.GetLength(1); x++)
+            {
+                sb.Append(source[y, x] ? '#' : '.');
+            }
+
+            sb.AppendLine();
+        }
+
+        return sb.ToString().Ocr();
+    }
 }
 
 public class Ocr
@@ -26,8 +42,7 @@ public class Ocr
         for (var i = 0; i <= lines[0].Length / 5; i++)
         {
             var from = i * 5;
-            var to = i * 5 + 4;
-            var s = string.Join(nl, lines.Select(l => l[from..to]));
+            var s = string.Join(nl, lines.Select(l => l[from..(from + 4)]));
             if (letters.TryGetValue(s, out var letter))
                 sb.Append(letter);
         }
@@ -44,10 +59,16 @@ public class Ocr
         foreach (var part in alphabet)
         {
             var c = part[0];
-            var r = part[(nl.Length + 1)..];
+            var r = string.Join(nl, Chunk(part[(nl.Length + 1)..].Replace(nl, string.Empty)));
             letters.Add(r, c);
         }
 
         return letters;
+    }
+
+    private IEnumerable<string> Chunk(string line)
+    {
+        for (var i = 0; i < line.Length - 1; i += 5)
+            yield return line[i..(i + 4)];
     }
 }

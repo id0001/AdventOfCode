@@ -53,4 +53,16 @@ public static class Array2DExtensions
 
         return c;
     }
+
+    public static IEnumerable<T> GetRow<T>(this T[,] source, int row)
+    {
+        for(var i = 0; i < source.GetLength(1); i++)
+            yield return source[row, i];
+    }
+
+    public static IEnumerable<T> GetColumn<T>(this T[,] source, int column)
+    {
+        for (var i = 0; i < source.GetLength(0); i++)
+            yield return source[i, column];
+    }
 }
