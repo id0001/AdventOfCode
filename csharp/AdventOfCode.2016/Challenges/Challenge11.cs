@@ -18,168 +18,147 @@ public class Challenge11(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        short rtgs = 0;
-        rtgs = SetLevel(rtgs, 0, 1); // TG
-        rtgs = SetLevel(rtgs, 1, 1); // PG
-        rtgs = SetLevel(rtgs, 2, 1); // SG
-        rtgs = SetLevel(rtgs, 3, 3); // PRG
-        rtgs = SetLevel(rtgs, 4, 3); // RG
+        int bits = 0;
+        bits = SetLevel(bits, 0, 0); // TM
+        bits = SetLevel(bits, 1, 1); // PM
+        bits = SetLevel(bits, 2, 1); // SM
+        bits = SetLevel(bits, 3, 2); // PRM
+        bits = SetLevel(bits, 4, 2); // RM
+        bits = SetLevel(bits, 5, 0); // TG
+        bits = SetLevel(bits, 6, 0); // PG
+        bits = SetLevel(bits, 7, 0); // SG
+        bits = SetLevel(bits, 8, 2); // PRG
+        bits = SetLevel(bits, 9, 2); // RG
 
-        short chips = 0;
-        chips = SetLevel(chips, 0, 1); // TM
-        chips = SetLevel(chips, 1, 2); // PM
-        chips = SetLevel(chips, 2, 2); // SM
-        chips = SetLevel(chips, 3, 3); // PRM
-        chips = SetLevel(chips, 4, 3); // RM
-
-        var state = new State(1, rtgs, chips);
+        var state = new State(0, bits, 5);
         var bfg = new BreadthFirstSearch<State>(GetAdjacent);
 
         bfg.TryPath(state, s => s.GoalReached, out var path);
-
         return (path.Count() - 1).ToString();
     }
 
-    // [Part2]
+    [Part2]
     public async Task<string> Part2Async()
     {
-        return string.Empty;
+        int bits = 0;
+        bits = SetLevel(bits, 0, 0); // TM
+        bits = SetLevel(bits, 1, 1); // PM
+        bits = SetLevel(bits, 2, 1); // SM
+        bits = SetLevel(bits, 3, 2); // PRM
+        bits = SetLevel(bits, 4, 2); // RM
+        bits = SetLevel(bits, 5, 0); // TG
+        bits = SetLevel(bits, 6, 1); // EM
+        bits = SetLevel(bits, 7, 1); // DM
+        bits = SetLevel(bits, 8, 0); // PG
+        bits = SetLevel(bits, 9, 0); // SG
+        bits = SetLevel(bits, 10, 2); // PRG
+        bits = SetLevel(bits, 11, 2); // RG
+        bits = SetLevel(bits, 12, 1); // EG
+        bits = SetLevel(bits, 13, 1); // DG
+
+        var state = new State(0, bits, 7);
+        var bfg = new BreadthFirstSearch<State>(GetAdjacent);
+
+        bfg.TryPath(state, s => s.GoalReached, out var path);
+        return (path.Count() - 1).ToString();
     }
 
     private IEnumerable<State> GetAdjacent(State current)
     {
-        var currentChips = GetIndicesOnLevel(current.Chips, current.CurrentLevel).ToArray();
-        var currentRtgs = GetIndicesOnLevel(current.Rtgs, current.CurrentLevel).ToArray();
-
-        // Go down
-        if (current.CurrentLevel > 1)
+        // Go up
+        if (current.CurrentLevel < 3)
         {
-            foreach (var next in GetNextNodes(current, currentChips, currentRtgs, -1))
+            foreach (var next in GetNextNodes(current, 1))
                 yield return next;
         }
 
-        // Go up
-        if (current.CurrentLevel < 4)
+        // Go down
+        if (current.CurrentLevel > 0)
         {
-            foreach (var next in GetNextNodes(current, currentChips, currentRtgs, 1))
+            foreach (var next in GetNextNodes(current, -1))
                 yield return next;
         }
     }
 
-    private static IEnumerable<State> GetNextNodes(State current, byte[] chipsAtLevel, byte[] rtgsAtLevel, int moveAmount)
+    private static IEnumerable<State> GetNextNodes(State current, int moveAmount)
     {
         var newLevel = (byte)(current.CurrentLevel + moveAmount);
 
-        // Single chip
-        foreach (var chip in chipsAtLevel)
+        // Doubles
+        foreach (var combination in GetIndicesOnLevel(current).Combinations(2))
         {
-            var chips = Move(current.Chips, chip, moveAmount);
-            if (IsValid(current.Rtgs, chips, newLevel))
-                yield return new State(newLevel, current.Rtgs, chips);
+            var next = new State(newLevel, Move(Move(current.Bits, combination[0], moveAmount), combination[1], moveAmount), current.Count);
+            if (next.IsValid)
+                yield return next;
         }
 
-        // Single rtg
-        foreach (var rtg in rtgsAtLevel)
+        // Singles
+        foreach (var index in GetIndicesOnLevel(current))
         {
-            var rtgs = Move(current.Rtgs, rtg, moveAmount);
-            if (IsValid(rtgs, current.Chips, newLevel))
-                yield return new State(newLevel, rtgs, current.Chips);
+            var next = new State(newLevel, Move(current.Bits, index, moveAmount), current.Count);
+            if (next.IsValid)
+                yield return next;
         }
+    }
 
-        // 2 chips
-        for (var i = 0; i < chipsAtLevel.Length - 1; i++)
+    private record State(byte CurrentLevel, int Bits, int Count)
+    {
+        public bool GoalReached => CurrentLevel == 3 && Enumerable.Range(0, Count * 2).All(i => GetLevel(Bits, i) == 3);
+
+        public bool IsValid
         {
-            for (var j = i; j < chipsAtLevel.Length; j++)
+            get
             {
-                var chips = current.Chips;
-                chips = Move(chips, chipsAtLevel[i], moveAmount);
-                chips = Move(chips, chipsAtLevel[j], moveAmount);
+                if (!GetIndicesOnLevel(this).Any(i => i >= Count))
+                    return true;
 
-                if (IsValid(current.Rtgs, chips, newLevel))
-                    yield return new State(newLevel, current.Rtgs, chips);
-            }
-        }
-
-        // 2 rtgs
-        for (var i = 0; i < rtgsAtLevel.Length - 1; i++)
-        {
-            for (var j = i; j < rtgsAtLevel.Length; j++)
-            {
-                var rtgs = current.Rtgs;
-                rtgs = Move(rtgs, rtgsAtLevel[i], moveAmount);
-                rtgs = Move(rtgs, rtgsAtLevel[j], moveAmount);
-
-                if (IsValid(rtgs, current.Chips, newLevel))
-                    yield return new State(newLevel, rtgs, current.Chips);
-            }
-        }
-
-        // 1 chip + 1 rtg
-        foreach (var chip in chipsAtLevel)
-        {
-            var chips = Move(current.Chips, chip, moveAmount);
-
-            foreach (var rtg in rtgsAtLevel)
-            {
-                var rtgs = Move(current.Rtgs, rtg, moveAmount);
-
-                if (IsValid(rtgs, chips, newLevel))
-                    yield return new State(newLevel, rtgs, chips);
+                return GetIndicesOnLevel(this).Where(i => i < Count).All(i => GetLevel(Bits, i + Count) == CurrentLevel);
             }
         }
     }
 
-    private record State(byte CurrentLevel, short Rtgs, short Chips)
-    {
-        public bool GoalReached => CurrentLevel == 4 && Enumerable.Range(0, DeviceCount).All(i => GetLevel(Rtgs, (byte)i) == 4 && GetLevel(Chips, (byte)i) == 4);
-    }
+    private static int Move(int bits, int index, int amount) => SetLevel(bits, index, (byte)(GetLevel(bits, index) + amount));
 
-    private static short Move(short bits, byte index, int amount) => SetLevel(bits, index, (byte)(GetLevel(bits, index) + amount));
-
-    private static byte GetLevel(short bits, byte index)
+    private static byte GetLevel(int bits, int index)
     {
-        var position = index * 3;
-        var mask = 0b111 << position;
+        var position = index * 2;
+        var mask = 0b11 << position;
         return (byte)((bits & mask) >> position);
     }
 
-    private static short SetLevel(short bits, byte index, byte value)
+    private static int SetLevel(int bits, int index, byte value)
     {
-        var vbits = value & 0b111;
-
-        var position = index * 3;
-        var mask = ~(0b111 << position);
-        return (short)((bits & mask) | (vbits << position));
+        var position = index * 2;
+        var mask = ~(0b11 << position);
+        return (bits & mask) | (value << position);
     }
 
-    private static bool IsValid(short rtgs, short chips, byte level)
-    {
-        if (!GetIndicesOnLevel(rtgs, level).Any())
-            return true;
-
-        if (GetIndicesOnLevel(chips, level).All(i => GetLevel(rtgs, i) == level))
-            return true;
-
-        return false;
-    }
-
-    private static IEnumerable<byte> GetIndicesOnLevel(short bits, byte level) => Enumerable.Range(0, DeviceCount).Where(i => GetLevel(bits, (byte)i) == level).Select(i => (byte)i);
+    private static IEnumerable<int> GetIndicesOnLevel(State state) => Enumerable
+        .Range(0, state.Count * 2)
+        .Where(i => GetLevel(state.Bits, (byte)i) == state.CurrentLevel);
 
     private static void PrintState(State state)
     {
         var table = new Table();
-        table.AddColumns("F#", "HG", "LG", "HM", "LM");
+        var cols = new List<string>();
+        cols.Add("F#");
+        for (var i = 0; i < state.Count; i++)
+            cols.Add($"M{i + 1}");
 
-        for (var level = 1; level < 5; level++)
+        for (var i = 0; i < state.Count; i++)
+            cols.Add($"G{i + 1}");
+
+        table.AddColumns(cols.ToArray());
+
+        for (var level = 0; level < 4; level++)
         {
-            var r = Enumerable.Range(0, DeviceCount).Select(i => new Markup(GetLevel(state.Rtgs, (byte)i) == level ? "O" : "")).ToArray();
-            var c = Enumerable.Range(0, DeviceCount).Select(i => new Markup(GetLevel(state.Chips, (byte)i) == level ? "O" : "")).ToArray();
+            var arr = Enumerable.Range(0, state.Count * 2).Select(i => new Markup(GetLevel(state.Bits, i) == level ? "O" : string.Empty)).ToArray();
 
             var levelMarkup = level == state.CurrentLevel
                 ? new Markup($"[green]F{level}[/]")
                 : new Markup($"F{level}");
 
-            table.AddRow(new[] { levelMarkup }.Concat(r).Concat(c).ToArray());
+            table.AddRow(new[] { levelMarkup }.Concat(arr).ToArray());
         }
 
         AnsiConsole.Write(table);

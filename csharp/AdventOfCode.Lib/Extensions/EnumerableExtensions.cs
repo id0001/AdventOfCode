@@ -43,8 +43,10 @@ public static class EnumerableExtensions
     public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> source, int k)
     {
         var list = source.ToList();
-        Requires.NotNullOrEmpty(list, nameof(source));
         Requires.Argument(k > 0, "Value must be greater than zero", nameof(k));
+
+        if (list.Count == 0)
+            yield break;
 
         var a = new T[k];
         var c = Enumerable.Range(0, k + 2).ToArray();
@@ -63,7 +65,7 @@ public static class EnumerableExtensions
                 for (var i = 0; i < k; i++)
                     a[i] = list[c[i]];
 
-                yield return (T[]) a.Clone();
+                yield return (T[])a.Clone();
 
                 int x;
                 if (j > 0)
