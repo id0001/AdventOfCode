@@ -180,6 +180,30 @@ public static class EnumerableExtensions
 
     public static long Product(this IEnumerable<long> source) => source.Aggregate(1L, (a, b) => a * b);
 
+    public static void Deconstruct<T>(this IEnumerable<T> source, out T? first, out IEnumerable<T> rest)
+    {
+        first = source.FirstOrDefault();
+        rest = source.Skip(1);
+    }
+
+    public static void Deconstruct<T>(this IEnumerable<T> source, out T? first, out T? second, out IEnumerable<T> rest)
+    {
+        first = source.FirstOrDefault();
+        (second, rest) = source.Skip(1);
+    }
+
+    public static void Deconstruct<T>(this IEnumerable<T> source, out T? first, out T? second, out T? third, out IEnumerable<T> rest)
+    {
+        first = source.FirstOrDefault();
+        (second, third, rest) = source.Skip(1);
+    }
+
+    public static IEnumerable<T> As<T>(this IEnumerable<T> source)
+        where T : IConvertible
+    {
+        return source.Cast<IConvertible>().Select(x => x.As<T>());
+    }
+
     private static IEnumerable<T[][]> PartitionRec<T>(IList<T> list, T[][] partitions, int[] distribution, int pi)
     {
         if (pi == partitions.Length)

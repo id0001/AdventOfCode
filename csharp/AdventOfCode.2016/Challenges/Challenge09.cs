@@ -1,7 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode2016.Challenges;
 
@@ -23,7 +22,7 @@ public class Challenge09(IInputReader inputReader)
             {
                 var marker = compressed[i..(compressed.IndexOf(')', i) + 1)];
                 i += marker.Length;
-                var (x, y) = Regex.Match(marker, @"(\d+)x(\d+)").Into(match => (match.Groups[1].Value.As<int>(), match.Groups[2].Value.As<int>()));
+                var (x, y, _) = marker.Extract(@"(\d+)x(\d+)").As<int>();
                 totalLength += x * y;
                 i += x - 1;
                 continue;
@@ -44,7 +43,7 @@ public class Challenge09(IInputReader inputReader)
             {
                 var marker = compressed[i..(compressed.IndexOf(')', i) + 1)];
                 i += marker.Length;
-                var (x, y) = Regex.Match(marker, @"(\d+)x(\d+)").Into(match => (match.Groups[1].Value.As<int>(), match.Groups[2].Value.As<int>()));
+                var (x, y, _) = marker.Extract(@"(\d+)x(\d+)").As<int>();
 
                 var str = string.Join(string.Empty, Enumerable.Repeat(compressed[i..(i + x)], y));
                 if (!cache.TryGetValue(str, out var length))
