@@ -11,7 +11,7 @@ public static partial class Euclid
     public static BigInteger Modulus(BigInteger dividend, BigInteger divisor) =>
         (dividend % divisor + divisor) % divisor;
 
-    public static (long, long) ChineseRemainderTheorem(long[] dividends, long[] divisors)
+    public static long ChineseRemainderTheorem(long[] dividends, long[] divisors)
     {
         var totalMod = divisors.Product();
         var total = 0L;
@@ -23,6 +23,6 @@ public static partial class Euclid
             total += ni * xi * bi;
         }
 
-        return (total % totalMod, totalMod);
+        return Modulus(total, totalMod);
     }
 }
