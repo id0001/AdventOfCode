@@ -12,7 +12,7 @@ public class Challenge18(IInputReader inputReader)
         var line = await inputReader.ReadLineAsync(18).ToListAsync();
 
         var safeCount = line.Count(c => c == '.');
-        for (var i = 1; i < 40; i++)
+        for (var row = 1; row < 40; row++)
         {
             line = Enumerable.Range(0, line.Count).Select(i =>
             {
@@ -33,7 +33,7 @@ public class Challenge18(IInputReader inputReader)
         var line = await inputReader.ReadLineAsync(18).ToListAsync();
 
         var safeCount = line.Count(c => c == '.');
-        for (var i = 1; i < 400000; i++)
+        for (var row = 1; row < 400000; row++)
         {
             line = Enumerable.Range(0, line.Count).Select(i =>
             {
