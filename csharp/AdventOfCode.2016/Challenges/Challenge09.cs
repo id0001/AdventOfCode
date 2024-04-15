@@ -15,7 +15,7 @@ public class Challenge09(IInputReader inputReader)
 
     private static int DecompressV1(string compressed)
     {
-        int totalLength = 0;
+        var totalLength = 0;
         for (var i = 0; i < compressed.Length; i++)
         {
             if (compressed[i] == '(')

@@ -13,7 +13,8 @@ public class Challenge15(IInputReader inputReader)
     {
         var discs = await inputReader.ParseLinesAsync(15, ParseLine).ToArrayAsync();
 
-        return Euclid.ChineseRemainderTheorem(discs.Select((d, i) => -((long)d.Position + i + 1)).ToArray(), discs.Select(d => (long)d.NumberOfPositions).ToArray()).ToString();
+        return Euclid.ChineseRemainderTheorem(discs.Select((d, i) => -((long) d.Position + i + 1)).ToArray(),
+            discs.Select(d => (long) d.NumberOfPositions).ToArray()).ToString();
     }
 
     [Part2]
@@ -22,7 +23,8 @@ public class Challenge15(IInputReader inputReader)
         var discs = await inputReader.ParseLinesAsync(15, ParseLine).ToArrayAsync();
         discs = [.. discs, new Disc(0, 11)];
 
-        return Euclid.ChineseRemainderTheorem(discs.Select((d, i) => -((long)d.Position + i + 1)).ToArray(), discs.Select(d => (long)d.NumberOfPositions).ToArray()).ToString();
+        return Euclid.ChineseRemainderTheorem(discs.Select((d, i) => -((long) d.Position + i + 1)).ToArray(),
+            discs.Select(d => (long) d.NumberOfPositions).ToArray()).ToString();
     }
 
     private Disc ParseLine(string line)

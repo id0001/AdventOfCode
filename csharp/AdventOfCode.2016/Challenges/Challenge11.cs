@@ -1,17 +1,16 @@
 using AdventOfCode.Core;
-using AdventOfCode.Lib.PathFinding;
 using AdventOfCode.Lib;
-using Spectre.Console;
+using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode2016.Challenges;
 
 [Challenge(11)]
-public class Challenge11()
+public class Challenge11
 {
     [Part1]
     public string Part1()
     {
-        int bits = 0;
+        var bits = 0;
         bits = SetLevel(bits, 0, 0); // TM
         bits = SetLevel(bits, 1, 1); // PM
         bits = SetLevel(bits, 2, 1); // SM
@@ -34,7 +33,7 @@ public class Challenge11()
     [Part2]
     public string Part2()
     {
-        int bits = 0;
+        var bits = 0;
         bits = SetLevel(bits, 0, 0); // TM
         bits = SetLevel(bits, 1, 1); // PM
         bits = SetLevel(bits, 2, 1); // SM
@@ -63,27 +62,24 @@ public class Challenge11()
     {
         // Go up
         if (current.CurrentLevel < 3)
-        {
             foreach (var next in GetNextNodes(current, 1))
                 yield return next;
-        }
 
         // Go down
         if (current.CurrentLevel > 0)
-        {
             foreach (var next in GetNextNodes(current, -1))
                 yield return next;
-        }
     }
 
     private static IEnumerable<State> GetNextNodes(State current, int moveAmount)
     {
-        var newLevel = (byte)(current.CurrentLevel + moveAmount);
+        var newLevel = (byte) (current.CurrentLevel + moveAmount);
 
         // Doubles
         foreach (var combination in GetIndicesOnLevel(current, current.CurrentLevel).Combinations(2))
         {
-            var next = new State(newLevel, Move(Move(current.Bits, combination[0], moveAmount), combination[1], moveAmount), current.PairCount);
+            var next = new State(newLevel,
+                Move(Move(current.Bits, combination[0], moveAmount), combination[1], moveAmount), current.PairCount);
             if (next.IsValid)
                 yield return next;
         }
@@ -97,9 +93,31 @@ public class Challenge11()
         }
     }
 
+    private static int Move(int bits, int index, int amount) =>
+        SetLevel(bits, index, (byte) (GetLevel(bits, index) + amount));
+
+    private static byte GetLevel(int bits, int index)
+    {
+        var position = index * 2;
+        var mask = 0b11 << position;
+        return (byte) ((bits & mask) >> position);
+    }
+
+    private static int SetLevel(int bits, int index, byte value)
+    {
+        var position = index * 2;
+        var mask = ~(0b11 << position);
+        return (bits & mask) | (value << position);
+    }
+
+    private static IEnumerable<int> GetIndicesOnLevel(State state, int level) => Enumerable
+        .Range(0, state.PairCount * 2)
+        .Where(i => GetLevel(state.Bits, (byte) i) == level);
+
     private sealed record State(byte CurrentLevel, int Bits, int PairCount)
     {
-        public bool GoalReached => CurrentLevel == 3 && Enumerable.Range(0, PairCount * 2).All(i => GetLevel(Bits, i) == 3);
+        public bool GoalReached =>
+            CurrentLevel == 3 && Enumerable.Range(0, PairCount * 2).All(i => GetLevel(Bits, i) == 3);
 
         public bool IsValid
         {
@@ -112,9 +130,18 @@ public class Challenge11()
                         if (!GetIndicesOnLevel(this, level).Any(i => i >= PairCount))
                             return true;
 
-                        return GetIndicesOnLevel(this, level).Where(i => i < PairCount).All(i => GetLevel(Bits, i + PairCount) == level);
+                        return GetIndicesOnLevel(this, level).Where(i => i < PairCount)
+                            .All(i => GetLevel(Bits, i + PairCount) == level);
                     });
             }
+        }
+
+        public bool Equals(State? other)
+        {
+            if (other is null)
+                return false;
+
+            return GeEquivalenceArray().SequenceEqual(other.GeEquivalenceArray());
         }
 
         private int[] GeEquivalenceArray()
@@ -132,14 +159,6 @@ public class Challenge11()
                 .ToArray();
         }
 
-        public bool Equals(State? other)
-        {
-            if (other is null)
-                return false;
-
-            return GeEquivalenceArray().SequenceEqual(other.GeEquivalenceArray());
-        }
-
         public override int GetHashCode()
         {
             var hc = new HashCode();
@@ -149,24 +168,4 @@ public class Challenge11()
             return hc.ToHashCode();
         }
     }
-
-    private static int Move(int bits, int index, int amount) => SetLevel(bits, index, (byte)(GetLevel(bits, index) + amount));
-
-    private static byte GetLevel(int bits, int index)
-    {
-        var position = index * 2;
-        var mask = 0b11 << position;
-        return (byte)((bits & mask) >> position);
-    }
-
-    private static int SetLevel(int bits, int index, byte value)
-    {
-        var position = index * 2;
-        var mask = ~(0b11 << position);
-        return (bits & mask) | (value << position);
-    }
-
-    private static IEnumerable<int> GetIndicesOnLevel(State state, int level) => Enumerable
-        .Range(0, state.PairCount * 2)
-        .Where(i => GetLevel(state.Bits, (byte)i) == level);
 }

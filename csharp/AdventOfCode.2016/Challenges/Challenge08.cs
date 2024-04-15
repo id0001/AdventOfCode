@@ -34,8 +34,8 @@ public class Challenge08(IInputReader inputReader)
         {
             var (xlen, ylen, _) = instruction.Extract(@"(\d+)x(\d+)").As<int>();
             for (var y = 0; y < ylen; y++)
-                for (var x = 0; x < xlen; x++)
-                    matrix[y, x] = true;
+            for (var x = 0; x < xlen; x++)
+                matrix[y, x] = true;
         }
         else if (instruction.StartsWith("rotate row"))
         {

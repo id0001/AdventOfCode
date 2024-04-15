@@ -5,7 +5,7 @@ using AdventOfCode.Lib.PathFinding;
 namespace AdventOfCode2016.Challenges;
 
 [Challenge(13)]
-public class Challenge13()
+public class Challenge13
 {
     private const int Input = 1352;
 
@@ -33,5 +33,6 @@ public class Challenge13()
         .GetNeighbors()
         .Where(p => p.X >= 0 && p.Y >= 0 && !IsWall(p.X, p.Y));
 
-    private static bool IsWall(int x, int y) => Convert.ToString(x * x + 3 * x + 2 * x * y + y + y * y + Input, 2).Count(x => x == '1') % 2 != 0;
+    private static bool IsWall(int x, int y) =>
+        Convert.ToString(x * x + 3 * x + 2 * x * y + y + y * y + Input, 2).Count(c => c == '1') % 2 != 0;
 }

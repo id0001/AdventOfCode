@@ -10,12 +10,9 @@ public static class OcrExtensions
     public static string Ocr(this bool[,] source)
     {
         var sb = new StringBuilder();
-        for (int y = 0; y < source.GetLength(0); y++)
+        for (var y = 0; y < source.GetLength(0); y++)
         {
-            for (int x = 0; x < source.GetLength(1); x++)
-            {
-                sb.Append(source[y, x] ? '#' : '.');
-            }
+            for (var x = 0; x < source.GetLength(1); x++) sb.Append(source[y, x] ? '#' : '.');
 
             sb.AppendLine();
         }

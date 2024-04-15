@@ -31,7 +31,7 @@ public class BreadthFirstSearch<T>(Func<T, IEnumerable<T>> getAdjacent)
         }
     }
 
-    public IEnumerable<(T Value, int Distance)> FloodFill(T start, int MaxSteps)
+    public IEnumerable<(T Value, int Distance)> FloodFill(T start, int maxSteps)
     {
         var queue = new Queue<T>();
         var visited = new Dictionary<T, int> { { start, 0 } };
@@ -45,7 +45,7 @@ public class BreadthFirstSearch<T>(Func<T, IEnumerable<T>> getAdjacent)
 
             yield return (currentNode, distance);
 
-            if (distance == MaxSteps)
+            if (distance == maxSteps)
                 continue;
 
             foreach (var adjacent in getAdjacent(currentNode))
