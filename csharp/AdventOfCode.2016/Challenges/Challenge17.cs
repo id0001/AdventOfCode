@@ -42,7 +42,7 @@ public class Challenge17
         {
             var currentNode = queue.Dequeue();
 
-            if (currentNode.Position == new Point2(3,3))
+            if (currentNode.Position == new Point2(3, 3))
             {
                 longestPath = Math.Max(longestPath, currentNode.Passcode[Input.Length..].Length);
                 continue;
