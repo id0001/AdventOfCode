@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Lib.Math;
+﻿using System.Diagnostics.CodeAnalysis;
+using AdventOfCode.Lib.Math;
 using Microsoft;
 
 namespace AdventOfCode.Lib;
@@ -65,7 +66,7 @@ public static class EnumerableExtensions
                 for (var i = 0; i < k; i++)
                     a[i] = list[c[i]];
 
-                yield return (T[])a.Clone();
+                yield return (T[]) a.Clone();
 
                 int x;
                 if (j > 0)
@@ -180,19 +181,23 @@ public static class EnumerableExtensions
 
     public static long Product(this IEnumerable<long> source) => source.Aggregate(1L, (a, b) => a * b);
 
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public static void Deconstruct<T>(this IEnumerable<T> source, out T? first, out IEnumerable<T> rest)
     {
         first = source.FirstOrDefault();
         rest = source.Skip(1);
     }
 
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public static void Deconstruct<T>(this IEnumerable<T> source, out T? first, out T? second, out IEnumerable<T> rest)
     {
         first = source.FirstOrDefault();
         (second, rest) = source.Skip(1);
     }
 
-    public static void Deconstruct<T>(this IEnumerable<T> source, out T? first, out T? second, out T? third, out IEnumerable<T> rest)
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+    public static void Deconstruct<T>(this IEnumerable<T> source, out T? first, out T? second, out T? third,
+        out IEnumerable<T> rest)
     {
         first = source.FirstOrDefault();
         (second, third, rest) = source.Skip(1);

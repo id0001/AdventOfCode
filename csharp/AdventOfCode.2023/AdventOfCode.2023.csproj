@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AdventOfCode.Lib" Version="1.0.0" />
+        <PackageReference Include="AdventOfCode.Lib" Version="1.0.0"/>
         <PackageReference Include="Microsoft.Z3" Version="4.12.2"/>
     </ItemGroup>
 

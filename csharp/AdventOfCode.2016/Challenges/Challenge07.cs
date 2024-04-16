@@ -34,7 +34,6 @@ public class Challenge07(IInputReader inputReader)
         var iSinceStart = 0;
 
         for (var i = 0; i < line.Length; i++)
-        {
             switch (line[i])
             {
                 case '[':
@@ -55,9 +54,9 @@ public class Challenge07(IInputReader inputReader)
                             return false;
                         hasAbba = true;
                     }
+
                     break;
             }
-        }
 
         return hasAbba;
     }
@@ -70,7 +69,6 @@ public class Challenge07(IInputReader inputReader)
         var iSinceStart = 0;
 
         for (var i = 0; i < line.Length; i++)
-        {
             switch (line[i])
             {
                 case '[':
@@ -85,12 +83,12 @@ public class Challenge07(IInputReader inputReader)
                     if (iSinceStart++ < 2)
                         continue;
 
-                    if (line[i] == line[i - 2] && line[i] != line[i-1])
+                    if (line[i] == line[i - 2] && line[i] != line[i - 1])
                     {
                         if (inHypernetSequence)
                             babSequences.Add(new string([line[i - 1], line[i], line[i - 1]]));
                         else
-                            abaSequences.Add(line[(i - 2)..(i+1)]);
+                            abaSequences.Add(line[(i - 2)..(i + 1)]);
 
                         if (abaSequences.Intersect(babSequences).Count() > 0)
                             return true;
@@ -98,7 +96,6 @@ public class Challenge07(IInputReader inputReader)
 
                     break;
             }
-        }
 
         return false;
     }

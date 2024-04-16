@@ -56,7 +56,7 @@ public static class Array2DExtensions
 
     public static IEnumerable<T> GetRow<T>(this T[,] source, int row)
     {
-        for(var i = 0; i < source.GetLength(1); i++)
+        for (var i = 0; i < source.GetLength(1); i++)
             yield return source[row, i];
     }
 

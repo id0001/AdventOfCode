@@ -97,7 +97,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AdventOfCode.Lib" Version="1.0.0" />
+        <PackageReference Include="AdventOfCode.Lib" Version="1.0.0"/>
     </ItemGroup>
 
 </Project>

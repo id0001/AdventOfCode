@@ -1,7 +1,7 @@
+using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode2016.Challenges;
 
@@ -11,7 +11,8 @@ public class Challenge04(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        return await inputReader.ParseLinesAsync(4, ParseLine).Where(msg => msg.IsValid).SumAsync(x => x.SectorId).ToStringAsync();
+        return await inputReader.ParseLinesAsync(4, ParseLine).Where(msg => msg.IsValid).SumAsync(x => x.SectorId)
+            .ToStringAsync();
     }
 
     [Part2]
@@ -31,7 +32,8 @@ public class Challenge04(IInputReader inputReader)
             .Into(x =>
             {
                 var words = x[..^1];
-                var (sectorId, checksum) = Regex.Match(x[^1], @"(\d+)\[([a-z]+)\]").Groups.Into(groups => (groups[1].Value.As<int>(), groups[2].Value.ToHashSet()));
+                var (sectorId, checksum) = Regex.Match(x[^1], @"(\d+)\[([a-z]+)\]").Groups
+                    .Into(groups => (groups[1].Value.As<int>(), groups[2].Value.ToHashSet()));
                 return new Message(words, sectorId, checksum);
             });
     }
@@ -57,10 +59,7 @@ public class Challenge04(IInputReader inputReader)
 
         public string Decrypted
         {
-            get
-            {
-                return string.Join(' ', Words.Select(w => w.CaesarShift(SectorId)));
-            }
+            get { return string.Join(' ', Words.Select(w => w.CaesarShift(SectorId))); }
         }
     }
 }
