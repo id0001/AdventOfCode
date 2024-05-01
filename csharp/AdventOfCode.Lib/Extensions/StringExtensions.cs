@@ -31,6 +31,43 @@ public static class StringExtensions
         return match.Groups.Values.Skip(1).Select(g => g.Value).ToArray();
     }
 
+    public static T[] Extract<T>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+        where T : IConvertible
+    {
+        var match = Regex.Match(source, pattern);
+        if (!match.Success)
+            throw new InvalidOperationException("Regex was unsuccessful");
+
+        return match.Groups.Values.Skip(1).Select(g => (T)Convert.ChangeType(g.Value, typeof(T))).ToArray();
+    }
+
+    public static bool TryExtract(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, out string[] matches)
+    {
+        var match = Regex.Match(source, pattern);
+        if (!match.Success)
+        {
+            matches = Array.Empty<string>();
+            return false;
+        }
+
+        matches = match.Groups.Values.Skip(1).Select(g => g.Value).ToArray();
+        return true;
+    }
+
+    public static bool TryExtract<T>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, out T[] matches)
+        where T : IConvertible
+    {
+        var match = Regex.Match(source, pattern);
+        if (!match.Success)
+        {
+            matches = Array.Empty<T>();
+            return false;
+        }
+
+        matches = match.Groups.Values.Skip(1).Select(g => (T)Convert.ChangeType(g.Value, typeof(T))).ToArray();
+        return true;
+    }
+
     public static string[][] ExtractAll(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
     {
         var matches = Regex.Matches(source, pattern);
