@@ -4,10 +4,10 @@ using AdventOfCode.Core.IO;
 namespace AdventOfCode2016.Challenges;
 
 [Challenge(25)]
-public class Challenge25(IInputReader inputReader)
+public class Challenge25()
 {
     [Part1]
-    public async Task<string> Part1Async()
+    public string Part1()
     {
         var num = 182 * 14;
 
