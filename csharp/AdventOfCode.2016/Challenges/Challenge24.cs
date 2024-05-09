@@ -1,10 +1,8 @@
+using System.Collections;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.PathFinding;
-using Spectre.Console;
-using System.Collections;
-using System.ComponentModel;
 
 namespace AdventOfCode2016.Challenges;
 
@@ -16,15 +14,15 @@ public class Challenge24(IInputReader inputReader)
     {
         var grid = await inputReader.ReadGridAsync(24);
 
-        var allPois = grid.Where((p, c) => char.IsNumber(c)).ToArray();
+        var allPointsOfInterest = grid.Where((_, c) => char.IsNumber(c)).ToArray();
 
-        var weights = GetWeights(grid, allPois);
+        var weights = GetWeights(grid, allPointsOfInterest);
 
-        var visited = new BitArray(allPois.Length);
+        var visited = new BitArray(allPointsOfInterest.Length);
         visited.Set(0, true);
 
-        var astar = new AStar<Node>(c => GetAdjacent(weights, c), (a, b) => Weight(weights, a, b));
-        astar.TryPath(new Node(0, visited), n => n.Visited.HasAllSet(), out var path, out var cost);
+        var aStar = new AStar<Node>(c => GetAdjacent(weights, c), (a, b) => Weight(weights, a, b));
+        aStar.TryPath(new Node(0, visited), n => n.Visited.HasAllSet(), out _, out var cost);
 
         return cost.ToString();
     }
@@ -34,14 +32,14 @@ public class Challenge24(IInputReader inputReader)
     {
         var grid = await inputReader.ReadGridAsync(24);
 
-        var allPois = grid.Where((p, c) => char.IsNumber(c)).ToArray();
+        var allPointsOfInterest = grid.Where((_, c) => char.IsNumber(c)).ToArray();
 
-        var weights = GetWeights(grid, allPois);
+        var weights = GetWeights(grid, allPointsOfInterest);
 
-        var visited = new BitArray(allPois.Length);
+        var visited = new BitArray(allPointsOfInterest.Length);
 
-        var astar = new AStar<Node>(c => GetAdjacent(weights, c), (a, b) => Weight(weights, a, b));
-        astar.TryPath(new Node(0, visited), n => n.Visited.HasAllSet(), out var path, out var cost);
+        var aStar = new AStar<Node>(c => GetAdjacent(weights, c), (a, b) => Weight(weights, a, b));
+        aStar.TryPath(new Node(0, visited), n => n.Visited.HasAllSet(), out _, out var cost);
 
         return cost.ToString();
     }
@@ -55,31 +53,30 @@ public class Challenge24(IInputReader inputReader)
         {
             bfs.TryPath(pair[0], n => n == pair[1], out var path);
 
-            var a = (int)char.GetNumericValue(grid[pair[0].Y, pair[0].X]);
-            var b = (int)char.GetNumericValue(grid[pair[1].Y, pair[1].X]);
+            var a = (int) char.GetNumericValue(grid[pair[0].Y, pair[0].X]);
+            var b = (int) char.GetNumericValue(grid[pair[1].Y, pair[1].X]);
 
-            dict.Add((a, b), path.Count() - 1);
-            dict.Add((b, a), path.Count() - 1);
+            var pathLength = path.Count() - 1;
+            dict.Add((a, b), pathLength);
+            dict.Add((b, a), pathLength);
         }
 
         return dict;
     }
 
-    private static int Weight(Dictionary<(int, int), int> weights, Node current, Node next) => weights[(current.Id, next.Id)];
+    private static int Weight(Dictionary<(int, int), int> weights, Node current, Node next) =>
+        weights[(current.Id, next.Id)];
 
     private static IEnumerable<Point2> GetAdjacentSimple(char[,] grid, Point2 current)
     {
         foreach (var neighbor in current.GetNeighbors())
-        {
             if (grid[neighbor.Y, neighbor.X] != '#')
                 yield return neighbor;
-        }
     }
 
     private static IEnumerable<Node> GetAdjacent(Dictionary<(int, int), int> nodes, Node current)
     {
         foreach (var n in nodes.Where(kv => kv.Key.Item1 == current.Id))
-        {
             if (!current.Visited[n.Key.Item2])
             {
                 var visitedWithZero = new BitArray(current.Visited);
@@ -93,7 +90,6 @@ public class Challenge24(IInputReader inputReader)
                 visited.Set(n.Key.Item2, true);
                 yield return new Node(n.Key.Item2, visited);
             }
-        }
     }
 
     private sealed record Node(int Id, BitArray Visited);
