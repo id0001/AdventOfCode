@@ -38,10 +38,11 @@ public static class StringExtensions
         if (!match.Success)
             throw new InvalidOperationException("Regex was unsuccessful");
 
-        return match.Groups.Values.Skip(1).Select(g => (T)Convert.ChangeType(g.Value, typeof(T))).ToArray();
+        return match.Groups.Values.Skip(1).Select(g => (T) Convert.ChangeType(g.Value, typeof(T))).ToArray();
     }
 
-    public static bool TryExtract(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, out string[] matches)
+    public static bool TryExtract(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern,
+        out string[] matches)
     {
         var match = Regex.Match(source, pattern);
         if (!match.Success)
@@ -54,7 +55,8 @@ public static class StringExtensions
         return true;
     }
 
-    public static bool TryExtract<T>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern, out T[] matches)
+    public static bool TryExtract<T>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern,
+        out T[] matches)
         where T : IConvertible
     {
         var match = Regex.Match(source, pattern);
@@ -64,7 +66,7 @@ public static class StringExtensions
             return false;
         }
 
-        matches = match.Groups.Values.Skip(1).Select(g => (T)Convert.ChangeType(g.Value, typeof(T))).ToArray();
+        matches = match.Groups.Values.Skip(1).Select(g => (T) Convert.ChangeType(g.Value, typeof(T))).ToArray();
         return true;
     }
 

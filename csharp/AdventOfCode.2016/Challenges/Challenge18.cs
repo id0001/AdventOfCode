@@ -23,7 +23,7 @@ public class Challenge18(IInputReader inputReader)
             }).ToList();
             safeCount += line.Count(c => c == '.');
         }
-        
+
         return safeCount.ToString();
     }
 
@@ -44,7 +44,7 @@ public class Challenge18(IInputReader inputReader)
             }).ToList();
             safeCount += line.Count(c => c == '.');
         }
-        
+
         return safeCount.ToString();
     }
 }

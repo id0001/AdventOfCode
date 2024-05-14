@@ -34,7 +34,7 @@ public class BreadthFirstSearch<T>(Func<T, IEnumerable<T>> getAdjacent)
     public IEnumerable<(T Value, int Distance)> FloodFill(T start, int maxSteps)
     {
         var queue = new Queue<T>();
-        var visited = new Dictionary<T, int> { { start, 0 } };
+        var visited = new Dictionary<T, int> {{start, 0}};
 
         queue.Enqueue(start);
 

@@ -3,21 +3,21 @@ using AdventOfCode.Core;
 namespace AdventOfCode2016.Challenges;
 
 [Challenge(19)]
-public class Challenge19()
+public class Challenge19
 {
     private const int Input = 3005290;
 
     [Part1]
     public string Part1()
     {
-        int count = Input;
+        var count = Input;
 
         var start = new Node(1);
         var current = start;
 
         for (var i = 1; i < Input; i++)
         {
-            var node = new Node(i + 1) { Previous = current };
+            var node = new Node(i + 1) {Previous = current};
             current.Next = node;
             current = node;
         }
@@ -50,7 +50,7 @@ public class Challenge19()
 
         for (var i = 1; i < Input; i++)
         {
-            var node = new Node(i + 1) { Previous = current };
+            var node = new Node(i + 1) {Previous = current};
             current.Next = node;
             current = node;
 
@@ -71,7 +71,7 @@ public class Challenge19()
             count--;
         }
 
-        return current!.Id.ToString();
+        return current.Id.ToString();
     }
 
     private class Node(int id)
