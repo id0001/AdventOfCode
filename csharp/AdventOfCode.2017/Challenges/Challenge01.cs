@@ -8,15 +8,17 @@ namespace AdventOfCode2017.Challenges;
 public class Challenge01(IInputReader inputReader)
 {
     [Part1]
-    public async Task<string> Part1Async() => (await inputReader.ReadLineAsync(1).Select(c => c.AsInteger()).ToListAsync())
+    public async Task<string> Part1Async() => await inputReader
+        .ReadLineAsync(1)
+        .Select(c => c.AsInteger())
         .Into(list => list
             .Cycle()
             .Skip(1)
             .Zip(list)
             .Where(pair => pair.First == pair.Second)
             .Select(pair => pair.First)
-            .Sum())
-        .ToString();
+            .SumAsync())
+        .ToStringAsync();
 
     [Part2]
     public async Task<string> Part2Async() => (await inputReader.ReadLineAsync(1).Select(c => c.AsInteger()).ToListAsync())

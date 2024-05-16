@@ -7,7 +7,7 @@ public static class StringExtensions
 {
     public static string[] SplitBy(this string source, string separator)
     {
-        return source.Split(new[] {separator},
+        return source.Split(new[] { separator },
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
     }
 
@@ -19,7 +19,7 @@ public static class StringExtensions
 
     public static string CaesarShift(this string source, int shift)
     {
-        return string.Join(string.Empty, source.ToLowerInvariant().Select(c => (char) ('a' + (c - 'a' + shift) % 26)));
+        return string.Join(string.Empty, source.ToLowerInvariant().Select(c => (char)('a' + (c - 'a' + shift) % 26)));
     }
 
     public static string[] Extract(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
@@ -38,7 +38,7 @@ public static class StringExtensions
         if (!match.Success)
             throw new InvalidOperationException("Regex was unsuccessful");
 
-        return match.Groups.Values.Skip(1).Select(g => (T) Convert.ChangeType(g.Value, typeof(T))).ToArray();
+        return match.Groups.Values.Skip(1).Select(g => (T)Convert.ChangeType(g.Value, typeof(T))).ToArray();
     }
 
     public static bool TryExtract(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern,
@@ -66,7 +66,7 @@ public static class StringExtensions
             return false;
         }
 
-        matches = match.Groups.Values.Skip(1).Select(g => (T) Convert.ChangeType(g.Value, typeof(T))).ToArray();
+        matches = match.Groups.Values.Skip(1).Select(g => (T)Convert.ChangeType(g.Value, typeof(T))).ToArray();
         return true;
     }
 
@@ -78,4 +78,6 @@ public static class StringExtensions
 
         return matches.Select(match => match.Groups.Values.Skip(1).Select(g => g.Value).ToArray()).ToArray();
     }
+
+    public static bool IsAnagramOf(this string source, string other) => source.Order().SequenceEqual(other.Order());
 }
