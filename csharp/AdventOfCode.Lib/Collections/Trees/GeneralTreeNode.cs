@@ -1,21 +1,29 @@
 ﻿namespace AdventOfCode.Lib.Collections.Trees;
 
-public class GeneralTreeNode<T>(T value) : IEquatable<GeneralTreeNode<T>>
+public class GeneralTreeNode<T>(T value)
 {
     private readonly HashSet<GeneralTreeNode<T>> _children = new();
 
-    public GeneralTreeNode<T>? Parent { get; set; }
+    public GeneralTreeNode<T>? Parent { get; private set; }
 
     public T Value { get; } = value;
 
     public int Depth => Parent?.Depth + 1 ?? 0;
 
-    public IReadOnlySet<GeneralTreeNode<T>> Children => _children;
+    public int ChildCount => _children.Count;
 
-    public bool Equals(GeneralTreeNode<T>? other)
+    public IEnumerable<GeneralTreeNode<T>> Children => _children;
+
+    public IEnumerable<GeneralTreeNode<T>> Siblings
     {
-        if (ReferenceEquals(null, other)) return false;
-        return ReferenceEquals(this, other) || EqualityComparer<T>.Default.Equals(Value, other.Value);
+        get
+        {
+            if (Parent == null)
+                yield break;
+
+            foreach (var child in Parent.Children.Where(c => c != this))
+                yield return child;
+        }
     }
 
     public bool AddChild(T value) => AddChild(new GeneralTreeNode<T>(value));
@@ -31,7 +39,7 @@ public class GeneralTreeNode<T>(T value) : IEquatable<GeneralTreeNode<T>>
         return _children.Add(node);
     }
 
-    public bool RemoveChild(T value) => RemoveChild(new GeneralTreeNode<T>(value) {Parent = this});
+    public bool RemoveChild(T value) => RemoveChild(new GeneralTreeNode<T>(value) { Parent = this });
 
     public bool RemoveChild(GeneralTreeNode<T> node)
     {
@@ -41,21 +49,4 @@ public class GeneralTreeNode<T>(T value) : IEquatable<GeneralTreeNode<T>>
         node.Parent = null;
         return _children.Remove(node);
     }
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((GeneralTreeNode<T>) obj);
-    }
-
-    public override int GetHashCode() => HashCode.Combine(Value);
-
-    public static bool operator ==(GeneralTreeNode<T>? left, GeneralTreeNode<T>? right)
-    {
-        if (ReferenceEquals(left, right)) return true;
-        return !ReferenceEquals(null, left) && left.Equals(right);
-    }
-
-    public static bool operator !=(GeneralTreeNode<T>? left, GeneralTreeNode<T>? right) => !(left == right);
 }
