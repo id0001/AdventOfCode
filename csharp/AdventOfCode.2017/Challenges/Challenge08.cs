@@ -10,102 +10,59 @@ public class Challenge08(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        var program = await inputReader.ReadLinesAsync(8).Select(line => new KeyValuePair<string, string>(string.Empty, line)).ToListAsync();
-        var cpu = new Cpu<int>();
-        cpu.InstructionSet.Add(string.Empty, GeneralInstruction);
-        cpu.Program = program;
+        var program = await inputReader.ReadLinesAsync(8).ToArrayAsync();
+        var registers = new Dictionary<string, int>();
+        
+        RunProgram(program, registers, out _);
 
-        while (cpu.MoveNext())
-        {
-        }
-
-        return cpu.Registers.MaxBy(r => r.Value).Value.ToString();
+        return registers.MaxBy(r => r.Value).Value.ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        var program = await inputReader.ReadLinesAsync(8).Select(line => new KeyValuePair<string, string>(string.Empty, line)).ToListAsync();
-        var cpu = new Cpu<int>();
-        cpu.InstructionSet.Add(string.Empty, GeneralInstruction);
-        cpu.Program = program;
-
-        int maxValue = int.MinValue;
-        while (cpu.MoveNext())
-        {
-            maxValue = Math.Max(maxValue, cpu.Registers.MaxBy(r => r.Value).Value);
-        }
+        var program = await inputReader.ReadLinesAsync(8).ToArrayAsync();
+        var registers = new Dictionary<string, int>();
+        
+        RunProgram(program, registers, out var maxValue);
 
         return maxValue.ToString();
     }
 
-    private static int GeneralInstruction(Cpu<int> cpu, string instruction)
+    private void RunProgram(string[] program, Dictionary<string, int> registers, out int maxValue)
     {
-        var extract = instruction.Extract(@"(\w+) (inc|dec) (-?\d+) if (\w+) ([<>=!]+) (-?\d+)");
-
-        var register = extract[0];
-        var op = extract[1];
-        var mod = extract[2].As<int>();
-        var conditionA = extract[3];
-        var compare = extract[4];
-        var conditionB = extract[5].As<int>();
-
-        cpu.Set(register, cpu.Get(register) + compare switch
+        var ip = 0;
+        maxValue = int.MinValue;
+        while (ip < program.Length)
         {
-            ">" when (cpu.Get(conditionA) > conditionB && op == "inc") => mod,
-            ">" when (cpu.Get(conditionA) > conditionB && op == "dec") => -mod,
-            "<" when (cpu.Get(conditionA) < conditionB && op == "inc") => mod,
-            "<" when (cpu.Get(conditionA) < conditionB && op == "dec") => -mod,
-            ">=" when (cpu.Get(conditionA) >= conditionB && op == "inc") => mod,
-            ">=" when (cpu.Get(conditionA) >= conditionB && op == "dec") => -mod,
-            "<=" when (cpu.Get(conditionA) <= conditionB && op == "inc") => mod,
-            "<=" when (cpu.Get(conditionA) <= conditionB && op == "dec") => -mod,
-            "==" when (cpu.Get(conditionA) == conditionB && op == "inc") => mod,
-            "==" when (cpu.Get(conditionA) == conditionB && op == "dec") => -mod,
-            "!=" when (cpu.Get(conditionA) != conditionB && op == "inc") => mod,
-            "!=" when (cpu.Get(conditionA) != conditionB && op == "dec") => -mod,
-            _ => 0
-        });
+            var extract = program[ip].Extract(@"(\w+) (inc|dec) (-?\d+) if (\w+) ([<>=!]+) (-?\d+)");
 
-        return cpu.Ip + 1;
-    }
+            var register = extract[0];
+            var op = extract[1];
+            var mod = extract[2].As<int>();
+            var conditionA = extract[3];
+            var compare = extract[4];
+            var conditionB = extract[5].As<int>();
 
+            registers[register] = registers.GetValueOrDefault(register, 0) + compare switch
+            {
+                ">" when registers.GetValueOrDefault(conditionA, 0) > conditionB && op == "inc" => mod,
+                ">" when registers.GetValueOrDefault(conditionA, 0) > conditionB && op == "dec" => -mod,
+                "<" when registers.GetValueOrDefault(conditionA, 0) < conditionB && op == "inc" => mod,
+                "<" when registers.GetValueOrDefault(conditionA, 0) < conditionB && op == "dec" => -mod,
+                ">=" when registers.GetValueOrDefault(conditionA, 0) >= conditionB && op == "inc" => mod,
+                ">=" when registers.GetValueOrDefault(conditionA, 0) >= conditionB && op == "dec" => -mod,
+                "<=" when registers.GetValueOrDefault(conditionA, 0) <= conditionB && op == "inc" => mod,
+                "<=" when registers.GetValueOrDefault(conditionA, 0) <= conditionB && op == "dec" => -mod,
+                "==" when registers.GetValueOrDefault(conditionA, 0) == conditionB && op == "inc" => mod,
+                "==" when registers.GetValueOrDefault(conditionA, 0) == conditionB && op == "dec" => -mod,
+                "!=" when registers.GetValueOrDefault(conditionA, 0) != conditionB && op == "inc" => mod,
+                "!=" when registers.GetValueOrDefault(conditionA, 0) != conditionB && op == "dec" => -mod,
+                _ => 0
+            };
 
-    private class Cpu<TRegister>
-    {
-        public Dictionary<string, TRegister> Registers { get; } = new();
-
-        public Dictionary<string, Func<Cpu<TRegister>, string, int>> InstructionSet { get; } = new();
-
-        public List<KeyValuePair<string, string>> Program { get; set; }
-
-        public int Ip { get; set; }
-
-        public bool Halt { get; set; }
-
-        public Func<Cpu<TRegister>, bool> HaltCondition { get; set; } = x => x.Program == null || x.Ip >= x.Program.Count;
-
-        public bool MoveNext()
-        {
-            if (Halt || HaltCondition(this))
-                return false;
-
-            var current = Program[Ip];
-            var instruction = InstructionSet[current.Key];
-
-            Ip = instruction.Invoke(this, current.Value);
-            return true;
+            ip++;
+            maxValue = Math.Max(maxValue, registers.MaxBy(r => r.Value).Value);
         }
-
-        public void Reset()
-        {
-            Halt = false;
-            Ip = 0;
-            Registers.Clear();
-        }
-
-        public TRegister? Get(string register) => Registers!.GetValueOrDefault(register, default);
-
-        public void Set(string register, TRegister value) => Registers[register] = value;
     }
 }
