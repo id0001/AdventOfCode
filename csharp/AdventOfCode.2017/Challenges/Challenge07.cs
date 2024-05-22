@@ -55,8 +55,8 @@ public class Challenge07(IInputReader inputReader)
         if (root.ChildCount == 0)
             return root;
 
-        var groupByWeight = root.Children.GroupBy(GetWeight);
-        if (groupByWeight.Count() == 1)
+        var groupByWeight = root.Children.GroupBy(GetWeight).ToList();
+        if (groupByWeight.Count == 1)
             return root;
 
         var fat = groupByWeight.Single(g => g.Count() == 1).Single();

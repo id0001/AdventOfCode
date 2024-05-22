@@ -5,7 +5,7 @@ using AdventOfCode.Lib.Collections;
 namespace AdventOfCode2017.Challenges;
 
 [Challenge(3)]
-public class Challenge03()
+public class Challenge03
 {
     private const int Input = 265149;
     private static readonly Point2[] Directions = [Face.Right, Face.Up, Face.Left, Face.Down];

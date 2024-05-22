@@ -71,7 +71,7 @@ public class Challenge08(IInputReader inputReader)
     }
 
 
-    private class Cpu<TRegister>()
+    private class Cpu<TRegister>
     {
         public Dictionary<string, TRegister> Registers { get; } = new();
 

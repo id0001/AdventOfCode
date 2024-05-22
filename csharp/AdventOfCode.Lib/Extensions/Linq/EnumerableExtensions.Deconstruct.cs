@@ -1,5 +1,4 @@
-﻿using Microsoft;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace AdventOfCode.Lib
 {

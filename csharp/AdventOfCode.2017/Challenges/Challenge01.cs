@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
@@ -8,6 +9,7 @@ namespace AdventOfCode2017.Challenges;
 public class Challenge01(IInputReader inputReader)
 {
     [Part1]
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public async Task<string> Part1Async() => await inputReader
         .ReadLineAsync(1)
         .Select(c => c.AsInteger())
