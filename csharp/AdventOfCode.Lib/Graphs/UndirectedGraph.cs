@@ -13,6 +13,8 @@ public class UndirectedGraph<TVertex, TEdge>
 
     public IEnumerable<TVertex> Vertices => _vertexEdges.Keys;
 
+    public IEnumerable<(TVertex, TVertex)> Edges => _edges.Keys;
+
     public bool AddVertex(TVertex vertex)
     {
         _vertexEdges.TryAdd(vertex, new List<TVertex>());
@@ -41,7 +43,11 @@ public class UndirectedGraph<TVertex, TEdge>
 
         _edges.Add((vertex1, vertex2), edge);
         _vertexEdges[vertex1].Add(vertex2);
-        _vertexEdges[vertex2].Add(vertex1);
+
+        // Don't add the edge twice when vertex1 and vertex2 are the same
+        if (!EqualityComparer<TVertex>.Default.Equals(vertex1, vertex2))
+            _vertexEdges[vertex2].Add(vertex1);
+
         return true;
     }
 
@@ -64,91 +70,13 @@ public class UndirectedGraph<TVertex, TEdge>
 
     public bool HasEdges(TVertex vertex) => _vertexEdges.TryGetValue(vertex, out var edges) && edges.Count > 0;
 
-    public IReadOnlyDictionary<TVertex, TEdge> Edges(TVertex vertex)
+    public IReadOnlyDictionary<TVertex, TEdge> OutEdges(TVertex vertex)
     {
         return !ContainsVertex(vertex)
-            ? new Dictionary<TVertex, TEdge>()
+            ? []
             : _vertexEdges[vertex]
                 .Select(t => (Target: t, Edge: GetEdge(vertex, t)))
                 .ToDictionary(kv => kv.Target, kv => kv.Edge);
-    }
-
-    public (List<TVertex>[] Partitions, List<(TVertex, TVertex)> CutEdges) MinCut()
-    {
-        var random = new Random();
-        var vertices = new TVertex[_vertexEdges.Count];
-        var viLookup = new Dictionary<TVertex, int>();
-        var subsets = new Subset[_vertexEdges.Keys.Count];
-
-        var vi = 0;
-        foreach (var vertex in _vertexEdges.Keys)
-        {
-            subsets[vi] = new Subset(vi, 0);
-            vertices[vi] = vertex;
-            viLookup.Add(vertex, vi);
-            vi++;
-        }
-
-        var edges = _edges.Keys.Select(e => (viLookup[e.Item1], viLookup[e.Item2])).ToArray();
-
-        var vertexCount = vertices.Length;
-        while (vertexCount > 2)
-        {
-            var i = random.Next(edges.Length);
-
-            var subset1 = FindSubset(subsets, edges[i].Item1);
-            var subset2 = FindSubset(subsets, edges[i].Item2);
-
-            if (subset1 == subset2)
-                continue;
-
-            vertexCount--;
-            Union(subsets, subset1, subset2);
-        }
-
-        var cutEdges = new List<(TVertex, TVertex)>();
-        for (var i = 0; i < edges.Length; i++)
-        {
-            var subset1 = FindSubset(subsets, edges[i].Item1);
-            var subset2 = FindSubset(subsets, edges[i].Item2);
-            if (subset1 == subset2) continue;
-
-            var v1 = vertices[edges[i].Item1];
-            var v2 = vertices[edges[i].Item2];
-            cutEdges.Add((v1, v2));
-        }
-
-        var partitions = vertices.GroupBy(v => FindSubset(subsets, viLookup[v])).Select(e => e.ToList()).ToArray();
-
-        return (partitions, cutEdges);
-    }
-
-    private static int FindSubset(IList<Subset> subset, int v)
-    {
-        if (subset[v].Parent != v)
-            subset[v] = subset[v] with {Parent = FindSubset(subset, subset[v].Parent)};
-
-        return subset[v].Parent;
-    }
-
-    private static void Union(IList<Subset> subsets, int x, int y)
-    {
-        var xRoot = FindSubset(subsets, x);
-        var yRoot = FindSubset(subsets, y);
-
-        if (subsets[xRoot].Rank < subsets[yRoot].Rank)
-        {
-            subsets[xRoot] = subsets[xRoot] with {Parent = yRoot};
-        }
-        else if (subsets[xRoot].Rank > subsets[yRoot].Rank)
-        {
-            subsets[yRoot] = subsets[yRoot] with {Parent = xRoot};
-        }
-        else
-        {
-            subsets[yRoot] = subsets[yRoot] with {Parent = xRoot};
-            subsets[xRoot] = subsets[xRoot] with {Rank = subsets[xRoot].Rank + 1};
-        }
     }
 
     private TEdge GetEdge(TVertex a, TVertex b)
@@ -161,6 +89,4 @@ public class UndirectedGraph<TVertex, TEdge>
 
         throw new ArgumentException("Edge not found");
     }
-
-    private record Subset(int Parent, int Rank);
 }
