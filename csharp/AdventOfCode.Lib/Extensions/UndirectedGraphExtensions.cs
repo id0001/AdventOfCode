@@ -9,7 +9,7 @@ namespace AdventOfCode.Lib.Extensions
             where TVertex : notnull
             where TEdge : notnull
         {
-            var bfs = new BreadthFirstSearch<TVertex>(v => source.OutEdges(v).Keys);
+            var bfs = new BreadthFirstSearch<TVertex>(v => source.AdjacentEdges(v).Keys);
             return bfs.FloodFill(start);
         }
 

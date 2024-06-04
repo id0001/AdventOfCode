@@ -70,7 +70,7 @@ public class UndirectedGraph<TVertex, TEdge>
 
     public bool HasEdges(TVertex vertex) => _vertexEdges.TryGetValue(vertex, out var edges) && edges.Count > 0;
 
-    public IReadOnlyDictionary<TVertex, TEdge> OutEdges(TVertex vertex)
+    public IReadOnlyDictionary<TVertex, TEdge> AdjacentEdges(TVertex vertex)
     {
         return !ContainsVertex(vertex)
             ? []
