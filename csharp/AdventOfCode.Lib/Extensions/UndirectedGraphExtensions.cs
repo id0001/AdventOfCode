@@ -1,7 +1,7 @@
 ﻿using AdventOfCode.Lib.Graphs;
 using AdventOfCode.Lib.PathFinding;
 
-namespace AdventOfCode.Lib.Extensions
+namespace AdventOfCode.Lib
 {
     public static class UndirectedGraphExtensions
     {
@@ -31,13 +31,12 @@ namespace AdventOfCode.Lib.Extensions
                 vi++;
             }
 
-
-            var edges = source.Edges.Select(e => (viLookup[e.Item1], viLookup[e.Item2])).ToArray();
+            var edges = source.Edges.Select(e => (viLookup[e.Item1], viLookup[e.Item2])).ToList();
 
             var vertexCount = vertices.Length;
             while (vertexCount > 2)
             {
-                var i = random.Next(edges.Length);
+                var i = random.Next(edges.Count);
 
                 var subset1 = FindSubset(subsets, edges[i].Item1);
                 var subset2 = FindSubset(subsets, edges[i].Item2);
@@ -50,7 +49,7 @@ namespace AdventOfCode.Lib.Extensions
             }
 
             var cutEdges = new List<(TVertex, TVertex)>();
-            for (var i = 0; i < edges.Length; i++)
+            for (var i = 0; i < edges.Count; i++)
             {
                 var subset1 = FindSubset(subsets, edges[i].Item1);
                 var subset2 = FindSubset(subsets, edges[i].Item2);

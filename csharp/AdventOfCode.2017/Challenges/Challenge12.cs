@@ -2,7 +2,6 @@ using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib.Graphs;
 using AdventOfCode.Lib;
-using AdventOfCode.Lib.Extensions;
 
 namespace AdventOfCode2017.Challenges;
 
