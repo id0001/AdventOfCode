@@ -13,5 +13,10 @@ namespace AdventOfCode.Lib
         public static string ToHexString<TNumber>(this TNumber source, int padding = 2, bool upperCase = false)
             where TNumber : IBinaryInteger<TNumber>
             => source.ToString($"{(upperCase ? "X" : "x")}{padding}", CultureInfo.InvariantCulture);
+
+        public static Point2 ToPoint2(this int i, int width)
+        {
+            return new Point2(i % width, i / width);
+        }
     }
 }
