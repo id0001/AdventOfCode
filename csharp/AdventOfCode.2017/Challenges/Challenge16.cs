@@ -39,37 +39,32 @@ public class Challenge16(IInputReader inputReader)
     {
         int[] programs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
         var moves = await inputReader.ReadLineAsync(16, ',').ToListAsync();
-        var history = new List<string>();
-        var cycleSet = new HashSet<(int, string)>();
-        var i = 0;
-        
-        foreach (var move in moves.Cycle())
+
+        for (var i = 0; i < 1_000_000_000; i++)
         {
-            if (cycleSet.Contains((i % moves.Count, Glue(programs))))
-                break;
-
-            cycleSet.Add((i % moves.Count, Glue(programs)));
-            history.Add(Glue(programs));
-            i++;
-
-            switch (move[0])
+            foreach (var move in moves)
             {
-                case 's':
-                    Spin(programs, move[1..]);
-                    break;
-                case 'x':
-                    Exchange(programs, move[1..]);
-                    break;
-                case 'p':
-                    Partner(programs, move[1..]);
-                    break;
-                default:
-                    throw new NotImplementedException();
+                switch (move[0])
+                {
+                    case 's':
+                        Spin(programs, move[1..]);
+                        break;
+                    case 'x':
+                        Exchange(programs, move[1..]);
+                        break;
+                    case 'p':
+                        Partner(programs, move[1..]);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
+
+            if (Glue(programs) == Dancers)
+                i += ((1_000_000_000 / (i + 1)) - 1) * (i + 1); // i + (cycles * length)
         }
 
-        var remaining = 1_000_000_000 % cycleSet.Count;
-        return history[remaining];
+        return Glue(programs);
     }
 
     private static void Spin(int[] programs, string move)
