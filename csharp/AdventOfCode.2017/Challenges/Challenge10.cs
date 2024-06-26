@@ -1,7 +1,7 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using AdventOfCode.Lib.Extensions.Linq;
+using AdventOfCode.Lib.Collections;
 
 namespace AdventOfCode2017.Challenges;
 
@@ -11,67 +11,35 @@ public class Challenge10(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        var numbers = Enumerable.Range(0, 256).ToArray();
+        var numbers = new CircularArray<byte>(256);
+        for(var b = 0; b < 256; b++)
+            numbers[b] = (byte)b;
+
         var i = 0;
         var skip = 0;
 
         await foreach (var length in inputReader.ReadLineAsync<int>(10, ','))
         {
-            numbers = numbers
-                .Cycle() // make circle
-                .Skip(i) // move i to 0
-                .Take(length) // take the length
-                .Reverse() // reverse the sequence
-                .Concat(
-                    numbers
-                        .Cycle()
-                        .Skip(i + length)
-                        .Take(numbers.Length - length)
-                ) // add the remaining numbers
-                .Cycle() // make circle
-                .Skip(numbers.Length - i) // move back to original index
-                .Take(numbers.Length) // make original length
-                .ToArray();
-
-            i = (i + length + skip).Mod(numbers.Length);
+            Twist(numbers, i, length);
+            i = (i + length + skip).Mod(numbers.Count);
             skip++;
         }
 
-        return numbers.Take(2).Product().ToString();
+        return numbers.Take(2).Select(b => (int)b).Product().ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
-        var sparseHash = Enumerable.Range(0, 256).ToArray();
-        var i = 0;
-        var skip = 0;
+        return string.Join("", KnotHash.Generate(await inputReader.ReadAllTextAsync(10)).Select(x => x.ToHexString()));
+    }
 
-        foreach (var round in Enumerable.Range(0, 64))
-        {
-            await foreach (var length in inputReader.ReadLineAsync(10).Select(c => (int)c).Concat(new[] { 17, 31, 73, 47, 23 }.ToAsyncEnumerable()))
-            {
-                sparseHash = sparseHash
-                    .Cycle() // make circle
-                    .Skip(i) // move i to 0
-                    .Take(length) // take the length
-                    .Reverse() // reverse the sequence
-                    .Concat(
-                        sparseHash
-                            .Cycle()
-                            .Skip(i + length)
-                            .Take(sparseHash.Length - length)
-                    ) // add the remaining numbers
-                    .Cycle() // make circle
-                    .Skip(sparseHash.Length - i) // move back to original index
-                    .Take(sparseHash.Length) // make original length
-                    .ToArray();
+    private static void Twist(CircularArray<byte> hash, int start, int length)
+    {
+        var copy = new byte[length];
+        hash.CopyTo(copy, start, length);
 
-                i = (i + length + skip).Mod(sparseHash.Length);
-                skip++;
-            }
-        }
-
-        return string.Join("", sparseHash.Chunk(16).Select(x => x.Xor().ToHexString()));
+        for (var i = 0; i < length; i++)
+            hash[start + i] = copy[^(i + 1)];
     }
 }
