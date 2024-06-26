@@ -8,9 +8,7 @@ namespace AdventOfCode2017
     {
         public static byte[] Generate(string input)
         {
-            var sparseHash = new CircularArray<byte>(256);
-            for (var b = 0; b < 256; b++)
-                sparseHash[b] = (byte)b;
+            CircularArray<byte> sparseHash = new(Enumerable.Range(0, 256).Select(x => (byte)x).ToArray());
 
             var i = 0;
             var skip = 0;
@@ -20,7 +18,7 @@ namespace AdventOfCode2017
                 foreach (var length in input.Select(c => (byte)c).Concat(new byte[] { 17, 31, 73, 47, 23 }))
                 {
                     Twist(sparseHash, i, length);
-                    i = (i + length + skip).Mod(sparseHash.Count);
+                    i = (i + length + skip).Mod(sparseHash.Length);
                     skip++;
                 }
             }
@@ -30,11 +28,9 @@ namespace AdventOfCode2017
 
         private static void Twist(CircularArray<byte> hash, int start, int length)
         {
-            var copy = new byte[length];
-            hash.CopyTo(copy, start, length);
-
-            for (var i = 0; i < length; i++)
-                hash[start + i] = copy[^(i+1)];
+            var (l, r) = ((int)Math.Round(length / 2d, MidpointRounding.AwayFromZero) - 1, (int)Math.Floor(length / 2d));
+            for (; l >= 0 && r < length; l--, r++)
+                (hash[start + l], hash[start + r]) = (hash[start + r], hash[start + l]);
         }
     }
 }

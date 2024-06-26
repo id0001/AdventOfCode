@@ -6,13 +6,18 @@ namespace AdventOfCode.Lib.Collections
     {
         private readonly T[] _array = new T[length];
 
+        public CircularArray(T[] source) : this(source.Length)
+        {
+            Array.Copy(source, _array, source.Length);
+        }
+
         public T this[int index]
         {
             get => _array[index.Mod(length)];
             set => _array[index.Mod(length)] = value;
         }
 
-        public int Count => length;
+        public int Length => length;
 
         public IEnumerator<T> GetEnumerator()
         {

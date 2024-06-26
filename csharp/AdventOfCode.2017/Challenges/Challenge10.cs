@@ -11,17 +11,14 @@ public class Challenge10(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        var numbers = new CircularArray<byte>(256);
-        for(var b = 0; b < 256; b++)
-            numbers[b] = (byte)b;
-
+        CircularArray<byte> numbers = new(Enumerable.Range(0,256).Select(x => (byte)x).ToArray());
         var i = 0;
         var skip = 0;
 
         await foreach (var length in inputReader.ReadLineAsync<int>(10, ','))
         {
             Twist(numbers, i, length);
-            i = (i + length + skip).Mod(numbers.Count);
+            i = (i + length + skip).Mod(numbers.Length);
             skip++;
         }
 
@@ -36,10 +33,8 @@ public class Challenge10(IInputReader inputReader)
 
     private static void Twist(CircularArray<byte> hash, int start, int length)
     {
-        var copy = new byte[length];
-        hash.CopyTo(copy, start, length);
-
-        for (var i = 0; i < length; i++)
-            hash[start + i] = copy[^(i + 1)];
+        var (l, r) = ((int)Math.Round(length / 2d, MidpointRounding.AwayFromZero) - 1, (int)Math.Floor(length / 2d));
+        for (; l >= 0 && r < length; l--, r++)
+            (hash[start + l], hash[start + r]) = (hash[start + r], hash[start + l]);
     }
 }
