@@ -1,5 +1,4 @@
 ﻿namespace AdventOfCode.Lib.Assembly
 {
-    public sealed record Instruction<TRegister>(string OpCode, IReadOnlyDictionary<string, string> Arguments)
-        where TRegister : IParsable<TRegister>;
+    public sealed record Instruction<TArguments>(string OpCode, TArguments Arguments);
 }

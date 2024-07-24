@@ -4,6 +4,7 @@
 
 # Don't share AoC input files
 Inputs/
+TestData/
 
 ### Csharp ###
 ## Ignore Visual Studio temporary files, build results, and

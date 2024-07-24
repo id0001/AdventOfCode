@@ -12,9 +12,15 @@ public static class ListExtensions
         where T : notnull
         => source[1];
 
+    public static T SecondOrDefault<T>(this IList<T> source, T defaultValue)
+        => source.Count > 1 ? source[1] : defaultValue;
+
     public static T Third<T>(this IList<T> source)
         where T : notnull
         => source[2];
+
+    public static T ThirdOrDefault<T>(this IList<T> source, T defaultValue)
+        => source.Count > 2 ? source[2] : defaultValue;
 
     public static IList<T> As<T>(this IList source)
         where T : IConvertible

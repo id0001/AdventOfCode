@@ -1,46 +1,31 @@
 ﻿namespace AdventOfCode.Lib.Assembly
 {
-    public class Cpu<TRegister, TMemory>
-        where TRegister : IParsable<TRegister>
-        where TMemory : DefaultMemory<TRegister>, new()
+    public class Cpu<TMemory, TArguments>(TMemory memory, IList<Instruction<TArguments>> program)
+        where TMemory : notnull, IMemory
     {
-        private readonly Dictionary<string, Action<Arguments<TRegister>, TMemory>> _instructionSet = new();
-        private readonly List<(string Opcode, Arguments<TRegister> Arguments)> _program = new();
+        private readonly Dictionary<string, Action<TArguments, TMemory>> _instructionSet = new();
 
-        public TMemory Memory { get; } = new();
+        public TMemory Memory { get; } = memory;
 
-        public bool IsHalted => Memory.Ip < 0 || Memory.Ip >= _program.Count;
+        public IList<Instruction<TArguments>> Program { get; } = program;
 
-        public void LoadProgram(IEnumerable<Instruction<TRegister>> instructions)
-        {
-            Reset();
+        public bool IsHalted => Memory.Ip < 0 || Memory.Ip >= Program.Count;
 
-            foreach (var instruction in instructions)
-            {
-                var args = new Arguments<TRegister>(instruction.Arguments, Memory);
-                _program.Add((instruction.OpCode, args));
-            }
-        }
-
-        public void Reset()
-        {
-            _program.Clear();
-            Memory.Clear();
-        }
+        public void Reset() => Memory.Clear();
 
         public bool Next()
         {
             if (IsHalted)
                 return false;
 
-            var instruction = _program[Memory.Ip];
-            var action = _instructionSet[instruction.Opcode];
+            var instruction = Program[Memory.Ip];
+            var action = _instructionSet[instruction.OpCode];
 
             action(instruction.Arguments, Memory);
             return true;
         }
 
-        public void AddInstruction(string opcode, Action<Arguments<TRegister>, TMemory> action) => _instructionSet.Add(opcode, action);
+        public void AddInstruction(string opcode, Action<TArguments, TMemory> action) => _instructionSet.Add(opcode, action);
 
         public void RunTillHalted()
         {
