@@ -11,9 +11,9 @@ namespace AdventOfCode.Lib.Assembly
 
         public int Ip { get; set; }
 
-        public TRegister Get(string registerOrValue) => TRegister.TryParse(registerOrValue, CultureInfo.InvariantCulture, out var value)
+        public TRegister Get(string registerOrValue, TRegister defaultValue = default!) => TRegister.TryParse(registerOrValue, CultureInfo.InvariantCulture, out var value)
             ? value
-            : _registers!.GetValueOrDefault(registerOrValue, default)!;
+            : _registers.GetValueOrDefault(registerOrValue, defaultValue);
 
         public void Set(string register, TRegister value) => _registers[register] = value;
 
