@@ -15,8 +15,8 @@ public class Challenge18(IInputReader inputReader)
 
         var cpu = new Cpu<MemoryEx, Arguments>(new(), program);
         AddBaseInstructions(cpu);
-        cpu.AddInstruction("snd", (args, ctx) => { ctx.Rcv = ctx.Get(args.X); ctx.Ip++; });
-        cpu.AddInstruction("rcv", (args, ctx) => ctx.Ip = ctx.Get(args.X) > 0 ? -1 : ctx.Ip + 1); // Halt
+        cpu.AddInstruction("snd", (args, ctx) => { ctx.Rcv = args.X.Value(ctx); ctx.Ip++; });
+        cpu.AddInstruction("rcv", (args, ctx) => ctx.Ip = args.X.Value(ctx) > 0 ? -1 : ctx.Ip + 1); // Halt
 
         cpu.RunTillHalted();
 
@@ -59,16 +59,16 @@ public class Challenge18(IInputReader inputReader)
 
     private static void AddBaseInstructions(Cpu<MemoryEx, Arguments> cpu)
     {
-        cpu.AddInstruction("set", (args, ctx) => { ctx.Set(args.X, ctx.Get(args.Y)); ctx.Ip++; });
-        cpu.AddInstruction("add", (args, ctx) => { ctx.Set(args.X, ctx.Get(args.X) + ctx.Get(args.Y)); ctx.Ip++; });
-        cpu.AddInstruction("mul", (args, ctx) => { ctx.Set(args.X, ctx.Get(args.X) * ctx.Get(args.Y)); ctx.Ip++; });
-        cpu.AddInstruction("mod", (args, ctx) => { ctx.Set(args.X, ctx.Get(args.X) % ctx.Get(args.Y)); ctx.Ip++; });
-        cpu.AddInstruction("jgz", (args, ctx) => ctx.Ip = ctx.Get(args.X) > 0 ? ctx.Ip + (int)ctx.Get(args.Y) : ctx.Ip + 1);
+        cpu.AddInstruction("set", (args, ctx) => { ctx.Set(args.X, args.Y.Value(ctx)); ctx.Ip++; });
+        cpu.AddInstruction("add", (args, ctx) => { ctx.Set(args.X, args.X.Value(ctx) + args.Y.Value(ctx)); ctx.Ip++; });
+        cpu.AddInstruction("mul", (args, ctx) => { ctx.Set(args.X, args.X.Value(ctx) * args.Y.Value(ctx)); ctx.Ip++; });
+        cpu.AddInstruction("mod", (args, ctx) => { ctx.Set(args.X, args.X.Value(ctx) % args.Y.Value(ctx)); ctx.Ip++; });
+        cpu.AddInstruction("jgz", (args, ctx) => ctx.Ip = args.X.Value(ctx) > 0 ? ctx.Ip + (int)args.Y.Value(ctx) : ctx.Ip + 1);
     }
 
     private static void AddPart2Instructions(Cpu<MemoryEx, Arguments> cpu, Cpu<MemoryEx, Arguments> other)
     {
-        cpu.AddInstruction("snd", (args, ctx) => { other.Memory.MessageQueue.Enqueue(ctx.Get(args.X)); ctx.SendCounter++; ctx.Ip++; });
+        cpu.AddInstruction("snd", (args, ctx) => { other.Memory.MessageQueue.Enqueue(args.X.Value(ctx)); ctx.SendCounter++; ctx.Ip++; });
         cpu.AddInstruction("rcv", (args, ctx) =>
         {
             if (ctx.MessageQueue.Count == 0)
@@ -93,5 +93,5 @@ public class Challenge18(IInputReader inputReader)
         public bool IsWaiting { get; set; }
     }
 
-    private record Arguments(string X, string Y);
+    private record Arguments(RegisterOrValueArgument<long> X, RegisterOrValueArgument<long> Y);
 }

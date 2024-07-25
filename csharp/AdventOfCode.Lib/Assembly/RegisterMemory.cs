@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace AdventOfCode.Lib.Assembly
+﻿namespace AdventOfCode.Lib.Assembly
 {
     public class RegisterMemory<TRegister> : IMemory
         where TRegister : notnull, IParsable<TRegister>
@@ -11,9 +9,7 @@ namespace AdventOfCode.Lib.Assembly
 
         public int Ip { get; set; }
 
-        public TRegister Get(string registerOrValue, TRegister defaultValue = default!) => TRegister.TryParse(registerOrValue, CultureInfo.InvariantCulture, out var value)
-            ? value
-            : _registers.GetValueOrDefault(registerOrValue, defaultValue);
+        public TRegister Get(string register, TRegister defaultValue = default!) => _registers.GetValueOrDefault(register, defaultValue);
 
         public void Set(string register, TRegister value) => _registers[register] = value;
 
