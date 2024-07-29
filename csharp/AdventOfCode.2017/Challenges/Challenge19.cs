@@ -26,7 +26,7 @@ public class Challenge19(IInputReader inputReader)
         return FollowToEnd(grid, new Point2(start, 0)).Steps.ToString();
     }
 
-    private (string Result, int Steps) FollowToEnd(char[,] grid, Point2 start)
+    private static (string Result, int Steps) FollowToEnd(char[,] grid, Point2 start)
     {
         var result = new StringBuilder();
         var dir = Face.Down;
