@@ -53,6 +53,9 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighb
 
     public Point2 ToPoint2() => new(X, Y);
 
+    public static int ManhattanDistance(Point3 p0, Point3 p1) =>
+        System.Math.Abs(p1.X - p0.X) + System.Math.Abs(p1.Y - p0.Y) + System.Math.Abs(p1.Z - p0.Z);
+
     public static Point3 Subtract(Point3 left, Point3 right) =>
         new(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
 

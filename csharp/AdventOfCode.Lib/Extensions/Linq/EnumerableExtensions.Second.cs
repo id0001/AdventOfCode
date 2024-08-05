@@ -5,7 +5,7 @@ namespace AdventOfCode.Lib
     public static partial class EnumerableExtensions
     {
         public static T Second<T>(this IEnumerable<T> source)
-        where T : IConvertible
+        where T : notnull
         {
             Requires.NotNull(source, nameof(source));
 
@@ -16,7 +16,7 @@ namespace AdventOfCode.Lib
         }
 
         public static T SecondOrDefault<T>(this IEnumerable<T> source, T defaultValue)
-        where T : IConvertible
+        where T : notnull
         {
             Requires.NotNull(source, nameof(source));
 
