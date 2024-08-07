@@ -18,6 +18,8 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighb
 
     int IPoint<int>.Dimensions => 3;
 
+    public int LengthSquared => DistanceSquared(Zero, this);
+
     public bool Equals(IPoint<int>? other)
     {
         if (other is null)
@@ -52,6 +54,14 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighb
     }
 
     public Point2 ToPoint2() => new(X, Y);
+
+    public static int DistanceSquared(Point3 left, Point3 right)
+    {
+        var dy = right.Y - left.Y;
+        var dx = right.X - left.X;
+        var dz = right.Z - left.Z;
+        return dx * dx + dy * dy + dz * dz;
+    }
 
     public static int ManhattanDistance(Point3 p0, Point3 p1) =>
         System.Math.Abs(p1.X - p0.X) + System.Math.Abs(p1.Y - p0.Y) + System.Math.Abs(p1.Z - p0.Z);
