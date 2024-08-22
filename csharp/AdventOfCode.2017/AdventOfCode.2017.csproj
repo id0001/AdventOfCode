@@ -9,13 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AdventOfCode.Core\AdventOfCode.Core.csproj"/>
-        <ProjectReference Include="..\AdventOfCode.Lib\AdventOfCode.Lib.csproj"/>
+        <ProjectReference Include="..\AdventOfCode.Core\AdventOfCode.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Challenges\"/>
-        <Folder Include="Inputs\"/>
+        <Folder Include="Challenges\" />
+        <Folder Include="Inputs\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AdventOfCode.Lib" Version="3.0.0" />
     </ItemGroup>
 
     <ItemGroup>
