@@ -16,6 +16,9 @@ jobs:
       run:
         working-directory: csharp/AdventOfCode.Lib
 
+    env:
+      NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
