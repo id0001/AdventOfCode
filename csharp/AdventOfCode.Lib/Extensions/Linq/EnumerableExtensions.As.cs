@@ -1,5 +1,6 @@
 ﻿using Microsoft;
 using System.Collections;
+using System.Text;
 
 namespace AdventOfCode.Lib
 {
@@ -19,6 +20,17 @@ namespace AdventOfCode.Lib
             Requires.NotNull(source, nameof(source));
 
             return source.Cast<IConvertible>().Select(x => x.As<T>());
+        }
+
+        public static string AsString(this IEnumerable<char> source)
+        {
+            Requires.NotNull(source, nameof(source));
+
+            var sb = new StringBuilder();
+            foreach(var c in source)
+                sb.Append(c);
+
+            return sb.ToString();
         }
     }
 }
