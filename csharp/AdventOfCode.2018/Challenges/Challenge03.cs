@@ -29,9 +29,8 @@ public class Challenge03(IInputReader inputReader)
     }
 
     private Claim ParseLine(string line) => line
-        .Extract(@"#(.+) @ (\d+),(\d+): (\d+)x(\d+)")
-        .As<int>()
-        .Into(x => new Claim(x[0], new Rectangle(x[1], x[2], x[3], x[4])));
+        .Extract<string,int,int,int,int>(@"#(.+) @ (\d+),(\d+): (\d+)x(\d+)")
+        .Into(x => new Claim(x.First, new Rectangle(x.Second, x.Third, x.Fourth, x.Fifth)));
 
-    private record Claim(int Id, Rectangle Square);
+    private record Claim(string Id, Rectangle Square);
 }
