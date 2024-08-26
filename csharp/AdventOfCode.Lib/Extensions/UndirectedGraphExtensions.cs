@@ -17,7 +17,7 @@ namespace AdventOfCode.Lib
             where TVertex : notnull
             where TEdge : notnull
         {
-            var random = new Random();
+            var random = Random.Shared;
             var vertices = new TVertex[source.VertexCount];
             var viLookup = new Dictionary<TVertex, int>();
             var subsets = new Subset[source.VertexCount];
