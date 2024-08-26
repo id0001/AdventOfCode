@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Lib
+﻿using System.ComponentModel;
+
+namespace AdventOfCode.Lib
 {
     public static partial class EnumerableExtensions
     {
@@ -13,7 +15,7 @@
                 else
                 {
                     yield return list;
-                    list = new List<T>();
+                    list = [];
                 }
         }
 
@@ -28,8 +30,76 @@
                 else
                 {
                     yield return list;
-                    list = new List<T>();
+                    list = [];
                 }
+        }
+
+        public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, Func<T, bool> predicate, bool matchIsLastItem = false)
+        {
+            var list = new List<T>();
+
+            bool skipFirst = true;
+            foreach (var item in source)
+            {
+                if(matchIsLastItem)
+                {
+                    list.Add(item);
+                    var isMatch = predicate(item);
+                    if (isMatch)
+                    {
+                        yield return list;
+                        list = [];
+                    }
+                }
+                else
+                {
+                    var isMatch = predicate(item);
+                    if (isMatch)
+                    {
+                        if (!skipFirst)
+                            yield return list;
+
+                        list = [];
+                        skipFirst = false;
+                    }
+
+                    list.Add(item);
+                }
+            }
+        }
+
+        public static async IAsyncEnumerable<IEnumerable<T>> ChunkBy<T>(this IAsyncEnumerable<T> source, Func<T, bool> predicate, bool matchIsLastItem = false)
+        {
+            var list = new List<T>();
+
+            bool skipFirst = true;
+            await foreach (var item in source)
+            {
+                if (matchIsLastItem)
+                {
+                    list.Add(item);
+                    var isMatch = predicate(item);
+                    if (isMatch)
+                    {
+                        yield return list;
+                        list = [];
+                    }
+                }
+                else
+                {
+                    var isMatch = predicate(item);
+                    if (isMatch)
+                    {
+                        if (!skipFirst)
+                            yield return list;
+
+                        list = [];
+                        skipFirst = false;
+                    }
+
+                    list.Add(item);
+                }
+            }
         }
     }
 }
