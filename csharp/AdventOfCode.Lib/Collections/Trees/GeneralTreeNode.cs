@@ -39,7 +39,7 @@ public class GeneralTreeNode<T>(T value)
         return _children.Add(node);
     }
 
-    public bool RemoveChild(T value) => RemoveChild(new GeneralTreeNode<T>(value) { Parent = this });
+    public bool RemoveChild(T value) => RemoveChild(new GeneralTreeNode<T>(value) {Parent = this});
 
     public bool RemoveChild(GeneralTreeNode<T> node)
     {

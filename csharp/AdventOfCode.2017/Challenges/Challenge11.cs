@@ -8,13 +8,15 @@ namespace AdventOfCode2017.Challenges;
 public class Challenge11(IInputReader inputReader)
 {
     [Part1]
-    public async Task<string> Part1Async() => Hex.ManhattanDistance(Hex.Zero, await inputReader.ReadLineAsync(11, ',').AggregateAsync(Hex.Zero, Next)).ToString();
+    public async Task<string> Part1Async() => Hex
+        .ManhattanDistance(Hex.Zero, await inputReader.ReadLineAsync(11, ',').AggregateAsync(Hex.Zero, Next))
+        .ToString();
 
     [Part2]
     public async Task<string> Part2Async() => (await inputReader.ReadLineAsync(11, ',')
             .AggregateAsync((MaxDistance: 0, Hex: Hex.Zero), NextWithMaxDistance))
-            .MaxDistance
-            .ToString();
+        .MaxDistance
+        .ToString();
 
     private Hex Next(Hex current, string dir) => dir switch
     {

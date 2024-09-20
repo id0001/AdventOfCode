@@ -1,7 +1,7 @@
+using System.Numerics;
 using AdventOfCode.Core;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.PathFinding;
-using System.Numerics;
 
 namespace AdventOfCode2017.Challenges;
 
@@ -9,7 +9,7 @@ namespace AdventOfCode2017.Challenges;
 public class Challenge14
 {
     private const string Input = "xlqgujun";
-    private static readonly Rectangle Bounds = new Rectangle(0, 0, 128, 128);
+    private static readonly Rectangle Bounds = new(0, 0, 128, 128);
 
     [Part1]
     public string Part1() => Enumerable.Range(0, 128)

@@ -2,7 +2,6 @@ using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Assembly;
-using System.Net.NetworkInformation;
 
 namespace AdventOfCode2017.Challenges;
 
@@ -14,10 +13,23 @@ public class Challenge23(IInputReader inputReader)
     {
         var program = await inputReader.ParseLinesAsync(23, ParseLine).ToListAsync();
 
-        var cpu = new Cpu<MemoryEx, Arguments>(new(), program);
-        cpu.AddInstruction("set", (args, mem) => { mem.Set(args.X, args.Y.Value(mem)); mem.Ip++; });
-        cpu.AddInstruction("sub", (args, mem) => { mem.Set(args.X, args.X.Value(mem) - args.Y.Value(mem)); mem.Ip++; });
-        cpu.AddInstruction("mul", (args, mem) => { mem.Set(args.X, args.X.Value(mem) * args.Y.Value(mem)); mem.Ip++; mem.MulCalled++; });
+        var cpu = new Cpu<MemoryEx, Arguments>(new MemoryEx(), program);
+        cpu.AddInstruction("set", (args, mem) =>
+        {
+            mem.Set(args.X, args.Y.Value(mem));
+            mem.Ip++;
+        });
+        cpu.AddInstruction("sub", (args, mem) =>
+        {
+            mem.Set(args.X, args.X.Value(mem) - args.Y.Value(mem));
+            mem.Ip++;
+        });
+        cpu.AddInstruction("mul", (args, mem) =>
+        {
+            mem.Set(args.X, args.X.Value(mem) * args.Y.Value(mem));
+            mem.Ip++;
+            mem.MulCalled++;
+        });
         cpu.AddInstruction("jnz", (args, mem) => mem.Ip += args.X.Value(mem) != 0 ? args.Y.Value(mem) : 1);
 
         cpu.RunTillHalted();
@@ -25,13 +37,13 @@ public class Challenge23(IInputReader inputReader)
     }
 
     [Part2]
-    public async Task<string> Part2Async()
+    public Task<string> Part2Async()
     {
-        var b = (57 * 100) + 100000;
+        var b = 57 * 100 + 100000;
         var c = b + 17000;
         var h = 0;
 
-        for(var i = b; i <= c; i+= 17)
+        for (var i = b; i <= c; i += 17)
         {
             var d = 2;
             while (i % d != 0)
@@ -41,7 +53,7 @@ public class Challenge23(IInputReader inputReader)
                 h++;
         }
 
-        return h.ToString();
+        return Task.FromResult(h.ToString());
     }
 
     private static Instruction<Arguments> ParseLine(string line) => line
@@ -52,7 +64,6 @@ public class Challenge23(IInputReader inputReader)
 
     private class MemoryEx : RegisterMemory<int>
     {
-
         public int MulCalled { get; set; }
-    };
+    }
 }

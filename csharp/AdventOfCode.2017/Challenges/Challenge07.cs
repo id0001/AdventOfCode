@@ -47,7 +47,7 @@ public class Challenge07(IInputReader inputReader)
                 parent.AddChild(nodes[child]);
         }
 
-        return new GeneralTree<Node>() { Root = nodes.Values.Single(x => x.Parent == null) };
+        return new GeneralTree<Node> {Root = nodes.Values.Single(x => x.Parent == null)};
     }
 
     private GeneralTreeNode<Node> FindFatNode(GeneralTreeNode<Node> root)

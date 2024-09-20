@@ -18,11 +18,11 @@ public class Challenge25(IInputReader inputReader)
         var cursor = 0;
         var tape = new Dictionary<int, int>();
 
-        for(var i = 0; i < StepsTillDiagnostic; i++)
+        for (var i = 0; i < StepsTillDiagnostic; i++)
         {
             var rule = rules[currentState];
             var v = tape.GetValueOrDefault(cursor, 0);
-            if(v == 0)
+            if (v == 0)
             {
                 tape[cursor] = rule.WriteZero;
                 cursor += rule.MoveZero == "left" ? -1 : 1;
@@ -30,7 +30,7 @@ public class Challenge25(IInputReader inputReader)
             }
             else
             {
-                tape[cursor] = rule.writeOne;
+                tape[cursor] = rule.WriteOne;
                 cursor += rule.MoveOne == "left" ? -1 : 1;
                 currentState = rule.NextOne;
             }
@@ -42,7 +42,7 @@ public class Challenge25(IInputReader inputReader)
     private Dictionary<string, Rule> ParseRules(string text)
     {
         var nl = Environment.NewLine;
-        return text.SplitBy($"{nl}{nl}").Skip(1).Select(text => text.SplitBy(nl).Into(lines =>
+        return text.SplitBy($"{nl}{nl}").Skip(1).Select(x => x.SplitBy(nl).Into(lines =>
         {
             var state = lines[0].Extract(@"In state (.):").First();
             var writeZero = lines[2].Extract(@"Write the value (\d).").First().As<int>();
@@ -57,5 +57,12 @@ public class Challenge25(IInputReader inputReader)
         })).ToDictionary(kv => kv.State);
     }
 
-    private record Rule(string State, int WriteZero, string MoveZero, string NextZero, int writeOne, string MoveOne, string NextOne);
+    private record Rule(
+        string State,
+        int WriteZero,
+        string MoveZero,
+        string NextZero,
+        int WriteOne,
+        string MoveOne,
+        string NextOne);
 }

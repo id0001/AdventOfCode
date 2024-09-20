@@ -1,7 +1,7 @@
+using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Text;
 
 namespace AdventOfCode2017.Challenges;
 
@@ -48,10 +48,13 @@ public class Challenge19(IInputReader inputReader)
         return (result.ToString(), steps);
     }
 
-    private static Point2 GetNewDirection(char[,] grid, Point2 dir, Point2 current, Rectangle bounds) => dir == Face.Up || dir == Face.Down
+    private static Point2 GetNewDirection(char[,] grid, Point2 dir, Point2 current, Rectangle bounds) =>
+        dir == Face.Up || dir == Face.Down
             ? ChooseDirection([current.Left, current.Right], '|', bounds, grid, current)
             : ChooseDirection([current.Up, current.Down], '-', bounds, grid, current);
 
-    private static Point2 ChooseDirection(IEnumerable<Point2> options, char oppositeDirectionalChar, Rectangle bounds, char[,] grid, Point2 current)
-        => options.Single(n => bounds.Contains(n) && !new[] { ' ', oppositeDirectionalChar }.Contains(grid[n.Y, n.X])) - current;
+    private static Point2 ChooseDirection(IEnumerable<Point2> options, char oppositeDirectionalChar, Rectangle bounds,
+        char[,] grid, Point2 current)
+        => options.Single(n => bounds.Contains(n) && !new[] {' ', oppositeDirectionalChar}.Contains(grid[n.Y, n.X])) -
+           current;
 }

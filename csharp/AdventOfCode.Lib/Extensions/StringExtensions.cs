@@ -1,6 +1,6 @@
-﻿using Microsoft;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using Microsoft;
 
 namespace AdventOfCode.Lib;
 
@@ -8,7 +8,7 @@ public static class StringExtensions
 {
     public static string[] SplitBy(this string source, string separator)
     {
-        return source.Split(new[] { separator },
+        return source.Split(new[] {separator},
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
     }
 
@@ -20,7 +20,7 @@ public static class StringExtensions
 
     public static string CaesarShift(this string source, int shift)
     {
-        return string.Join(string.Empty, source.ToLowerInvariant().Select(c => (char)('a' + (c - 'a' + shift) % 26)));
+        return string.Join(string.Empty, source.ToLowerInvariant().Select(c => (char) ('a' + (c - 'a' + shift) % 26)));
     }
 
     public static string[] Extract(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
@@ -39,10 +39,11 @@ public static class StringExtensions
         if (!match.Success)
             throw new InvalidOperationException("Regex was unsuccessful");
 
-        return match.Groups.Values.Skip(1).Select(g => (T)Convert.ChangeType(g.Value, typeof(T))).ToArray();
+        return match.Groups.Values.Skip(1).Select(g => (T) Convert.ChangeType(g.Value, typeof(T))).ToArray();
     }
 
-    public static (T1 First, T2 Second) Extract<T1, T2>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+    public static (T1 First, T2 Second) Extract<T1, T2>(this string source,
+        [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
         where T1 : IConvertible
         where T2 : IConvertible
     {
@@ -57,7 +58,8 @@ public static class StringExtensions
         return (items[0].As<T1>(), items[1].As<T2>());
     }
 
-    public static (T1 First, T2 Second, T3 Third) Extract<T1, T2, T3>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+    public static (T1 First, T2 Second, T3 Third) Extract<T1, T2, T3>(this string source,
+        [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
         where T1 : IConvertible
         where T2 : IConvertible
         where T3 : IConvertible
@@ -73,7 +75,8 @@ public static class StringExtensions
         return (items[0].As<T1>(), items[1].As<T2>(), items[2].As<T3>());
     }
 
-    public static (T1 First, T2 Second, T3 Third, T4 Fourth) Extract<T1, T2, T3, T4>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+    public static (T1 First, T2 Second, T3 Third, T4 Fourth) Extract<T1, T2, T3, T4>(this string source,
+        [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
         where T1 : IConvertible
         where T2 : IConvertible
         where T3 : IConvertible
@@ -90,7 +93,8 @@ public static class StringExtensions
         return (items[0].As<T1>(), items[1].As<T2>(), items[2].As<T3>(), items[3].As<T4>());
     }
 
-    public static (T1 First, T2 Second, T3 Third, T4 Fourth, T5 Fifth) Extract<T1, T2, T3, T4, T5>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+    public static (T1 First, T2 Second, T3 Third, T4 Fourth, T5 Fifth) Extract<T1, T2, T3, T4, T5>(this string source,
+        [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
         where T1 : IConvertible
         where T2 : IConvertible
         where T3 : IConvertible
@@ -133,7 +137,7 @@ public static class StringExtensions
             return false;
         }
 
-        matches = match.Groups.Values.Skip(1).Select(g => (T)Convert.ChangeType(g.Value, typeof(T))).ToArray();
+        matches = match.Groups.Values.Skip(1).Select(g => (T) Convert.ChangeType(g.Value, typeof(T))).ToArray();
         return true;
     }
 
@@ -149,7 +153,7 @@ public static class StringExtensions
     public static bool IsAnagramOf(this string source, string other) => source.Order().SequenceEqual(other.Order());
 
     /// <summary>
-    /// Calculate the amount of letters that are different in a sequence of equal length.
+    ///     Calculate the amount of letters that are different in a sequence of equal length.
     /// </summary>
     /// <param name="source"></param>
     /// <param name="other"></param>

@@ -1,7 +1,7 @@
+using System.Collections.Immutable;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Collections.Immutable;
 
 namespace AdventOfCode2017.Challenges;
 
@@ -41,11 +41,11 @@ public class Challenge24(IInputReader inputReader)
 
     private int Strongest(List<Bridge> all, int outputPins, ImmutableHashSet<Bridge> visited)
     {
-        var options = all.Where(b => !visited.Contains(b) && (b.A == outputPins || b.B == outputPins));
-        if (!options.Any())
+        var options = all.Where(b => !visited.Contains(b) && (b.A == outputPins || b.B == outputPins)).ToList();
+        if (options.Count == 0)
             return visited.Sum(b => b.Strength);
 
-        int max = int.MinValue;
+        var max = int.MinValue;
         foreach (var bridge in options)
         {
             var newVisited = visited.Add(bridge);
@@ -57,8 +57,8 @@ public class Challenge24(IInputReader inputReader)
 
     private (int, int) LongestAndStrongest(List<Bridge> all, int outputPins, ImmutableHashSet<Bridge> visited)
     {
-        var options = all.Where(b => !visited.Contains(b) && (b.A == outputPins || b.B == outputPins));
-        if (!options.Any())
+        var options = all.Where(b => !visited.Contains(b) && (b.A == outputPins || b.B == outputPins)).ToList();
+        if (options.Count == 0)
             return (visited.Sum(x => x.Strength), visited.Count);
 
         var max = int.MinValue;

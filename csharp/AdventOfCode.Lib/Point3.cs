@@ -5,6 +5,8 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighb
     public static readonly Point3 Zero = new();
     public static readonly Point3 One = new(1, 1, 1);
 
+    public int LengthSquared => DistanceSquared(Zero, this);
+
     IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) =>
         GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
 
@@ -17,8 +19,6 @@ public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighb
     };
 
     int IPoint<int>.Dimensions => 3;
-
-    public int LengthSquared => DistanceSquared(Zero, this);
 
     public bool Equals(IPoint<int>? other)
     {

@@ -21,12 +21,12 @@ public class Challenge03
         var tsi = 0;
         var sci = 0;
 
-        for(var i = 1; i < Input; i++)
+        for (var i = 1; i < Input; i++)
         {
             curr += Directions[di];
             tsi++;
 
-            if(tsi == totalSteps)
+            if (tsi == totalSteps)
             {
                 di = (di + 1).Mod(4);
                 tsi = 0;
@@ -55,7 +55,7 @@ public class Challenge03
         var tsi = 0;
         var sci = 0;
 
-        while(true)
+        while (true)
         {
             curr += Directions[di];
             cloud[curr] = curr.GetNeighbors(true).Select(n => cloud[n]).Sum();

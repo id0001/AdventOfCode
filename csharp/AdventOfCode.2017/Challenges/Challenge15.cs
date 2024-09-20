@@ -17,7 +17,7 @@ public class Challenge15
     {
         long valueA = StartA;
         long valueB = StartB;
-        int matches = 0;
+        var matches = 0;
         for (var i = 0; i < 40_000_000; i++)
         {
             if (IsMatch(valueA, valueB))
@@ -35,7 +35,7 @@ public class Challenge15
     {
         long valueA = StartA;
         long valueB = StartB;
-        int matches = 0;
+        var matches = 0;
         for (var i = 0; i < 5_000_000; i++)
         {
             if (IsMatch(valueA, valueB))
@@ -48,8 +48,12 @@ public class Challenge15
         return matches.ToString();
     }
 
-    private static long GetNextValueForA(long current, bool part2 = false) => GetNextValue(current, FactorA, part2 ? 4 : 1);
-    private static long GetNextValueForB(long current, bool part2 = false) => GetNextValue(current, FactorB, part2 ? 8 : 1);
+    private static long GetNextValueForA(long current, bool part2 = false) =>
+        GetNextValue(current, FactorA, part2 ? 4 : 1);
+
+    private static long GetNextValueForB(long current, bool part2 = false) =>
+        GetNextValue(current, FactorB, part2 ? 8 : 1);
+
     private static long GetNextValue(long current, long factor, long mustBeDivisibleBy)
     {
         current = (current * factor).Mod(Divisor);

@@ -23,7 +23,8 @@ public class Challenge01(IInputReader inputReader)
         .ToStringAsync();
 
     [Part2]
-    public async Task<string> Part2Async() => (await inputReader.ReadLineAsync(1).Select(c => c.AsInteger()).ToListAsync())
+    public async Task<string> Part2Async() =>
+        (await inputReader.ReadLineAsync(1).Select(c => c.AsInteger()).ToListAsync())
         .Into(list => list
             .Cycle()
             .Skip(list.Count / 2)

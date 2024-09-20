@@ -14,7 +14,6 @@ public class Challenge16(IInputReader inputReader)
     {
         int[] programs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
         await foreach (var move in inputReader.ReadLineAsync(16, ','))
-        {
             switch (move[0])
             {
                 case 's':
@@ -29,7 +28,6 @@ public class Challenge16(IInputReader inputReader)
                 default:
                     throw new NotImplementedException();
             }
-        }
 
         return Glue(programs);
     }
@@ -43,7 +41,6 @@ public class Challenge16(IInputReader inputReader)
         for (var i = 0; i < 1_000_000_000; i++)
         {
             foreach (var move in moves)
-            {
                 switch (move[0])
                 {
                     case 's':
@@ -58,10 +55,9 @@ public class Challenge16(IInputReader inputReader)
                     default:
                         throw new NotImplementedException();
                 }
-            }
 
             if (Glue(programs) == Dancers)
-                i += ((1_000_000_000 / (i + 1)) - 1) * (i + 1); // i + (cycles * length)
+                i += (1_000_000_000 / (i + 1) - 1) * (i + 1); // i + (cycles * length)
         }
 
         return Glue(programs);
@@ -69,8 +65,8 @@ public class Challenge16(IInputReader inputReader)
 
     private static void Spin(int[] programs, string move)
     {
-        int x = int.Parse(move);
-        for (int i = 0; i < programs.Length; i++)
+        var x = int.Parse(move);
+        for (var i = 0; i < programs.Length; i++)
             programs[i] = (programs[i] + x).Mod(programs.Length);
     }
 
@@ -86,5 +82,6 @@ public class Challenge16(IInputReader inputReader)
         (programs[pos[0]], programs[pos[1]]) = (programs[pos[1]], programs[pos[0]]);
     }
 
-    private static string Glue(int[] programs) => string.Join("", programs.Zip(Dancers.ToCharArray()).OrderBy(x => x.First).Select(x => x.Second));
+    private static string Glue(int[] programs) => string.Join("",
+        programs.Zip(Dancers.ToCharArray()).OrderBy(x => x.First).Select(x => x.Second));
 }

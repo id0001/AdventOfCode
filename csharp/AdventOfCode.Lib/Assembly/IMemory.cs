@@ -1,9 +1,8 @@
-﻿namespace AdventOfCode.Lib.Assembly
-{
-    public interface IMemory
-    {
-        int Ip { get; set; }
+﻿namespace AdventOfCode.Lib.Assembly;
 
-        void Clear();
-    }
+public interface IMemory
+{
+    int Ip { get; set; }
+
+    void Clear();
 }

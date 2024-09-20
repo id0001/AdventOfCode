@@ -3,6 +3,7 @@ using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib.Graphs;
 using AdventOfCode.Lib.Math;
+// ReSharper disable UsageOfDefaultStructEquality
 
 namespace AdventOfCode2022.Challenges;
 

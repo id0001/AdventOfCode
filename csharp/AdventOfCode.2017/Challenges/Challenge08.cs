@@ -12,10 +12,10 @@ public class Challenge08(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var program = await inputReader.ParseLinesAsync(8, ParseLine).ToArrayAsync();
-        var cpu = new Cpu<RegisterMemory<int>, Arguments>(new(), program);
+        var cpu = new Cpu<RegisterMemory<int>, Arguments>(new RegisterMemory<int>(), program);
 
         var ignore = 0;
-        cpu.AddInstruction("inc", (args, mem) => Inc(args,mem,ref ignore));
+        cpu.AddInstruction("inc", (args, mem) => Inc(args, mem, ref ignore));
         cpu.AddInstruction("dec", (args, mem) => Dec(args, mem, ref ignore));
 
         cpu.RunTillHalted();
@@ -26,7 +26,7 @@ public class Challenge08(IInputReader inputReader)
     public async Task<string> Part2Async()
     {
         var program = await inputReader.ParseLinesAsync(8, ParseLine).ToArrayAsync();
-        var cpu = new Cpu<RegisterMemory<int>, Arguments>(new(), program);
+        var cpu = new Cpu<RegisterMemory<int>, Arguments>(new RegisterMemory<int>(), program);
 
         var maxValue = 0;
         cpu.AddInstruction("inc", (args, mem) => Inc(args, mem, ref maxValue));
@@ -82,7 +82,7 @@ public class Challenge08(IInputReader inputReader)
         var compare = extract[4];
         var conditionB = extract[5].As<int>();
 
-        return new Instruction<Arguments>(op, new(register, mod, conditionA, compare, conditionB));
+        return new Instruction<Arguments>(op, new Arguments(register, mod, conditionA, compare, conditionB));
     }
 
     private record Arguments(string Register, int Mod, string CondtionA, string Compare, int ConditionB);

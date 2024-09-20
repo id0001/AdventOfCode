@@ -17,7 +17,7 @@ public class Challenge17
         var current = list.First!;
         for (var i = 0; i < 2017; i++)
         {
-            int steps = Input % list.Count;
+            var steps = Input % list.Count;
             for (var j = 0; j < steps; j++)
                 current = current.NextOrFirst();
 

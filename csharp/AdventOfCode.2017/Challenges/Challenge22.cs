@@ -14,7 +14,7 @@ public class Challenge22(IInputReader inputReader)
         var cloud = CreateMap(await inputReader.ReadGridAsync(22));
         var current = new Pose2(Point2.Zero, Face.Up);
 
-        int infected = 0;
+        var infected = 0;
         for (var i = 0; i < 10000; i++)
         {
             current = cloud[current.Position] == 2 ? current.TurnRight() : current.TurnLeft();
@@ -24,7 +24,9 @@ public class Challenge22(IInputReader inputReader)
                 cloud[current.Position] = 2;
             }
             else
+            {
                 cloud[current.Position] = 0;
+            }
 
             current = current.Step();
         }
@@ -38,7 +40,7 @@ public class Challenge22(IInputReader inputReader)
         var cloud = CreateMap(await inputReader.ReadGridAsync(22));
         var current = new Pose2(Point2.Zero, Face.Up);
 
-        int infected = 0;
+        var infected = 0;
         for (var i = 0; i < 10000000; i++)
         {
             current = cloud[current.Position] switch
@@ -67,13 +69,9 @@ public class Challenge22(IInputReader inputReader)
 
         var cloud = new SparseSpatialMap<Point2, int, int>();
         for (var y = 0; y < h; y++)
-        {
-            for (var x = 0; x < w; x++)
-            {
-                if (map[y, x] == '#')
-                    cloud.Set(new Point2(x - (w / 2), y - (h / 2)), 2);
-            }
-        }
+        for (var x = 0; x < w; x++)
+            if (map[y, x] == '#')
+                cloud.Set(new Point2(x - w / 2, y - h / 2), 2);
 
         return cloud;
     }

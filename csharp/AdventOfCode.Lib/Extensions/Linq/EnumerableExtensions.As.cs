@@ -1,36 +1,36 @@
-﻿using Microsoft;
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
+using Microsoft;
+// ReSharper disable PossibleMultipleEnumeration
 
-namespace AdventOfCode.Lib
+namespace AdventOfCode.Lib;
+
+public static partial class EnumerableExtensions
 {
-    public static partial class EnumerableExtensions
+    public static IList<T> As<T>(this IList source)
+        where T : IConvertible
     {
-        public static IList<T> As<T>(this IList source)
+        Requires.NotNull(source, nameof(source));
+
+        return source.Cast<IConvertible>().Select(x => x.As<T>()).ToList();
+    }
+
+    public static IEnumerable<T> As<T>(this IEnumerable<T> source)
         where T : IConvertible
-        {
-            Requires.NotNull(source, nameof(source));
+    {
+        Requires.NotNull(source, nameof(source));
 
-            return source.Cast<IConvertible>().Select(x => x.As<T>()).ToList();
-        }
+        return source.Cast<IConvertible>().Select(x => x.As<T>());
+    }
 
-        public static IEnumerable<T> As<T>(this IEnumerable<T> source)
-        where T : IConvertible
-        {
-            Requires.NotNull(source, nameof(source));
+    public static string AsString(this IEnumerable<char> source)
+    {
+        Requires.NotNull(source, nameof(source));
 
-            return source.Cast<IConvertible>().Select(x => x.As<T>());
-        }
+        var sb = new StringBuilder();
+        foreach (var c in source)
+            sb.Append(c);
 
-        public static string AsString(this IEnumerable<char> source)
-        {
-            Requires.NotNull(source, nameof(source));
-
-            var sb = new StringBuilder();
-            foreach(var c in source)
-                sb.Append(c);
-
-            return sb.ToString();
-        }
+        return sb.ToString();
     }
 }

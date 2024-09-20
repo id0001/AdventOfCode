@@ -1,4 +1,5 @@
 ﻿// ReSharper disable All
+
 namespace AdventOfCode.Lib
 {
     public static partial class EnumerableExtensions

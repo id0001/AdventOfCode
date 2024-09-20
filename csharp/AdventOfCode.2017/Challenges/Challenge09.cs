@@ -35,8 +35,6 @@ public class Challenge09(IInputReader inputReader)
                 case '!' when !shouldIgnore:
                     shouldIgnore = true;
                     continue;
-                default:
-                    break;
             }
 
             shouldIgnore = false;

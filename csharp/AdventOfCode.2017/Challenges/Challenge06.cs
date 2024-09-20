@@ -13,15 +13,15 @@ public class Challenge06(IInputReader inputReader)
     {
         var banks = (await inputReader.ReadAllTextAsync(6)).SplitBy("\t").As<int>().ToArray();
 
-        var visited = new HashSet<string> { string.Join(",", banks) };
-        int cycle = 0;
+        var visited = new HashSet<string> {string.Join(",", banks)};
+        var cycle = 0;
 
         while (true)
         {
             var (i, blocks) = Enumerable.Range(0, 16).Zip(banks).MaxBy(pair => pair.Second);
             banks[i] = 0;
 
-            while(blocks > 0)
+            while (blocks > 0)
             {
                 banks[(i + 1).Mod(16)]++;
                 blocks--;
@@ -45,10 +45,10 @@ public class Challenge06(IInputReader inputReader)
 
         var visited = new OrderedDictionary<string, int>
         {
-            { string.Join(",", banks), 0 }
+            {string.Join(",", banks), 0}
         };
 
-        int cycle = 0;
+        var cycle = 0;
 
         while (true)
         {

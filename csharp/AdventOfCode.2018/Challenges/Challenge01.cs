@@ -15,13 +15,11 @@ public class Challenge01(IInputReader inputReader)
     {
         var visited = new HashSet<int>([0]);
         var f = 0;
-        await foreach(var change in inputReader.ReadLinesAsync<int>(1).Cycle())
+        await foreach (var change in inputReader.ReadLinesAsync<int>(1).Cycle())
         {
             f += change;
-            if (visited.Contains(f))
+            if (!visited.Add(f))
                 return f.ToString();
-
-            visited.Add(f);
         }
 
         return "err";

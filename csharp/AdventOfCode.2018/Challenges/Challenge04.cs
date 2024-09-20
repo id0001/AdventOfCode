@@ -1,8 +1,7 @@
+using System.Text.RegularExpressions;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -14,7 +13,8 @@ public class Challenge04(IInputReader inputReader)
     {
         var logs = ParseLogs(await inputReader.ParseLinesAsync(4, PreParse).OrderBy(log => log.Time).ToListAsync());
         var guard = logs.OrderByDescending(x => x.Value.Sum(a => a.TotalMinutes)).First();
-        var minute = ExtractAsleepCountPerMinute(guard.Value).Select((v, i) => new { Minute = i, Value = v }).OrderByDescending(x => x.Value).First().Minute;
+        var minute = ExtractAsleepCountPerMinute(guard.Value).Select((v, i) => new {Minute = i, Value = v})
+            .OrderByDescending(x => x.Value).First().Minute;
 
         return (guard.Key * minute).ToString();
     }
@@ -24,12 +24,13 @@ public class Challenge04(IInputReader inputReader)
     {
         var logs = ParseLogs(await inputReader.ParseLinesAsync(4, PreParse).OrderBy(log => log.Time).ToListAsync());
         var res = logs.Select(kv =>
-        {
-            var asleep = ExtractAsleepCountPerMinute(kv.Value).Select((v, i) => new { Minute = i, Value = v }).OrderByDescending(x => x.Value).First();
-            return (Id: kv.Key, asleep.Minute, asleep.Value);
-        })
-        .OrderByDescending(x => x.Value)
-        .First();
+            {
+                var asleep = ExtractAsleepCountPerMinute(kv.Value).Select((v, i) => new {Minute = i, Value = v})
+                    .OrderByDescending(x => x.Value).First();
+                return (Id: kv.Key, asleep.Minute, asleep.Value);
+            })
+            .OrderByDescending(x => x.Value)
+            .First();
 
         return (res.Id * res.Minute).ToString();
     }
@@ -39,20 +40,20 @@ public class Challenge04(IInputReader inputReader)
         .Select(minute => list.Count(asleep => asleep.From.Minute <= minute && asleep.To.Minute > minute))
         .ToArray();
 
-    private static (DateTime Time, string Action) PreParse(string line) => line.Extract<DateTime, string>(@"\[(.+)] (.+)");
+    private static (DateTime Time, string Action) PreParse(string line) =>
+        line.Extract<DateTime, string>(@"\[(.+)] (.+)");
 
     private static IDictionary<int, List<Asleep>> ParseLogs(IEnumerable<(DateTime Time, string Action)> logs)
     {
-        string pattern = @"Guard #(\d+) begins shift";
+        var pattern = @"Guard #(\d+) begins shift";
 
         var dict = new Dictionary<int, List<Asleep>>();
-        foreach (var chunk in logs.ChunkBy(log => Regex.IsMatch(log.Action, pattern)))
+        foreach (var chunk in logs.ChunkBy(log => Regex.IsMatch(log.Action, pattern)).Select(c => c.ToArray()))
         {
             var id = chunk.First().Action.Extract<int>(pattern)[0];
-            var asleep = chunk.Skip(1).Chunk(2).Select(parts => new Asleep(parts.First().Time, parts.Second().Time)).ToList();
-            if (!dict.ContainsKey(id))
-                dict.Add(id, asleep);
-            else
+            var asleep = chunk.Skip(1).Chunk(2).Select(parts => new Asleep(parts.First().Time, parts.Second().Time))
+                .ToList();
+            if (!dict.TryAdd(id, asleep))
                 dict[id].AddRange(asleep);
         }
 
@@ -61,6 +62,6 @@ public class Challenge04(IInputReader inputReader)
 
     private record Asleep(DateTime From, DateTime To)
     {
-        public double TotalMinutes = (To - From).TotalMinutes;
+        public readonly double TotalMinutes = (To - From).TotalMinutes;
     }
 }
