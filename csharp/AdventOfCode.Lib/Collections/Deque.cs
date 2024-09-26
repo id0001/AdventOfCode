@@ -5,11 +5,9 @@ using Microsoft;
 
 namespace AdventOfCode.Lib.Collections;
 
-[DebuggerTypeProxy(typeof(Deque<>.DequeDebugView))]
 [DebuggerDisplay("Count = {Count}")]
 public class Deque<T> : ICollection, IReadOnlyCollection<T>
 {
-    private const int MinimumGrow = 4;
     private const int GrowFactor = 2;
 
     private T?[] _array;
@@ -83,14 +81,30 @@ public class Deque<T> : ICollection, IReadOnlyCollection<T>
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
 
+    public void Rotate(int amount)
+    {
+        if (amount == 0)
+            return;
+
+        if (amount > 0)
+        {
+            for (var i = 0; i < amount; i++)
+                PushFront(PopBack());
+        }
+        else
+        {
+            for (var i = 0; i > amount; i--)
+                PushBack(PopFront());
+        }
+    }
+
     public void PushFront(T item)
     {
         var insertIndex = IsEmpty ? _head : _head - 1;
 
         if (insertIndex < 0)
         {
-            var newCapacity = (int) System.Math.Max(_array.LongLength * GrowFactor, _array.Length + MinimumGrow);
-            SetCapacity(newCapacity);
+            Rebalance();
             insertIndex = IsEmpty ? _head : _head - 1;
         }
 
@@ -106,8 +120,7 @@ public class Deque<T> : ICollection, IReadOnlyCollection<T>
 
         if (insertIndex == _array.Length)
         {
-            var newCapacity = (int) System.Math.Max(_array.LongLength * GrowFactor, _array.Length + MinimumGrow);
-            SetCapacity(newCapacity);
+            Rebalance();
             insertIndex = IsEmpty ? _tail : _tail + 1;
         }
 
@@ -214,15 +227,13 @@ public class Deque<T> : ICollection, IReadOnlyCollection<T>
         Array.Copy(_array, _head, array, index, Count);
     }
 
-    private void SetCapacity(int newCapacity)
+    private void Rebalance()
     {
+        var newCapacity = System.Math.Max(8, Count * GrowFactor);
         var oldArray = _array;
         _array = new T[newCapacity];
 
-        var ca = (int) ((_tail + _head) / 2f);
-        var cb = (int) (newCapacity / 2f);
-
-        var newHead = cb - ca;
+        var newHead = (_array.Length / 2) - (Count / 2);
         var newTail = IsEmpty ? newHead : newHead + Count - 1;
 
         Array.Copy(oldArray, _head, _array, newHead, Count);
