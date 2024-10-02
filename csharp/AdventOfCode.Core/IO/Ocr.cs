@@ -23,49 +23,82 @@ public static class OcrExtensions
 
 public class Ocr
 {
+    private const string LargeLetterSequence = "ABCEFGHJKLNPRXZ";
+    private const string LargeAlphabetResourceName = "AdventOfCode.Core.Resources.alphabet_l.txt";
+
+    private const string SmallLetterSequence = "ABCEFGHIJKLOPRSUYZ";
     private const string SmallAlphabetResourceName = "AdventOfCode.Core.Resources.alphabet_s.txt";
+
+    private static string[] TrimLines(string input)
+    {
+        var vtrimmed = input
+        .Split(Environment.NewLine)
+        .Where(line => !line.All(c => c == '.'))
+        .ToArray();
+
+        var left = Enumerable.Range(0, vtrimmed[0].Length).First(x => !vtrimmed.All(line => line[x] == '.'));
+        var right = Enumerable.Range(0, vtrimmed[0].Length).Last(x => !vtrimmed.All(line => line[x] == '.')) + 1;
+
+        return vtrimmed.Select(line => line[left..(right - left)]).ToArray();
+    }
 
     public string Parse(string input)
     {
-        var nl = Environment.NewLine;
-        var letters = GetLetters();
+        if (string.IsNullOrEmpty(input))
+            throw new ArgumentNullException(nameof(input));
 
-        var lines = input.Replace('.', ' ').Split(nl, StringSplitOptions.RemoveEmptyEntries).Select(l => l.TrimEnd())
-            .ToArray();
-        var maxLength = lines.Max(l => l.Length);
-        lines = lines.Select(l => l.PadRight(maxLength)).ToArray();
+        string[] lines = TrimLines(input);
+        if (!lines.All(x => x.Length == lines[0].Length))
+            throw new ArgumentException("All lines must be the same length", nameof(input));
 
-        var sb = new StringBuilder();
-        for (var i = 0; i <= lines[0].Length / 5; i++)
+        return new string(ExtractLetters(GetAlphabetLookup(), lines).ToArray());
+    }
+
+    private static Dictionary<string, char> GetAlphabetLookup() => GetSmallLetters().Concat(GetLargeLetters()).ToDictionary(kv => kv.Pattern, kv => kv.Letter);
+
+    private static IEnumerable<(char Letter, string Pattern)> GetSmallLetters() => ExtractAlphabetFromResource(SmallLetterSequence, SmallAlphabetResourceName);
+
+    private static IEnumerable<(char Letter, string Pattern)> GetLargeLetters() => ExtractAlphabetFromResource(LargeLetterSequence, LargeAlphabetResourceName);
+
+    private static IEnumerable<(char Letter, string Pattern)> ExtractAlphabetFromResource(string letterSequence, string resourceName)
+    {
+        var lines = ResourceHelper.Read(resourceName).Split(Environment.NewLine);
+        int[] xstart = [0, .. Enumerable.Range(0, lines[0].Length).Where(x => lines.All(line => line[x] == '.')).Select(x => x + 1)];
+
+        for (var i = 0; i < xstart.Length; i++)
         {
-            var from = i * 5;
-            var s = string.Join(nl, lines.Select(l => l[from..(from + 4)]));
-            if (letters.TryGetValue(s, out var letter))
-                sb.Append(letter);
+            if (i == xstart.Length - 1)
+                yield return (letterSequence[i], Flatten(lines.Select(line => line[xstart[i]..])));
+            else
+                yield return (letterSequence[i], Flatten(lines.Select(line => line[xstart[i]..(xstart[i + 1] - 1)])));
+        }
+    }
+
+    private IEnumerable<char> ExtractLetters(Dictionary<string, char> lookup, string[] lines)
+    {
+        string[] currentLetter = new string[lines.Length];
+
+        for (var x = 0; x < lines[0].Length; x++)
+        {
+            var scanLine = GetVerticalLine(lines, x);
+            if (scanLine.All(c => c == '.'))
+                continue; // Ignore empty space
+
+            for (var y = 0; y < scanLine.Length; y++)
+                currentLetter[y] += scanLine[y];
+
+            if (lookup.TryGetValue(Flatten(currentLetter), out char letter))
+            {
+                yield return letter;
+                currentLetter = new string[lines.Length];
+            }
         }
 
-        return sb.ToString();
+        if (lookup.TryGetValue(Flatten(currentLetter), out char lastLetter))
+            yield return lastLetter;
     }
 
-    private Dictionary<string, char> GetLetters()
-    {
-        var nl = Environment.NewLine;
-        var alphabet = ResourceHelper.Read(SmallAlphabetResourceName).Split($"{nl}{nl}");
+    private static string GetVerticalLine(string[] lines, int x) => new string(lines.Select(line => line[x]).ToArray());
 
-        var letters = new Dictionary<string, char>();
-        foreach (var part in alphabet)
-        {
-            var c = part[0];
-            var r = string.Join(nl, Chunk(part[(nl.Length + 1)..].Replace(nl, string.Empty)));
-            letters.Add(r, c);
-        }
-
-        return letters;
-    }
-
-    private IEnumerable<string> Chunk(string line)
-    {
-        for (var i = 0; i < line.Length - 1; i += 5)
-            yield return line[i..(i + 4)];
-    }
+    private static string Flatten(IEnumerable<string> lines) => lines.Aggregate(string.Concat);
 }
