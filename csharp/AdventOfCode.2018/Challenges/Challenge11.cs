@@ -1,5 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Lib;
+using AdventOfCode.Lib.Factories;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -12,7 +13,7 @@ public class Challenge11
     public string Part1()
     {
         var sat = new SummedAreaTable<int>(PrecalculatePowerlevels());
-        var largest = Enumerable.Range(0, 297).SelectMany(y => Enumerable.Range(0, 297).Select(x => new Point2(x, y))).MaxBy(p => sat.SumQuery(p.X, p.Y, 3, 3));
+        var largest = Array2d.Range(297, 297).MaxBy(p => sat.SumQuery(p.X, p.Y, 3, 3));
         return $"{largest.X},{largest.Y}";
     }
 
@@ -20,9 +21,7 @@ public class Challenge11
     public string Part2()
     {
         var sat = new SummedAreaTable<int>(PrecalculatePowerlevels());
-        var largest = Enumerable.Range(1, 301)
-            .SelectMany(size => Enumerable.Range(0, 301 - size).SelectMany(y => Enumerable.Range(0, 301 - size).Select(x => new Point3(x, y, size))))
-            .MaxBy(key => sat.SumQuery(key.X, key.Y, key.Z, key.Z));
+        var largest = Enumerable.Range(1, 301).SelectMany(size => Array2d.Range(301 - size, 301 - size).Select(p => new Point3(p.X, p.Y, size))).MaxBy(p => sat.SumQuery(p.X, p.Y, p.Z, p.Z));
 
         return $"{largest.X},{largest.Y},{largest.Z}";
     }
@@ -31,17 +30,5 @@ public class Challenge11
 
     private static int GetRackId(int x) => x + 10;
 
-    private static int[,] PrecalculatePowerlevels()
-    {
-        var table = new int[300, 300];
-        for (var y = 0; y < 300; y++)
-        {
-            for (var x = 0; x < 300; x++)
-            {
-                table[y, x] = GetPowerlevel(x, y);
-            }
-        }
-
-        return table;
-    }
+    private static int[,] PrecalculatePowerlevels() => Array2d.Create(300, 300, p => GetPowerlevel(p.X, p.Y));
 }
