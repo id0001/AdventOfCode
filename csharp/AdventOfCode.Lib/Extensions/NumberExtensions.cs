@@ -28,4 +28,29 @@ public static class NumberExtensions
         var divisor2 = System.Math.Pow(10d, offsetFromRight + 1);
         return TNumber.CreateChecked(System.Math.Truncate(value / divisor) - (10d * System.Math.Truncate(value / divisor2)));
     }
+
+    public static IEnumerable<TNumber> EnumerateDigits<TNumber>(this TNumber source)
+        where TNumber :
+        IBinaryInteger<TNumber>,
+        IComparisonOperators<TNumber, TNumber, bool>,
+        IDivisionOperators<TNumber, TNumber, TNumber>,
+        IModulusOperators<TNumber, TNumber, TNumber>
+    {
+        var numberBase = TNumber.CreateChecked(10);
+        return EnumerateDigits(source, numberBase);
+    }
+
+    public static IEnumerable<TNumber> EnumerateDigits<TNumber>(TNumber number, TNumber numberBase)
+        where TNumber : 
+        IBinaryInteger<TNumber>, 
+        IComparisonOperators<TNumber, TNumber, bool>, 
+        IDivisionOperators<TNumber, TNumber, TNumber>, 
+        IModulusOperators<TNumber, TNumber, TNumber>
+    {
+        if (number < numberBase)
+            yield return number;
+        else
+            foreach (var n in EnumerateDigits(number / numberBase, numberBase).Concat(EnumerateDigits(number % numberBase, numberBase)))
+                yield return n;
+    }
 }

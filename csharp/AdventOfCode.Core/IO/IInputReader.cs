@@ -4,6 +4,8 @@ public interface IInputReader
 {
     Task<string> ReadAllTextAsync(int challenge);
 
+    Task<T> ReadNumberAsync<T>(int challenge) where T : IParsable<T>;
+
     IAsyncEnumerable<char> ReadLineAsync(int challenge);
 
     Task<char[,]> ReadGridAsync(int challenge);
