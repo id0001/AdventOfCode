@@ -3,6 +3,10 @@
 public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, Func<T, int> heuristic)
     where T : notnull
 {
+    public AStar(Func<T, IEnumerable<T>> adjacent) : this(adjacent, (_, _) => 1, _ => 0)
+    {
+    }
+
     public AStar(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight) : this(adjacent, weight, _ => 0)
     {
     }
@@ -16,7 +20,7 @@ public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, 
     {
         var queue = new PriorityQueue<T, int>();
         var cameFrom = new Dictionary<T, T>();
-        var costSoFar = new Dictionary<T, int> {{start, 0}};
+        var costSoFar = new Dictionary<T, int> { { start, 0 } };
 
         queue.Enqueue(start, 0);
 
@@ -49,13 +53,41 @@ public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, 
         return false;
     }
 
+    public Dictionary<T, int> CalculateDistances(T start)
+    {
+        var queue = new PriorityQueue<T, int>();
+        var cameFrom = new Dictionary<T, T>();
+        var costSoFar = new Dictionary<T, int> { { start, 0 } };
+
+        queue.Enqueue(start, 0);
+
+        while (queue.Count > 0)
+        {
+            var currentNode = queue.Dequeue();
+
+            foreach (var nextNode in adjacent(currentNode))
+            {
+                var newCost = costSoFar[currentNode] + weight(currentNode, nextNode);
+
+                if (!costSoFar.ContainsKey(nextNode) || newCost < costSoFar[nextNode])
+                {
+                    costSoFar[nextNode] = newCost;
+                    queue.Enqueue(nextNode, newCost + heuristic(nextNode));
+                    cameFrom[nextNode] = currentNode;
+                }
+            }
+        }
+
+        return costSoFar;
+    }
+
     public bool All(
         T start,
         Func<T, bool> shouldContinue
     )
     {
         var queue = new PriorityQueue<T, int>();
-        var costSoFar = new Dictionary<T, int> {{start, 0}};
+        var costSoFar = new Dictionary<T, int> { { start, 0 } };
 
         queue.Enqueue(start, 0);
 

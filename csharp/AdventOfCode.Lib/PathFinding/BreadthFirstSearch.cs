@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Lib.PathFinding;
+﻿using System.IO;
+
+namespace AdventOfCode.Lib.PathFinding;
 
 public class BreadthFirstSearch<T>(Func<T, IEnumerable<T>> getAdjacent)
     where T : notnull
@@ -57,6 +59,31 @@ public class BreadthFirstSearch<T>(Func<T, IEnumerable<T>> getAdjacent)
                 queue.Enqueue(adjacent);
             }
         }
+    }
+
+    public Dictionary<T, int> CalculateDistances(T start)
+    {
+        var queue = new Queue<T>();
+        var visited = new Dictionary<T, int> { { start, 0 } };
+
+        queue.Enqueue(start);
+
+        while (queue.Count > 0)
+        {
+            var currentNode = queue.Dequeue();
+            var distance = visited[currentNode];
+
+            foreach (var adjacent in getAdjacent(currentNode))
+            {
+                if (visited.ContainsKey(adjacent))
+                    continue;
+
+                visited.Add(adjacent, distance + 1);
+                queue.Enqueue(adjacent);
+            }
+        }
+
+        return visited;
     }
 
     private static bool TryPath(T start, Func<T, IEnumerable<T>> getAdjacent, Func<T, bool> isFinished,
