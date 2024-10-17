@@ -2,7 +2,8 @@
 
 namespace AdventOfCode.Lib.Assembly;
 
-public record RegisterOrValueArgument<TValue> where TValue : IParsable<TValue>
+public record RegisterOrValueArgument<TValue>
+    where TValue : IParsable<TValue>
 {
     private readonly string _registerOrValue;
     private readonly TValue? _value;
@@ -15,7 +16,7 @@ public record RegisterOrValueArgument<TValue> where TValue : IParsable<TValue>
 
     public bool IsValue { get; }
 
-    public TValue Value(RegisterMemory<TValue> registers) => IsValue ? _value! : registers.Get(_registerOrValue);
+    public TValue Value(RegisterMemory<string, TValue> registers) => IsValue ? _value! : registers.Get(_registerOrValue);
 
     public static implicit operator RegisterOrValueArgument<TValue>(string value) => new(value);
 

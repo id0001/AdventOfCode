@@ -1,13 +1,14 @@
 ﻿namespace AdventOfCode.Lib.Assembly;
 
-public class Cpu<TMemory, TArguments>(TMemory memory, IList<Instruction<TArguments>> program)
+public class Cpu<TMemory, TOpCode, TArguments>(TMemory memory, IList<Instruction<TOpCode, TArguments>> program)
     where TMemory : IMemory
+    where TOpCode : notnull
 {
-    private readonly Dictionary<string, Action<TArguments, TMemory>> _instructionSet = new();
+    private readonly Dictionary<TOpCode, Action<TArguments, TMemory>> _instructionSet = new();
 
     public TMemory Memory { get; } = memory;
 
-    public IList<Instruction<TArguments>> Program { get; } = program;
+    public IList<Instruction<TOpCode, TArguments>> Program { get; } = program;
 
     public bool IsHalted => Memory.Ip < 0 || Memory.Ip >= Program.Count;
 
@@ -25,7 +26,7 @@ public class Cpu<TMemory, TArguments>(TMemory memory, IList<Instruction<TArgumen
         return true;
     }
 
-    public void AddInstruction(string opcode, Action<TArguments, TMemory> action) =>
+    public void AddInstruction(TOpCode opcode, Action<TArguments, TMemory> action) =>
         _instructionSet.Add(opcode, action);
 
     public void RunTillHalted()

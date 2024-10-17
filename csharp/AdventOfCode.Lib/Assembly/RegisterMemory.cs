@@ -1,11 +1,12 @@
 ﻿namespace AdventOfCode.Lib.Assembly;
 
-public class RegisterMemory<TRegister> : IMemory
-    where TRegister : IParsable<TRegister>
+public class RegisterMemory<TKey, TValue> : IMemory
+    where TKey : notnull
+    where TValue : IParsable<TValue>
 {
-    private readonly Dictionary<string, TRegister> _registers = new();
+    private readonly Dictionary<TKey, TValue> _registers = new();
 
-    public IReadOnlyDictionary<string, TRegister> Registers => _registers;
+    public IReadOnlyDictionary<TKey, TValue> Registers => _registers;
 
     public int Ip { get; set; }
 
@@ -15,8 +16,8 @@ public class RegisterMemory<TRegister> : IMemory
         _registers.Clear();
     }
 
-    public TRegister Get(string register, TRegister defaultValue = default!) =>
+    public TValue Get(TKey register, TValue defaultValue = default!) =>
         _registers.GetValueOrDefault(register, defaultValue);
 
-    public void Set(string register, TRegister value) => _registers[register] = value;
+    public void Set(TKey register, TValue value) => _registers[register] = value;
 }
