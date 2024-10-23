@@ -1,4 +1,5 @@
 ﻿using Microsoft;
+using System.Text;
 
 namespace AdventOfCode.Lib;
 
@@ -64,6 +65,24 @@ public static class Array2dExtensions
 
             Console.WriteLine();
         }
+    }
+
+    public static async Task PrintToFileAsync<T>(this T[,] source, string path, Func<Point2, T, char> selector)
+    {
+        var sb = new StringBuilder();
+        for (var y = 0; y < source.GetLength(0); y++)
+        {
+            for (var x = 0; x < source.GetLength(1); x++)
+            {
+                var p = new Point2(x, y);
+                var c = selector(p, source[y, x]);
+                sb.Append(c);
+            }
+
+            sb.AppendLine();
+        }
+
+        await File.WriteAllTextAsync(path, sb.ToString());
     }
 
     public static int Count<T>(this T[,] source, Func<T, bool> predicate)

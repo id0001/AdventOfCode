@@ -45,4 +45,6 @@ public readonly record struct Rectangle(int X, int Y, int Width, int Height)
 
         return new Rectangle(leftSide, topSide, rightSide - leftSide, bottomSide - topSide);
     }
+
+    public Rectangle Expand(int amount) => new(X - amount, Y - amount, Width + amount, Height + amount);
 }
