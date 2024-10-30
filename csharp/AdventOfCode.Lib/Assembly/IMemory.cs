@@ -2,7 +2,7 @@
 
 public interface IMemory
 {
-    int Ip { get; set; }
+    int Ip { get; }
 
     void Clear();
 }

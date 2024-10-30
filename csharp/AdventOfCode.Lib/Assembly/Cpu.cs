@@ -34,4 +34,10 @@ public class Cpu<TMemory, TOpCode, TArguments>(TMemory memory, IList<Instruction
         while (!IsHalted)
             Next();
     }
+
+    public void RunCycles(int cycles)
+    {
+        for (var i = 0; i < cycles && !IsHalted; i++)
+            Next();
+    }
 }
