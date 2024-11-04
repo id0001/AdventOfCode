@@ -45,7 +45,7 @@ public class Challenge20(IInputReader inputReader)
             yield return map[current.Location.Left]!;
     }
 
-    private SparseSpatialMap<Point2, int, Room> MapRooms(string input)
+    private static SparseSpatialMap<Point2, int, Room> MapRooms(string input)
     {
         SparseSpatialMap<Point2, int, Room> map = new();
         Stack<Room> stack = new();
@@ -95,7 +95,7 @@ public class Challenge20(IInputReader inputReader)
         return map;
     }
 
-    private void MoveBetween(Room from, Room to)
+    private static void MoveBetween(Room from, Room to)
     {
         var dir = to.Location - from.Location;
 

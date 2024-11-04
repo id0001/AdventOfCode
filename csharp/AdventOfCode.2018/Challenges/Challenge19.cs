@@ -44,13 +44,11 @@ public class Challenge19(IInputReader inputReader)
         foreach (var operation in Operations)
         {
             var opcode = operation.Method.Name.ToLower();
-            cpu.AddInstruction(opcode, (a, m) => WrapInstruction(opcode, operation, a, m));
+            cpu.AddInstruction(opcode, (a, m) => WrapInstruction(operation, a, m));
         }
-
-        cpu.AddInstruction("override", (a, m) => WrapInstruction("override", Override, a, m));
     }
 
-    private static void WrapInstruction(string opcode, Action<Argument, Memory> action, Argument args, Memory memory)
+    private static void WrapInstruction(Action<Argument, Memory> action, Argument args, Memory memory)
     {
         memory.Set(memory.IpRegister, memory.Ip);
         action(args, memory);
@@ -67,12 +65,6 @@ public class Challenge19(IInputReader inputReader)
                 .Into(parts => new Instruction<string, Argument>(parts.First, new Argument(parts.Second, parts.Third, parts.Fourth)))
                 )
             .ToList();
-    }
-
-    private static void Override(Argument args, Memory memory)
-    {
-        memory.Set(5, 10551319);
-        memory.Set(1, 10551329);
     }
 
     private static void Addr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) + memory.Get(args.B));
