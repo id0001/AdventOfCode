@@ -55,54 +55,57 @@ public class Challenge23(IInputReader inputReader)
 
     private static Cube ToNearestPowerOf2(Cube cube)
     {
-        var largest = new[] { cube.Width, cube.Height, cube.Depth }.Max();
+        var largest = new[] {cube.Width, cube.Height, cube.Depth}.Max();
 
-        int s = 0;
-        int p = 0;
+        var s = 0;
+        var p = 0;
         while (s < largest)
         {
-            s = (int)Math.Pow(2, p);
+            s = (int) Math.Pow(2, p);
             p++;
         }
 
-        return cube with { Width = s, Height = s, Depth = s };
+        return cube with {Width = s, Height = s, Depth = s};
     }
 
     private static bool Intersects(Cube cube, Nanobot bot)
     {
         // Make sure the coordinate is 1 less than the width/height/depth to be 'in' the cube
-        var cubeVerts = new[] {
+        var cubeVerts = new[]
+        {
             new Point3(cube.Left, cube.Top, cube.Front),
-            new Point3(cube.Right-1, cube.Top, cube.Front),
-            new Point3(cube.Right-1, cube.Bottom-1, cube.Front),
-            new Point3(cube.Left, cube.Bottom-1, cube.Front),
-            new Point3(cube.Left, cube.Top, cube.Back-1),
-            new Point3(cube.Right-1, cube.Top, cube.Back-1),
-            new Point3(cube.Right-1, cube.Bottom-1, cube.Back-1),
-            new Point3(cube.Left, cube.Bottom-1, cube.Back-1)
-            };
+            new Point3(cube.Right - 1, cube.Top, cube.Front),
+            new Point3(cube.Right - 1, cube.Bottom - 1, cube.Front),
+            new Point3(cube.Left, cube.Bottom - 1, cube.Front),
+            new Point3(cube.Left, cube.Top, cube.Back - 1),
+            new Point3(cube.Right - 1, cube.Top, cube.Back - 1),
+            new Point3(cube.Right - 1, cube.Bottom - 1, cube.Back - 1),
+            new Point3(cube.Left, cube.Bottom - 1, cube.Back - 1)
+        };
 
         return bot.Vertices.Any(cube.Contains) || cubeVerts.Any(bot.IsInRange);
     }
 
     private static Nanobot ParseLine(string line)
-        => line.Extract<int, int, int, int>(@"pos=<(-?\d+),(-?\d+),(-?\d+)>, r=(\d+)").Into(res => new Nanobot(new Point3(res.First, res.Second, res.Third), res.Fourth));
+        => line.Extract<int, int, int, int>(@"pos=<(-?\d+),(-?\d+),(-?\d+)>, r=(\d+)").Into(res =>
+            new Nanobot(new Point3(res.First, res.Second, res.Third), res.Fourth));
 
     private record Nanobot(Point3 Center, int Radius)
     {
+        public Point3[] Vertices =>
+        [
+            new(Center.X, Center.Y, Center.Z),
+            new(Center.X - Radius, Center.Y, Center.Z),
+            new(Center.X + Radius, Center.Y, Center.Z),
+            new(Center.X, Center.Y - Radius, Center.Z),
+            new(Center.X, Center.Y + Radius, Center.Z),
+            new(Center.X, Center.Y, Center.Z - Radius),
+            new(Center.X, Center.Y, Center.Z + Radius)
+        ];
+
         public bool IsInRange(Point3 p) => GetDistance(p) <= Radius;
 
         private long GetDistance(Point3 p) => Point3.ManhattanDistance(p, Center);
-
-        public Point3[] Vertices => [
-            new Point3(Center.X, Center.Y, Center.Z),
-            new Point3(Center.X - Radius, Center.Y, Center.Z),
-            new Point3(Center.X + Radius, Center.Y, Center.Z),
-            new Point3(Center.X, Center.Y - Radius, Center.Z),
-            new Point3(Center.X, Center.Y + Radius, Center.Z),
-            new Point3(Center.X, Center.Y, Center.Z - Radius),
-            new Point3(Center.X, Center.Y, Center.Z + Radius),
-        ];
     }
 
     private record Priority(int BotsInRange, int DistanceToOrigin, long Size);
@@ -126,7 +129,7 @@ public class Challenge23(IInputReader inputReader)
             if (x.DistanceToOrigin != y.DistanceToOrigin)
                 return x.DistanceToOrigin - y.DistanceToOrigin;
 
-            return (int)(x.Size - y.Size);
+            return (int) (x.Size - y.Size);
         }
     }
 }

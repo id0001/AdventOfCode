@@ -1,8 +1,8 @@
+using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Collections;
-using System.Text;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -34,7 +34,7 @@ public class Challenge12(IInputReader inputReader)
     public async Task<string> Part2Async()
     {
         var (state, groups) = ParseInput(await inputReader.ReadLinesAsync(12).ToListAsync());
-        for (long i = 0; ; i++)
+        for (long i = 0;; i++)
         {
             var newState = new PointCloud<Point1, int>();
             for (var x = state.Bounds.GetMin(0) - 2; x <= state.Bounds.GetMax(0) + 2; x++)
@@ -48,7 +48,8 @@ public class Challenge12(IInputReader inputReader)
             {
                 var add = 50_000_000_000 - i;
                 var (min, max) = (state.Bounds.GetMin(0), state.Bounds.GetMax(0));
-                return Enumerable.Range(min, max - min + 1).Where(i => state.Contains(i)).Select(i => i + add).Sum().ToString();
+                return Enumerable.Range(min, max - min + 1).Where(ix => state.Contains(ix)).Select(ix => ix + add).Sum()
+                    .ToString();
             }
 
             state = newState;
@@ -84,10 +85,8 @@ public class Challenge12(IInputReader inputReader)
     {
         var state = input.Extract(@"initial state: (.+)").First();
         for (var i = 0; i < state.Length; i++)
-        {
             if (state[i] == '#')
                 yield return i;
-        }
     }
 
     private static IDictionary<string, char> ParseConversionGroups(IEnumerable<string> lines)

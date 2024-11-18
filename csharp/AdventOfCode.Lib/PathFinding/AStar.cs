@@ -20,7 +20,7 @@ public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, 
     {
         var queue = new PriorityQueue<T, int>();
         var cameFrom = new Dictionary<T, T>();
-        var costSoFar = new Dictionary<T, int> { { start, 0 } };
+        var costSoFar = new Dictionary<T, int> {{start, 0}};
 
         queue.Enqueue(start, 0);
 
@@ -56,8 +56,7 @@ public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, 
     public Dictionary<T, int> CalculateDistances(T start)
     {
         var queue = new PriorityQueue<T, int>();
-        var cameFrom = new Dictionary<T, T>();
-        var costSoFar = new Dictionary<T, int> { { start, 0 } };
+        var costSoFar = new Dictionary<T, int> {{start, 0}};
 
         queue.Enqueue(start, 0);
 
@@ -73,7 +72,6 @@ public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, 
                 {
                     costSoFar[nextNode] = newCost;
                     queue.Enqueue(nextNode, newCost + heuristic(nextNode));
-                    cameFrom[nextNode] = currentNode;
                 }
             }
         }
@@ -87,7 +85,7 @@ public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, 
     )
     {
         var queue = new PriorityQueue<T, int>();
-        var costSoFar = new Dictionary<T, int> { { start, 0 } };
+        var costSoFar = new Dictionary<T, int> {{start, 0}};
 
         queue.Enqueue(start, 0);
 

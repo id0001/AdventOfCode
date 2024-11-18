@@ -16,7 +16,8 @@ public record RegisterOrValueArgument<TValue>
 
     public bool IsValue { get; }
 
-    public TValue Value(RegisterMemory<string, TValue> registers) => IsValue ? _value! : registers.Get(_registerOrValue);
+    public TValue Value(RegisterMemory<string, TValue> registers) =>
+        IsValue ? _value! : registers.Get(_registerOrValue);
 
     public static implicit operator RegisterOrValueArgument<TValue>(string value) => new(value);
 

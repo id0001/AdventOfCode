@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.Numerics;
 using AdventOfCode.Lib.Math;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AdventOfCode.Lib;
 
@@ -26,7 +25,8 @@ public static class NumberExtensions
         var value = double.CreateChecked(source);
         var divisor = System.Math.Pow(10d, offsetFromRight);
         var divisor2 = System.Math.Pow(10d, offsetFromRight + 1);
-        return TNumber.CreateChecked(System.Math.Truncate(value / divisor) - (10d * System.Math.Truncate(value / divisor2)));
+        return TNumber.CreateChecked(System.Math.Truncate(value / divisor) -
+                                     10d * System.Math.Truncate(value / divisor2));
     }
 
     public static IEnumerable<TNumber> EnumerateDigits<TNumber>(this TNumber source)
@@ -41,16 +41,17 @@ public static class NumberExtensions
     }
 
     public static IEnumerable<TNumber> EnumerateDigits<TNumber>(TNumber number, TNumber numberBase)
-        where TNumber : 
-        IBinaryInteger<TNumber>, 
-        IComparisonOperators<TNumber, TNumber, bool>, 
-        IDivisionOperators<TNumber, TNumber, TNumber>, 
+        where TNumber :
+        IBinaryInteger<TNumber>,
+        IComparisonOperators<TNumber, TNumber, bool>,
+        IDivisionOperators<TNumber, TNumber, TNumber>,
         IModulusOperators<TNumber, TNumber, TNumber>
     {
         if (number < numberBase)
             yield return number;
         else
-            foreach (var n in EnumerateDigits(number / numberBase, numberBase).Concat(EnumerateDigits(number % numberBase, numberBase)))
+            foreach (var n in EnumerateDigits(number / numberBase, numberBase)
+                         .Concat(EnumerateDigits(number % numberBase, numberBase)))
                 yield return n;
     }
 }

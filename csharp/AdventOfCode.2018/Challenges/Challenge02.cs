@@ -13,7 +13,8 @@ public class Challenge02(IInputReader inputReader)
         var c2 = 0;
         var c3 = 0;
         await foreach (var groups in inputReader.ReadLinesAsync(2).Select(line =>
-                           line.ToCharArray().GroupBy(c => c).Select(g => new {Character = g.Key, Count = g.Count()}).ToArray()))
+                           line.ToCharArray().GroupBy(c => c).Select(g => new {Character = g.Key, Count = g.Count()})
+                               .ToArray()))
         {
             if (groups.Any(g => g.Count == 2))
                 c2++;

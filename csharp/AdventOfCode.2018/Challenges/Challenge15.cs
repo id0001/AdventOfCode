@@ -1,7 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using AdventOfCode.Lib.Math;
 using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode2018.Challenges;
@@ -14,7 +13,7 @@ public class Challenge15(IInputReader inputReader)
     {
         var (terrain, units) = Parse(await inputReader.ReadGridAsync(15));
 
-        Run(terrain, units, 3, out long score);
+        Run(terrain, units, 3, out var score);
         return score.ToString();
     }
 
@@ -24,11 +23,9 @@ public class Challenge15(IInputReader inputReader)
         var (terrain, baseUnits) = Parse(await inputReader.ReadGridAsync(15));
 
         for (var ap = 4; ap < 200; ap++)
-        {
             // Make a copy of baseUnits
             if (Run(terrain, baseUnits.ToDictionary(), ap, out var score))
                 return score.ToString();
-        }
 
         return string.Empty;
     }
@@ -37,14 +34,12 @@ public class Challenge15(IInputReader inputReader)
     {
         // set correct AP
         foreach (var key in units.Keys)
-        {
             if (units[key] is Elf elf)
-                units[key] = elf with { Ap = ap };
-        }
+                units[key] = elf with {Ap = ap};
 
         var elfCount = units.Count(u => u.Value.GetType() == typeof(Elf));
         score = 0;
-        int round = 0;
+        var round = 0;
         while (true)
         {
             foreach (var key in units.Keys.OrderBy(k => k.Y).ThenBy(k => k.X).ToArray())
@@ -66,8 +61,6 @@ public class Challenge15(IInputReader inputReader)
                     case Goblin:
                         ExecuteTurn(terrain, units, key, GetPositions<Elf>(units));
                         break;
-                    default:
-                        break;
                 }
             }
 
@@ -75,7 +68,8 @@ public class Challenge15(IInputReader inputReader)
         }
     }
 
-    private static void ExecuteTurn(char[,] terrain, IDictionary<Point2, Unit> units, Point2 currentPosition, ISet<Point2> targets)
+    private static void ExecuteTurn(char[,] terrain, IDictionary<Point2, Unit> units, Point2 currentPosition,
+        ISet<Point2> targets)
     {
         // Move or stay
         var nextPosition = NextPosition(terrain, units, targets, currentPosition);
@@ -93,7 +87,7 @@ public class Challenge15(IInputReader inputReader)
             return;
 
         var target = targetsInRange.MinBy(t => units[t].Hp);
-        units[target] = units[target] with { Hp = units[target].Hp - units[currentPosition].Ap };
+        units[target] = units[target] with {Hp = units[target].Hp - units[currentPosition].Ap};
         if (units[target].Hp <= 0)
             units.Remove(target);
     }
@@ -101,7 +95,8 @@ public class Challenge15(IInputReader inputReader)
     private static IEnumerable<Point2> GetTargetsInRange(ISet<Point2> targets, Point2 current)
         => current.GetNeighbors().Where(targets.Contains);
 
-    private static Point2 NextPosition(char[,] terrain, IDictionary<Point2, Unit> units, ISet<Point2> targets, Point2 currentPosition)
+    private static Point2 NextPosition(char[,] terrain, IDictionary<Point2, Unit> units, ISet<Point2> targets,
+        Point2 currentPosition)
     {
         if (GetTargetsInRange(targets, currentPosition).Any())
             return currentPosition;
@@ -117,7 +112,7 @@ public class Challenge15(IInputReader inputReader)
             .OrderBy(k => k.Value)
             .ThenBy(kv => kv.Key.Y)
             .ThenBy(kv => kv.Key.X)
-            .Select(kv => (Point2?)kv.Key)
+            .Select(kv => (Point2?) kv.Key)
             .FirstOrDefault();
 
         if (!reachable.HasValue)
@@ -132,7 +127,8 @@ public class Challenge15(IInputReader inputReader)
         => units.Where(kv => kv.Value.GetType() == typeof(T)).Select(x => x.Key).ToHashSet();
 
     private static IEnumerable<Point2> GetOpenSpacesAroundTarget(char[,] terrain, ISet<Point2> occupied, Point2 target)
-        => target.GetNeighbors().Where(n => !occupied.Contains(n) && terrain[n.Y, n.X] == '.').OrderBy(n => n.Y).ThenBy(n => n.X);
+        => target.GetNeighbors().Where(n => !occupied.Contains(n) && terrain[n.Y, n.X] == '.').OrderBy(n => n.Y)
+            .ThenBy(n => n.X);
 
     private static IEnumerable<Point2> GetAdjacent(char[,] terrain, ISet<Point2> units, Point2 current)
         => GetOpenSpacesAroundTarget(terrain, units, current);
@@ -163,6 +159,8 @@ public class Challenge15(IInputReader inputReader)
     }
 
     private record Unit(long Hp, long Ap);
+
     private record Elf() : Unit(200, 3);
+
     private record Goblin() : Unit(200, 3);
 }

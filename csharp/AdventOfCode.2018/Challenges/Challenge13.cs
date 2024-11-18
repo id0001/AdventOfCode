@@ -14,14 +14,12 @@ public class Challenge13(IInputReader inputReader)
         var carts = ExtractCarts(grid).Cast<ActiveCart>().ToArray();
 
         while (true)
-        {
             for (var i = 0; i < carts.Length; i++)
             {
                 carts[i] = Move(grid, carts[i]);
                 if (carts.DistinctBy(x => x.Pose.Position).Count() != carts.Length)
                     return $"{carts[i].Pose.Position.X},{carts[i].Pose.Position.Y}";
             }
-        }
     }
 
     [Part2]
@@ -32,7 +30,6 @@ public class Challenge13(IInputReader inputReader)
         while (true)
         {
             for (var i = 0; i < carts.Length; i++)
-            {
                 if (carts[i] is ActiveCart cart)
                 {
                     carts[i] = cart = Move(grid, cart);
@@ -43,7 +40,6 @@ public class Challenge13(IInputReader inputReader)
                         carts[crashIndex] = new CrashedCart();
                     }
                 }
-            }
 
             if (carts.OfType<ActiveCart>().Count() == 1)
             {
@@ -56,25 +52,25 @@ public class Challenge13(IInputReader inputReader)
     private static ActiveCart Move(char[,] grid, ActiveCart cart)
     {
         // Step
-        cart = cart with { Pose = cart.Pose.Step() };
+        cart = cart with {Pose = cart.Pose.Step()};
 
         // Turn
         return (grid[cart.Pose.Position.Y, cart.Pose.Position.X], cart.Pose.Face) switch
         {
             ('+', _) => TurnAtIntersection(cart),
-            ('/', var face) when face == Face.Up || face == Face.Down => cart with { Pose = cart.Pose.TurnRight() },
-            ('/', var face) when face == Face.Left || face == Face.Right => cart with { Pose = cart.Pose.TurnLeft() },
-            ('\\', var face) when face == Face.Up || face == Face.Down => cart with { Pose = cart.Pose.TurnLeft() },
-            ('\\', var face) when face == Face.Left || face == Face.Right => cart with { Pose = cart.Pose.TurnRight() },
+            ('/', var face) when face == Face.Up || face == Face.Down => cart with {Pose = cart.Pose.TurnRight()},
+            ('/', var face) when face == Face.Left || face == Face.Right => cart with {Pose = cart.Pose.TurnLeft()},
+            ('\\', var face) when face == Face.Up || face == Face.Down => cart with {Pose = cart.Pose.TurnLeft()},
+            ('\\', var face) when face == Face.Left || face == Face.Right => cart with {Pose = cart.Pose.TurnRight()},
             _ => cart
         };
     }
 
     private static ActiveCart TurnAtIntersection(ActiveCart cart) => cart.Choice switch
     {
-        0 => cart with { Pose = cart.Pose.TurnLeft(), Choice = (cart.Choice + 1).Mod(3) },
-        2 => cart with { Pose = cart.Pose.TurnRight(), Choice = (cart.Choice + 1).Mod(3) },
-        _ => cart with { Choice = (cart.Choice + 1).Mod(3) },
+        0 => new ActiveCart(cart.Pose.TurnLeft(), (cart.Choice + 1).Mod(3)),
+        2 => new ActiveCart(cart.Pose.TurnRight(), (cart.Choice + 1).Mod(3)),
+        _ => cart with {Choice = (cart.Choice + 1).Mod(3)}
     };
 
     private int FindCrashIndex(Cart[] carts, ActiveCart cart, int index) => carts
@@ -85,7 +81,7 @@ public class Challenge13(IInputReader inputReader)
 
     private static IEnumerable<Cart> ExtractCarts(char[,] grid)
     {
-        var positions = grid.Where((p, c) => c is 'v' or '>' or '<' or '^').ToArray();
+        var positions = grid.Where((_, c) => c is 'v' or '>' or '<' or '^').ToArray();
         foreach (var p in positions)
         {
             var dir = grid[p.Y, p.X] switch
@@ -111,6 +107,8 @@ public class Challenge13(IInputReader inputReader)
     }
 
     private record Cart;
+
     private record ActiveCart(Pose2 Pose, int Choice) : Cart;
+
     private record CrashedCart : Cart;
 }

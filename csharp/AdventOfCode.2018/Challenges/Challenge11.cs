@@ -21,12 +21,15 @@ public class Challenge11
     public string Part2()
     {
         var sat = new SummedAreaTable<int>(PrecalculatePowerlevels());
-        var largest = Enumerable.Range(1, 301).SelectMany(size => Array2d.Range(301 - size, 301 - size).Select(p => new Point3(p.X, p.Y, size))).MaxBy(p => sat.SumQuery(p.X, p.Y, p.Z, p.Z));
+        var largest = Enumerable.Range(1, 301)
+            .SelectMany(size => Array2d.Range(301 - size, 301 - size).Select(p => new Point3(p.X, p.Y, size)))
+            .MaxBy(p => sat.SumQuery(p.X, p.Y, p.Z, p.Z));
 
         return $"{largest.X},{largest.Y},{largest.Z}";
     }
 
-    private static int GetPowerlevel(int x, int y) => (((GetRackId(x) * y) + SerialNumber) * GetRackId(x)).ExtractDigit(2) - 5;
+    private static int GetPowerlevel(int x, int y) =>
+        ((GetRackId(x) * y + SerialNumber) * GetRackId(x)).ExtractDigit(2) - 5;
 
     private static int GetRackId(int x) => x + 10;
 

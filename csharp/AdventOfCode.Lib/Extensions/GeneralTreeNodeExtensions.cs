@@ -1,37 +1,33 @@
 ﻿using AdventOfCode.Lib.Collections.Trees;
 
-namespace AdventOfCode.Lib.Extensions
+namespace AdventOfCode.Lib;
+
+public static class GeneralTreeNodeExtensions
 {
-    public static class GeneralTreeNodeExtensions
+    public static void MakeRoot<T>(this GeneralTreeNode<T> source)
     {
-        public static void MakeRoot<T>(this GeneralTreeNode<T> source)
+        if (source.Parent == null)
+            return;
+
+        var parent = source.Parent;
+        parent.RemoveChild(source);
+        parent.MakeRoot();
+        source.AddChild(parent);
+    }
+
+    public static IEnumerable<GeneralTreeNode<T>> EnumeratePreOrder<T>(this GeneralTreeNode<T> node)
+    {
+        var stack = new Stack<GeneralTreeNode<T>>();
+        stack.Push(node);
+
+        while (stack.Count > 0)
         {
-            if (source.Parent == null)
-                return;
+            var current = stack.Pop();
 
-            var parent = source.Parent;
-            parent.RemoveChild(source);
-            parent.MakeRoot();
-            source.AddChild(parent);
-        }
+            yield return current;
 
-        public static IEnumerable<GeneralTreeNode<T>> EnumeratePreOrder<T>(this GeneralTreeNode<T> node)
-        {
-            if (node is null)
-                yield break;
-
-            var stack = new Stack<GeneralTreeNode<T>>();
-            stack.Push(node);
-
-            while (stack.Count > 0)
-            {
-                var current = stack.Pop();
-
-                yield return current;
-
-                foreach (var child in current.Children.Reverse())
-                    stack.Push(child);
-            }
+            foreach (var child in current.Children.Reverse())
+                stack.Push(child);
         }
     }
 }

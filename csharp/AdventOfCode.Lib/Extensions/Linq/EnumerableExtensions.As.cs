@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Text;
 using Microsoft;
+
 // ReSharper disable PossibleMultipleEnumeration
 
 namespace AdventOfCode.Lib;

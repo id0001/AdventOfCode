@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AdventOfCode.Lib;
+﻿namespace AdventOfCode.Lib;
 
 public readonly record struct Cube(int X, int Y, int Z, int Width, int Height, int Depth)
 {
@@ -42,15 +40,15 @@ public readonly record struct Cube(int X, int Y, int Z, int Width, int Height, i
 
     public int Volume => Width * Height * Depth;
 
-    public long LongVolume => (long)Width * Height * Depth;
+    public long LongVolume => (long) Width * Height * Depth;
 
-    public int SmallestArea => new[] { AreaFrontBack, AreaLeftRight, AreaTopBottom }.Min();
+    public int SmallestArea => new[] {AreaFrontBack, AreaLeftRight, AreaTopBottom}.Min();
 
     public int SmallestPerimeter
     {
         get
         {
-            var ordered = new[] { Width, Height, Depth }.OrderBy(x => x).ToArray();
+            var ordered = new[] {Width, Height, Depth}.OrderBy(x => x).ToArray();
             return ordered[0] + ordered[0] + ordered[1] + ordered[1];
         }
     }
@@ -62,13 +60,13 @@ public readonly record struct Cube(int X, int Y, int Z, int Width, int Height, i
         get
         {
             for (var z = Front; z < Back; z++)
-                for (var y = Top; y < Bottom; y++)
-                    for (var x = Left; x < Right; x++)
-                        yield return new Point3(x, y, z);
+            for (var y = Top; y < Bottom; y++)
+            for (var x = Left; x < Right; x++)
+                yield return new Point3(x, y, z);
         }
     }
 
-    public Point3 Center => new Point3(Left + (Width / 2), Top + (Height / 2), Front + (Depth / 2));
+    public Point3 Center => new(Left + Width / 2, Top + Height / 2, Front + Depth / 2);
 
     public bool IntersectsWith(Cube other) => Intersects(this, other);
 
@@ -96,7 +94,8 @@ public readonly record struct Cube(int X, int Y, int Z, int Width, int Height, i
         return new Cube(leftSide, topSide, frontSide, rightSide - leftSide, bottomSide - topSide, backSide - frontSide);
     }
 
-    public bool Contains(Point3 p) => p.X >= Left && p.X < Right && p.Y >= Top && p.Y < Bottom && p.Z >= Front && p.Z < Back;
+    public bool Contains(Point3 p) =>
+        p.X >= Left && p.X < Right && p.Y >= Top && p.Y < Bottom && p.Z >= Front && p.Z < Back;
 
     public override string ToString() => $"[X: {X}, Y: {Y}, Z: {Z}, Width: {Width}, Height: {Height}, Depth: {Depth}";
 }

@@ -13,9 +13,9 @@ public class Challenge14(IInputReader inputReader)
         var input = await inputReader.ReadNumberAsync<int>(14);
 
         var (a, b) = (0, 1);
-        var list = new List<int> { 3, 7 };
+        var list = new List<int> {3, 7};
 
-        for (var i = 0; list.Count < input + 10; i++)
+        while (list.Count < input + 10)
         {
             var sum = list[a] + list[b];
 
@@ -36,7 +36,7 @@ public class Challenge14(IInputReader inputReader)
         var input = (await inputReader.ReadNumberAsync<int>(14)).EnumerateDigits().ToArray();
 
         var (a, b) = (0, 1);
-        var list = new List<int> { 3, 7 };
+        var list = new List<int> {3, 7};
 
         while (true)
         {
@@ -49,7 +49,8 @@ public class Challenge14(IInputReader inputReader)
             a = (a + 1 + list[a]) % list.Count;
             b = (b + 1 + list[b]) % list.Count;
 
-            if (list.Count > input.Length && (sum >= 10 ? list[^2] : list[^1]) == input[^1] && list[^(input.Length + 1)..^1].SequenceEqual(input))
+            if (list.Count > input.Length && (sum >= 10 ? list[^2] : list[^1]) == input[^1] &&
+                list[^(input.Length + 1)..^1].SequenceEqual(input))
                 return (list.Count - input.Length - 1).ToString();
         }
     }

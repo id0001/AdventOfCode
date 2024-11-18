@@ -1,9 +1,7 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 using AdventOfCode.Lib.Collections.Trees;
-using AdventOfCode.Lib.Extensions;
-using JetBrains.Annotations;
-using System.Xml.Linq;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -29,7 +27,7 @@ public class Challenge08(IInputReader inputReader)
         var stack = new Stack<GeneralTreeNode<int[]>>();
         stack.Push(root);
 
-        int sum = 0;
+        var sum = 0;
         while (stack.Count > 0)
         {
             var current = stack.Pop();
@@ -42,10 +40,8 @@ public class Challenge08(IInputReader inputReader)
 
             var children = current.Children.ToList();
             foreach (var i in current.Value)
-            {
                 if (i - 1 < children.Count && i - 1 >= 0)
                     stack.Push(children[i - 1]);
-            }
         }
 
         return sum.ToString();

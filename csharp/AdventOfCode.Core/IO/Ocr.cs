@@ -32,9 +32,9 @@ public class Ocr
     private static string[] TrimLines(string input)
     {
         var vtrimmed = input
-        .Split(Environment.NewLine)
-        .Where(line => !line.All(c => c == '.'))
-        .ToArray();
+            .Split(Environment.NewLine)
+            .Where(line => !line.All(c => c == '.'))
+            .ToArray();
 
         var left = Enumerable.Range(0, vtrimmed[0].Length).First(x => !vtrimmed.All(line => line[x] == '.'));
         var right = Enumerable.Range(0, vtrimmed[0].Length).Last(x => !vtrimmed.All(line => line[x] == '.')) + 1;
@@ -47,36 +47,47 @@ public class Ocr
         if (string.IsNullOrEmpty(input))
             throw new ArgumentNullException(nameof(input));
 
-        string[] lines = TrimLines(input);
+        var lines = TrimLines(input);
         if (!lines.All(x => x.Length == lines[0].Length))
             throw new ArgumentException("All lines must be the same length", nameof(input));
 
         return new string(ExtractLetters(GetAlphabetLookup(), lines).ToArray());
     }
 
-    private static Dictionary<string, char> GetAlphabetLookup() => GetSmallLetters().Concat(GetLargeLetters()).ToDictionary(kv => kv.Pattern, kv => kv.Letter);
+    private static Dictionary<string, char> GetAlphabetLookup() => GetSmallLetters().Concat(GetLargeLetters())
+        .ToDictionary(kv => kv.Pattern, kv => kv.Letter);
 
-    private static IEnumerable<(char Letter, string Pattern)> GetSmallLetters() => ExtractAlphabetFromResource(SmallLetterSequence, SmallAlphabetResourceName);
+    private static IEnumerable<(char Letter, string Pattern)> GetSmallLetters() =>
+        ExtractAlphabetFromResource(SmallLetterSequence, SmallAlphabetResourceName);
 
-    private static IEnumerable<(char Letter, string Pattern)> GetLargeLetters() => ExtractAlphabetFromResource(LargeLetterSequence, LargeAlphabetResourceName);
+    private static IEnumerable<(char Letter, string Pattern)> GetLargeLetters() =>
+        ExtractAlphabetFromResource(LargeLetterSequence, LargeAlphabetResourceName);
 
-    private static IEnumerable<(char Letter, string Pattern)> ExtractAlphabetFromResource(string letterSequence, string resourceName)
+    private static IEnumerable<(char Letter, string Pattern)> ExtractAlphabetFromResource(string letterSequence,
+        string resourceName)
     {
         var lines = ResourceHelper.Read(resourceName).Split(Environment.NewLine);
-        int[] xstart = [0, .. Enumerable.Range(0, lines[0].Length).Where(x => lines.All(line => line[x] == '.')).Select(x => x + 1)];
+        int[] xstart =
+        [
+            0, .. Enumerable.Range(0, lines[0].Length).Where(x => lines.All(line => line[x] == '.')).Select(x => x + 1)
+        ];
 
         for (var i = 0; i < xstart.Length; i++)
-        {
             if (i == xstart.Length - 1)
-                yield return (letterSequence[i], Flatten(lines.Select(line => line[xstart[i]..])));
+            {
+                var i1 = i;
+                yield return (letterSequence[i], Flatten(lines.Select(line => line[xstart[i1]..])));
+            }
             else
-                yield return (letterSequence[i], Flatten(lines.Select(line => line[xstart[i]..(xstart[i + 1] - 1)])));
-        }
+            {
+                var i1 = i;
+                yield return (letterSequence[i], Flatten(lines.Select(line => line[xstart[i1]..(xstart[i1 + 1] - 1)])));
+            }
     }
 
     private IEnumerable<char> ExtractLetters(Dictionary<string, char> lookup, string[] lines)
     {
-        string[] currentLetter = new string[lines.Length];
+        var currentLetter = new string[lines.Length];
 
         for (var x = 0; x < lines[0].Length; x++)
         {
@@ -87,18 +98,18 @@ public class Ocr
             for (var y = 0; y < scanLine.Length; y++)
                 currentLetter[y] += scanLine[y];
 
-            if (lookup.TryGetValue(Flatten(currentLetter), out char letter))
+            if (lookup.TryGetValue(Flatten(currentLetter), out var letter))
             {
                 yield return letter;
                 currentLetter = new string[lines.Length];
             }
         }
 
-        if (lookup.TryGetValue(Flatten(currentLetter), out char lastLetter))
+        if (lookup.TryGetValue(Flatten(currentLetter), out var lastLetter))
             yield return lastLetter;
     }
 
-    private static string GetVerticalLine(string[] lines, int x) => new string(lines.Select(line => line[x]).ToArray());
+    private static string GetVerticalLine(string[] lines, int x) => new(lines.Select(line => line[x]).ToArray());
 
     private static string Flatten(IEnumerable<string> lines) => lines.Aggregate(string.Concat);
 }

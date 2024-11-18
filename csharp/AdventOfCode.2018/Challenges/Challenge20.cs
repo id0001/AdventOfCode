@@ -124,7 +124,6 @@ public class Challenge20(IInputReader inputReader)
         {
             to.Doors[1] = true;
             from.Doors[3] = true;
-            return;
         }
     }
 

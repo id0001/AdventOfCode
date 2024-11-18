@@ -12,7 +12,7 @@ public class Challenge07(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var actions = await inputReader.ParseLinesAsync(7, ParseLine).ToListAsync();
-        var options = actions.SelectMany(a => new[] { a.First, a.Second }).Distinct().ToHashSet();
+        var options = actions.SelectMany(a => new[] {a.First, a.Second}).Distinct().ToHashSet();
 
         var graph = new DirectedGraph<char, int>();
 
@@ -29,7 +29,7 @@ public class Challenge07(IInputReader inputReader)
     public async Task<string> Part2Async()
     {
         var actions = await inputReader.ParseLinesAsync(7, ParseLine).ToListAsync();
-        var nodes = actions.SelectMany(a => new[] { a.First, a.Second }).Distinct().ToHashSet();
+        var nodes = actions.SelectMany(a => new[] {a.First, a.Second}).Distinct().ToHashSet();
 
         var graph = new DirectedGraph<char, int>();
 
@@ -45,9 +45,10 @@ public class Challenge07(IInputReader inputReader)
         var time = 0;
         while (nodesWork.Keys.Count > 0)
         {
-            var available = nodesWork.Where(n => inDegree[n.Key].Count == 0).OrderBy(kv => kv.Value).Select(kv => kv.Key).ToList();
+            var available = nodesWork.Where(n => inDegree[n.Key].Count == 0).OrderBy(kv => kv.Value)
+                .Select(kv => kv.Key).ToList();
 
-            foreach(var (worker, node) in Enumerable.Range(0, 5).Zip(available))
+            foreach (var (_, node) in Enumerable.Range(0, 5).Zip(available))
             {
                 nodesWork[node] -= 1;
                 if (nodesWork[node] == 0)
@@ -64,5 +65,6 @@ public class Challenge07(IInputReader inputReader)
         return time.ToString();
     }
 
-    private static (char First, char Second) ParseLine(string line) => line.Extract<char, char>(@"Step (\w) must be finished before step (\w) can begin\.");
+    private static (char First, char Second) ParseLine(string line) =>
+        line.Extract<char, char>(@"Step (\w) must be finished before step (\w) can begin\.");
 }

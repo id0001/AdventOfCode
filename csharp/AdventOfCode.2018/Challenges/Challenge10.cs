@@ -1,8 +1,8 @@
+using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Collections;
-using System.Text;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -31,7 +31,7 @@ public class Challenge10(IInputReader inputReader)
     {
         var set = await inputReader.ParseLinesAsync(10, ParseLine).ToHashSetAsync();
 
-        for (var i = 1; ; i++)
+        for (var i = 1;; i++)
         {
             set = CalculateNextPositions(set);
             if (TryGetResult(set.Select(x => x.Position), out var value))
@@ -64,11 +64,12 @@ public class Challenge10(IInputReader inputReader)
     }
 
     private static HashSet<PosVel> CalculateNextPositions(HashSet<PosVel> items)
-        => items.Select(x => x with { Position = x.Position + x.Velocity }).ToHashSet();
+        => items.Select(x => x with {Position = x.Position + x.Velocity}).ToHashSet();
 
     private PosVel ParseLine(string line) => line
         .Extract<int, int, int, int>(@"position=< ?(-?\d+),  ?(-?\d+)> velocity=< ?(-?\d+),  ?(-?\d+)>")
-        .Into(matches => new PosVel(new Point2(matches.First, matches.Second), new Point2(matches.Third, matches.Fourth)));
+        .Into(matches =>
+            new PosVel(new Point2(matches.First, matches.Second), new Point2(matches.Third, matches.Fourth)));
 
     private record PosVel(Point2 Position, Point2 Velocity);
 }

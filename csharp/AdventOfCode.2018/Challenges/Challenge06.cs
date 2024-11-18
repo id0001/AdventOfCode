@@ -3,8 +3,6 @@ using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Collections;
 using AdventOfCode.Lib.Collections.Helpers;
-using System.Diagnostics;
-using System.Net.WebSockets;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -37,7 +35,7 @@ public class Challenge06(IInputReader inputReader)
     {
         var coords = await inputReader.ParseLinesAsync(6, ParseLine).ToListAsync();
         var cloud = new PointCloud<Point2, int>(coords);
-        int totalArea = 0;
+        var totalArea = 0;
         foreach (var p in cloud.Bounds.EnumeratePoints())
         {
             var sumOfDistances = coords.Sum(c => Point2.ManhattanDistance(p, c));
@@ -50,9 +48,9 @@ public class Challenge06(IInputReader inputReader)
 
     private static bool IsOnBorder(Point2 p, BoundingBox<Point2, int> bounds)
         => p.X == bounds.GetMin(0)
-        || p.X == bounds.GetMax(0)
-        || p.Y == bounds.GetMin(1)
-        || p.Y == bounds.GetMax(1);
+           || p.X == bounds.GetMax(0)
+           || p.Y == bounds.GetMin(1)
+           || p.Y == bounds.GetMax(1);
 
     private static bool TryGetClosestPoint(Point2 point, IList<Point2> points, out Point2 closest)
     {

@@ -24,7 +24,7 @@ public class Challenge18(IInputReader inputReader)
             initialGrid = nextGrid;
         }
 
-        var (_, tree, lumberyard) = Count(initialGrid);
+        var (tree, lumberyard) = Count(initialGrid);
         return (tree * lumberyard).ToString();
     }
 
@@ -35,7 +35,7 @@ public class Challenge18(IInputReader inputReader)
 
         var previousStates = new Dictionary<string, int>
         {
-            { initialGrid.PrintToString((_, c) => c), 0 }
+            {initialGrid.PrintToString((_, c) => c), 0}
         };
 
         var total = 1_000_000_000;
@@ -59,7 +59,7 @@ public class Challenge18(IInputReader inputReader)
             previousStates.Add(key, i);
         }
 
-        var (_, tree, lumberyard) = Count(initialGrid);
+        var (tree, lumberyard) = Count(initialGrid);
         return (tree * lumberyard).ToString();
     }
 
@@ -94,8 +94,6 @@ public class Challenge18(IInputReader inputReader)
                 case '|':
                     treeCount++;
                     break;
-                default:
-                    break;
             }
 
             if (lumberyardCount > 0 && treeCount > 0)
@@ -105,15 +103,13 @@ public class Challenge18(IInputReader inputReader)
         return '.';
     }
 
-    private static (int Open, int Tree, int Lumberyard) Count(char[,] state)
+    private static (int Tree, int Lumberyard) Count(char[,] state)
     {
-        int open = 0, tree = 0, lumberyard = 0;
+        int tree = 0, lumberyard = 0;
         foreach (var (_, c) in state.AsEnumerable())
-        {
             switch (c)
             {
                 case '.':
-                    open++;
                     break;
                 case '|':
                     tree++;
@@ -121,12 +117,9 @@ public class Challenge18(IInputReader inputReader)
                 case '#':
                     lumberyard++;
                     break;
-                default:
-                    break;
             }
-        }
 
-        return (open, tree, lumberyard);
+        return (tree, lumberyard);
     }
 
     private static bool IsInBounds(Point2 p) => Bounds.Contains(p);

@@ -1,5 +1,4 @@
 ﻿using Microsoft;
-using System.Data.SqlTypes;
 
 namespace AdventOfCode.Lib;
 
@@ -7,7 +6,7 @@ public static partial class StringExtensions
 {
     public static string CaesarShift(this string source, int shift)
     {
-        return string.Join(string.Empty, source.ToLowerInvariant().Select(c => (char)('a' + (c - 'a' + shift) % 26)));
+        return string.Join(string.Empty, source.ToLowerInvariant().Select(c => (char) ('a' + (c - 'a' + shift) % 26)));
     }
 
     public static bool IsAnagramOf(this string source, string other) => source.Order().SequenceEqual(other.Order());
@@ -27,14 +26,15 @@ public static partial class StringExtensions
         return source.Zip(other).Count(pair => pair.First != pair.Second);
     }
 
-    public static int IndexOfClosingPair(this string source, int startingIndex, char openingCharacter, char closingCharacter)
+    public static int IndexOfClosingPair(this string source, int startingIndex, char openingCharacter,
+        char closingCharacter)
     {
-        Requires.Argument(openingCharacter != closingCharacter, nameof(closingCharacter), "Parameters cannot be the same");
+        Requires.Argument(openingCharacter != closingCharacter, nameof(closingCharacter),
+            "Parameters cannot be the same");
         Requires.Range(startingIndex < source.Length - 1, nameof(startingIndex));
 
-        int depth = 0;
+        var depth = 0;
         for (var i = startingIndex; i < source.Length; i++)
-        {
             switch (source[i])
             {
                 case '(':
@@ -45,10 +45,7 @@ public static partial class StringExtensions
                 case ')':
                     depth--;
                     break;
-                default:
-                    break;
             }
-        }
 
         return -1;
     }

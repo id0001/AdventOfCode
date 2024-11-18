@@ -1,4 +1,5 @@
 ﻿using Microsoft;
+
 // ReSharper disable PossibleMultipleEnumeration
 
 namespace AdventOfCode.Lib;

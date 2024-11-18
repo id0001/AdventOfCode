@@ -96,6 +96,8 @@ public class Challenge21(IInputReader inputReader)
             _pattern = string.Join("/", fullPattern.ToJaggedArray().Select(x => new string(x)));
         }
 
+        public bool Equals(Pattern other) => other._pattern == _pattern;
+
         public IEnumerable<Pattern> Subdivide()
         {
             var split = _pattern.SplitBy("/");
@@ -109,8 +111,6 @@ public class Challenge21(IInputReader inputReader)
                     yield return new Pattern(
                         $"{split[y][x..(x + 3)]}/{split[y + 1][x..(x + 3)]}/{split[y + 2][x..(x + 3)]}");
         }
-
-        public bool Equals(Pattern other) => other._pattern == _pattern;
 
         public override int GetHashCode() => HashCode.Combine(_pattern);
 

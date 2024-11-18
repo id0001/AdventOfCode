@@ -48,60 +48,91 @@ public class Challenge16(IInputReader inputReader)
         {
             var candidates = new List<Action<int[], RegisterMemory<int, int>>>[16];
             for (var i = 0; i < candidates.Length; i++)
-                candidates[i] = operations.Except(known).ToList(); // Set all possible candidates for each number (operations - known)
+                candidates[i] =
+                    operations.Except(known)
+                        .ToList(); // Set all possible candidates for each number (operations - known)
 
             foreach (var test in tests)
             {
                 // Run every operation for each sample
                 var res = TestOpcodes(test.Before, test.Input, test.After);
                 for (var i = 0; i < res.Length; i++)
-                {
                     // For each failed operation remove the operation from the candidates for the test number
                     if (!res[i])
                         candidates[test.Input[0]].Remove(Operations[i]);
-                }
             }
 
             for (var i = 0; i < 16; i++)
-            {
                 // When only 1 candidate remains it must be the correct opcode
                 if (candidates[i].Count == 1)
                 {
                     opCodes[i] = candidates[i][0];
                     known.Add(opCodes[i]);
                 }
-            }
         }
 
         return opCodes;
     }
 
-    private bool[] TestOpcodes(int[] template, int[] arguments, int[] expected) => Operations.Select(op => Test(template, arguments, expected, op)).ToArray();
+    private bool[] TestOpcodes(int[] template, int[] arguments, int[] expected) =>
+        Operations.Select(op => Test(template, arguments, expected, op)).ToArray();
 
-    private static void ExecAndIncIp(Action<int[], RegisterMemory<int, int>> action, int[] args, RegisterMemory<int, int> registers)
+    private static void ExecAndIncIp(Action<int[], RegisterMemory<int, int>> action, int[] args,
+        RegisterMemory<int, int> registers)
     {
         action(args, registers);
         registers.Ip++;
     }
 
-    private static void Addr(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) + registers.Get(args[2]));
-    private static void Addi(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) + args[2]);
-    private static void Mulr(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) * registers.Get(args[2]));
-    private static void Muli(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) * args[2]);
-    private static void Banr(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) & registers.Get(args[2]));
-    private static void Bani(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) & args[2]);
-    private static void Borr(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) | registers.Get(args[2]));
-    private static void Bori(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) | args[2]);
-    private static void Setr(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]));
-    private static void Seti(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], args[1]);
-    private static void Gtir(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], args[1] > registers.Get(args[2]) ? 1 : 0);
-    private static void Gtri(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) > args[2] ? 1 : 0);
-    private static void Gtrr(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) > registers.Get(args[2]) ? 1 : 0);
-    private static void Eqir(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], args[1] == registers.Get(args[2]) ? 1 : 0);
-    private static void Eqri(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) == args[2] ? 1 : 0);
-    private static void Eqrr(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], registers.Get(args[1]) == registers.Get(args[2]) ? 1 : 0);
+    private static void Addr(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) + registers.Get(args[2]));
 
-    private bool Test(int[] startingRegisters, int[] arguments, int[] expectedOutput, Action<int[], RegisterMemory<int, int>> action)
+    private static void Addi(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) + args[2]);
+
+    private static void Mulr(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) * registers.Get(args[2]));
+
+    private static void Muli(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) * args[2]);
+
+    private static void Banr(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) & registers.Get(args[2]));
+
+    private static void Bani(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) & args[2]);
+
+    private static void Borr(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) | registers.Get(args[2]));
+
+    private static void Bori(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) | args[2]);
+
+    private static void Setr(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]));
+
+    private static void Seti(int[] args, RegisterMemory<int, int> registers) => registers.Set(args[3], args[1]);
+
+    private static void Gtir(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], args[1] > registers.Get(args[2]) ? 1 : 0);
+
+    private static void Gtri(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) > args[2] ? 1 : 0);
+
+    private static void Gtrr(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) > registers.Get(args[2]) ? 1 : 0);
+
+    private static void Eqir(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], args[1] == registers.Get(args[2]) ? 1 : 0);
+
+    private static void Eqri(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) == args[2] ? 1 : 0);
+
+    private static void Eqrr(int[] args, RegisterMemory<int, int> registers) =>
+        registers.Set(args[3], registers.Get(args[1]) == registers.Get(args[2]) ? 1 : 0);
+
+    private bool Test(int[] startingRegisters, int[] arguments, int[] expectedOutput,
+        Action<int[], RegisterMemory<int, int>> action)
     {
         var registers = new RegisterMemory<int, int>();
         for (var i = 0; i < startingRegisters.Length; i++)
@@ -124,7 +155,7 @@ public class Challenge16(IInputReader inputReader)
             parts.First().Extract<int>(@"Before: \[(\d), (\d), (\d), (\d)\]"),
             parts.Second().SplitBy(" ").As<int>().ToArray(),
             parts.Third().Extract<int>(@"After:  \[(\d), (\d), (\d), (\d)\]")
-            ));
+        ));
 
     private static IList<Instruction<int, int[]>> ExtractProgram(string input) => input
         .SplitBy(Environment.NewLine)

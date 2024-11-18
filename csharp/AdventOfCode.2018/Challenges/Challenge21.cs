@@ -15,7 +15,7 @@ public class Challenge21(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var lines = await inputReader.ReadLinesAsync(21).ToListAsync();
-        var program = CreateProgram(lines, out int ipRegister);
+        var program = CreateProgram(lines, out var ipRegister);
 
         var memory = new Memory(ipRegister);
         var cpu = new Cpu<Memory, string, Argument>(memory, program);
@@ -27,12 +27,12 @@ public class Challenge21(IInputReader inputReader)
     }
 
     [Part2]
-    public async Task<string> Part2Async()
+    public string Part2()
     {
         var seen = new HashSet<int>();
         var lastSeen = 0;
 
-        int r4 = 123;
+        var r4 = 123;
         while (true)
         {
             r4 &= 456;
@@ -43,12 +43,12 @@ public class Challenge21(IInputReader inputReader)
         r4 = 0;
         while (true)
         {
-            int r5 = r4 | 65536;
+            var r5 = r4 | 65536;
             r4 = 10704114;
 
             while (true)
             {
-                int r2 = r5 & 255;
+                var r2 = r5 & 255;
                 r4 += r2;
                 r4 &= 16777215;
                 r4 *= 65899;
@@ -67,7 +67,7 @@ public class Challenge21(IInputReader inputReader)
                 r2 = 0;
                 while (true)
                 {
-                    int r3 = r2 + 1;
+                    var r3 = r2 + 1;
                     r3 *= 256;
                     if (r3 > r5)
                     {
@@ -88,8 +88,10 @@ public class Challenge21(IInputReader inputReader)
             .Skip(1)
             .Select(line => line
                 .Extract<string, int, int, int>(@"(.+) (\d+) (\d+) (\d+)")
-                .Into(parts => new Instruction<string, Argument>(parts.First, new Argument(parts.Second, parts.Third, parts.Fourth)))
-                )
+                .Into(parts =>
+                    new Instruction<string, Argument>(parts.First,
+                        new Argument(parts.Second, parts.Third, parts.Fourth)))
+            )
             .ToList();
     }
 
@@ -115,32 +117,43 @@ public class Challenge21(IInputReader inputReader)
         memory.Ip = memory.Get(memory.IpRegister) + 1;
     }
 
-    private static void Addr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) + memory.Get(args.B));
+    private static void Addr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) + memory.Get(args.B));
+
     private static void Addi(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) + args.B);
-    private static void Mulr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) * memory.Get(args.B));
+
+    private static void Mulr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) * memory.Get(args.B));
+
     private static void Muli(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) * args.B);
-    private static void Banr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) & memory.Get(args.B));
+
+    private static void Banr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) & memory.Get(args.B));
+
     private static void Bani(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) & args.B);
-    private static void Borr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) | memory.Get(args.B));
+
+    private static void Borr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) | memory.Get(args.B));
+
     private static void Bori(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) | args.B);
     private static void Setr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A));
     private static void Seti(Argument args, Memory memory) => memory.Set(args.C, args.A);
     private static void Gtir(Argument args, Memory memory) => memory.Set(args.C, args.A > memory.Get(args.B) ? 1 : 0);
     private static void Gtri(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) > args.B ? 1 : 0);
-    private static void Gtrr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) > memory.Get(args.B) ? 1 : 0);
+
+    private static void Gtrr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) > memory.Get(args.B) ? 1 : 0);
+
     private static void Eqir(Argument args, Memory memory) => memory.Set(args.C, args.A == memory.Get(args.B) ? 1 : 0);
     private static void Eqri(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) == args.B ? 1 : 0);
-    private static void Eqrr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) == memory.Get(args.B) ? 1 : 0);
+
+    private static void Eqrr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) == memory.Get(args.B) ? 1 : 0);
 
     private record Argument(int A, int B, int C);
 
     private class Memory(int ipRegister) : RegisterMemory<int, int>
     {
         public int IpRegister { get; } = ipRegister;
-
-        public override void Clear()
-        {
-            base.Clear();
-        }
     }
 }

@@ -11,7 +11,8 @@ public class Challenge17(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        var sand = CreateGrid(await inputReader.ParseLinesAsync(17, ParseLine).SelectMany(x => x.ToAsyncEnumerable()).ToListAsync());
+        var sand = CreateGrid(await inputReader.ParseLinesAsync(17, ParseLine).SelectMany(x => x.ToAsyncEnumerable())
+            .ToListAsync());
 
         var water = new SparseSpatialMap<Point2, int, Water>();
         Flow(new Point2(500, 0), sand, water);
@@ -25,13 +26,15 @@ public class Challenge17(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var sand = CreateGrid(await inputReader.ParseLinesAsync(17, ParseLine).SelectMany(x => x.ToAsyncEnumerable()).ToListAsync());
+        var sand = CreateGrid(await inputReader.ParseLinesAsync(17, ParseLine).SelectMany(x => x.ToAsyncEnumerable())
+            .ToListAsync());
 
         var water = new SparseSpatialMap<Point2, int, Water>();
         Flow(new Point2(500, 0), sand, water);
 
         return water
-            .Where(p => p.Key.Y >= sand.Bounds.GetMin(1) && p.Key.Y <= sand.Bounds.GetMax(1) && p.Value == Water.Settled)
+            .Where(p => p.Key.Y >= sand.Bounds.GetMin(1) && p.Key.Y <= sand.Bounds.GetMax(1) &&
+                        p.Value == Water.Settled)
             .Count()
             .ToString();
     }
@@ -43,7 +46,7 @@ public class Challenge17(IInputReader inputReader)
 
         water.Set(current, Water.Flowing);
 
-        bool hitVoid = false;
+        var hitVoid = false;
         if (CanFlowDown(sand, water, current))
             hitVoid = Flow(current.Down, sand, water);
 
@@ -62,7 +65,7 @@ public class Challenge17(IInputReader inputReader)
     private static void Settle(Point2 current, PointCloud<Point2, int> sand, SparseSpatialMap<Point2, int, Water> water)
     {
         var toSettle = new List<Point2>();
-        for (int i = current.X; ; i--)
+        for (var i = current.X;; i--)
         {
             var p = new Point2(i, current.Y);
             if (sand.Contains(p))
@@ -74,7 +77,7 @@ public class Challenge17(IInputReader inputReader)
             toSettle.Add(p);
         }
 
-        for (int i = current.X; ; i++)
+        for (var i = current.X;; i++)
         {
             var p = new Point2(i, current.Y);
             if (sand.Contains(p))
@@ -90,16 +93,19 @@ public class Challenge17(IInputReader inputReader)
             water.Set(p, Water.Settled);
     }
 
-    private static bool CanFlowDown(PointCloud<Point2, int> sand, SparseSpatialMap<Point2, int, Water> water, Point2 current)
+    private static bool CanFlowDown(PointCloud<Point2, int> sand, SparseSpatialMap<Point2, int, Water> water,
+        Point2 current)
         => IsEmpty(sand, water, current.Down);
 
-    private static bool CanFlowSideways(PointCloud<Point2, int> sand, SparseSpatialMap<Point2, int, Water> water, Point2 current, Point2 direction)
-        => IsEmpty(sand, water, current + direction) && IsSolidOrSettled(sand, water,current.Down);
+    private static bool CanFlowSideways(PointCloud<Point2, int> sand, SparseSpatialMap<Point2, int, Water> water,
+        Point2 current, Point2 direction)
+        => IsEmpty(sand, water, current + direction) && IsSolidOrSettled(sand, water, current.Down);
 
     private static bool IsEmpty(PointCloud<Point2, int> sand, SparseSpatialMap<Point2, int, Water> water, Point2 p)
         => !sand.Contains(p) && water.Get(p) == Water.None;
 
-    private static bool IsSolidOrSettled(PointCloud<Point2, int> sand, SparseSpatialMap<Point2, int, Water> water, Point2 p)
+    private static bool IsSolidOrSettled(PointCloud<Point2, int> sand, SparseSpatialMap<Point2, int, Water> water,
+        Point2 p)
         => sand.Contains(p) || water.Get(p) == Water.Settled;
 
     private static PointCloud<Point2, int> CreateGrid(IEnumerable<Point2> points) => new(points);
@@ -113,7 +119,8 @@ public class Challenge17(IInputReader inputReader)
             return ParsePoints(a, Enumerable.Range(bl, br - bl + 1), c == 'y');
         });
 
-    private static IEnumerable<Point2> ParsePoints(int a, IEnumerable<int> range, bool flipped) => range.Select(b => flipped ? new Point2(b, a) : new Point2(a, b));
+    private static IEnumerable<Point2> ParsePoints(int a, IEnumerable<int> range, bool flipped) =>
+        range.Select(b => flipped ? new Point2(b, a) : new Point2(a, b));
 
     private enum Water
     {

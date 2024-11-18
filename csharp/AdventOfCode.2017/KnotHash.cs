@@ -14,14 +14,12 @@ public static class KnotHash
         var skip = 0;
 
         for (var r = 0; r < 64; r++)
-        {
             foreach (var length in input.Select(c => (byte) c).Concat(new byte[] {17, 31, 73, 47, 23}))
             {
                 Twist(sparseHash, i, length);
                 i = (i + length + skip).Mod(sparseHash.Length);
                 skip++;
             }
-        }
 
         return sparseHash.Chunk(16).Select(x => x.Xor()).ToArray();
     }

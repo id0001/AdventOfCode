@@ -2,7 +2,6 @@ using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
 using AdventOfCode.Lib.Assembly;
-using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -16,9 +15,9 @@ public class Challenge19(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var lines = await inputReader.ReadLinesAsync(19).ToListAsync();
-        var program = CreateProgram(lines, out int ipRegister);
+        var program = CreateProgram(lines, out var ipRegister);
 
-        var memory = new Memory { IpRegister = ipRegister };
+        var memory = new Memory {IpRegister = ipRegister};
         var cpu = new Cpu<Memory, string, Argument>(memory, program);
         LoadInstructions(cpu);
         cpu.RunTillHalted();
@@ -31,10 +30,8 @@ public class Challenge19(IInputReader inputReader)
     {
         var sum = 0;
         for (var i = 1; i <= 10551319; i++)
-        {
             if (10551319 % i == 0)
                 sum += i;
-        }
 
         return sum.ToString();
     }
@@ -62,27 +59,45 @@ public class Challenge19(IInputReader inputReader)
             .Skip(1)
             .Select(line => line
                 .Extract<string, int, int, int>(@"(.+) (\d+) (\d+) (\d+)")
-                .Into(parts => new Instruction<string, Argument>(parts.First, new Argument(parts.Second, parts.Third, parts.Fourth)))
-                )
+                .Into(parts =>
+                    new Instruction<string, Argument>(parts.First,
+                        new Argument(parts.Second, parts.Third, parts.Fourth)))
+            )
             .ToList();
     }
 
-    private static void Addr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) + memory.Get(args.B));
+    private static void Addr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) + memory.Get(args.B));
+
     private static void Addi(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) + args.B);
-    private static void Mulr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) * memory.Get(args.B));
+
+    private static void Mulr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) * memory.Get(args.B));
+
     private static void Muli(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) * args.B);
-    private static void Banr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) & memory.Get(args.B));
+
+    private static void Banr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) & memory.Get(args.B));
+
     private static void Bani(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) & args.B);
-    private static void Borr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) | memory.Get(args.B));
+
+    private static void Borr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) | memory.Get(args.B));
+
     private static void Bori(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) | args.B);
     private static void Setr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A));
     private static void Seti(Argument args, Memory memory) => memory.Set(args.C, args.A);
     private static void Gtir(Argument args, Memory memory) => memory.Set(args.C, args.A > memory.Get(args.B) ? 1 : 0);
     private static void Gtri(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) > args.B ? 1 : 0);
-    private static void Gtrr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) > memory.Get(args.B) ? 1 : 0);
+
+    private static void Gtrr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) > memory.Get(args.B) ? 1 : 0);
+
     private static void Eqir(Argument args, Memory memory) => memory.Set(args.C, args.A == memory.Get(args.B) ? 1 : 0);
     private static void Eqri(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) == args.B ? 1 : 0);
-    private static void Eqrr(Argument args, Memory memory) => memory.Set(args.C, memory.Get(args.A) == memory.Get(args.B) ? 1 : 0);
+
+    private static void Eqrr(Argument args, Memory memory) =>
+        memory.Set(args.C, memory.Get(args.A) == memory.Get(args.B) ? 1 : 0);
 
     private record Argument(int A, int B, int C);
 

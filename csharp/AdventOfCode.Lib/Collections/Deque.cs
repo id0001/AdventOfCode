@@ -87,15 +87,11 @@ public class Deque<T> : ICollection, IReadOnlyCollection<T>
             return;
 
         if (amount > 0)
-        {
             for (var i = 0; i < amount; i++)
                 PushFront(PopBack());
-        }
         else
-        {
             for (var i = 0; i > amount; i--)
                 PushBack(PopFront());
-        }
     }
 
     public void PushFront(T item)
@@ -233,7 +229,7 @@ public class Deque<T> : ICollection, IReadOnlyCollection<T>
         var oldArray = _array;
         _array = new T[newCapacity];
 
-        var newHead = (_array.Length / 2) - (Count / 2);
+        var newHead = _array.Length / 2 - Count / 2;
         var newTail = IsEmpty ? newHead : newHead + Count - 1;
 
         Array.Copy(oldArray, _head, _array, newHead, Count);

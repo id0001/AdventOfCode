@@ -8,32 +8,32 @@ public class Challenge21
 {
     private static readonly Item[] Weapons =
     [
-        new Item(8, 4, 0),
-        new Item(10, 5, 0),
-        new Item(25, 6, 0),
-        new Item(40, 7, 0),
-        new Item(74, 8, 0)
+        new(8, 4, 0),
+        new(10, 5, 0),
+        new(25, 6, 0),
+        new(40, 7, 0),
+        new(74, 8, 0)
     ];
 
     private static readonly Item[] Armor =
     [
-        new Item(0, 0, 0),
-        new Item(13, 0, 1),
-        new Item(31, 0, 2),
-        new Item(53, 0, 3),
-        new Item(75, 0, 4),
-        new Item(102, 0, 5)
+        new(0, 0, 0),
+        new(13, 0, 1),
+        new(31, 0, 2),
+        new(53, 0, 3),
+        new(75, 0, 4),
+        new(102, 0, 5)
     ];
 
     private static readonly List<Item> Rings =
     [
-        new Item(0, 0, 0),
-        new Item(25, 1, 0),
-        new Item(50, 2, 0),
-        new Item(100, 3, 0),
-        new Item(20, 0, 1),
-        new Item(40, 0, 2),
-        new Item(80, 0, 3)
+        new(0, 0, 0),
+        new(25, 1, 0),
+        new(50, 2, 0),
+        new(100, 3, 0),
+        new(20, 0, 1),
+        new(40, 0, 2),
+        new(80, 0, 3)
     ];
 
     [Part1]

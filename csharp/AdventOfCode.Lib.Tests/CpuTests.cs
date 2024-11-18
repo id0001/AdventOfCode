@@ -9,7 +9,8 @@ public class CpuTests
     public async Task Test_2017_Day8_Part2()
     {
         var program = await InputReader.ParseLinesAsync("2017.8.2.txt", ParseLine8).ToListAsync();
-        var cpu = new Cpu<RegisterMemory<string, int>, string, Args2017Day8>(new RegisterMemory<string, int>(), program);
+        var cpu = new Cpu<RegisterMemory<string, int>, string, Args2017Day8>(new RegisterMemory<string, int>(),
+            program);
 
         var maxValue = 0;
         cpu.AddInstruction("inc", (args, mem) =>
@@ -63,7 +64,8 @@ public class CpuTests
         var compare = extract[4];
         var conditionB = extract[5].As<int>();
 
-        return new Instruction<string, Args2017Day8>(op, new Args2017Day8(register, mod, conditionA, compare, conditionB));
+        return new Instruction<string, Args2017Day8>(op,
+            new Args2017Day8(register, mod, conditionA, compare, conditionB));
     }
 
     private record Args2017Day8(string Register, int Mod, string CondtionA, string Compare, int ConditionB);
