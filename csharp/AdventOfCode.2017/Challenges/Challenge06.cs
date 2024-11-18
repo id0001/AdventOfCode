@@ -1,7 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using AdventOfCode.Lib.Collections;
 
 namespace AdventOfCode2017.Challenges;
 
@@ -43,7 +42,7 @@ public class Challenge06(IInputReader inputReader)
     {
         var banks = (await inputReader.ReadAllTextAsync(6)).SplitBy("\t").As<int>().ToArray();
 
-        var visited = new OrderedDictionary<string, int>
+        var visited = new AdventOfCode.Lib.Collections.OrderedDictionary<string, int>
         {
             {string.Join(",", banks), 0}
         };
