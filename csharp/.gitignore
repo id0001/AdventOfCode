@@ -47,6 +47,10 @@ bld/
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
+# IntelliJ IDEA
+.idea/
+*.iml
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
