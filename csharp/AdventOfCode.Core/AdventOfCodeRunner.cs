@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using AdventOfCode.Core.IO;
@@ -15,7 +14,7 @@ public class AdventOfCodeRunner
 {
     private const string UsageResourceName = "AdventOfCode.Core.Resources.docopt.txt";
     private const string InputBasePath = "Inputs";
-    private const string ConfigName = "aoc.json";
+    private const string SessionTokenFileName = "AoC_SessionToken.txt";
 
     private static readonly HttpClient SharedHttpClient = new()
     {
@@ -26,7 +25,7 @@ public class AdventOfCodeRunner
     private readonly string _usage;
     private readonly int _year;
 
-    private AocConfig _config = new AocConfig();
+    private string? _sessionToken;
 
     public AdventOfCodeRunner(int year)
     {
@@ -42,7 +41,7 @@ public class AdventOfCodeRunner
     {
         try
         {
-            _config = await ReadConfigAsync();
+            _sessionToken = await ReadSessionTokenAsync();
             EnsureSessionTokenExistsAsync();
             await ParseArgumentsAsync(args);
         }
@@ -54,34 +53,31 @@ public class AdventOfCodeRunner
 
     private async void EnsureSessionTokenExistsAsync()
     {
-        if (string.IsNullOrEmpty(_config.SessionToken))
+        if (string.IsNullOrEmpty(_sessionToken))
         {
             Console.WriteLine("Please enter your session token:");
             var token = Console.ReadLine();
             if (!string.IsNullOrEmpty(token))
             {
-                _config.SessionToken = token;
-                await SaveConfigAsync(_config);
+                _sessionToken = token;
+                await SaveSessionTokenAsync(_sessionToken);
             }
 
             Console.Clear();
         }
     }
 
-    private async Task<AocConfig> ReadConfigAsync()
+    private async Task<string?> ReadSessionTokenAsync()
     {
-        if (!File.Exists(ConfigName))
-            return new(); // Default config
-
-        using var stream = File.OpenRead(ConfigName);
-        return (await JsonSerializer.DeserializeAsync<AocConfig>(stream))!;
+        var path = GetSessionTokenFilePath();
+        if (!File.Exists(GetSessionTokenFilePath()))
+            return _sessionToken; // Default config
+        
+        return await File.ReadAllTextAsync(GetSessionTokenFilePath());
     }
 
-    private async Task SaveConfigAsync(AocConfig config)
-    {
-        using var stream = File.OpenWrite(ConfigName);
-        await JsonSerializer.SerializeAsync(stream, config);
-    }
+    private static async Task SaveSessionTokenAsync(string sessionToken)
+        => await File.WriteAllTextAsync(GetSessionTokenFilePath(), sessionToken);
 
     private async Task ParseArgumentsAsync(string[] args)
     {
@@ -164,8 +160,8 @@ public class AdventOfCodeRunner
     {
         var benchmark = ShouldBenchmark();
 
-        if (!string.IsNullOrEmpty(_config.SessionToken))
-            await DownloadInputIfNotExistsAsync(_year, day, _config.SessionToken);
+        if (!string.IsNullOrEmpty(_sessionToken))
+            await DownloadInputIfNotExistsAsync(_year, day, _sessionToken);
 
         var setupMethod = GetSetup(type);
         var part1Method = GetPart1(type);
@@ -243,6 +239,7 @@ public class AdventOfCodeRunner
         request.Headers.Add("Cookie", $"session={sessionToken}");
         var response = await SharedHttpClient.SendAsync(request);
         var responseMessage = await response.Content.ReadAsStringAsync();
+        responseMessage = responseMessage.ReplaceLineEndings(); // Normalize line endings
 
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await File.WriteAllTextAsync(path, responseMessage);
@@ -344,6 +341,8 @@ public class AdventOfCodeRunner
     }
 
     private static string GetInputPath(int day) => Path.Combine(InputBasePath, $"{day:D2}.txt");
+
+    private static string GetSessionTokenFilePath() => Path.Combine(Path.GetTempPath(), SessionTokenFileName);
 
     private static bool ShouldBenchmark()
     {
