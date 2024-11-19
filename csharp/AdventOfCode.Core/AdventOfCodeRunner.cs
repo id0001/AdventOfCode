@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using AdventOfCode.Core.IO;
@@ -13,12 +14,23 @@ namespace AdventOfCode.Core;
 public class AdventOfCodeRunner
 {
     private const string UsageResourceName = "AdventOfCode.Core.Resources.docopt.txt";
+    private const string InputBasePath = "Inputs";
+    private const string ConfigName = "aoc.json";
+
+    private static readonly HttpClient SharedHttpClient = new()
+    {
+        BaseAddress = new Uri("https://adventofcode.com")
+    };
 
     private readonly Table _container;
     private readonly string _usage;
+    private readonly int _year;
+
+    private AocConfig _config = new AocConfig();
 
     public AdventOfCodeRunner(int year)
     {
+        _year = year;
         _usage = ResourceHelper.Read(UsageResourceName);
 
         _container = new Table().HideHeaders();
@@ -30,12 +42,45 @@ public class AdventOfCodeRunner
     {
         try
         {
+            _config = await ReadConfigAsync();
+            EnsureSessionTokenExistsAsync();
             await ParseArgumentsAsync(args);
         }
         catch (Exception ex)
         {
             await Console.Error.WriteLineAsync(ex.ToString());
         }
+    }
+
+    private async void EnsureSessionTokenExistsAsync()
+    {
+        if (string.IsNullOrEmpty(_config.SessionToken))
+        {
+            Console.WriteLine("Please enter your session token:");
+            var token = Console.ReadLine();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _config.SessionToken = token;
+                await SaveConfigAsync(_config);
+            }
+
+            Console.Clear();
+        }
+    }
+
+    private async Task<AocConfig> ReadConfigAsync()
+    {
+        if (!File.Exists(ConfigName))
+            return new(); // Default config
+
+        using var stream = File.OpenRead(ConfigName);
+        return (await JsonSerializer.DeserializeAsync<AocConfig>(stream))!;
+    }
+
+    private async Task SaveConfigAsync(AocConfig config)
+    {
+        using var stream = File.OpenWrite(ConfigName);
+        await JsonSerializer.SerializeAsync(stream, config);
     }
 
     private async Task ParseArgumentsAsync(string[] args)
@@ -119,6 +164,9 @@ public class AdventOfCodeRunner
     {
         var benchmark = ShouldBenchmark();
 
+        if (!string.IsNullOrEmpty(_config.SessionToken))
+            await DownloadInputIfNotExistsAsync(_year, day, _config.SessionToken);
+
         var setupMethod = GetSetup(type);
         var part1Method = GetPart1(type);
         var part2Method = GetPart2(type);
@@ -185,6 +233,21 @@ public class AdventOfCodeRunner
         }
     }
 
+    private static async Task DownloadInputIfNotExistsAsync(int year, int day, string sessionToken)
+    {
+        var path = GetInputPath(day);
+        if (File.Exists(path) && !string.IsNullOrEmpty(await File.ReadAllTextAsync(path)))
+            return;
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/{year}/day/{day}/input");
+        request.Headers.Add("Cookie", $"session={sessionToken}");
+        var response = await SharedHttpClient.SendAsync(request);
+        var responseMessage = await response.Content.ReadAsStringAsync();
+
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        await File.WriteAllTextAsync(path, responseMessage);
+    }
+
     private static async Task<(string?, TimeSpan)> Benchmark(Func<Task<string?>> func, int runAmount,
         TimeSpan? timeout = null)
     {
@@ -209,7 +272,7 @@ public class AdventOfCodeRunner
         AppDomain.CurrentDomain
             .GetAssemblies()
             .SelectMany(GetLoadableTypes)
-            .Select(t => new {Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>()})
+            .Select(t => new { Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>() })
             .FirstOrDefault(x => x.Challenge is not null && x.Challenge.Day == day)?
             .Type;
 
@@ -217,7 +280,7 @@ public class AdventOfCodeRunner
     {
         return AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(GetLoadableTypes)
-            .Select(t => new {Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>()})
+            .Select(t => new { Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>() })
             .Where(x => x.Challenge is not null)
             .OrderByDescending(x => x.Challenge!.Day)
             .Select(x => (x.Challenge!.Day, x.Type))
@@ -228,7 +291,7 @@ public class AdventOfCodeRunner
     {
         return AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(GetLoadableTypes)
-            .Select(t => new {Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>()})
+            .Select(t => new { Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>() })
             .Where(x => x.Challenge is not null)
             .OrderBy(x => x.Challenge!.Day)
             .Select(x => (x.Challenge!.Day, x.Type));
@@ -251,7 +314,7 @@ public class AdventOfCodeRunner
 
     private static object? CreateInstance(Type type)
     {
-        var ctor = type.GetConstructor(new[] {typeof(IInputReader)});
+        var ctor = type.GetConstructor(new[] { typeof(IInputReader) });
         return ctor is not null ? Activator.CreateInstance(type, new InputReader()) : Activator.CreateInstance(type);
     }
 
@@ -277,8 +340,10 @@ public class AdventOfCodeRunner
         if (result is Task<string?> task)
             return await task;
 
-        return (string?) result;
+        return (string?)result;
     }
+
+    private static string GetInputPath(int day) => Path.Combine(InputBasePath, $"{day:D2}.txt");
 
     private static bool ShouldBenchmark()
     {
