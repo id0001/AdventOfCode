@@ -1,21 +1,24 @@
-﻿namespace AdventOfCode.Lib.Math;
+﻿using System.Numerics;
+
+namespace AdventOfCode.Lib.Math;
 
 public static partial class SpecialFunctions
 {
-    public static long? BinarySearch(long min, long max, Func<long, long> compare)
+    public static TNumber? BinarySearch<TNumber>(TNumber min, TNumber max, Func<TNumber, TNumber> compare)
+        where TNumber : IBinaryNumber<TNumber>
     {
         while (min < max)
         {
-            var m = (long) System.Math.Floor((min + max) / 2d);
+            var m = (min + max) / TNumber.CreateChecked(2);
             var cmp = compare(m);
-            if (cmp < 0)
-                min = m + 1;
-            else if (cmp > 0)
-                max = m - 1;
+            if (cmp < TNumber.Zero)
+                min = m + TNumber.One;
+            else if (cmp > TNumber.Zero)
+                max = m - TNumber.One;
             else
                 return m;
         }
 
-        return null;
+        return default;
     }
 }

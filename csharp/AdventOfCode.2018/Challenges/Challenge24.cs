@@ -1,6 +1,7 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
+using System.Collections;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -13,61 +14,63 @@ public class Challenge24(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var (immuneSystem, infected) = ParseInput(await inputReader.ReadAllTextAsync(24));
-        Army winner = Fight(immuneSystem, infected);
 
-        return winner.Groups.Sum(g => g.Units).ToString();
+        var winner = Fight(new Army(ArmyType.ImmuneSystem, immuneSystem, 0), new Army(ArmyType.Infected, infected, 0));
+        return winner!.UnitsLeft.ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
+        var (immuneSystem, infected) = ParseInput(await inputReader.ReadAllTextAsync(24));
 
-        int boost = 1570;
-        Army winner = null!;
+        var boost = 0;
+        Army? winner = null;
         for (; ; boost++)
         {
-            var (immuneSystem, infected) = ParseInput(await inputReader.ReadAllTextAsync(0));
-            foreach (var group in immuneSystem.Groups)
-                group.Boost = boost;
-
-            winner = Fight(immuneSystem, infected);
-            if (winner.Id == "Immune System")
+            var army1 = new Army(ArmyType.ImmuneSystem, immuneSystem, boost);
+            var army2 = new Army(ArmyType.Infected, infected, 0);
+            winner = Fight(army1, army2);
+            if (winner?.Type == ArmyType.ImmuneSystem)
                 break;
         }
 
-        //SpecialFunctions.BinarySearch(1, 1_000_000, )
-        return winner.Groups.Sum(g => g.Units).ToString();
+        return winner.UnitsLeft.ToString();
     }
 
-    private static Army Fight(Army immuneSystem, Army infected)
+    private static Army? Fight(Army army1, Army army2)
     {
-        while (!immuneSystem.Groups.All(g => g.Units == 0) && !infected.Groups.All(g => g.Units == 0))
+        while (army1.UnitsLeft > 0 && army2.UnitsLeft > 0)
         {
-            var battles = ChooseTargets(immuneSystem, infected).Concat(ChooseTargets(infected, immuneSystem)).ToList();
+            var battles = ChooseTargets(army1, army2).Concat(ChooseTargets(army2, army1)).ToList();
 
-            foreach (var battle in battles.OrderByDescending(t => t.Attacker.Initiative))
+            int totalLosses = 0;
+            foreach (var battle in battles.OrderByDescending(t => t.Attacker.Template.Initiative))
             {
                 var dmg = CalculateDamage(battle.Attacker, battle.Defender);
-                var losses = Math.Min(battle.Defender.Units, dmg / battle.Defender.Hp);
+                var losses = Math.Min(battle.Defender.Units, dmg / battle.Defender.Template.Hp);
+                totalLosses += losses;
                 battle.Defender.Units -= losses;
             }
+
+            if (totalLosses == 0)
+                return null;
         }
 
-        var winner = immuneSystem.Groups.All(g => g.Units == 0) ? infected : immuneSystem;
-        return winner;
+        return army1.UnitsLeft > 0 ? army1 : army2;
     }
 
     private static IEnumerable<Target> ChooseTargets(Army attackers, Army defenders)
     {
         var chosen = new List<Group>();
-        foreach (var attacker in attackers.Groups.Where(g => g.Units > 0).OrderByDescending(g => g.EffectivePower).ThenByDescending(g => g.Initiative))
+        foreach (var attacker in attackers.Where(g => g.Units > 0).OrderByDescending(g => g.EffectivePower).ThenByDescending(g => g.Template.Initiative))
         {
-            var choices = defenders.Groups
+            var choices = defenders
                 .Where(defender => defender.Units > 0 && CalculateDamage(attacker, defender) > 0)
                 .Except(chosen)
                 .OrderByDescending(defender => CalculateDamage(attacker, defender))
                 .ThenByDescending(defender => defender.EffectivePower)
-                .ThenByDescending(defender => defender.Initiative)
+                .ThenByDescending(defender => defender.Template.Initiative)
                 .ToList();
 
             if (choices.Count == 0)
@@ -83,23 +86,27 @@ public class Challenge24(IInputReader inputReader)
         if (attacker.Units == 0)
             return 0;
 
-        if (defender.Immunity.Contains(attacker.AttackType))
+        if (defender.Template.Immunity.Contains(attacker.Template.AttackType))
             return 0;
 
-        int dmg = attacker.Units * attacker.EffectivePower;
-        if (defender.Weakness.Contains(attacker.AttackType))
+        int dmg = attacker.EffectivePower;
+        if (defender.Template.Weakness.Contains(attacker.Template.AttackType))
             dmg *= 2;
 
         return dmg;
     }
 
-    private static (Army, Army) ParseInput(string input)
+    private static (GroupTemplate[], GroupTemplate[]) ParseInput(string input)
         => input.SplitBy(DoubleNewLine).Select(ParseArmy).ToList().Into(armies => (armies.First(), armies.Second()));
 
-    private static Army ParseArmy(string input)
-        => input.SplitBy(Environment.NewLine).Into(lines => new Army(lines.First().TrimEnd(':'), lines.Skip(1).Select((line, i) => ParseGroup(line, lines.First().TrimEnd(':'), i + 1)).ToArray()));
+    private static GroupTemplate[] ParseArmy(string input)
+        => input.SplitBy(Environment.NewLine).Into(lines =>
+        {
+            var name = lines[0].TrimEnd(':');
+            return lines.Skip(1).Select((line, i) => ParseGroup(line, name, i + 1)).ToArray();
+        });
 
-    private static Group ParseGroup(string input, string army, int id)
+    private static GroupTemplate ParseGroup(string input, string army, int id)
     {
         var result = input.Extract(
             @"(\d+) units each with (\d+) hit points (?:\(([^)]+)\) )?with an attack that does (\d+) ([^ ]+) damage at initiative (\d+)");
@@ -112,18 +119,7 @@ public class Challenge24(IInputReader inputReader)
         var initiative = result[5].As<int>();
 
         var (weak, immune) = ParseWeaknessesAndImmunities(weakAndImmune);
-        return new Group
-        {
-            Army = army,
-            Id = id,
-            Units = units,
-            Hp = hp,
-            AttackDamage = ad,
-            Initiative = initiative,
-            AttackType = attackType,
-            Weakness = weak,
-            Immunity = immune
-        };
+        return new GroupTemplate(id, units, hp, ad, initiative, attackType, weak, immune);
     }
 
     private static (string[] Weak, string[] Immune) ParseWeaknessesAndImmunities(string input)
@@ -148,20 +144,41 @@ public class Challenge24(IInputReader inputReader)
 
     private record Target(Group Attacker, Group Defender);
 
-    private record Army(string Id, Group[] Groups);
+    private record GroupTemplate(int Id, int Units, int Hp, int AttackDamage, int Initiative, string AttackType, string[] Weakness, string[] Immunity);
 
-    private class Group
+    private class Army : IEnumerable<Group>
     {
-        public int EffectivePower => Units * (AttackDamage + Boost);
-        public required string Army { get; init; }
-        public required int Id { get; init; }
-        public required int Units { get; set; }
-        public required int Hp { get; init; }
-        public required int AttackDamage { get; init; }
-        public required int Initiative { get; init; }
-        public required string AttackType { get; init; }
-        public required string[] Weakness { get; init; }
-        public required string[] Immunity { get; init; }
-        public int Boost = 0;
+        private readonly IList<Group> _groups;
+
+        public Army(ArmyType type, GroupTemplate[] groups, int boost)
+        {
+            Type = type;
+            _groups = groups.Select(g => new Group(type, g, boost)).ToList();
+        }
+
+        public ArmyType Type { get; init; }
+
+        public int UnitsLeft => _groups.Sum(g => g.Units);
+
+        public IEnumerator<Group> GetEnumerator() => _groups.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    private class Group(ArmyType type, GroupTemplate template, int boost)
+    {
+        public GroupTemplate Template { get; } = template;
+
+        public ArmyType ArmyType { get; } = type;
+
+        public int Units { get; set; } = template.Units;
+
+        public int EffectivePower => Units * (Template.AttackDamage + boost);
+    }
+
+    private enum ArmyType
+    {
+        ImmuneSystem,
+        Infected
     }
 }
