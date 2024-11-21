@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Lib.Graphs;
+﻿using Microsoft;
+
+namespace AdventOfCode.Lib.Graphs;
 
 public class UndirectedGraph<TVertex, TEdge>
     where TVertex : notnull
@@ -38,6 +40,9 @@ public class UndirectedGraph<TVertex, TEdge>
 
     public bool AddEdge(TVertex vertex1, TVertex vertex2, TEdge edge)
     {
+        Requires.Argument(ContainsVertex(vertex1), nameof(vertex1), "Vertex does not exist");
+        Requires.Argument(ContainsVertex(vertex2), nameof(vertex2), "Vertex does not exist");
+
         if (ContainsEdge(vertex1, vertex2))
             return false;
 

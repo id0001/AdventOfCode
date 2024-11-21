@@ -23,7 +23,7 @@ public readonly record struct Point4(int X, int Y, int Z, int W) : IPoint<int>, 
         if (other is null)
             return false;
 
-        var instance = (IPoint<int>) this;
+        var instance = (IPoint<int>)this;
 
         if (other.Dimensions != instance.Dimensions)
             return false;
@@ -38,18 +38,18 @@ public readonly record struct Point4(int X, int Y, int Z, int W) : IPoint<int>, 
     public IEnumerable<Point4> GetNeighbors(bool includeDiagonal = false)
     {
         for (var w = -1; w <= 1; w++)
-        for (var z = -1; z <= 1; z++)
-        for (var y = -1; y <= 1; y++)
-        for (var x = -1; x <= 1; x++)
-        {
-            if (!includeDiagonal && !((x == 0) ^ (y == 0) ^ (z == 0) ^ (w == 0)))
-                continue;
+            for (var z = -1; z <= 1; z++)
+                for (var y = -1; y <= 1; y++)
+                    for (var x = -1; x <= 1; x++)
+                    {
+                        if (!includeDiagonal && !((x == 0) ^ (y == 0) ^ (z == 0) ^ (w == 0)))
+                            continue;
 
-            if (x == 0 && y == 0 && z == 0 && w == 0)
-                continue;
+                        if (x == 0 && y == 0 && z == 0 && w == 0)
+                            continue;
 
-            yield return new Point4(X + x, Y + y, Z + z, W + w);
-        }
+                        yield return new Point4(X + x, Y + y, Z + z, W + w);
+                    }
     }
 
     public static Point4 Subtract(Point4 left, Point4 right) =>
@@ -68,4 +68,6 @@ public readonly record struct Point4(int X, int Y, int Z, int W) : IPoint<int>, 
     public static Point4 operator -(Point4 left, Point4 right) => Subtract(left, right);
 
     public static Point4 operator *(Point4 left, int right) => Multiply(left, right);
+
+    public static int ManhattanDistance(Point4 a, Point4 b) => System.Math.Abs(a.X - b.X) + System.Math.Abs(a.Y - b.Y) + System.Math.Abs(a.Z - b.Z) + System.Math.Abs(a.W - b.W);
 }

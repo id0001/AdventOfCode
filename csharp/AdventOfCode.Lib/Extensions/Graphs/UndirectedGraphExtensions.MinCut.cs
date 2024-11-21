@@ -3,7 +3,7 @@ using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode.Lib;
 
-public static class UndirectedGraphExtensions
+public static partial class UndirectedGraphExtensions
 {
     public static IEnumerable<(TVertex Vertex, int Distance)> FloodFill<TVertex, TEdge>(
         this UndirectedGraph<TVertex, TEdge> source, TVertex start)
