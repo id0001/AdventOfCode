@@ -3,7 +3,7 @@
   "profiles": {
     "AdventOfCode.2017": {
       "commandName": "Project",
-      "commandLineArgs": "-d 21",
+      "commandLineArgs": "-a",
       "environmentVariables": {
       }
     }

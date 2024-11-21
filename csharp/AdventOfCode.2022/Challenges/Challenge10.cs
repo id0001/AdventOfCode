@@ -16,7 +16,7 @@ public class Challenge10(IInputReader inputReader)
         var x = 1;
 
         var totalSum = 0;
-        var check = new HashSet<int> {20, 60, 100, 140, 180, 220};
+        var check = new HashSet<int> { 20, 60, 100, 140, 180, 220 };
 
         await foreach (var (opcode, value) in inputReader.ParseLinesAsync(10, ParseLine))
         {
@@ -63,7 +63,7 @@ public class Challenge10(IInputReader inputReader)
             sb.AppendLine();
         }
 
-        return sb.ToString();
+        return sb.ToString().Ocr();
     }
 
     private static void Cycle1(ref int cycle, int x, ref int totalSum, HashSet<int> check)
