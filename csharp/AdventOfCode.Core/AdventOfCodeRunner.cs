@@ -239,7 +239,9 @@ public class AdventOfCodeRunner
         request.Headers.Add("Cookie", $"session={sessionToken}");
         var response = await SharedHttpClient.SendAsync(request);
         var responseMessage = await response.Content.ReadAsStringAsync();
-        responseMessage = responseMessage.ReplaceLineEndings(); // Normalize line endings
+        responseMessage = responseMessage
+            .ReplaceLineEndings() // Normalize line endings
+            .Trim(Environment.NewLine.ToCharArray());
 
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await File.WriteAllTextAsync(path, responseMessage);
