@@ -18,4 +18,5 @@ public interface IInputReader
     IAsyncEnumerable<T> ReadLineAsync<T>(int challenge, char separator);
 
     IAsyncEnumerable<T> ParseLinesAsync<T>(int challenge, Func<string, T> parser);
+    Task<T> ParseTextAsync<T>(int challenge, Func<string, T> parser);
 }

@@ -2,13 +2,13 @@
 
 public static partial class StringExtensions
 {
-    public static string[] SplitBy(this string source, string separator)
+    public static IList<string> SplitBy(this string source, string separator)
     {
-        return source.Split(new[] {separator},
+        return source.Split([separator],
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
     }
 
-    public static string[] SplitBy(this string source, params string[] separators)
+    public static IList<string> SplitBy(this string source, params string[] separators)
     {
         return source.Split(separators,
             StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
@@ -19,8 +19,8 @@ public static partial class StringExtensions
         where T2 : IConvertible
     {
         var items = source.SplitBy(separator);
-        if (items.Length > 2)
-            throw new InvalidOperationException($"Incorrect amount of split items. Expected 2, got {items.Length}");
+        if (items.Count > 2)
+            throw new InvalidOperationException($"Incorrect amount of split items. Expected 2, got {items.Count}");
 
         return (items[0].As<T1>(), items[1].As<T2>());
     }
@@ -31,8 +31,8 @@ public static partial class StringExtensions
         where T3 : IConvertible
     {
         var items = source.SplitBy(separator);
-        if (items.Length > 3)
-            throw new InvalidOperationException($"Incorrect amount of split items. Expected 3, got {items.Length}");
+        if (items.Count > 3)
+            throw new InvalidOperationException($"Incorrect amount of split items. Expected 3, got {items.Count}");
 
         return (items[0].As<T1>(), items[1].As<T2>(), items[2].As<T3>());
     }
@@ -45,8 +45,8 @@ public static partial class StringExtensions
         where T4 : IConvertible
     {
         var items = source.SplitBy(separator);
-        if (items.Length > 4)
-            throw new InvalidOperationException($"Incorrect amount of split items. Expected 4, got {items.Length}");
+        if (items.Count > 4)
+            throw new InvalidOperationException($"Incorrect amount of split items. Expected 4, got {items.Count}");
 
         return (items[0].As<T1>(), items[1].As<T2>(), items[2].As<T3>(), items[3].As<T4>());
     }
@@ -60,8 +60,8 @@ public static partial class StringExtensions
         where T5 : IConvertible
     {
         var items = source.SplitBy(separator);
-        if (items.Length > 5)
-            throw new InvalidOperationException($"Incorrect amount of split items. Expected 5, got {items.Length}");
+        if (items.Count > 5)
+            throw new InvalidOperationException($"Incorrect amount of split items. Expected 5, got {items.Count}");
 
         return (items[0].As<T1>(), items[1].As<T2>(), items[2].As<T3>(), items[3].As<T4>(), items[4].As<T5>());
     }

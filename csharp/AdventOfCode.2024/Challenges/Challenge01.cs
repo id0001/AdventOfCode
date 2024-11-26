@@ -9,7 +9,7 @@ public class Challenge01(IInputReader inputReader)
     [Part1]
     public async Task<string> Part1Async()
     {
-        return await inputReader.ReadAllTextAsync(0);
+        return string.Empty;
     }
 
     // [Part2]
@@ -17,4 +17,6 @@ public class Challenge01(IInputReader inputReader)
     {
         return string.Empty;
     }
+
+    private record GroupTemplate(string Army, int Id, int Units, int Health, int Damage);
 }
