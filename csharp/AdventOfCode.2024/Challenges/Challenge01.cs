@@ -19,22 +19,16 @@ public class Challenge01(IInputReader inputReader)
     {
         var (a, b) = await inputReader.ParseTextAsync(1, ParseText);
         var lookup = b.GroupBy(x => x).ToDictionary(kv => kv.Key, kv => kv.Count());
-        return a.Select(x => lookup.GetValueOrDefault(x,0) * x).Sum().ToString();
+        return a.Select(x => lookup.GetValueOrDefault(x, 0) * x).Sum().ToString();
     }
 
     private static (List<int>, List<int>) ParseText(string input)
     {
-        var a = new List<int>();
-        var b = new List<int>();
+        var (a, b) = input
+            .SelectLines()
+            .Select(line => line.SplitBy<int, int>(" "))
+            .Unzip();
 
-        foreach(var (first, second) in input.Lines().Select(line => line.SplitBy<int,int>(" ")))
-        {
-            a.Add(first);
-            b.Add(second);
-        }
-
-        a.Sort();
-        b.Sort();
-        return (a, b);
+        return ([.. a.Order()], [.. b.Order()]);
     }
 }
