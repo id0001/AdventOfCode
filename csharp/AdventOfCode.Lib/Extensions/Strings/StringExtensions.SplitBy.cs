@@ -2,12 +2,6 @@
 
 public static partial class StringExtensions
 {
-    public static IList<string> SplitBy(this string source, string separator)
-    {
-        return source.Split([separator],
-            StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-    }
-
     public static IList<string> SplitBy(this string source, params string[] separators)
     {
         return source.Split(separators,

@@ -8,20 +8,20 @@ namespace AdventOfCode.Lib;
 
 public static partial class EnumerableExtensions
 {
-    public static IList<T> As<T>(this IList source)
+    public static IList<T> As<T>(this IList<string> source)
         where T : IConvertible
     {
         Requires.NotNull(source, nameof(source));
 
         return source.Cast<IConvertible>().Select(x => x.As<T>()).ToList();
     }
-
-    public static IEnumerable<T> As<T>(this IEnumerable<T> source)
-        where T : IConvertible
+    
+    public static IEnumerable<T2> As<T1,T2>(this IEnumerable<T1> source)
+        where T1 : IConvertible
+        where T2 : IConvertible
     {
         Requires.NotNull(source, nameof(source));
-
-        return source.Cast<IConvertible>().Select(x => x.As<T>());
+        return source.Cast<IConvertible>().Select(x => x.As<T2>());
     }
 
     public static string AsString(this IEnumerable<char> source)
