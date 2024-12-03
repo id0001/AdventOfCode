@@ -12,20 +12,20 @@ public partial class Challenge03(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var input = await inputReader.ReadAllTextAsync(3);
-        var mulls = input.ExtractAll(@"mul\((\d+),(\d+)\)");
-        return mulls.Sum(digits => digits.As<int>().Product()).ToString();
+        var mulls = input.ExtractAllValues<int>(@"mul\((\d+),(\d+)\)");
+        return mulls.Sum(m => m.Product()).ToString();
     }
 
     [Part2]
     public async Task<string> Part2Async()
     {
         var input = await inputReader.ReadAllTextAsync(3);
-        var matches = Part2Pattern().Matches(input);
-        var (sum, _) = matches.Aggregate((Sum: 0, Enabled: true), (acc, match) => (match.Groups[0].Value, acc.Enabled) switch
+        var matches = input.ExtractAll<int>(@"do\(\)|don't\(\)|mul\((\d+),(\d+)\)");
+        var (sum, _) = matches.Aggregate((Sum: 0, Enabled: true), (acc, match) => (match.Match, acc.Enabled) switch
         {
             ("do()", _) => (acc.Sum, true),
             ("don't()", _) => (acc.Sum, false),
-            (_, true)  => (acc.Sum + match.Groups.Values.Skip(1).Select(x => x.Value.As<int>()).Product(), true),
+            (_, true)  => (acc.Sum + match.Values.Product(), true),
             (_, false) => (acc.Sum, false),
         });
 

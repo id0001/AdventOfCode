@@ -126,13 +126,56 @@ public static partial class StringExtensions
         matches = match.Groups.Values.Skip(1).Select(g => (T) Convert.ChangeType(g.Value, typeof(T))).ToArray();
         return true;
     }
-
-    public static string[][] ExtractAll(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+    
+    public static string[][] ExtractAllValues(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
     {
         var matches = Regex.Matches(source, pattern);
         if (matches.Count == 0)
             throw new InvalidOperationException("Regex was unsuccessful");
 
-        return matches.Select(match => match.Groups.Values.Skip(1).Select(g => g.Value).ToArray()).ToArray();
+        return matches.Select(match =>
+            match.Groups.Values.Skip(1).Where(g => g.Success).Select(g => g.Value).ToArray()).ToArray();
     }
+
+    public static T[][] ExtractAllValues<T>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+        where T : IConvertible
+    {
+        var matches = Regex.Matches(source, pattern);
+        if (matches.Count == 0)
+            throw new InvalidOperationException("Regex was unsuccessful");
+
+        return matches.Select(match =>
+            match.Groups.Values.Skip(1).Where(g => g.Success).Select(g => g.Value.As<T>()).ToArray()).ToArray();
+    }
+
+    public static ExtractionValue<string>[] ExtractAll(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+    {
+        var matches = Regex.Matches(source, pattern);
+        if (matches.Count == 0)
+            throw new InvalidOperationException("Regex was unsuccessful");
+
+        return matches.Select(match =>
+        {
+            var m = match.Groups[0].Value;
+            var v = match.Groups.Values.Where(g => g.Success).Skip(1).Select(g => g.Value).ToArray();
+            return new ExtractionValue<string>(m, v);
+        }).ToArray();
+    }
+    
+    public static ExtractionValue<T>[] ExtractAll<T>(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
+        where T : IConvertible
+    {
+        var matches = Regex.Matches(source, pattern);
+        if (matches.Count == 0)
+            throw new InvalidOperationException("Regex was unsuccessful");
+
+        return matches.Select(match =>
+        {
+            var m = match.Groups[0].Value;
+            var v = match.Groups.Values.Where(g => g.Success).Skip(1).Select(g => g.Value.As<T>()).ToArray();
+            return new ExtractionValue<T>(m, v);
+        }).ToArray();
+    }
+
+    public record ExtractionValue<T>(string Match, T[] Values);
 }
