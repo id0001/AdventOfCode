@@ -20,25 +20,14 @@ public partial class Challenge03(IInputReader inputReader)
     public async Task<string> Part2Async()
     {
         var input = await inputReader.ReadAllTextAsync(3);
-        var enabled = true;
-        var sum = 0;
         var matches = Part2Pattern().Matches(input);
-        foreach (var match in matches.AsEnumerable())
+        var (sum, _) = matches.Aggregate((Sum: 0, Enabled: true), (acc, match) => (match.Groups[0].Value, acc.Enabled) switch
         {
-            switch (match.Groups[0].Value)
-            {
-                case "do()":
-                    enabled = true;
-                    break;
-                case "don't()":
-                    enabled = false;
-                    break;
-                default:
-                    if(enabled)
-                        sum += match.Groups.Values.Skip(1).Select(x => x.Value.As<int>()).Product();
-                    break;
-            }
-        }
+            ("do()", _) => (acc.Sum, true),
+            ("don't()", _) => (acc.Sum, false),
+            (_, true)  => (acc.Sum + match.Groups.Values.Skip(1).Select(x => x.Value.As<int>()).Product(), true),
+            (_, false) => (acc.Sum, false),
+        });
 
         return sum.ToString();
     }
