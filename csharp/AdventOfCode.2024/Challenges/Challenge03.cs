@@ -31,7 +31,4 @@ public partial class Challenge03(IInputReader inputReader)
 
         return sum.ToString();
     }
-
-    [GeneratedRegex(@"do\(\)|don't\(\)|mul\((\d+),(\d+)\)")]
-    private static partial Regex Part2Pattern();
 }
