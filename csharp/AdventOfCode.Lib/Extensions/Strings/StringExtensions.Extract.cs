@@ -130,7 +130,7 @@ public static partial class StringExtensions
     public static string[][] ExtractAll(this string source, [StringSyntax(StringSyntaxAttribute.Regex)] string pattern)
     {
         var matches = Regex.Matches(source, pattern);
-        if (!matches.Any())
+        if (matches.Count == 0)
             throw new InvalidOperationException("Regex was unsuccessful");
 
         return matches.Select(match => match.Groups.Values.Skip(1).Select(g => g.Value).ToArray()).ToArray();

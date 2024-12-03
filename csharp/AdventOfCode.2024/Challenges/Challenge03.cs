@@ -6,7 +6,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2024.Challenges;
 
 [Challenge(3)]
-public class Challenge03(IInputReader inputReader)
+public partial class Challenge03(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -19,33 +19,30 @@ public class Challenge03(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var enabled = true;
         var input = await inputReader.ReadAllTextAsync(3);
+        var enabled = true;
         var sum = 0;
-        for (var i = 0; i < input.Length; i++)
+        var matches = Part2Pattern().Matches(input);
+        foreach (var match in matches.AsEnumerable())
         {
-            if (input[i] != ')')
-                continue; // Optimized
-
-            if (input[..(i + 1)].EndsWith("don't()"))
+            switch (match.Groups[0].Value)
             {
-                enabled = false;
-                continue;
+                case "do()":
+                    enabled = true;
+                    break;
+                case "don't()":
+                    enabled = false;
+                    break;
+                default:
+                    if(enabled)
+                        sum += match.Groups.Values.Skip(1).Select(x => x.Value.As<int>()).Product();
+                    break;
             }
-
-            if (input[..(i + 1)].EndsWith("do()"))
-            {
-                enabled = true;
-                continue;
-            }
-
-            if(!enabled)
-                continue;
-
-            if (input[..(i + 1)].TryExtract<int>(@"mul\((\d+),(\d+)\)$", out var numbers))
-                sum += numbers.Product();
         }
 
         return sum.ToString();
     }
+
+    [GeneratedRegex(@"do\(\)|don't\(\)|mul\((\d+),(\d+)\)")]
+    private static partial Regex Part2Pattern();
 }
