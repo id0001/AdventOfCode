@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace AdventOfCode.Lib;
+namespace AdventOfCode.Lib.Utilities;
 
 /// <summary>
 ///     https://en.wikipedia.org/wiki/Summed-area_table
@@ -45,12 +45,12 @@ public record SummedAreaTable<T> where T : IBinaryInteger<T>
             aux[0, x] = source[0, x];
 
         for (var y = 1; y < height; y++)
-        for (var x = 0; x < width; x++)
-            aux[y, x] = source[y, x] + aux[y - 1, x];
+            for (var x = 0; x < width; x++)
+                aux[y, x] = source[y, x] + aux[y - 1, x];
 
         for (var y = 0; y < height; y++)
-        for (var x = 1; x < width; x++)
-            aux[y, x] += aux[y, x - 1];
+            for (var x = 1; x < width; x++)
+                aux[y, x] += aux[y, x - 1];
 
         return aux;
     }

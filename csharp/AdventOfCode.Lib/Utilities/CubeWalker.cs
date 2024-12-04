@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace AdventOfCode.Lib.Misc;
+namespace AdventOfCode.Lib.Utilities;
 
 public class CubeWalker
 {
