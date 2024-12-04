@@ -126,6 +126,70 @@ public static class Array2dExtensions
             yield return source[i, column];
     }
 
+    public static int GetDiagonalLength<T>(this T[,] source) => source.GetLength(0) + source.GetLength(1);
+
+    public static IEnumerable<T> GetDownRightDiagonal<T>(this T[,] source, int diagonalRow)
+    {
+        var width = source.GetLength(1);
+        var height = source.GetLength(0);
+
+        if (diagonalRow < height)
+        {
+            var y = height - diagonalRow - 1;
+            var x = 0;
+
+            while (x < width && y < height)
+            {
+                yield return source[y, x];
+                x++;
+                y++;
+            }
+        }
+        else if (diagonalRow >= height)
+        {
+            var x = diagonalRow - (height - 1);
+            var y = 0;
+
+            while (x < width && y < height)
+            {
+                yield return source[y, x];
+                x++;
+                y++;
+            }
+        }
+    }
+
+    public static IEnumerable<T> GetDownLeftDiagonal<T>(this T[,] source, int diagonalRow)
+    {
+        var width = source.GetLength(1);
+        var height = source.GetLength(0);
+
+        if (diagonalRow < width)
+        {
+            var y = 0;
+            var x = diagonalRow;
+
+            while (x >= 0 && y < height)
+            {
+                yield return source[y, x];
+                x--;
+                y++;
+            }
+        }
+        else if (diagonalRow >= width)
+        {
+            var x = width - 1;
+            var y = diagonalRow - (width - 1);
+
+            while (x >= 0 && y < height)
+            {
+                yield return source[y, x];
+                x--;
+                y++;
+            }
+        }
+    }
+
     public static T[][] ToJaggedArray<T>(this T[,] source)
     {
         Requires.NotNull(source, nameof(source));
@@ -155,5 +219,19 @@ public static class Array2dExtensions
             result[y, x] = source[y][x];
 
         return result;
+    }
+
+    public static IEnumerable<T[,]> Windowed<T>(this T[,] source, int width, int height)
+    {
+        for (var y = 0; y < source.GetLength(0) - (height - 1); y++)
+        for (var x = 0; x < source.GetLength(1) - (width - 1); x++)
+        {
+            var window = new T[height, width];
+            for (var j = 0; j < height; j++)
+            for (var i = 0; i < width; i++)
+                window[j, i] = source[y + j, x + i];
+
+            yield return window;
+        }
     }
 }
