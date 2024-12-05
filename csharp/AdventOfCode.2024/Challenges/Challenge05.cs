@@ -11,10 +11,10 @@ public class Challenge05(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var (rules, lines) = await inputReader.ParseTextAsync(5, ParseInput);
-
-        var correct = lines.Where(l => IsCorrect(rules, l)).ToArray();
-
-        return lines.Where(l => IsCorrect(rules, l)).Select(l => l[l.Length/2]).Sum().ToString();
+        return lines
+            .Where(l => IsCorrect(rules, l))
+            .Sum(l => l[l.Length / 2])
+            .ToString();
     }
 
     [Part2]
@@ -22,56 +22,45 @@ public class Challenge05(IInputReader inputReader)
     {
         var (rules, lines) = await inputReader.ParseTextAsync(5, ParseInput);
 
-        var incorrect = lines.Where(l => !IsCorrect(rules, l)).Select(l => l.ToList()).ToList();
+        var comparer = new InputComparer(rules);
 
-        for (var i = 0; i < incorrect.Count; i++)
-        {
-            var j = 0;
-            while(j < incorrect[i].Count-1)
-            {
-                for (var k = j + 1; k < incorrect[i].Count; k++)
-                {
-                    if (rules.Any(r => r.Before == incorrect[i][k] && r.After == incorrect[i][j]))
-                    {
-                        var n = incorrect[i][j];
-                        incorrect[i].Insert(k + 1, n);
-                        incorrect[i].RemoveAt(j);
-                        continue;
-                    }
-
-                    j++;
-                }
-            }
-
-            if (!IsCorrect(rules, incorrect[i]))
-                i--;
-        }
-        
-        
-        return incorrect.Select(l => l[l.Count/2]).Sum().ToString();
+        return lines
+            .Where(l => !IsCorrect(rules, l))
+            .Select(l => l.Order(comparer).ToArray())
+            .Sum(l => l[l.Length / 2])
+            .ToString();
     }
 
-    private static bool IsCorrect(SortRule[] rules, IList<int> items)
+    private static bool IsCorrect(SortRule[] rules, int[] items)
     {
-        for (int i = 0; i < items.Count; i++)
+        for (int i = 0; i < items.Length; i++)
         {
-            for (var j = i+1; j < items.Count; j++)
-            {
-                if (rules.Any(r => r.Before == items[j] && r.After == items[i]))
-                    return false;
-            }
+            if (rules.Where(r => r.After == items[i]).IntersectBy(items[(i + 1)..], r => r.Before).Any())
+                return false;
         }
 
         return true;
     }
 
-    private static (SortRule[], int[][]) ParseInput(string input) => input.SelectParagraphs()
+    private static (SortRule[], List<int[]>) ParseInput(string input) => input.SelectParagraphs()
         .Into(parts => (
             parts[0].SelectLines()
                 .Select(x => x.SplitBy<int, int>("|")
                     .Into(n => new SortRule(n.First, n.Second))).ToArray(),
-            parts[1].SelectLines().Select(l => l.SplitBy(",").As<int>().ToArray()).ToArray()
+            parts[1].SelectLines().Select(l => l.SplitBy(",").As<int>().ToArray()).ToList()
         ));
 
     private record SortRule(int Before, int After);
+
+    private class InputComparer(IList<SortRule> sortRules) : IComparer<int>
+    {
+        public int Compare(int x, int y)
+        {
+            if (x == y)
+                return 0;
+
+            return sortRules.Any(rule => rule.Before == y && rule.After == x) ? 1 : -1;
+        }
+    }
+
 }
