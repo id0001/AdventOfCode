@@ -11,9 +11,8 @@ public class Challenge06(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var grid = await inputReader.ReadGridAsync(6);
-        var pos = grid.Find(p => p == '^');
-
-        var guard = new Pose2(pos, Face.Up);
+        var start = grid.Find(p => p == '^');
+        var guard = new Pose2(start, Face.Up);
 
         var visited = Simulate(grid, guard);
         return visited.DistinctBy(v => v.Position).Count().ToString();
@@ -23,38 +22,32 @@ public class Challenge06(IInputReader inputReader)
     public async Task<string> Part2Async()
     {
         var grid = await inputReader.ReadGridAsync(6);
-        var pos = grid.Find(p => p == '^');
-    
-        var guard = new Pose2(pos, Face.Up);
-        
-        var visited = Simulate(grid, guard);
+        var start = grid.Find(p => p == '^');
+        var guard = new Pose2(start, Face.Up);
 
         var count = 0;
-        var checkedPositions = new HashSet<Point2>();
-        for (var i = 0; i < visited.Count; i++)
+        var checkedPositions = new HashSet<Pose2>();
+        var toCheck = Simulate(grid, guard).DistinctBy(v => v.Position).ToList(); // Takes the first pose for every position.
+        for (var i = 0; i < toCheck.Count; i++)
         {
-            if (visited[i].Position == pos)
+            if (toCheck[i].Position == start)
             {
-                checkedPositions.Add(visited[i].Position);
+                checkedPositions.Add(toCheck[i]);
                 continue;
             }
-            
-            if(checkedPositions.Contains(visited[i].Position))
-                continue;
 
-            if (!SimulateFrom(grid, visited[i - 1], visited[i].Position, visited.Take(i).ToHashSet()))
+            if (!SimulateFrom(grid, toCheck[i - 1], toCheck[i].Position, checkedPositions))
                 count++;
             
-            checkedPositions.Add(visited[i].Position);
+            checkedPositions.Add(toCheck[i]);
         }
     
         return count.ToString();
     }
 
-    private List<Pose2> Simulate(char[,] grid, Pose2 guard)
+    private static List<Pose2> Simulate(char[,] grid, Pose2 guard)
     {
-        var visited = new List<Pose2> {guard};
-
+        List<Pose2> path = [guard];
         var bounds = grid.Bounds();
         while (true)
         {
@@ -69,14 +62,15 @@ public class Challenge06(IInputReader inputReader)
             }
 
             guard = guard.Step();
-            visited.Add(guard);
+            path.Add(guard);
         }
 
-        return visited;
+        return path;
     }
 
-    private bool SimulateFrom(char[,] grid, Pose2 guard, Point2 obstacle, HashSet<Pose2> visited)
+    private static bool SimulateFrom(char[,] grid, Pose2 guard, Point2 obstacle, IReadOnlySet<Pose2> visitedBase)
     {
+        var visited = new HashSet<Pose2>();
         var bounds = grid.Bounds();
         while (true)
         {
@@ -91,7 +85,7 @@ public class Challenge06(IInputReader inputReader)
             }
 
             guard = guard.Step();
-            if (!visited.Add(guard))
+            if (visitedBase.Contains(guard) || !visited.Add(guard))
                 return false; // loop detected
         }
 
