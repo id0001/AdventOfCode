@@ -39,7 +39,7 @@ public class Challenge07(IInputReader inputReader)
         if (IsCorrect(equation, result * equation.Parts[i], i + 1, useConcat))
             return true;
 
-        if (useConcat && IsCorrect(equation, long.Parse(result.ToString() + equation.Parts[i]), i + 1, useConcat))
+        if (useConcat && IsCorrect(equation, result.Concat(equation.Parts[i]), i + 1, useConcat))
             return true;
 
         return false;

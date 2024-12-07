@@ -54,4 +54,11 @@ public static class NumberExtensions
                          .Concat(EnumerateDigits(number % numberBase, numberBase)))
                 yield return n;
     }
+
+    public static TNumber Concat<TNumber>(this TNumber a, TNumber b)
+        where TNumber :
+        IBinaryInteger<TNumber>,
+        IAdditionOperators<TNumber, TNumber, TNumber>,
+        IMultiplyOperators<TNumber, TNumber, TNumber> 
+        => a * TNumber.CreateChecked(System.Math.Pow(10d, System.Math.Floor(System.Math.Log10(double.CreateChecked(b))) + 1)) + b;
 }
