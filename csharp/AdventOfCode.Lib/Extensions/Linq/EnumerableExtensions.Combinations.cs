@@ -4,6 +4,9 @@ namespace AdventOfCode.Lib;
 
 public static partial class EnumerableExtensions
 {
+    public static IEnumerable<T[]> CombinationsWithRepetition<T>(this T[] source, int k) 
+        => CombinationsWithRepetitionReq(source, [], k);
+
     public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> source, int k)
     {
         var list = source.ToList();
@@ -59,5 +62,20 @@ public static partial class EnumerableExtensions
                 c[j - 1] = x;
                 j--;
             }
+    }
+    
+    private static IEnumerable<T[]> CombinationsWithRepetitionReq<T>(this T[] source, T[] result, int k)
+    {
+        if (k == 0)
+        {
+            yield return result;
+            yield break;
+        }
+
+        foreach (var item in source)
+        {
+            foreach (var combination in CombinationsWithRepetitionReq(source, [..result, item], k - 1))
+                yield return combination;
+        }
     }
 }
