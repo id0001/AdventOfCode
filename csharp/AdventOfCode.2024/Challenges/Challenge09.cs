@@ -1,6 +1,7 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AdventOfCode2024.Challenges;
 
@@ -35,6 +36,7 @@ public class Challenge09(IInputReader inputReader)
     {
         var expanded = await ReadInputAsync(inputReader);
 
+        int emptySearchFromIndex = 0;
         for(var bi = expanded.Count-1; bi > 0; bi--)
         {
             if (expanded[bi] == -1)
@@ -44,12 +46,17 @@ public class Challenge09(IInputReader inputReader)
             var block = GetMemoryBlock(expanded, bi);
             bi = block.Start;
 
-            if(TryGetFirstAvailableEmptyIndex(expanded, block, out var ei))
+            if(TryGetFirstAvailableEmptyIndex(expanded, emptySearchFromIndex, block, out var ei, out var isFirstEmptySpace))
             {
                 for (var i = 0; i < block.Size; i++)
                 {
                     expanded[bi + i] = -1;
                     expanded[ei + i] = id;
+                }
+
+                if(isFirstEmptySpace)
+                {
+                    emptySearchFromIndex = ei + block.Size;
                 }
             }
         }
@@ -67,10 +74,11 @@ public class Challenge09(IInputReader inputReader)
         return new Block(id, index, end - index + 1);
     }
 
-    private static bool TryGetFirstAvailableEmptyIndex(List<int> list, Block block, out int idx)
+    private static bool TryGetFirstAvailableEmptyIndex(List<int> list, int emptySearchFromIndex, Block block, out int idx, out bool isFirstEmptySpace)
     {
+        isFirstEmptySpace = true;
         int start = -1;
-        for (var i = 0; i < block.Start; i++)
+        for (var i = emptySearchFromIndex; i < block.Start; i++)
         {
             if (list[i] != -1)
                 continue;
@@ -84,6 +92,8 @@ public class Challenge09(IInputReader inputReader)
                 idx = start;
                 return true;
             }
+
+            isFirstEmptySpace = false;
         }
 
         idx = -1;

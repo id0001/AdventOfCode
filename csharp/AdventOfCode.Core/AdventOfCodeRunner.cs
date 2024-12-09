@@ -185,7 +185,7 @@ public class AdventOfCodeRunner
                 try
                 {
                     (_, time) = await Benchmark(() => GetPartResult(instance, part1Method), 100,
-                        TimeSpan.FromSeconds(60));
+                        TimeSpan.FromSeconds(120));
                     items.Add(new Text(time.ToString()));
                 }
                 catch (TimeoutException ex)
