@@ -12,18 +12,19 @@ public class Challenge09(IInputReader inputReader)
     {
         var expanded = await ReadInputAsync(inputReader);
 
-        var empty = expanded.IndexOf(-1);
-        var block = expanded.FindLastIndex(x => x != -1);
+        var bi = expanded.Count - 1;
+        while (bi > 0 && expanded[bi] == -1)
+            bi--;
 
-        while (empty < block)
+        for (var ei = 0; ei < bi; ei++)
         {
-            expanded[empty] = expanded[block];
-            expanded[block] = -1;
-            while (expanded[empty] != -1)
-                empty++;
+            if (expanded[ei] != -1)
+                continue;
 
-            while (expanded[block] == -1)
-                block--;
+            expanded[ei] = expanded[bi];
+            expanded[bi] = -1;
+            while (bi > ei && expanded[bi] == -1)
+                bi--;
         }
 
         return Checksum(expanded).ToString();
@@ -34,23 +35,21 @@ public class Challenge09(IInputReader inputReader)
     {
         var expanded = await ReadInputAsync(inputReader);
 
-        for (var blockIndex = expanded.Count - 1; blockIndex > 0; blockIndex--)
+        for(var bi = expanded.Count-1; bi > 0; bi--)
         {
-            if (expanded[blockIndex] == -1)
+            if (expanded[bi] == -1)
                 continue;
 
-            int blockEnd = blockIndex;
-            int id = expanded[blockIndex];
-            while (blockIndex > 0 && expanded[blockIndex - 1] == id)
-                blockIndex--;
+            var id = expanded[bi];
+            var block = GetMemoryBlock(expanded, bi);
+            bi = block.Start;
 
-            int size = blockEnd - blockIndex + 1;
-            if (TryFindEmptyBlock(expanded, blockIndex, size, out var emptyIndex))
+            if(TryGetFirstAvailableEmptyIndex(expanded, block, out var ei))
             {
-                for (var i = 0; i < size; i++)
+                for (var i = 0; i < block.Size; i++)
                 {
-                    expanded[blockIndex + i] = -1;
-                    expanded[emptyIndex + i] = id;
+                    expanded[bi + i] = -1;
+                    expanded[ei + i] = id;
                 }
             }
         }
@@ -58,10 +57,20 @@ public class Challenge09(IInputReader inputReader)
         return Checksum(expanded).ToString();
     }
 
-    private static bool TryFindEmptyBlock(List<int> list, int blockIndex, int sizeNeeded, out int idx)
+    private static Block GetMemoryBlock(List<int> list, int index)
+    {
+        int end = index;
+        int id = list[index];
+        while (index > 0 && list[index - 1] == id)
+            index--;
+
+        return new Block(id, index, end - index + 1);
+    }
+
+    private static bool TryGetFirstAvailableEmptyIndex(List<int> list, Block block, out int idx)
     {
         int start = -1;
-        for (var i = 0; i < blockIndex; i++)
+        for (var i = 0; i < block.Start; i++)
         {
             if (list[i] != -1)
                 continue;
@@ -70,7 +79,7 @@ public class Challenge09(IInputReader inputReader)
             while (list[i + 1] == -1)
                 i++;
 
-            if (i - start + 1 >= sizeNeeded)
+            if (i - start + 1 >= block.Size)
             {
                 idx = start;
                 return true;
@@ -119,4 +128,6 @@ public class Challenge09(IInputReader inputReader)
 
         return sum;
     }
+
+    private readonly record struct Block(int Id, int Start, int Size);
 }
