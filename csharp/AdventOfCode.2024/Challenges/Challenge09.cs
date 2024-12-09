@@ -14,17 +14,17 @@ public class Challenge09(IInputReader inputReader)
         var expanded = await ReadInputAsync(inputReader);
 
         var bi = expanded.Count - 1;
-        while (bi > 0 && expanded[bi] == -1)
-            bi--;
+        var ei = 0;
 
-        for (var ei = 0; ei < bi; ei++)
+        while (ei < bi)
         {
-            if (expanded[ei] != -1)
-                continue;
+            if (expanded[ei] == -1 && expanded[bi] != -1)
+                (expanded[ei], expanded[bi]) = (expanded[bi], expanded[ei]);
 
-            expanded[ei] = expanded[bi];
-            expanded[bi] = -1;
-            while (bi > ei && expanded[bi] == -1)
+            if (expanded[ei] != -1)
+                ei++;
+
+            if (expanded[bi] == -1)
                 bi--;
         }
 
@@ -37,7 +37,7 @@ public class Challenge09(IInputReader inputReader)
         var expanded = await ReadInputAsync(inputReader);
 
         int emptySearchFromIndex = 0;
-        for(var bi = expanded.Count-1; bi > 0; bi--)
+        for (var bi = expanded.Count - 1; bi > 0; bi--)
         {
             if (expanded[bi] == -1)
                 continue;
@@ -46,7 +46,7 @@ public class Challenge09(IInputReader inputReader)
             var block = GetMemoryBlock(expanded, bi);
             bi = block.Start;
 
-            if(TryGetFirstAvailableEmptyIndex(expanded, emptySearchFromIndex, block, out var ei, out var isFirstEmptySpace))
+            if (TryGetFirstAvailableEmptyIndex(expanded, emptySearchFromIndex, block, out var ei, out var isFirstEmptySpace))
             {
                 for (var i = 0; i < block.Size; i++)
                 {
@@ -54,7 +54,7 @@ public class Challenge09(IInputReader inputReader)
                     expanded[ei + i] = id;
                 }
 
-                if(isFirstEmptySpace)
+                if (isFirstEmptySpace)
                 {
                     emptySearchFromIndex = ei + block.Size;
                 }
