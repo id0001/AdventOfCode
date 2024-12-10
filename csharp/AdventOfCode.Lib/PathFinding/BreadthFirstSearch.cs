@@ -84,6 +84,32 @@ public class BreadthFirstSearch<T>(Func<T, IEnumerable<T>> getAdjacent)
         return visited;
     }
 
+    public int CountPaths(T start, Func<T, bool> isFinished)
+    {
+        var queue = new Queue<T>();
+
+        queue.Enqueue(start);
+
+        int count = 0;
+        while (queue.Count > 0)
+        {
+            var currentNode = queue.Dequeue();
+
+            if (isFinished(currentNode))
+            {
+                count++;
+                continue;
+            }
+
+            foreach (var adjacent in getAdjacent(currentNode))
+            {
+                queue.Enqueue(adjacent);
+            }
+        }
+
+        return count;
+    }
+
     private static bool TryPath(T start, Func<T, IEnumerable<T>> getAdjacent, Func<T, bool> isFinished,
         out IEnumerable<T> path)
     {
