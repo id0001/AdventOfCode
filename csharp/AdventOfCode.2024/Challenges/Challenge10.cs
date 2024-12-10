@@ -33,12 +33,30 @@ public class Challenge10(IInputReader inputReader)
 
     private int ScoreTrailHead(BreadthFirstSearch<Point2> bfs, int[,] graph, Point2 start)
     {
-        var list = bfs.FloodFill(start).ToList();
-        return list.Count(t => graph[t.Value.Y, t.Value.X] == 9);
+        int count = 0;
+        bfs.Run(start, c =>
+        {
+            if (graph[c.Y, c.X] == 9)
+                count++;
+            return false;
+        });
+
+        return count;
     }
 
     private int CountTrails(BreadthFirstSearch<Point2> bfs, Point2 start, Point2 end)
-        => bfs.CountPaths(start, p => p == end);
+    {
+        int count = 0;
+        bfs.RunIgnoreVisited(start, c =>
+        {
+            if (c == end)
+                count++;
+
+            return false;
+        });
+
+        return count;
+    }
 
     private static IEnumerable<Point2> GetAdjacent(int[,] graph, Point2 current)
     {

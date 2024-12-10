@@ -11,7 +11,7 @@ namespace AdventOfCode.Lib.Extensions.Graphs
             var candidates = graph.Vertices.ToHashSet();
             while (candidates.Count > 0)
             {
-                var cluster = graph.FloodFill(candidates.First()).Select(t => t.Vertex);
+                var cluster = graph.FloodFill(candidates.First());
                 foreach (var v in cluster)
                     candidates.Remove(v);
 
