@@ -1,7 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode2024.Challenges;
 
@@ -14,9 +13,7 @@ public class Challenge10(IInputReader inputReader)
         var graph = await inputReader.ReadGridAsync<int>(10);
 
         var trailheads = graph.Where((p, v) => v == 0).ToList();
-
-        var bfs = new BreadthFirstSearch<Point2>(p => GetAdjacent(graph, p));
-        return trailheads.Sum(p => ScoreTrailHead(bfs, graph, p)).ToString();
+        return trailheads.Sum(start => graph.Bfs(GetAdjacent, start).Count(n => graph[n.Y, n.X] == 9)).ToString();
     }
 
     [Part2]
@@ -27,35 +24,14 @@ public class Challenge10(IInputReader inputReader)
         var trailheads = graph.Where((p, v) => v == 0).ToList();
         var trailEnds = graph.Where((p, v) => v == 9).ToList();
 
-        var bfs = new BreadthFirstSearch<Point2>(p => GetAdjacent(graph, p));
-        return trailheads.SelectMany(s => trailEnds, (s, e) => CountTrails(bfs, s, e)).Sum().ToString();
-    }
-
-    private int ScoreTrailHead(BreadthFirstSearch<Point2> bfs, int[,] graph, Point2 start)
-    {
-        int count = 0;
-        bfs.Run(start, c =>
-        {
-            if (graph[c.Y, c.X] == 9)
-                count++;
-            return false;
-        });
-
-        return count;
-    }
-
-    private int CountTrails(BreadthFirstSearch<Point2> bfs, Point2 start, Point2 end)
-    {
-        int count = 0;
-        bfs.RunIgnoreVisited(start, c =>
-        {
-            if (c == end)
-                count++;
-
-            return false;
-        });
-
-        return count;
+        return trailheads
+            .SelectMany(start => trailEnds, (start, end) => graph
+                .Bfs(GetAdjacent, start)
+                .IgnoreVisited()
+                .Count(n => n == end)
+            )
+            .Sum()
+            .ToString();
     }
 
     private static IEnumerable<Point2> GetAdjacent(int[,] graph, Point2 current)

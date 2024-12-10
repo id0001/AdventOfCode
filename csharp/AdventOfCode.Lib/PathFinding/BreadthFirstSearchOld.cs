@@ -1,6 +1,7 @@
 ﻿namespace AdventOfCode.Lib.PathFinding;
 
-public class BreadthFirstSearch<T>(Func<T, IEnumerable<T>> getAdjacent)
+[Obsolete("Use the linq extensions")]
+public class BreadthFirstSearchOld<T>(Func<T, IEnumerable<T>> getAdjacent)
     where T : notnull
 {
     public bool TryPath(T start, Func<T, bool> isFinished, out IEnumerable<T> path) =>

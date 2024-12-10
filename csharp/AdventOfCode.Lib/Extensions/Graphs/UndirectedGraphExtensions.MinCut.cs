@@ -5,24 +5,6 @@ namespace AdventOfCode.Lib;
 
 public static partial class UndirectedGraphExtensions
 {
-    public static IEnumerable<TVertex> FloodFill<TVertex, TEdge>(
-        this UndirectedGraph<TVertex, TEdge> source, TVertex start)
-        where TVertex : notnull
-        where TEdge : notnull
-    {
-        var bfs = new BreadthFirstSearch<TVertex>(v => source.AdjacentEdges(v).Keys);
-        return bfs.FloodFill(start);
-    }
-
-    public static IEnumerable<(TVertex Vertex, int Distance)> FloodFillGetDistance<TVertex, TEdge>(
-        this UndirectedGraph<TVertex, TEdge> source, TVertex start)
-        where TVertex : notnull
-        where TEdge : notnull
-    {
-        var bfs = new BreadthFirstSearch<TVertex>(v => source.AdjacentEdges(v).Keys);
-        return bfs.FloodFillGetDistance(start);
-    }
-
     public static (List<TVertex>[] Partitions, List<(TVertex, TVertex)> CutEdges) MinCut<TVertex, TEdge>(
         this UndirectedGraph<TVertex, TEdge> source)
         where TVertex : notnull
