@@ -1,13 +1,14 @@
 ﻿namespace AdventOfCode.Lib.PathFinding;
 
-public class AStar<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, Func<T, int> heuristic)
+[Obsolete("Use the linq extensions")]
+public class AStarOld<T>(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight, Func<T, int> heuristic)
     where T : notnull
 {
-    public AStar(Func<T, IEnumerable<T>> adjacent) : this(adjacent, (_, _) => 1, _ => 0)
+    public AStarOld(Func<T, IEnumerable<T>> adjacent) : this(adjacent, (_, _) => 1, _ => 0)
     {
     }
 
-    public AStar(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight) : this(adjacent, weight, _ => 0)
+    public AStarOld(Func<T, IEnumerable<T>> adjacent, Func<T, T, int> weight) : this(adjacent, weight, _ => 0)
     {
     }
 

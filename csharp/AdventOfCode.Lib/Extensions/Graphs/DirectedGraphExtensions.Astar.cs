@@ -1,17 +1,12 @@
 ﻿using AdventOfCode.Lib.Graphs;
-using AdventOfCode.Lib.PathFinding;
 
 namespace AdventOfCode.Lib;
 
 public static partial class DirectedGraphExtensions
 {
-    public static bool TryPath<TVertex>(this DirectedGraph<TVertex, int> graph, TVertex start,
-        Func<TVertex, bool> isFinished, out IEnumerable<TVertex> path, out int totalCost)
+    public static AStar<TVertex> AStar<TVertex>(this DirectedGraph<TVertex, int> graph, TVertex start)
         where TVertex : notnull
-    {
-        var astar = new AStar<TVertex>(c => GetAdjacent(graph, c), (c, n) => GetWeight(graph, c, n));
-        return astar.TryPath(start, isFinished, out path, out totalCost);
-    }
+        => new AStar<TVertex>(n => GetAdjacent(graph, n), start, (c, n) => GetWeight(graph, c, n), _ => 0);
 
     private static IEnumerable<TVertex> GetAdjacent<TVertex, TEdge>(DirectedGraph<TVertex, TEdge> graph,
         TVertex current)
