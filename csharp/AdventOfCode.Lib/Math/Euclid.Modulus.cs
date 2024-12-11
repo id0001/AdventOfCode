@@ -5,7 +5,7 @@ namespace AdventOfCode.Lib.Math;
 public static partial class Euclid
 {
     public static TNumber Modulus<TNumber>(TNumber divident, TNumber divisor)
-        where TNumber : IAdditionOperators<TNumber, TNumber, TNumber>, IModulusOperators<TNumber, TNumber, TNumber>
+        where TNumber : IBinaryInteger<TNumber>
         => (divident % divisor + divisor) % divisor;
 
     public static long ChineseRemainderTheorem(long[] dividends, long[] divisors)

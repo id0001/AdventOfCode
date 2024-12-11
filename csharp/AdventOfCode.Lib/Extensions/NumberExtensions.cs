@@ -7,7 +7,7 @@ namespace AdventOfCode.Lib;
 public static class NumberExtensions
 {
     public static TNumber Mod<TNumber>(this TNumber divident, TNumber divisor)
-        where TNumber : IAdditionOperators<TNumber, TNumber, TNumber>, IModulusOperators<TNumber, TNumber, TNumber>
+        where TNumber : IBinaryInteger<TNumber>
         => Euclid.Modulus(divident, divisor);
 
     public static string ToHexString<TNumber>(this TNumber source, int padding = 2, bool upperCase = false)
@@ -30,22 +30,10 @@ public static class NumberExtensions
     }
 
     public static IEnumerable<TNumber> EnumerateDigits<TNumber>(this TNumber source)
-        where TNumber :
-        IBinaryInteger<TNumber>,
-        IComparisonOperators<TNumber, TNumber, bool>,
-        IDivisionOperators<TNumber, TNumber, TNumber>,
-        IModulusOperators<TNumber, TNumber, TNumber>
-    {
-        var numberBase = TNumber.CreateChecked(10);
-        return EnumerateDigits(source, numberBase);
-    }
+        where TNumber : IBinaryInteger<TNumber> => EnumerateDigits(source, TNumber.CreateChecked(10));
 
     public static IEnumerable<TNumber> EnumerateDigits<TNumber>(TNumber number, TNumber numberBase)
-        where TNumber :
-        IBinaryInteger<TNumber>,
-        IComparisonOperators<TNumber, TNumber, bool>,
-        IDivisionOperators<TNumber, TNumber, TNumber>,
-        IModulusOperators<TNumber, TNumber, TNumber>
+        where TNumber : IBinaryInteger<TNumber>
     {
         if (number < numberBase)
             yield return number;
@@ -56,17 +44,10 @@ public static class NumberExtensions
     }
 
     public static TNumber Concat<TNumber>(this TNumber a, TNumber b)
-        where TNumber :
-        IBinaryInteger<TNumber>,
-        IAdditionOperators<TNumber, TNumber, TNumber>,
-        IMultiplyOperators<TNumber, TNumber, TNumber>
+        where TNumber : IBinaryInteger<TNumber>
         => a * TNumber.CreateChecked(System.Math.Pow(10d, System.Math.Floor(System.Math.Log10(double.CreateChecked(b))) + 1)) + b;
 
     public static int CountDigits<TNumber>(this TNumber number)
-        where TNumber :
-        IBinaryInteger<TNumber>,
-        IComparisonOperators<TNumber, TNumber, bool>,
-        IDivisionOperators<TNumber, TNumber, TNumber>,
-        IModulusOperators<TNumber, TNumber, TNumber> 
+        where TNumber : IBinaryInteger<TNumber>
         => (int)System.Math.Floor(System.Math.Log10(double.CreateChecked(number))) + 1;
 }
