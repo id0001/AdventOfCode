@@ -59,6 +59,14 @@ public static class NumberExtensions
         where TNumber :
         IBinaryInteger<TNumber>,
         IAdditionOperators<TNumber, TNumber, TNumber>,
-        IMultiplyOperators<TNumber, TNumber, TNumber> 
+        IMultiplyOperators<TNumber, TNumber, TNumber>
         => a * TNumber.CreateChecked(System.Math.Pow(10d, System.Math.Floor(System.Math.Log10(double.CreateChecked(b))) + 1)) + b;
+
+    public static int CountDigits<TNumber>(this TNumber number)
+        where TNumber :
+        IBinaryInteger<TNumber>,
+        IComparisonOperators<TNumber, TNumber, bool>,
+        IDivisionOperators<TNumber, TNumber, TNumber>,
+        IModulusOperators<TNumber, TNumber, TNumber> 
+        => (int)System.Math.Floor(System.Math.Log10(double.CreateChecked(number))) + 1;
 }

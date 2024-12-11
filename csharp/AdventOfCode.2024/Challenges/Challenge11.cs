@@ -1,5 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
+using AdventOfCode.Lib;
 
 namespace AdventOfCode2024.Challenges;
 
@@ -29,26 +30,27 @@ public class Challenge11(IInputReader inputReader)
         if (cache.ContainsKey((number, remaining)))
             return cache[(number, remaining)];
 
+        var digits = number.CountDigits();
+
         if (remaining == 1)
-            return Blink(number).Length;
+            return digits % 2 == 0 ? 2 : 1;
 
-        var blink = Blink(number);
-        var sum = blink.Select(n => Blink(n, remaining - 1, cache)).Sum();
-        cache.TryAdd((number, remaining), sum);
-        return sum;
-    }
-
-    private static long[] Blink(long number)
-    {
         if (number == 0)
-            return [1];
+        {
+            cache.TryAdd((number, remaining), Blink(1, remaining - 1, cache));
+            return cache[(number, remaining)];
+        }
 
-        var str = number.ToString();
-        if (str.Length % 2 != 0) return [number * 2024];
+        if (digits % 2 != 0)
+        {
+            cache.TryAdd((number, remaining), Blink(number * 2024, remaining - 1, cache));
+            return cache[(number, remaining)];
+        }
 
-        var half = str.Length / 2;
-        var n1 = long.Parse(str[..half]);
-        var n2 = long.Parse(str[half..]);
-        return [n1, n2];
+        long divisor = (long)Math.Pow(10, digits / 2);
+        var n1 = Blink(number / divisor, remaining - 1, cache);
+        var n2 = Blink(number % divisor, remaining - 1, cache);
+        cache.TryAdd((number, remaining), n1 + n2);
+        return cache[(number, remaining)];
     }
 }
