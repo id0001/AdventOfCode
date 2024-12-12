@@ -1,7 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using AdventOfCode.Lib.Math;
 
 namespace AdventOfCode2024.Challenges;
 
@@ -9,123 +8,79 @@ namespace AdventOfCode2024.Challenges;
 public class Challenge12(IInputReader inputReader)
 {
     [Part1]
-    public async Task<string> Part1Async()
-    {
-        var grid = await inputReader.ReadGridAsync(12);
-        var regions = GetRegions(grid);
-        return regions.Sum(r => r.Count * CountPerimeter(r)).ToString();
-    }
+    public async Task<string> Part1Async() => (await inputReader.ReadGridAsync(12))
+        .Into(GetRegions)
+        .Sum(r => r.Count * CountPerimeter(r))
+        .ToString();
 
     [Part2]
-    public async Task<string> Part2Async()
-    {
-        var grid = await inputReader.ReadGridAsync(12);
-        var regions = GetRegions(grid);
-        return regions.Sum(r => r.Count * CountCorners(r)).ToString();
-    }
+    public async Task<string> Part2Async() => (await inputReader.ReadGridAsync(12))
+        .Into(GetRegions)
+        .Sum(r => r.Count * CountEdges(r))
+        .ToString();
 
     private static int CountPerimeter(ISet<Point2> points)
-    {
-        int perimeter = 0;
-        foreach (var p in points)
-        {
-            foreach (var neighbor in p.GetNeighbors())
-            {
-                if(!points.Contains(neighbor))
-                    perimeter++;
-            }
-        }
-        
-        return perimeter;
-    }
-    
-    private static int CountCorners(ISet<Point2> points)
+        => points.SelectMany(p => p.GetNeighbors().Except(points)).Count();
+
+    private static int CountEdges(ISet<Point2> points) => points.Sum(p => CountCornerVertices(points, p));
+
+    private static int CountCornerVertices(ISet<Point2> points, Point2 p)
     {
         int corners = 0;
-        foreach (var p in points)
-        {
-            if(HasTopLeftCorner(points,p))
-                corners++;
-            
-            if(HasTopRightCorner(points,p))
-                corners++;
-            
-            if(HasDownLeftCorner(points,p))
-                corners++;
-            
-            if(HasDownRightCorner(points,p))
-                corners++;
-        }
+        if (HasTopLeftCorner(points, p))
+            corners++;
+
+        if (HasTopRightCorner(points, p))
+            corners++;
+
+        if (HasDownLeftCorner(points, p))
+            corners++;
+
+        if (HasDownRightCorner(points, p))
+            corners++;
 
         return corners;
     }
 
-    private static bool HasTopLeftCorner(ISet<Point2> points, Point2 p)
+    private static bool HasTopLeftCorner(ISet<Point2> points, Point2 p) => (points.Contains(p.Up), points.Contains(p.Left)) switch
     {
-        if (!points.Contains(p.Up.Left) && !points.Contains(p.Up) && !points.Contains(p.Left))
-            return true;
-        
-        if (!points.Contains(p.Up.Left) && points.Contains(p.Up) && points.Contains(p.Left))
-            return true;
-        
-        if (points.Contains(p.Up.Left) && !points.Contains(p.Up) && !points.Contains(p.Left))
-            return true;
+        (false, false) => true,
+        (true, true) when !points.Contains(p.Up.Left) => true,
+        _ => false
+    };
 
-        return false;
-    }
-    
-    private static bool HasTopRightCorner(ISet<Point2> points, Point2 p)
+    private static bool HasTopRightCorner(ISet<Point2> points, Point2 p) => (points.Contains(p.Up), points.Contains(p.Right)) switch
     {
-        if (!points.Contains(p.Up.Right) && !points.Contains(p.Up) && !points.Contains(p.Right))
-            return true;
-        
-        if (!points.Contains(p.Up.Right) && points.Contains(p.Up) && points.Contains(p.Right))
-            return true;
-        
-        if (points.Contains(p.Up.Right) && !points.Contains(p.Up) && !points.Contains(p.Right))
-            return true;
+        (false, false) => true,
+        (true, true) when !points.Contains(p.Up.Right) => true,
+        _ => false
+    };
 
-        return false;
-    }
-    
-    private static bool HasDownLeftCorner(ISet<Point2> points, Point2 p)
+    private static bool HasDownLeftCorner(ISet<Point2> points, Point2 p) => (points.Contains(p.Down), points.Contains(p.Left)) switch
     {
-        if (!points.Contains(p.Down.Left) && !points.Contains(p.Down) && !points.Contains(p.Left))
-            return true;
-        
-        if (!points.Contains(p.Down.Left) && points.Contains(p.Down) && points.Contains(p.Left))
-            return true;
-        
-        if (points.Contains(p.Down.Left) && !points.Contains(p.Down) && !points.Contains(p.Left))
-            return true;
+        (false, false) => true,
+        (true, true) when !points.Contains(p.Down.Left) => true,
+        _ => false
+    };
 
-        return false;
-    }
-    
-    private static bool HasDownRightCorner(ISet<Point2> points, Point2 p)
+    private static bool HasDownRightCorner(ISet<Point2> points, Point2 p) => (points.Contains(p.Down), points.Contains(p.Right)) switch
     {
-        if (!points.Contains(p.Down.Right) && !points.Contains(p.Down) && !points.Contains(p.Right))
-            return true;
-        
-        if (!points.Contains(p.Down.Right) && points.Contains(p.Down) && points.Contains(p.Right))
-            return true;
-        
-        if (points.Contains(p.Down.Right) && !points.Contains(p.Down) && !points.Contains(p.Right))
-            return true;
+        (false, false) => true,
+        (true, true) when !points.Contains(p.Down.Right) => true,
+        _ => false
+    };
 
-        return false;
-    }
-
-    private static List<HashSet<Point2>> GetRegions(char[,] grid)
+    private static IList<ISet<Point2>> GetRegions(char[,] grid)
     {
         var visited = new HashSet<Point2>();
-        var regions = new List<HashSet<Point2>>();
+        var regions = new List<ISet<Point2>>();
         foreach (var (p, _) in grid.AsEnumerable())
         {
             if (visited.Contains(p))
                 continue;
 
-            var region = grid.Bfs<char, Point2>(GetAdjacent, p)
+            var region = grid
+                .Bfs(GetAdjacent, p)
                 .FloodFill()
                 .ToHashSet();
 
@@ -137,17 +92,5 @@ public class Challenge12(IInputReader inputReader)
     }
 
     private static IEnumerable<Point2> GetAdjacent(char[,] grid, Point2 p)
-    {
-        var bounds = grid.Bounds();
-        foreach (var neighbor in p.GetNeighbors())
-        {
-            if(!bounds.Contains(neighbor))
-                continue;
-            
-            if(grid[neighbor.Y, neighbor.X] != grid[p.Y, p.X])
-                continue;
-
-            yield return neighbor;
-        }
-    }
+        => p.GetNeighbors().Where(n => grid.Bounds().Contains(n) && grid[n.Y, n.X] == grid[p.Y, p.X]);
 }
