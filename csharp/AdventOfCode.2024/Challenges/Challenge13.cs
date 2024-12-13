@@ -46,10 +46,13 @@ public class Challenge13(IInputReader inputReader)
         var dx = px * by - py * bx;
         var dy = py * ax - px * ay;
 
+        if (d == 0)
+            return 0L;
+
         var x = dx / d;
         var y = dy / d;
 
-        if (d != 0 && dx == x * d && dy == y * d)
+        if (dx == x * d && dy == y * d)
             return x * 3L + y;
 
         return 0L;
