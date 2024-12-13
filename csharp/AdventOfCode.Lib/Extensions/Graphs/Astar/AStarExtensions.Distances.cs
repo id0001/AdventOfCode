@@ -2,7 +2,7 @@
 {
     public static partial class AStarExtensions
     {
-        public static IDictionary<TNode, int> Distances<TNode>(this AStar<TNode> source)
+        public static IDictionary<TNode, int> Distances<TGraph, TNode>(this AStar<TGraph, TNode> source)
             where TNode : notnull
         {
             var queue = new PriorityQueue<TNode, int>();

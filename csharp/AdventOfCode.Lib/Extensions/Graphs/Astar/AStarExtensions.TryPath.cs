@@ -2,7 +2,7 @@
 {
     public static partial class AStarExtensions
     {
-        public static bool TryPath<TNode>(this AStar<TNode> source, Func<TNode, bool> isFinished, out IEnumerable<TNode> path, out int totalCost)
+        public static bool TryPath<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished, out IEnumerable<TNode> path, out int totalCost)
             where TNode : notnull
         {
             var queue = new PriorityQueue<TNode, int>();
