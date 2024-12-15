@@ -94,34 +94,27 @@ public class Challenge15(IInputReader inputReader)
 
     private static Point2 MoveVertically(char[,] map, Point2 robot, Point2 boxLeft, Point2 boxRight, Point2 direction)
     {
-        if (!CanMoveBoxes(map, boxLeft, boxRight, direction))
+        if (!CanMoveBox(map, boxLeft, boxRight, direction))
             return robot;
 
         MoveBoxes(map, boxLeft, boxRight, direction);
         return robot + direction;
     }
 
-    private static bool CanMoveBoxes(char[,] map, Point2 boxLeft, Point2 boxRight, Point2 direction)
+    private static bool CanMoveBox(char[,] map, Point2 boxLeft, Point2 boxRight, Point2 direction)
     {
         var nextLeft = boxLeft + direction;
-        var nextRight = boxRight + direction;
-
-        if (map[nextLeft.Y, nextLeft.X] == '#')
-            return false;
-
-        if (map[nextRight.Y, nextRight.X] == '#')
-            return false;
-
-        if (map[nextLeft.Y, nextLeft.X] == ']' && !CanMoveBoxes(map, nextLeft.Left, nextLeft, direction))
-            return false;
-
-        if (map[nextRight.Y, nextRight.X] == '[' && !CanMoveBoxes(map, nextRight, nextRight.Right, direction))
-            return false;
-
-        if (map[nextLeft.Y, nextLeft.X] == '[' && !CanMoveBoxes(map, nextLeft, nextRight, direction))
-            return false;
-
-        return true;
+        var nextRight=  boxRight + direction;
+        
+        return (map[nextLeft.Y, nextLeft.X], map[nextRight.Y,nextRight.X]) switch
+        {
+            ('#', _) => false,
+            (_, '#') => false,
+            ('[',']') when !CanMoveBox(map, nextLeft,nextRight, direction) => false,
+            (']', _) when !CanMoveBox(map, nextLeft.Left, nextLeft, direction) => false,
+            (_, '[') when !CanMoveBox(map, nextRight, nextRight.Right, direction) => false,
+            _ => true
+        };
     }
 
     private static void MoveBoxes(char[,] map, Point2 boxLeft, Point2 boxRight, Point2 direction)
