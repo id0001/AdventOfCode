@@ -40,11 +40,11 @@
             }
 
             return finishedStates
-                .Select(end => (end.Cost, Paths: Backtrack(source.StartNode, end.Node, cameFrom)))
+                .Select(end => (end.Cost, Paths: GetPaths(source.StartNode, end.Node, cameFrom)))
                 .ToList();
         }
 
-        private static IList<IList<TNode>> Backtrack<TNode>(TNode start, TNode node, IDictionary<TNode, HashSet<TNode>> previous)
+        private static IList<IList<TNode>> GetPaths<TNode>(TNode start, TNode node, IDictionary<TNode, HashSet<TNode>> previous)
             where TNode : notnull
         {
             if (node.Equals(start))
@@ -52,7 +52,7 @@
 
             var paths = new List<IList<TNode>>();
             foreach (var previousNode in previous[node])
-                foreach (var path in Backtrack(start, previousNode, previous))
+                foreach (var path in GetPaths(start, previousNode, previous))
                     paths.Add([.. path, node]);
 
             return paths;

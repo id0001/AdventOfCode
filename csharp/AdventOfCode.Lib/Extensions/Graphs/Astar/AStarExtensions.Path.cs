@@ -2,7 +2,7 @@
 {
     public static partial class AStarExtensions
     {
-        public static bool TryPath<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished, out IEnumerable<TNode> path, out int totalCost)
+        public static AStarResult<TNode> Path<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished)
             where TNode : notnull
         {
             var queue = new PriorityQueue<TNode, int>();
@@ -17,9 +17,9 @@
 
                 if (isFinished(currentNode))
                 {
-                    path = GetPath(currentNode, cameFrom);
-                    totalCost = costSoFar[currentNode];
-                    return true;
+                    var path = GetPath(currentNode, cameFrom);
+                    var totalCost = costSoFar[currentNode];
+                    return new AStarResult<TNode>(true, totalCost, path.ToList());
                 }
 
                 foreach (var nextNode in source.GetAdjacent(currentNode))
@@ -35,9 +35,7 @@
                 }
             }
 
-            path = Enumerable.Empty<TNode>();
-            totalCost = 0;
-            return false;
+            return new AStarResult<TNode>(false, 0, new List<TNode>());
         }
 
         private static IEnumerable<TNode> GetPath<TNode>(TNode end, IDictionary<TNode, TNode> previous)

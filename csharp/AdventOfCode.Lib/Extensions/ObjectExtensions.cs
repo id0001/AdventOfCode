@@ -12,12 +12,4 @@ public static class ObjectExtensions
         where TIn : notnull
         where TOut : notnull
         => converter(source);
-
-    public static AStar<TGraph, TNode> AStar<TGraph, TNode>(this TGraph source, Func<TGraph, TNode, IEnumerable<TNode>> getAdjacent, TNode startNode)
-            where TNode : notnull
-            => new AStar<TGraph, TNode>(source, n => getAdjacent(source, n), startNode, (_, _) => 1, _ => 0);
-
-    public static BreadthFirstSearch<TNode> Bfs<TGraph, TNode>(this TGraph source, Func<TGraph, TNode, IEnumerable<TNode>> getAdjacent, TNode startNode)
-            where TNode : notnull
-            => new BreadthFirstSearch<TNode>(c => getAdjacent(source, c), startNode);
 }

@@ -2,7 +2,7 @@
 {
     public static partial class BreadthFirstSearchExtensions
     {
-        public static IEnumerable<TNode> FloodFill<TNode>(this BreadthFirstSearch<TNode> source)
+        public static IEnumerable<TNode> FloodFill<TGraph, TNode>(this BreadthFirstSearch<TGraph, TNode> source)
             where TNode : notnull
         {
             var queue = new Queue<TNode>();
@@ -26,7 +26,7 @@
             }
         }
 
-        public static IEnumerable<(TNode Node, int Distance)> FloodFillWithDistance<TNode>(this BreadthFirstSearch<TNode> source)
+        public static IEnumerable<(TNode Node, int Distance)> FloodFillWithDistance<TGraph, TNode>(this BreadthFirstSearch<TGraph, TNode> source)
             where TNode : notnull
         {
             var queue = new Queue<TNode>();
@@ -52,7 +52,7 @@
             }
         }
 
-        public static IEnumerable<(TNode Node, int Distance)> FloodFillWithDistance<TNode>(this BreadthFirstSearch<TNode> source, int maxDistance)
+        public static IEnumerable<(TNode Node, int Distance)> FloodFillWithDistance<TGraph, TNode>(this BreadthFirstSearch<TGraph, TNode> source, int maxDistance)
             where TNode : notnull
         {
             var queue = new Queue<TNode>();

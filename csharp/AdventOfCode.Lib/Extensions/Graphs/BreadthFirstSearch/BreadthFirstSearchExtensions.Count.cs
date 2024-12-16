@@ -2,7 +2,7 @@
 {
     public static partial class BreadthFirstSearchExtensions
     {
-        public static int Count<TNode>(this BreadthFirstSearch<TNode> source, Func<TNode, bool> selector)
+        public static int Count<TGraph, TNode>(this BreadthFirstSearch<TGraph, TNode> source, Func<TNode, bool> selector)
             where TNode : notnull
         {
             var queue = new Queue<TNode>();
@@ -34,7 +34,7 @@
             return count;
         }
 
-        public static int Count<TNode>(this BreadthFirstSearchIgnoreVisited<TNode> source, Func<TNode, bool> selector)
+        public static int Count<TGraph, TNode>(this BreadthFirstSearchIgnoreVisited<TGraph, TNode> source, Func<TNode, bool> selector)
             where TNode : notnull
         {
             var queue = new Queue<TNode>();

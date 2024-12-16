@@ -15,6 +15,8 @@
            => source with { GetHeuristic = getHeuristic };
     }
 
-    public record AStar<TGraph, TNode>(TGraph Source, Func<TNode, IEnumerable<TNode>> GetAdjacent, TNode StartNode, Func<TNode, TNode, int> GetWeight, Func<TNode, int> GetHeuristic)
+    public record AStar<TGraph, TNode>(TGraph Source, TNode StartNode, Func<TNode, IEnumerable<TNode>> GetAdjacent, Func<TNode, TNode, int> GetWeight, Func<TNode, int> GetHeuristic)
         where TNode : notnull;
+
+    public record AStarResult<TNode>(bool Success, int Cost, IList<TNode> Path);
 }

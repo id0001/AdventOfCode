@@ -2,7 +2,7 @@
 {
     public static partial class BreadthFirstSearchExtensions
     {
-        public static bool TryPath<TNode>(this BreadthFirstSearch<TNode> source, Func<TNode, bool> isFinished, out IEnumerable<TNode> path)
+        public static BreadthFirstSearchResult<TNode> Path<TGraph, TNode>(this BreadthFirstSearch<TGraph, TNode> source, Func<TNode, bool> isFinished)
             where TNode : notnull
         {
             var queue = new Queue<TNode>();
@@ -17,8 +17,8 @@
 
                 if (isFinished(currentNode))
                 {
-                    path = GetPath(currentNode, previous);
-                    return true;
+                    var path = GetPath(currentNode, previous);
+                    return new BreadthFirstSearchResult<TNode>(true, path.ToList());
                 }
 
                 foreach (var adjacent in source.GetAdjacent(currentNode))
@@ -32,8 +32,7 @@
                 }
             }
 
-            path = Enumerable.Empty<TNode>();
-            return false;
+            return new BreadthFirstSearchResult<TNode>(false, new List<TNode>());
         }
 
         private static IEnumerable<TNode> GetPath<TNode>(TNode end, IDictionary<TNode, TNode> previous)

@@ -2,7 +2,7 @@
 {
     public static partial class BreadthFirstSearchExtensions
     {
-        public static IDictionary<TNode, int> Distances<TNode>(this BreadthFirstSearch<TNode> source)
+        public static IDictionary<TNode, int> Distances<TGraph, TNode>(this BreadthFirstSearch<TGraph, TNode> source)
             where TNode : notnull
         {
             var queue = new Queue<TNode>();

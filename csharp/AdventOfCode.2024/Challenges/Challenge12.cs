@@ -80,7 +80,7 @@ public class Challenge12(IInputReader inputReader)
                 continue;
 
             var region = grid
-                .Bfs(GetAdjacent, p)
+                .Bfs(p, GetAdjacent)
                 .FloodFill()
                 .ToHashSet();
 
