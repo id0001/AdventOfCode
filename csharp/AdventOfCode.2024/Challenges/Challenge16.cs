@@ -32,10 +32,14 @@ public class Challenge16(IInputReader inputReader)
 
         var queue = new PriorityQueue<Pose2, int>();
         var distances = new Dictionary<Pose2, int>();
-        var predecessors = new Dictionary<Point2, HashSet<Pose2>>();
+        var predecessors = new Dictionary<Pose2, HashSet<Pose2>>();
         
         queue.Enqueue(new (start, Face.Right), 0);
         distances.Add(new (start, Face.Right), 0);
+        
+        grid.AStar(GetAdjacent, new Pose2(start, Face.Right))
+            .WithWeight(GetWeight)
+            .TryPath(p => p.Position == end, out _, out int actualCost);
 
         while (queue.Count > 0)
         {
@@ -51,27 +55,48 @@ public class Challenge16(IInputReader inputReader)
                 {
                     distances[neighbor] = newDistance;
                     queue.Enqueue(neighbor, newDistance);
-                    if(neighbor.Position != currentNode.Position)
-                        predecessors[neighbor.Position] = [currentNode];
+                        predecessors[neighbor] = [currentNode];
                 }
                 else if (newDistance == distances[neighbor])
                 {
-                    if(neighbor.Position != currentNode.Position)
-                        predecessors[neighbor.Position].Add(currentNode);
+                        predecessors[neighbor].Add(currentNode);
                 }
             }
         }
         
-        var paths = Backtrack(start, end, predecessors);
+        var paths = Backtrack(new Pose2(start, Face.Right), end, new[]{ new Pose2(end, Face.Up), new Pose2(end, Face.Right) }, predecessors);
+
+        var groups = paths
+            .GroupBy(p => CalculateCost(p))
+            .ToList();
+        
+        var test = groups
+            .OrderBy(g => g.Key)
+            .First().SelectMany(p => p.Select(x => x.Position)).Distinct().Count();
         
         return string.Empty;
     }
-    
-    private static List<List<Point2>> Backtrack(Point2 start, Point2 node, IDictionary<Point2, HashSet<Pose2>> previous)
+
+    private static int CalculateCost(List<Pose2> path)
     {
-        var paths = new List<List<Point2>>();
-        var stack = new Stack<(Point2, List<Point2>)>();
-        stack.Push((node, [node]));
+        int cost = 0;
+        foreach (var pair in path.Windowed(2))
+        {
+            if (pair[0].Position == pair[1].Position)
+                cost += 1000;
+
+            cost++;
+        }
+
+        return cost;
+    }
+    
+    private static List<List<Pose2>> Backtrack(Pose2 start, Point2 endPos, Pose2[] nodes, IDictionary<Pose2, HashSet<Pose2>> previous)
+    {
+        var paths = new List<List<Pose2>>();
+        var stack = new Stack<(Pose2, List<Pose2>)>();
+        foreach(var end in nodes)
+            stack.Push((end, [end]));
 
         while (stack.Count > 0)
         {
@@ -83,8 +108,8 @@ public class Challenge16(IInputReader inputReader)
             }
             else
             {
-                foreach(var predecessor in previous[currentNode])
-                    stack.Push((predecessor.Position, [..path, predecessor.Position]));
+                foreach(var predecessor in previous[currentNode].Where(p => p.Position != endPos))
+                    stack.Push((predecessor, [..path, predecessor]));
             }
         }
         
