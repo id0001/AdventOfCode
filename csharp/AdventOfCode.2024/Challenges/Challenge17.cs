@@ -23,7 +23,7 @@ public class Challenge17(IInputReader inputReader)
         return FindValueOfA(cpu, 15, 0, program).ToString();
     }
 
-    private static long FindValueOfA(Cpu<Memory, int, int> cpu, int digitsRemaining, long value, string target)
+    private static long FindValueOfA(Assembler<Memory, int, int> cpu, int digitsRemaining, long value, string target)
     {
         for (var i = 0; i < 8; i++)
         {
@@ -109,17 +109,9 @@ public class Challenge17(IInputReader inputReader)
         _ => operant
     };
 
-    private static (Cpu<Memory, int, int>, string) ParseInput(string input)
+    private static (Assembler<Memory, int, int>, string) ParseInput(string input)
     {
         var paragraphs = input.SelectParagraphs();
-
-        var memory = new Memory();
-        var abc = paragraphs[0]
-            .SelectLines()
-            .Select(line => line.Extract<int>(@"(\d+)")[0]).ToArray();
-        memory.Set('A', abc[0]);
-        memory.Set('B', abc[1]);
-        memory.Set('C', abc[2]);
 
         var program = paragraphs[1]
             .Substring("Program: ".Length)
@@ -129,7 +121,15 @@ public class Challenge17(IInputReader inputReader)
             .Select(arr => new Instruction<int, int>(arr[0], arr[1]))
             .ToList();
 
-        var cpu = new Cpu<Memory, int, int>(memory, program);
+        var memory = new Memory(program);
+        var abc = paragraphs[0]
+            .SelectLines()
+            .Select(line => line.Extract<int>(@"(\d+)")[0]).ToArray();
+        memory.Set('A', abc[0]);
+        memory.Set('B', abc[1]);
+        memory.Set('C', abc[2]);
+
+        var cpu = new Assembler<Memory, int, int>(memory);
 
         cpu.AddInstruction(0, Adv);
         cpu.AddInstruction(1, Bxl);
@@ -143,7 +143,8 @@ public class Challenge17(IInputReader inputReader)
         return (cpu, paragraphs[1]);
     }
 
-    private class Memory : RegisterMemory<char, long>
+    private class Memory(IList<Instruction<int, int>> program)
+        : RegisterMemory<char, long, Instruction<int, int>>(program)
     {
         public List<long> Output { get; } = [];
 
