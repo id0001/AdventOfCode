@@ -12,16 +12,6 @@ public class Challenge17(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var (cpu, _) = await inputReader.ParseTextAsync(17, ParseInput);
-
-        cpu.AddInstruction(0, Adv);
-        cpu.AddInstruction(1, Bxl);
-        cpu.AddInstruction(2, Bst);
-        cpu.AddInstruction(3, Jnz);
-        cpu.AddInstruction(4, Bxc);
-        cpu.AddInstruction(5, Out);
-        cpu.AddInstruction(6, Bdv);
-        cpu.AddInstruction(7, Cdv);
-
         cpu.RunTillHalted();
         return string.Join(",", cpu.Memory.Output);
     }
@@ -30,30 +20,19 @@ public class Challenge17(IInputReader inputReader)
     public async Task<string> Part2Async()
     {
         var (cpu, program) = await inputReader.ParseTextAsync(17, ParseInput);
-
-        cpu.AddInstruction(0, Adv);
-        cpu.AddInstruction(1, Bxl);
-        cpu.AddInstruction(2, Bst);
-        cpu.AddInstruction(3, Jnz);
-        cpu.AddInstruction(4, Bxc);
-        cpu.AddInstruction(5, Out);
-        cpu.AddInstruction(6, Bdv);
-        cpu.AddInstruction(7, Cdv);
-
         return FindValueOfA(cpu, 15, 0, program).ToString();
     }
 
     private static long FindValueOfA(Cpu<Memory, int, int> cpu, int digitsRemaining, long value, string target)
     {
-        for(var i = 0; i < 8; i++)
+        for (var i = 0; i < 8; i++)
         {
-            var a = value * 8L + i;
+            var a = value * 8L + i; // Multiply the existing value by 8 and add the current digit
             cpu.Memory.Clear();
             cpu.Memory.Set('A', a);
             cpu.RunTillHalted();
-            var result = string.Join(",", cpu.Memory.Output);
-            
-            if (!target.EndsWith(result))
+
+            if (!target.EndsWith(string.Join(",", cpu.Memory.Output)))
                 continue; // Not the correct digit
 
             if (digitsRemaining == 0)
@@ -61,7 +40,7 @@ public class Challenge17(IInputReader inputReader)
 
             a = FindValueOfA(cpu, digitsRemaining - 1, a, target);
             if (a == -1)
-                continue; // Wrong path taken
+                continue; // Wrong path taken. Different values can lead to the same output but result in errors later down the line
 
             return a;
         }
@@ -151,6 +130,16 @@ public class Challenge17(IInputReader inputReader)
             .ToList();
 
         var cpu = new Cpu<Memory, int, int>(memory, program);
+
+        cpu.AddInstruction(0, Adv);
+        cpu.AddInstruction(1, Bxl);
+        cpu.AddInstruction(2, Bst);
+        cpu.AddInstruction(3, Jnz);
+        cpu.AddInstruction(4, Bxc);
+        cpu.AddInstruction(5, Out);
+        cpu.AddInstruction(6, Bdv);
+        cpu.AddInstruction(7, Cdv);
+
         return (cpu, paragraphs[1]);
     }
 
