@@ -2,7 +2,7 @@
 {
     public static partial class AStarExtensions
     {
-        public static AStarResult<TNode> Path<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished)
+        public static AStarResult<TNode> FindPath<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished)
             where TNode : notnull
         {
             var queue = new PriorityQueue<TNode, int>();

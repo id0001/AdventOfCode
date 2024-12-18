@@ -58,7 +58,7 @@ public readonly record struct Point2(int X, int Y) : IPoint<int>, INeighbors<int
 
     public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
 
-    public override string ToString() => $"({X},{Y})";
+    public override string ToString() => $"{X},{Y}";
 
     public static Point2 Subtract(Point2 left, Point2 right) => new(left.X - right.X, left.Y - right.Y);
 

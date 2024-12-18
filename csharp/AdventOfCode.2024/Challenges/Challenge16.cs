@@ -17,7 +17,7 @@ public class Challenge16(IInputReader inputReader)
 
         return grid.AStar(new Pose2(start, Face.Right), GetAdjacent)
             .WithWeight(GetWeight)
-            .Path(p => p.Position == end)
+            .FindPath(p => p.Position == end)
             .Cost
             .ToString();
     }
