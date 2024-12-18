@@ -1,96 +1,57 @@
-﻿namespace AdventOfCode.Lib;
-
-public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighbors<int>
+﻿namespace AdventOfCode.Lib
 {
-    public static readonly Point3 Zero = new();
-    public static readonly Point3 One = new(1, 1, 1);
-
-    public int LengthSquared => DistanceSquared(Zero, this);
-
-    IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal) =>
-        GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
-
-    int IPoint<int>.this[int index] => index switch
+    public readonly record struct Point3(int X, int Y, int Z) : IPoint<int>, INeighbors<int>
     {
-        0 => X,
-        1 => Y,
-        2 => Z,
-        _ => throw new NotSupportedException()
-    };
+        public static readonly Point3 Zero = new();
 
-    int IPoint<int>.Dimensions => 3;
+        public Point3 Left => new(X - 1, Y, Z);
 
-    public bool Equals(IPoint<int>? other)
-    {
-        if (other is null)
-            return false;
+        public Point3 Right => new(X + 1, Y, Z);
 
-        var instance = (IPoint<int>) this;
+        public Point3 Up => new(X, Y - 1, Z);
 
-        if (other.Dimensions != instance.Dimensions)
-            return false;
+        public Point3 Down => new(X, Y + 1, Z);
 
-        for (var d = 0; d < instance.Dimensions; d++)
-            if (instance[d] != other[d])
-                return false;
+        public Point3 Backward => new(X, Y, Z - 1);
 
-        return true;
-    }
+        public Point3 Forward => new(X, Y, Z + 1);
 
-    public IEnumerable<Point3> GetNeighbors(bool includeDiagonal = false)
-    {
-        for (var z = -1; z <= 1; z++)
-        for (var y = -1; y <= 1; y++)
-        for (var x = -1; x <= 1; x++)
+        #region Interface implementations
+
+        int IPoint<int>.this[int index] => index switch
         {
-            if (!includeDiagonal && !((x == 0 && y == 0) ^ (x == 0 && z == 0) ^ (y == 0 && z == 0)))
-                continue;
+            0 => X,
+            1 => Y,
+            2 => Z,
+            _ => throw new NotSupportedException()
+        };
 
-            if (x == 0 && y == 0 && z == 0)
-                continue;
+        int IPoint<int>.Dimensions => 3;
 
-            yield return new Point3(X + x, Y + y, Z + z);
-        }
+        IEnumerable<IPoint<int>> INeighbors<int>.GetNeighbors(bool includeDiagonal)
+            => this.GetNeighbors(includeDiagonal).Cast<IPoint<int>>();
+
+        #endregion
+
+        public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+
+        public override string ToString() => $"{X},{Y},{Z}".ToString();
+
+        public void Deconstruct(out int x, out int y, out int z) => (x, y, z) = (X, Y, Z);
+
+        public static int ManhattanDistance(Point3 p0, Point3 p1)
+            => System.Math.Abs(p1.X - p0.X) + System.Math.Abs(p1.Y - p0.Y) + System.Math.Abs(p1.Z - p0.Z);
+
+        #region Operators
+
+        public static Point3 operator +(Point3 left, Point3 right) => new(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+
+        public static Point3 operator -(Point3 left, Point3 right) => new(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+
+        public static Point3 operator *(Point3 left, int right) => new(left.X * right, left.Y * right, left.Z * right);
+
+        public static Point3 operator *(int left, Point3 right) => new(left * right.X, left * right.Y, left * right.Z);
+
+        #endregion
     }
-
-    public Point2 ToPoint2() => new(X, Y);
-
-    public static int DistanceSquared(Point3 left, Point3 right)
-    {
-        var dy = right.Y - left.Y;
-        var dx = right.X - left.X;
-        var dz = right.Z - left.Z;
-        return dx * dx + dy * dy + dz * dz;
-    }
-
-    public static int ManhattanDistance(Point3 p0, Point3 p1) =>
-        System.Math.Abs(p1.X - p0.X) + System.Math.Abs(p1.Y - p0.Y) + System.Math.Abs(p1.Z - p0.Z);
-
-    public static Point3 Subtract(Point3 left, Point3 right) =>
-        new(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
-
-    public static Point3 Subtract(Point3 left, Point2 right) => new(left.X - right.X, left.Y - right.Y, left.Z);
-
-    public static Point3 Add(Point3 left, Point3 right) => new(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
-
-    public static Point3 Add(Point3 left, Point2 right) => new(left.X + right.X, left.Y + right.Y, left.Z);
-
-    public static Point3 Multiply(Point3 left, int multiplier) =>
-        new(left.X * multiplier, left.Y * multiplier, left.Z * multiplier);
-
-    public void Deconstruct(out int x, out int y, out int z) => (x, y, z) = (X, Y, Z);
-
-    public override string ToString() => $"({X},{Y},{Z})";
-
-    public static Point3 operator +(Point3 left, Point3 right) => Add(left, right);
-
-    public static Point3 operator +(Point3 left, Point2 right) => Add(left, right);
-
-    public static Point3 operator +(Point2 left, Point3 right) => Add(right, left);
-
-    public static Point3 operator -(Point3 left, Point3 right) => Subtract(left, right);
-
-    public static Point3 operator -(Point3 left, Point2 right) => Subtract(left, right);
-
-    public static Point3 operator *(Point3 left, int right) => Multiply(left, right);
 }

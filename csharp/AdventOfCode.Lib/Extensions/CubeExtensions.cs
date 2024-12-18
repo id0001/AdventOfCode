@@ -1,12 +1,10 @@
-﻿namespace AdventOfCode.Lib;
-
-public static class CubeExtensions
+﻿namespace AdventOfCode.Lib
 {
-    public static IEnumerable<Cube> Subdivide(this Cube cube, int divisor)
+    public static class CubeExtensions
     {
-        for (var z = cube.Front; z < cube.Back; z += cube.Depth / divisor)
-        for (var y = cube.Top; y < cube.Bottom; y += cube.Height / divisor)
-        for (var x = cube.Left; x < cube.Right; x += cube.Width / divisor)
-            yield return new Cube(x, y, z, cube.Width / divisor, cube.Height / divisor, cube.Depth / divisor);
+        public static bool Contains(this Cube source, Point3 p)
+            => p.X >= source.Left && p.X < source.Right && p.Y >= source.Top && p.Y < source.Bottom && p.Z >= source.Front && p.Z < source.Back;
+
+        public static bool IntersectsWith(this Cube source, Cube other) => Cube.Intersects(source, other);
     }
 }

@@ -95,19 +95,19 @@ public class CubeWalker
     private Point2 UpdateDirection(Side from, Side to, Point2 direction)
     {
         if (from == to)
-            return Point2.Turn(direction, Point2.Zero, System.Math.PI);
+            return direction.TurnAround(Point2.Zero, System.Math.PI);
 
         if ((from == Side.Top && to == Side.Left) || (from == Side.Bottom && to == Side.Right))
-            return Point2.Turn(direction, Point2.Zero, System.Math.PI / 2d);
+            return direction.TurnAround(Point2.Zero, System.Math.PI / 2d);
 
         if ((from == Side.Top && to == Side.Right) || (from == Side.Bottom && to == Side.Left))
-            return Point2.Turn(direction, Point2.Zero, -(System.Math.PI / 2d));
+            return direction.TurnAround(Point2.Zero, -(System.Math.PI / 2d));
 
         if ((from == Side.Right && to == Side.Top) || (from == Side.Left && to == Side.Bottom))
-            return Point2.Turn(direction, Point2.Zero, System.Math.PI / 2d);
+            return direction.TurnAround(Point2.Zero, System.Math.PI / 2d);
 
         if ((from == Side.Right && to == Side.Bottom) || (from == Side.Left && to == Side.Top))
-            return Point2.Turn(direction, Point2.Zero, -(System.Math.PI / 2d));
+            return direction.TurnAround(Point2.Zero, -(System.Math.PI / 2d));
 
         return direction;
     }

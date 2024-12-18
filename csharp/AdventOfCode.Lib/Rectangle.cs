@@ -1,50 +1,37 @@
-﻿namespace AdventOfCode.Lib;
-
-public readonly record struct Rectangle(int X, int Y, int Width, int Height)
+﻿namespace AdventOfCode.Lib
 {
-    public static readonly Rectangle Empty = new();
-
-    public Rectangle(Point2 location, Point2 size)
-        : this(location.X, location.Y, size.X, size.Y)
+    public readonly record struct Rectangle(int X, int Y, int Width, int Height)
     {
-    }
+        public static readonly Rectangle Empty = new();
 
-    public int Left => X;
+        public Rectangle(Point2 position, Point2 size) : this(position.X, position.Y, size.X, size.Y)
+        {
+        }
 
-    public int Top => Y;
+        public int Left => X;
 
-    public int Right => X + Width;
+        public int Top => Y;
 
-    public int Bottom => Y + Height;
+        public int Right => X + Width; // Exclusive
 
-    public IEnumerable<Point2> AsGridPoints()
-    {
-        for (var y = Y; y < Y + Height; y++)
-        for (var x = X; x < X + Width; x++)
-            yield return new Point2(x, y);
-    }
+        public int Bottom => Y + Height; // Exclusive
 
-    public override string ToString() => $"[X: {X}, Y: {Y}, Width: {Width}, Height: {Height}]";
+        public override string ToString() => $"[X: {X}, Y: {Y}, Width: {Width}, Height: {Height}]";
 
-    public bool Contains(Point2 p) => p.X >= Left && p.X < Right && p.Y >= Top && p.Y < Bottom;
-
-    public bool IntersectsWith(Rectangle other) => Intersects(this, other);
-
-    public static bool Intersects(Rectangle a, Rectangle b) =>
+        public static bool Intersects(Rectangle a, Rectangle b) =>
         b.Left < a.Right && a.Left < b.Right && b.Top < a.Bottom && a.Top < b.Bottom;
 
-    public static Rectangle Intersect(Rectangle a, Rectangle b)
-    {
-        if (!a.IntersectsWith(b))
-            return Empty;
+        public static Rectangle Intersect(Rectangle a, Rectangle b)
+        {
+            if (!a.IntersectsWith(b))
+                return Empty;
 
-        var rightSide = System.Math.Min(a.Right, b.Right);
-        var leftSide = System.Math.Max(a.Left, b.Left);
-        var bottomSide = System.Math.Min(a.Bottom, b.Bottom);
-        var topSide = System.Math.Max(a.Top, b.Top);
+            var rightSide = System.Math.Min(a.Right, b.Right);
+            var leftSide = System.Math.Max(a.Left, b.Left);
+            var bottomSide = System.Math.Min(a.Bottom, b.Bottom);
+            var topSide = System.Math.Max(a.Top, b.Top);
 
-        return new Rectangle(leftSide, topSide, rightSide - leftSide, bottomSide - topSide);
+            return new Rectangle(leftSide, topSide, rightSide - leftSide, bottomSide - topSide);
+        }
     }
-
-    public Rectangle Expand(int amount) => new(X - amount, Y - amount, Width + amount, Height + amount);
 }
