@@ -2,24 +2,26 @@
 {
     public static partial class AStarExtensions
     {
-        public static AStarResult<TNode> FindPath<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished)
+        public static int Count<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished)
             where TNode : notnull
         {
             var queue = new PriorityQueue<TNode, int>();
-            var cameFrom = new Dictionary<TNode, TNode>();
+            var pathsCount = new Dictionary<TNode, int>() { { source.StartNode, 1 } };
             var costSoFar = new Dictionary<TNode, int> { { source.StartNode, 0 } };
 
             queue.Enqueue(source.StartNode, 0);
 
+            var count = 0;
             while (queue.Count > 0)
             {
-                var currentNode = queue.Dequeue();
+                queue.TryDequeue(out var currentNode, out var currentCost);
+                if (currentNode is null)
+                    continue; // Impossible
 
                 if (isFinished(currentNode))
                 {
-                    var path = GetPath(currentNode, cameFrom);
-                    var totalCost = costSoFar[currentNode];
-                    return new AStarResult<TNode>(true, totalCost, path.ToList());
+                    count += pathsCount[currentNode];
+                    continue;
                 }
 
                 foreach (var nextNode in source.GetAdjacent(currentNode))
@@ -30,25 +32,14 @@
                     {
                         costSoFar[nextNode] = newCost;
                         queue.Enqueue(nextNode, newCost + source.GetHeuristic(nextNode));
-                        cameFrom[nextNode] = currentNode;
+                        pathsCount[nextNode] = pathsCount[currentNode];
                     }
+                    else if (newCost == costSoFar[nextNode])
+                        pathsCount[nextNode] += pathsCount[currentNode];
                 }
             }
 
-            return new AStarResult<TNode>(false, 0, new List<TNode>());
-        }
-
-        private static IEnumerable<TNode> GetPath<TNode>(TNode end, IDictionary<TNode, TNode> previous)
-            where TNode : notnull
-        {
-            var stack = new Stack<TNode>();
-            var current = end;
-            do
-            {
-                stack.Push(current);
-            } while (previous.TryGetValue(current, out current));
-
-            return stack;
+            return count;
         }
     }
 }

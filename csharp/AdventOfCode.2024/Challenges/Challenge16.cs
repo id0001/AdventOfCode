@@ -15,9 +15,9 @@ public class Challenge16(IInputReader inputReader)
         var start = grid.Find((p, c) => c == 'S');
         var end = grid.Find((p, c) => c == 'E');
 
-        return grid.AStar(new Pose2(start, Face.Right), GetAdjacent)
+        return grid.Path(new Pose2(start, Face.Right), GetAdjacent)
             .WithWeight(GetWeight)
-            .FindPath(p => p.Position == end)
+            .FindShortest(p => p.Position == end)
             .Cost
             .ToString();
     }
@@ -29,13 +29,13 @@ public class Challenge16(IInputReader inputReader)
         var start = grid.Find((p, c) => c == 'S');
         var end = grid.Find((p, c) => c == 'E');
 
-        return grid.AStar(new Pose2(start, Face.Right), GetAdjacent)
+        return grid.Path(new Pose2(start, Face.Right), GetAdjacent)
             .WithWeight(GetWeight)
-            .All(n => n.Position == end)
-            .OrderBy(p => p.Cost)
+            .FindAll(n => n.Position == end)
+            .GroupBy(p => p.Cost)
+            .OrderBy(p => p.Key)
             .First()
-            .Paths
-            .SelectMany(p => p.Select(n => n.Position))
+            .SelectMany(p => p.Path.Select(n => n.Position))
             .Distinct()
             .Count()
             .ToString();

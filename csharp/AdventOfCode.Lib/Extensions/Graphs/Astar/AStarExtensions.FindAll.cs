@@ -1,8 +1,10 @@
-﻿namespace AdventOfCode.Lib
+﻿using System.IO;
+
+namespace AdventOfCode.Lib
 {
     public static partial class AStarExtensions
     {
-        public static IEnumerable<(int Cost, IList<IList<TNode>> Paths)> All<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished)
+        public static IEnumerable<AStarResult<TNode>> FindAll<TGraph, TNode>(this AStar<TGraph, TNode> source, Func<TNode, bool> isFinished)
             where TNode : notnull
         {
             var queue = new PriorityQueue<TNode, int>();
@@ -20,7 +22,9 @@
 
                 if (isFinished(currentNode))
                 {
-                    finishedStates.Add((currentCost, currentNode));
+                    foreach (var result in GetPaths(source.StartNode, currentNode, cameFrom).Select(p => new AStarResult<TNode>(true, currentCost, p)))
+                        yield return result;
+
                     continue;
                 }
 
@@ -38,24 +42,6 @@
                         cameFrom[nextNode].Add(currentNode);
                 }
             }
-
-            return finishedStates
-                .Select(end => (end.Cost, Paths: GetPaths(source.StartNode, end.Node, cameFrom)))
-                .ToList();
-        }
-
-        private static IList<IList<TNode>> GetPaths<TNode>(TNode start, TNode node, IDictionary<TNode, HashSet<TNode>> previous)
-            where TNode : notnull
-        {
-            if (node.Equals(start))
-                return [[start]];
-
-            var paths = new List<IList<TNode>>();
-            foreach (var previousNode in previous[node])
-                foreach (var path in GetPaths(start, previousNode, previous))
-                    paths.Add([.. path, node]);
-
-            return paths;
         }
     }
 }

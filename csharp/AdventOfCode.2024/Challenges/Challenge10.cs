@@ -13,7 +13,7 @@ public class Challenge10(IInputReader inputReader)
         var graph = await inputReader.ReadGridAsync<int>(10);
 
         var trailheads = graph.Where((p, v) => v == 0).ToList();
-        return trailheads.Sum(start => graph.Bfs(start, GetAdjacent).Count(n => graph[n.Y, n.X] == 9)).ToString();
+        return trailheads.Sum(start => graph.Path(start, GetAdjacent).FloodFill().Count(n => graph[n.Y, n.X] == 9)).ToString();
     }
 
     [Part2]
@@ -26,8 +26,7 @@ public class Challenge10(IInputReader inputReader)
 
         return trailheads
             .SelectMany(start => trailEnds, (start, end) => graph
-                .Bfs(start, GetAdjacent)
-                .IgnoreVisited()
+                .Path(start, GetAdjacent)
                 .Count(n => n == end)
             )
             .Sum()

@@ -14,8 +14,8 @@ public class Challenge18(IInputReader inputReader)
         var grid = bytes.Take(1024).ToHashSet();
         
         return grid
-            .Bfs(Point2.Zero, GetAdjacent)
-            .FindPath(p => p == new Point2(70, 70))
+            .Path(Point2.Zero, GetAdjacent)
+            .FindShortest(p => p == new Point2(70, 70))
             .Distance
             .ToString();
     }
@@ -27,8 +27,8 @@ public class Challenge18(IInputReader inputReader)
         for (var i = bytes.Count - 1; i > 0; i--)
         {
             var grid = bytes.Take(i).ToHashSet();
-            var result = grid.Bfs(Point2.Zero, GetAdjacent)
-                .FindPath(p => p == new Point2(70, 70));
+            var result = grid.Path(Point2.Zero, GetAdjacent)
+                .FindShortest(p => p == new Point2(70, 70));
 
             if (result.Success)
                 return bytes[i + 1].ToString();

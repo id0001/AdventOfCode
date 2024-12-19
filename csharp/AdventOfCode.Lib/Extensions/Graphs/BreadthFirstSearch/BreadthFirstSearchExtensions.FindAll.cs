@@ -2,37 +2,37 @@
 {
     public static partial class BreadthFirstSearchExtensions
     {
-        public static int Count<TGraph, TNode>(this BreadthFirstSearch<TGraph, TNode> source, Func<TNode, bool> isFinished)
+        public static IEnumerable<BreadthFirstSearchResult<TNode>> FindAll<TGraph, TNode>(this BreadthFirstSearch<TGraph, TNode> source, Func<TNode, bool> isFinished)
             where TNode : notnull
         {
+            var cameFrom = new Dictionary<TNode, HashSet<TNode>>();
             var queue = new Queue<TNode>();
-            var pathsCount = new Dictionary<TNode, int>() { { source.StartNode, 1 } };
             queue.Enqueue(source.StartNode);
 
-            int count = 0;
+            var finishedStates = new List<TNode>();
             while (queue.Count > 0)
             {
                 var currentNode = queue.Dequeue();
 
                 if (isFinished(currentNode))
                 {
-                    count += pathsCount[currentNode];
+                    foreach (var result in GetPaths(source.StartNode, currentNode, cameFrom).Select(p => new BreadthFirstSearchResult<TNode>(true, p)))
+                        yield return result;
+
                     continue;
                 }
 
                 foreach (var adjacent in source.GetAdjacent(currentNode))
                 {
-                    if (pathsCount.TryAdd(adjacent, pathsCount[currentNode]))
+                    if (cameFrom.TryAdd(adjacent, [currentNode]))
                     {
                         queue.Enqueue(adjacent);
                         continue;
                     }
 
-                    pathsCount[adjacent] += pathsCount[currentNode];
+                    cameFrom[adjacent].Add(currentNode);
                 }
             }
-
-            return count;
         }
     }
 }
