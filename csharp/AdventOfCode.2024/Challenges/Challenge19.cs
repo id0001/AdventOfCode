@@ -21,7 +21,7 @@ public class Challenge19(IInputReader inputReader)
         return wanted.Sum(w =>
         {
             var cache = new Dictionary<string, long>();
-            return CountPossibilities(w,  available, cache);
+            return CountPossibilities(w, available, cache);
         }).ToString();
     }
 
@@ -42,13 +42,13 @@ public class Challenge19(IInputReader inputReader)
 
         if (wanted.Length == 0)
             return 1;
-        
+
         var count = 0L;
         foreach (var test in available)
         {
-            if (!wanted.StartsWith(test)) 
+            if (!wanted.StartsWith(test))
                 continue;
-            
+
             var candidate = wanted[test.Length..];
             cache.TryAdd(candidate, CountPossibilities(candidate, available, cache));
             count += cache[candidate];
@@ -56,13 +56,9 @@ public class Challenge19(IInputReader inputReader)
 
         return count;
     }
-    
-    private static (IList<string> Available, IList<string> Wanted) ParseInput(string input)
-    {
-        var paragraphs = input.SelectParagraphs();
-        var available = paragraphs.First().SplitBy(",").OrderByDescending(x => x.Length).ToList();
-        var wanted = paragraphs.Second().SelectLines();
 
-        return (available, wanted);
-    }
+    private static (IList<string> Available, IList<string> Wanted) ParseInput(string input)
+        => input
+        .SelectParagraphs()
+        .Into(p => (p.First().SplitBy(","), p.Second().SelectLines()));
 }
