@@ -9,7 +9,6 @@
             var queue = new Queue<TNode>();
             queue.Enqueue(source.StartNode);
 
-            var finishedStates = new List<TNode>();
             while (queue.Count > 0)
             {
                 var currentNode = queue.Dequeue();
