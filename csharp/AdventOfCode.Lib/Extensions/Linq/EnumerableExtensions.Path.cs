@@ -6,6 +6,10 @@
             where TNode : notnull
             => new BreadthFirstSearch<IEnumerable<TNode>, TNode>(source, startNode, getAdjacent);
 
+        public static BreadthFirstSearch<IEnumerable<TGraph>, TNode> Path<TGraph, TNode>(this IEnumerable<TGraph> source, TNode startNode, Func<TNode, IEnumerable<TNode>> getAdjacent)
+            where TNode : notnull
+            => new BreadthFirstSearch<IEnumerable<TGraph>, TNode>(source, startNode, getAdjacent);
+        
         public static BreadthFirstSearch<IEnumerable<TGraph>, TNode> Path<TGraph, TNode>(this IEnumerable<TGraph> source, TNode startNode, Func<IEnumerable<TGraph>, TNode, IEnumerable<TNode>> getAdjacent)
             where TNode : notnull
             => new BreadthFirstSearch<IEnumerable<TGraph>, TNode>(source, startNode, n => getAdjacent(source, n));

@@ -22,16 +22,40 @@
             return stack;
         }
 
-        private static IList<IList<TNode>> GetPaths<TNode>(TNode start, TNode node, IDictionary<TNode, HashSet<TNode>> previous)
+        private static List<List<TNode>> GetPaths<TNode>(TNode start, TNode node, IDictionary<TNode, HashSet<TNode>> previous)
             where TNode : notnull
         {
-            if (node.Equals(start))
-                return [[start]];
+            var paths = new List<List<TNode>>();
+            var stack = new Stack<(TNode currentNode, List<TNode> path)>();
 
-            var paths = new List<IList<TNode>>();
-            foreach (var previousNode in previous[node])
-                foreach (var path in GetPaths(start, previousNode, previous))
-                    paths.Add([.. path, node]);
+            // Initialize the stack with the starting node and an empty path
+            stack.Push((node, [node]));
+
+            while (stack.Count > 0)
+            {
+                var (currentNode, path) = stack.Pop();
+
+                if (currentNode.Equals(start))
+                {
+                    // Add the complete path to the results
+                    paths.Add(new List<TNode>(path));
+                    continue;
+                }
+
+                if (previous.TryGetValue(currentNode, out var previousNodes))
+                {
+                    foreach (var prevNode in previousNodes)
+                    {
+                        // Create a new path including the previous node
+                        var newPath = new List<TNode>(path) { prevNode };
+                        stack.Push((prevNode, newPath));
+                    }
+                }
+            }
+
+            // Reverse the paths to get the correct order from start to node
+            foreach (var path in paths)
+                path.Reverse();
 
             return paths;
         }
