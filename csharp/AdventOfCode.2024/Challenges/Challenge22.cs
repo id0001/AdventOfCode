@@ -27,14 +27,12 @@ public class Challenge22(IInputReader inputReader)
     [Part2]
     public async Task<string> Part2Async()
     {
-        var input = await inputReader.ReadLinesAsync<long>(22).ToListAsync();
-
         var total = new Dictionary<(long, long, long, long), long>();
 
-        for(var n = 0; n < input.Count; n++)
+        await foreach (var input in inputReader.ReadLinesAsync<long>(22))
         {
-            var secret = input[n];
-            var values = new long[2000];
+            var secret = input;
+            var prices = new long[2000];
             var changes = new long[2000];
             long previous = 0;
             var seenSequences = new HashSet<(long,long,long,long)>();
@@ -42,20 +40,19 @@ public class Challenge22(IInputReader inputReader)
             for (var i = 0; i < 2000; i++)
             {
                 secret = CalculateSecret(secret);
-                values[i] = secret % 10;
+                prices[i] = secret % 10;
                 changes[i] = (secret % 10) - previous;
                 previous = secret % 10;
-            }
 
-            for (var i = 3; i < 2000; i++)
-            {
+                if (i < 3) 
+                    continue;
+                
                 var key = (changes[i - 3], changes[i - 2], changes[i - 1], changes[i]);
-                if (!seenSequences.Contains(key))
-                {
-                    seenSequences.Add(key);
-                    if (!total.TryAdd(key, values[i]))
-                        total[key] += values[i];
-                }
+                if (!seenSequences.Add(key)) 
+                    continue;
+                
+                if (!total.TryAdd(key, prices[i]))
+                    total[key] += prices[i];
             }
         }
         
