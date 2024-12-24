@@ -115,26 +115,20 @@ public class Challenge24(IInputReader inputReader)
     }
 
 
-    private class Gate(string type, string gateA, string gateB, Dictionary<string, Gate> gates)
+    private record Gate(string Type, string GateA, string GateB, Dictionary<string, Gate> Gates)
     {
-        public string Type { get; } = type;
-
-        public string GateA { get; } = gateA;
-
-        public string GateB { get; } = gateB;
-
         public bool GetOutput()
         {
-            if (type == "TRUE")
+            if (Type == "TRUE")
                 return true;
 
-            if (type == "FALSE")
+            if (Type == "FALSE")
                 return false;
 
-            var a = gates[gateA];
-            var b = gates[gateB];
+            var a = Gates[GateA];
+            var b = Gates[GateB];
 
-            return type switch
+            return Type switch
             {
                 "AND" => a.GetOutput() && b.GetOutput(),
                 "OR" => a.GetOutput() || b.GetOutput(),
@@ -143,5 +137,4 @@ public class Challenge24(IInputReader inputReader)
             };
         }
     }
-
 }
