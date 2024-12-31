@@ -4,9 +4,10 @@ namespace AdventOfCode.Lib;
 
 public static partial class DirectedGraphExtensions
 {
-    public static AStar<DirectedGraph<TVertex, int>, TVertex> Path<TVertex>(this DirectedGraph<TVertex, int> graph, TVertex start)
+    public static AStar<DirectedGraph<TVertex, int>, TVertex> Path<TVertex>(this DirectedGraph<TVertex, int> graph,
+        TVertex start)
         where TVertex : notnull
-        => new AStar<DirectedGraph<TVertex, int>, TVertex>(graph, start, n => GetAdjacent(graph, n), (c, n) => GetWeight(graph, c, n), _ => 0);
+        => new(graph, start, n => GetAdjacent(graph, n), (c, n) => GetWeight(graph, c, n), _ => 0);
 
     private static IEnumerable<TVertex> GetAdjacent<TVertex, TEdge>(DirectedGraph<TVertex, TEdge> graph,
         TVertex current)

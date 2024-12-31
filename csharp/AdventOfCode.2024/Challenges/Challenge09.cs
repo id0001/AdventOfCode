@@ -1,7 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AdventOfCode2024.Challenges;
 
@@ -36,7 +35,7 @@ public class Challenge09(IInputReader inputReader)
     {
         var expanded = await ReadInputAsync(inputReader);
 
-        int emptySearchFromIndex = 0;
+        var emptySearchFromIndex = 0;
         for (var bi = expanded.Count - 1; bi > 0; bi--)
         {
             if (expanded[bi] == -1)
@@ -46,7 +45,8 @@ public class Challenge09(IInputReader inputReader)
             var block = GetMemoryBlock(expanded, bi);
             bi = block.Start;
 
-            if (TryGetFirstAvailableEmptyIndex(expanded, emptySearchFromIndex, block, out var ei, out var isFirstEmptySpace))
+            if (TryGetFirstAvailableEmptyIndex(expanded, emptySearchFromIndex, block, out var ei,
+                    out var isFirstEmptySpace))
             {
                 for (var i = 0; i < block.Size; i++)
                 {
@@ -54,10 +54,7 @@ public class Challenge09(IInputReader inputReader)
                     expanded[ei + i] = id;
                 }
 
-                if (isFirstEmptySpace)
-                {
-                    emptySearchFromIndex = ei + block.Size;
-                }
+                if (isFirstEmptySpace) emptySearchFromIndex = ei + block.Size;
             }
         }
 
@@ -66,24 +63,24 @@ public class Challenge09(IInputReader inputReader)
 
     private static Block GetMemoryBlock(List<int> list, int index)
     {
-        int end = index;
-        int id = list[index];
+        var end = index;
+        var id = list[index];
         while (index > 0 && list[index - 1] == id)
             index--;
 
-        return new Block(id, index, end - index + 1);
+        return new Block(index, end - index + 1);
     }
 
-    private static bool TryGetFirstAvailableEmptyIndex(List<int> list, int emptySearchFromIndex, Block block, out int idx, out bool isFirstEmptySpace)
+    private static bool TryGetFirstAvailableEmptyIndex(List<int> list, int emptySearchFromIndex, Block block,
+        out int idx, out bool isFirstEmptySpace)
     {
         isFirstEmptySpace = true;
-        int start = -1;
         for (var i = emptySearchFromIndex; i < block.Start; i++)
         {
             if (list[i] != -1)
                 continue;
 
-            start = i;
+            var start = i;
             while (list[i + 1] == -1)
                 i++;
 
@@ -109,12 +106,10 @@ public class Challenge09(IInputReader inputReader)
         {
             var i = c.AsInteger();
             for (var j = 0; j < i; j++)
-            {
                 if (s == 0)
                     expanded.Add(id);
                 else
                     expanded.Add(-1);
-            }
 
             if (s == 0)
                 id++;
@@ -133,11 +128,11 @@ public class Challenge09(IInputReader inputReader)
             if (list[i] == -1)
                 continue;
 
-            sum += (long)list[i] * i;
+            sum += (long) list[i] * i;
         }
 
         return sum;
     }
 
-    private readonly record struct Block(int Id, int Start, int Size);
+    private readonly record struct Block(int Start, int Size);
 }

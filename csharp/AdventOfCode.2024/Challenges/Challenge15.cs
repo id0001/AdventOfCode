@@ -11,7 +11,7 @@ public class Challenge15(IInputReader inputReader)
     public async Task<string> Part1Async()
     {
         var (map, robot, moves) = await inputReader.ParseTextAsync(15, ParseTextAsync);
-        
+
         _ = moves.Aggregate(robot, (position, move) => Move1(map, position, move));
         return map.AsEnumerable().Where(kv => kv.Value == 'O').Sum(kv => 100 * kv.Key.Y + kv.Key.X).ToString();
     }
@@ -34,7 +34,7 @@ public class Challenge15(IInputReader inputReader)
         {
             '#' => robot,
             '.' => next,
-            'O' => MovePart1(map, robot,  direction),
+            'O' => MovePart1(map, robot, direction),
             _ => throw new NotImplementedException()
         };
     }
@@ -104,13 +104,13 @@ public class Challenge15(IInputReader inputReader)
     private static bool CanMoveBox(char[,] map, Point2 boxLeft, Point2 boxRight, Point2 direction)
     {
         var nextLeft = boxLeft + direction;
-        var nextRight=  boxRight + direction;
-        
-        return (map[nextLeft.Y, nextLeft.X], map[nextRight.Y,nextRight.X]) switch
+        var nextRight = boxRight + direction;
+
+        return (map[nextLeft.Y, nextLeft.X], map[nextRight.Y, nextRight.X]) switch
         {
             ('#', _) => false,
             (_, '#') => false,
-            ('[',']') when !CanMoveBox(map, nextLeft,nextRight, direction) => false,
+            ('[', ']') when !CanMoveBox(map, nextLeft, nextRight, direction) => false,
             (']', _) when !CanMoveBox(map, nextLeft.Left, nextLeft, direction) => false,
             (_, '[') when !CanMoveBox(map, nextRight, nextRight.Right, direction) => false,
             _ => true

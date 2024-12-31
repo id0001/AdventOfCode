@@ -12,15 +12,11 @@ public class Challenge25(IInputReader inputReader)
     {
         var (locks, keys) = await inputReader.ParseTextAsync(25, ParseInput);
 
-        int fitCount = 0;
-        foreach(var @lock in locks)
-        {
-            foreach(var key in keys)
-            {
-                if (@lock.Zip(key).Select(z => z.First + z.Second).All(z => z < 6))
-                    fitCount++;
-            }
-        }
+        var fitCount = 0;
+        foreach (var @lock in locks)
+        foreach (var key in keys)
+            if (@lock.Zip(key).Select(z => z.First + z.Second).All(z => z < 6))
+                fitCount++;
 
         return fitCount.ToString();
     }
@@ -44,13 +40,13 @@ public class Challenge25(IInputReader inputReader)
         return (locks, keys);
     }
 
-    private static int[] GetLock(IList<string> lines) 
+    private static int[] GetLock(IList<string> lines)
         => Enumerable.Range(0, 5)
-        .Select(i => lines.Skip(1).Take(5).Aggregate(0, (a, v) => a + (v[i] == '#' ? 1 : 0)))
-        .ToArray();
+            .Select(i => lines.Skip(1).Take(5).Aggregate(0, (a, v) => a + (v[i] == '#' ? 1 : 0)))
+            .ToArray();
 
-    private static int[] GetKey(IList<string> lines) 
+    private static int[] GetKey(IList<string> lines)
         => Enumerable
-        .Range(0, 5).Select(i => lines.Skip(1).Take(5).Aggregate(5, (a, v) => a - (v[i] == '.' ? 1 : 0)))
-        .ToArray();
+            .Range(0, 5).Select(i => lines.Skip(1).Take(5).Aggregate(5, (a, v) => a - (v[i] == '.' ? 1 : 0)))
+            .ToArray();
 }

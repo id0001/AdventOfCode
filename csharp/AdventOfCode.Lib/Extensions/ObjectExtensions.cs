@@ -5,7 +5,7 @@ public static class ObjectExtensions
     public static T As<T>(this IConvertible source)
         where T : IConvertible
     {
-        return (T)Convert.ChangeType(source, typeof(T));
+        return (T) Convert.ChangeType(source, typeof(T));
     }
 
     public static TOut Into<TIn, TOut>(this TIn source, Func<TIn, TOut> converter)

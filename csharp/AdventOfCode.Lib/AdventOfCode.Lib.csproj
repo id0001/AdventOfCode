@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <Compile Remove="Graphs\Collections\**" />
-        <EmbeddedResource Remove="Graphs\Collections\**" />
-        <None Remove="Graphs\Collections\**" />
+        <Compile Remove="Graphs\Collections\**"/>
+        <EmbeddedResource Remove="Graphs\Collections\**"/>
+        <None Remove="Graphs\Collections\**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
-        <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.8.8" />
-        <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+        <PackageReference Include="JetBrains.Annotations" Version="2024.2.0"/>
+        <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.8.8"/>
+        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="True" PackagePath="\" />
+        <None Include="README.md" Pack="True" PackagePath="\"/>
     </ItemGroup>
 
     <PropertyGroup>

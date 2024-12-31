@@ -24,7 +24,8 @@ public class Challenge13(IInputReader inputReader)
     {
         var machines = await inputReader.ParseTextAsync(13, ParseInput);
         return machines
-            .Select(m => CramersRule(m.ButtonA.X, m.ButtonA.Y, m.ButtonB.X, m.ButtonB.Y, m.Price.X + Part2, m.Price.Y + Part2))
+            .Select(m => CramersRule(m.ButtonA.X, m.ButtonA.Y, m.ButtonB.X, m.ButtonB.Y, m.Price.X + Part2,
+                m.Price.Y + Part2))
             .Sum()
             .ToString();
     }

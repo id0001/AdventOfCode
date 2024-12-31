@@ -12,8 +12,8 @@ public class Challenge16(IInputReader inputReader)
     {
         var grid = await inputReader.ReadGridAsync(16);
 
-        var start = grid.Find((p, c) => c == 'S');
-        var end = grid.Find((p, c) => c == 'E');
+        var start = grid.Find((_, c) => c == 'S');
+        var end = grid.Find((_, c) => c == 'E');
 
         return grid.Path(new Pose2(start, Face.Right), GetAdjacent)
             .WithWeight(GetWeight)
@@ -26,8 +26,8 @@ public class Challenge16(IInputReader inputReader)
     public async Task<string> Part2Async()
     {
         var grid = await inputReader.ReadGridAsync(16);
-        var start = grid.Find((p, c) => c == 'S');
-        var end = grid.Find((p, c) => c == 'E');
+        var start = grid.Find((_, c) => c == 'S');
+        var end = grid.Find((_, c) => c == 'E');
 
         return grid.Path(new Pose2(start, Face.Right), GetAdjacent)
             .WithWeight(GetWeight)

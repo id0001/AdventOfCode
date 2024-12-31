@@ -27,7 +27,8 @@ public class Challenge06(IInputReader inputReader)
 
         var count = 0;
         var checkedPositions = new HashSet<Pose2>();
-        var toCheck = Simulate(grid, guard).DistinctBy(v => v.Position).ToList(); // Takes the first pose for every position.
+        var toCheck =
+            Simulate(grid, guard).DistinctBy(v => v.Position).ToList(); // Takes the first pose for every position.
         for (var i = 0; i < toCheck.Count; i++)
         {
             if (toCheck[i].Position == start)
@@ -38,10 +39,10 @@ public class Challenge06(IInputReader inputReader)
 
             if (!SimulateFrom(grid, toCheck[i - 1], toCheck[i].Position, checkedPositions))
                 count++;
-            
+
             checkedPositions.Add(toCheck[i]);
         }
-    
+
         return count.ToString();
     }
 
@@ -54,7 +55,7 @@ public class Challenge06(IInputReader inputReader)
             var next = guard.Ahead;
             if (!bounds.Contains(next))
                 break;
-            
+
             if (grid[next.Y, next.X] == '#')
             {
                 guard = guard.TurnRight();
@@ -77,7 +78,7 @@ public class Challenge06(IInputReader inputReader)
             var next = guard.Ahead;
             if (!bounds.Contains(next))
                 break;
-            
+
             if (grid[next.Y, next.X] == '#' || next == obstacle)
             {
                 guard = guard.TurnRight();

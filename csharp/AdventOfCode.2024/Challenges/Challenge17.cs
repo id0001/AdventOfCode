@@ -50,7 +50,7 @@ public class Challenge17(IInputReader inputReader)
 
     private static void Adv(int arg, Memory memory)
     {
-        memory.Set('A', memory.Get('A') / (long)Math.Pow(2, GetValue(memory, arg)));
+        memory.Set('A', memory.Get('A') / (long) Math.Pow(2, GetValue(memory, arg)));
         memory.Ip += 2;
     }
 
@@ -91,13 +91,13 @@ public class Challenge17(IInputReader inputReader)
 
     private static void Bdv(int arg, Memory memory)
     {
-        memory.Set('B', memory.Get('A') / (long)Math.Pow(2, GetValue(memory, arg)));
+        memory.Set('B', memory.Get('A') / (long) Math.Pow(2, GetValue(memory, arg)));
         memory.Ip += 2;
     }
 
     private static void Cdv(int arg, Memory memory)
     {
-        memory.Set('C', memory.Get('A') / (long)Math.Pow(2, GetValue(memory, arg)));
+        memory.Set('C', memory.Get('A') / (long) Math.Pow(2, GetValue(memory, arg)));
         memory.Ip += 2;
     }
 

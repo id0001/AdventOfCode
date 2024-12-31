@@ -59,6 +59,6 @@ public class Challenge19(IInputReader inputReader)
 
     private static (IList<string> Available, IList<string> Wanted) ParseInput(string input)
         => input
-        .SelectParagraphs()
-        .Into(p => (p.First().SplitBy(","), p.Second().SelectLines()));
+            .SelectParagraphs()
+            .Into(p => (p.First().SplitBy(","), p.Second().SelectLines()));
 }

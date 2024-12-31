@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AdventOfCode.Core\AdventOfCode.Core.csproj" />
+        <ProjectReference Include="..\AdventOfCode.Core\AdventOfCode.Core.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -19,10 +19,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Properties" />
+        <Folder Include="Properties"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AdventOfCode.Lib" Version="0.1.0" />
+        <PackageReference Include="AdventOfCode.Lib" Version="0.1.0"/>
     </ItemGroup>
 </Project>

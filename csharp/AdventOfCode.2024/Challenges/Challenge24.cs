@@ -1,7 +1,7 @@
+using System.Text;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Text;
 using TextCopy;
 
 namespace AdventOfCode2024.Challenges;
@@ -14,9 +14,10 @@ public class Challenge24(IInputReader inputReader)
     {
         var gates = await inputReader.ParseTextAsync(24, ParseInput);
 
-        var outputs = gates.Where(g => g.Key.StartsWith("z")).OrderByDescending(g => g.Key).Select(g => g.Value).ToList();
+        var outputs = gates.Where(g => g.Key.StartsWith("z")).OrderByDescending(g => g.Key).Select(g => g.Value)
+            .ToList();
 
-        string output = "";
+        var output = "";
         foreach (var o in outputs)
             output += o.GetOutput() ? "1" : "0";
 
@@ -33,28 +34,28 @@ public class Challenge24(IInputReader inputReader)
                in2[label="IN2 (TRUE)"]
                prev1[label="PREV1 (AND)"]
                prev2[label="PREV2 (AND)"]
-   
+
                xor1[label="XOR"]
                or1[label="OR"]
                and1[label="AND"]
-   
+
                out[label="OUT (XOR)"]
                next1[label="NEXT1 (AND)"]
                next2[label="NEXT2 (OR)"]
-   
+
                in1 -> xor1
                in1 -> and1
                in2 -> xor1
                in2 -> and1
-   
+
                prev1 -> or1
                prev2 -> or1
-   
+
                or1 -> out
                or1 -> next1
                xor1 -> out
                xor1 -> next1
-   
+
                and1 -> next2
                next1 -> next2
             }
@@ -80,7 +81,8 @@ public class Challenge24(IInputReader inputReader)
             gates.Add(o, gate);
         }
 
-        foreach (var (a, op, b, o) in paragraphs[1].SelectLines().Select(line => line.Extract<string, string, string, string>("(.+) (OR|AND|XOR) (.+) -> (.+)")))
+        foreach (var (a, op, b, o) in paragraphs[1].SelectLines().Select(line =>
+                     line.Extract<string, string, string, string>("(.+) (OR|AND|XOR) (.+) -> (.+)")))
         {
             var gate = new Gate(op, a, b, gates);
             gates.Add(o, gate);
@@ -94,10 +96,7 @@ public class Challenge24(IInputReader inputReader)
         var sb = new StringBuilder();
         sb.AppendLine("digraph G {");
 
-        foreach (var key in gates.Keys)
-        {
-            sb.AppendLine($"{key}[label=\"{key}({gates[key].Type})\"]");
-        }
+        foreach (var key in gates.Keys) sb.AppendLine($"{key}[label=\"{key}({gates[key].Type})\"]");
 
         foreach (var key in gates.Keys)
         {

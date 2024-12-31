@@ -12,7 +12,7 @@ public class Challenge18(IInputReader inputReader)
     {
         var bytes = await inputReader.ParseLinesAsync(18, ParseLine).ToListAsync();
         var grid = bytes.Take(1024).ToHashSet();
-        
+
         return grid
             .Path(Point2.Zero, GetAdjacent)
             .FindShortest(p => p == new Point2(70, 70))
@@ -37,12 +37,12 @@ public class Challenge18(IInputReader inputReader)
         return string.Empty;
     }
 
-    private static IEnumerable<Point2> GetAdjacent(ISet<Point2> bytes, Point2 point) 
+    private static IEnumerable<Point2> GetAdjacent(ISet<Point2> bytes, Point2 point)
         => point
             .GetNeighbors()
             .Where(neighbor => neighbor.X is >= 0 and <= 70 && neighbor.Y is >= 0 and <= 70)
             .Where(neighbor => !bytes.Contains(neighbor));
 
-    private static Point2 ParseLine(string line) 
+    private static Point2 ParseLine(string line)
         => line.SplitBy(",").As<int>().Into(p => new Point2(p[0], p[1]));
 }

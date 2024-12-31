@@ -1,7 +1,7 @@
+using System.Collections;
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 using AdventOfCode.Lib;
-using System.Collections;
 
 namespace AdventOfCode2018.Challenges;
 
@@ -25,8 +25,8 @@ public class Challenge24(IInputReader inputReader)
         var (immuneSystem, infected) = ParseInput(await inputReader.ReadAllTextAsync(24));
 
         var boost = 0;
-        Army? winner = null;
-        for (; ; boost++)
+        Army? winner;
+        for (;; boost++)
         {
             var army1 = new Army(ArmyType.ImmuneSystem, immuneSystem, boost);
             var army2 = new Army(ArmyType.Infected, infected, 0);
@@ -44,7 +44,7 @@ public class Challenge24(IInputReader inputReader)
         {
             var battles = ChooseTargets(army1, army2).Concat(ChooseTargets(army2, army1)).ToList();
 
-            int totalLosses = 0;
+            var totalLosses = 0;
             foreach (var battle in battles.OrderByDescending(t => t.Attacker.Template.Initiative))
             {
                 var dmg = CalculateDamage(battle.Attacker, battle.Defender);
@@ -63,7 +63,8 @@ public class Challenge24(IInputReader inputReader)
     private static IEnumerable<Target> ChooseTargets(Army attackers, Army defenders)
     {
         var chosen = new List<Group>();
-        foreach (var attacker in attackers.Where(g => g.Units > 0).OrderByDescending(g => g.EffectivePower).ThenByDescending(g => g.Template.Initiative))
+        foreach (var attacker in attackers.Where(g => g.Units > 0).OrderByDescending(g => g.EffectivePower)
+                     .ThenByDescending(g => g.Template.Initiative))
         {
             var choices = defenders
                 .Where(defender => defender.Units > 0 && CalculateDamage(attacker, defender) > 0)
@@ -89,7 +90,7 @@ public class Challenge24(IInputReader inputReader)
         if (defender.Template.Immunity.Contains(attacker.Template.AttackType))
             return 0;
 
-        int dmg = attacker.EffectivePower;
+        var dmg = attacker.EffectivePower;
         if (defender.Template.Weakness.Contains(attacker.Template.AttackType))
             dmg *= 2;
 
@@ -100,13 +101,9 @@ public class Challenge24(IInputReader inputReader)
         => input.SplitBy(DoubleNewLine).Select(ParseArmy).ToList().Into(armies => (armies.First(), armies.Second()));
 
     private static GroupTemplate[] ParseArmy(string input)
-        => input.SplitBy(Environment.NewLine).Into(lines =>
-        {
-            var name = lines[0].TrimEnd(':');
-            return lines.Skip(1).Select((line, i) => ParseGroup(line, name, i + 1)).ToArray();
-        });
+        => input.SplitBy(Environment.NewLine).Into(lines => lines.Skip(1).Select(ParseGroup).ToArray());
 
-    private static GroupTemplate ParseGroup(string input, string army, int id)
+    private static GroupTemplate ParseGroup(string input)
     {
         var result = input.Extract(
             @"(\d+) units each with (\d+) hit points (?:\(([^)]+)\) )?with an attack that does (\d+) ([^ ]+) damage at initiative (\d+)");
@@ -119,7 +116,7 @@ public class Challenge24(IInputReader inputReader)
         var initiative = result[5].As<int>();
 
         var (weak, immune) = ParseWeaknessesAndImmunities(weakAndImmune);
-        return new GroupTemplate(id, units, hp, ad, initiative, attackType, weak, immune);
+        return new GroupTemplate(units, hp, ad, initiative, attackType, weak, immune);
     }
 
     private static (string[] Weak, string[] Immune) ParseWeaknessesAndImmunities(string input)
@@ -144,7 +141,14 @@ public class Challenge24(IInputReader inputReader)
 
     private record Target(Group Attacker, Group Defender);
 
-    private record GroupTemplate(int Id, int Units, int Hp, int AttackDamage, int Initiative, string AttackType, string[] Weakness, string[] Immunity);
+    private record GroupTemplate(
+        int Units,
+        int Hp,
+        int AttackDamage,
+        int Initiative,
+        string AttackType,
+        string[] Weakness,
+        string[] Immunity);
 
     private class Army : IEnumerable<Group>
     {
@@ -153,10 +157,10 @@ public class Challenge24(IInputReader inputReader)
         public Army(ArmyType type, GroupTemplate[] groups, int boost)
         {
             Type = type;
-            _groups = groups.Select(g => new Group(type, g, boost)).ToList();
+            _groups = groups.Select(g => new Group(g, boost)).ToList();
         }
 
-        public ArmyType Type { get; init; }
+        public ArmyType Type { get; }
 
         public int UnitsLeft => _groups.Sum(g => g.Units);
 
@@ -165,11 +169,9 @@ public class Challenge24(IInputReader inputReader)
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-    private class Group(ArmyType type, GroupTemplate template, int boost)
+    private class Group(GroupTemplate template, int boost)
     {
         public GroupTemplate Template { get; } = template;
-
-        public ArmyType ArmyType { get; } = type;
 
         public int Units { get; set; } = template.Units;
 

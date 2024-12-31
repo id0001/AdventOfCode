@@ -1,22 +1,22 @@
 ﻿using AdventOfCode.Lib.Graphs;
 
-namespace AdventOfCode.Lib.Extensions.Graphs
-{
-    public static partial class UndirectedGraphExtensions
-    {
-        public static IEnumerable<IEnumerable<TVertex>> ConnectedComponents<TVertex, TEdge>(this UndirectedGraph<TVertex, TEdge> graph)
-            where TVertex : notnull
-            where TEdge : notnull
-        {
-            var candidates = graph.Vertices.ToHashSet();
-            while (candidates.Count > 0)
-            {
-                var cluster = graph.Path(candidates.First()).FloodFill();
-                foreach (var v in cluster)
-                    candidates.Remove(v);
+namespace AdventOfCode.Lib;
 
-                yield return cluster;
-            }
+public static partial class UndirectedGraphExtensions
+{
+    public static IEnumerable<IEnumerable<TVertex>> ConnectedComponents<TVertex, TEdge>(
+        this UndirectedGraph<TVertex, TEdge> graph)
+        where TVertex : notnull
+        where TEdge : notnull
+    {
+        var candidates = graph.Vertices.ToHashSet();
+        while (candidates.Count > 0)
+        {
+            var cluster = graph.Path(candidates.First()).FloodFill().ToList();
+            foreach (var v in cluster)
+                candidates.Remove(v);
+
+            yield return cluster;
         }
     }
 }

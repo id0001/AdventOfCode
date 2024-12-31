@@ -1,33 +1,55 @@
-﻿namespace AdventOfCode.Lib
+﻿namespace AdventOfCode.Lib;
+
+public readonly record struct Line2
 {
-    public readonly record struct Line2(Vector2 Start, Vector2 End)
+    public Line2(Vector2 start, Vector2 end)
     {
-        public double A { get; } = Start.Y - End.Y;
+        Start = start;
+        End = end;
+        A = start.Y - end.Y;
+        B = end.X - start.X;
+        C = (start.X - end.X) * start.Y + (end.Y - start.Y) * start.X;
+        IsVertical = start.X.IsSimilarTo(end.X);
+        IsHorizontal = start.Y.IsSimilarTo(end.Y);
+        Slope = (end.Y - start.Y) / (end.X - start.X);
+        Intercept = start.Y - (end.Y - start.Y) / (end.X - start.X) * start.X;
+    }
 
-        public double B { get; } = End.X - Start.X;
+    public double A { get; }
 
-        public double C { get; } = ((Start.X - End.X) * Start.Y) + ((End.Y - Start.Y) * Start.X);
+    public double B { get; }
 
-        public bool IsVertical { get; } = Start.X == End.X;
+    public double C { get; }
 
-        public bool IsHorizontal { get; } = Start.Y == End.Y;
+    public bool IsVertical { get; }
 
-        public double Slope { get; } = (End.Y - Start.Y) / (End.X - Start.X);
+    public bool IsHorizontal { get; }
 
-        public double Intercept { get; } = (Start.Y - (End.Y - Start.Y) / (End.X - Start.X) * Start.X);
+    public double Slope { get; }
 
-        public static bool TryIntersect(Line2 line1, Line2 line2, out Vector2 intersection)
-        {
-            intersection = Vector2.Zero;
+    public double Intercept { get; }
+    
+    public Vector2 Start { get; init; }
+    
+    public Vector2 End { get; init; }
 
-            var d = (line1.A * line2.B) - (line2.A * line1.B);
-            if (d == 0)
-                return false;
+    public static bool TryIntersect(Line2 line1, Line2 line2, out Vector2 intersection)
+    {
+        intersection = Vector2.Zero;
 
-            var x = ((line1.B * line2.C) - (line2.B * line1.C)) / d;
-            var y = ((line2.A * line1.C) - (line1.A * line2.C)) / d;
-            intersection = new(x, y);
-            return true;
-        }
+        var d = line1.A * line2.B - line2.A * line1.B;
+        if (d == 0)
+            return false;
+
+        var x = (line1.B * line2.C - line2.B * line1.C) / d;
+        var y = (line2.A * line1.C - line1.A * line2.C) / d;
+        intersection = new Vector2(x, y);
+        return true;
+    }
+
+    public void Deconstruct(out Vector2 start, out Vector2 end)
+    {
+        start = Start;
+        end = End;
     }
 }

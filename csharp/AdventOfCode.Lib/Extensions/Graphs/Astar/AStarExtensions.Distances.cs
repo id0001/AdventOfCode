@@ -1,32 +1,31 @@
-﻿namespace AdventOfCode.Lib
+﻿namespace AdventOfCode.Lib;
+
+public static partial class AStarExtensions
 {
-    public static partial class AStarExtensions
+    public static IDictionary<TNode, int> Distances<TGraph, TNode>(this AStar<TGraph, TNode> source)
+        where TNode : notnull
     {
-        public static IDictionary<TNode, int> Distances<TGraph, TNode>(this AStar<TGraph, TNode> source)
-            where TNode : notnull
+        var queue = new PriorityQueue<TNode, int>();
+        var costSoFar = new Dictionary<TNode, int> {{source.StartNode, 0}};
+
+        queue.Enqueue(source.StartNode, 0);
+
+        while (queue.Count > 0)
         {
-            var queue = new PriorityQueue<TNode, int>();
-            var costSoFar = new Dictionary<TNode, int> { { source.StartNode, 0 } };
+            var currentNode = queue.Dequeue();
 
-            queue.Enqueue(source.StartNode, 0);
-
-            while (queue.Count > 0)
+            foreach (var nextNode in source.GetAdjacent(currentNode))
             {
-                var currentNode = queue.Dequeue();
+                var newCost = costSoFar[currentNode] + source.GetWeight(currentNode, nextNode);
 
-                foreach (var nextNode in source.GetAdjacent(currentNode))
+                if (!costSoFar.ContainsKey(nextNode) || newCost < costSoFar[nextNode])
                 {
-                    var newCost = costSoFar[currentNode] + source.GetWeight(currentNode, nextNode);
-
-                    if (!costSoFar.ContainsKey(nextNode) || newCost < costSoFar[nextNode])
-                    {
-                        costSoFar[nextNode] = newCost;
-                        queue.Enqueue(nextNode, newCost + source.GetHeuristic(nextNode));
-                    }
+                    costSoFar[nextNode] = newCost;
+                    queue.Enqueue(nextNode, newCost + source.GetHeuristic(nextNode));
                 }
             }
-
-            return costSoFar;
         }
+
+        return costSoFar;
     }
 }

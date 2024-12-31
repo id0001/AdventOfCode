@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Text;
+﻿using System.Text;
 using Microsoft;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -15,7 +14,7 @@ public static partial class EnumerableExtensions
 
         return source.Cast<IConvertible>().Select(x => x.As<T>()).ToList();
     }
-    
+
     public static IEnumerable<T> As<T>(this IEnumerable<string> source)
         where T : IConvertible
     {

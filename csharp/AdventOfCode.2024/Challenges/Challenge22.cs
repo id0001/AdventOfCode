@@ -1,6 +1,8 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.IO;
 
+// ReSharper disable RedundantAssignment
+
 namespace AdventOfCode2024.Challenges;
 
 [Challenge(22)]
@@ -33,7 +35,7 @@ public class Challenge22(IInputReader inputReader)
         {
             var secret = input;
             long previous = 0;
-            var seenSequences = new HashSet<(long,long,long,long)>();
+            var seenSequences = new HashSet<(long, long, long, long)>();
 
             var (a, b, c, d) = (0L, 0L, 0L, 0L); // changes
             for (var i = 0; i < 2000; i++)
@@ -43,17 +45,17 @@ public class Challenge22(IInputReader inputReader)
                 (a, b, c, d) = (b, c, d, price - previous);
                 previous = price;
 
-                if (i < 3) 
+                if (i < 3)
                     continue;
-                
-                if (!seenSequences.Add((a, b, c, d))) 
+
+                if (!seenSequences.Add((a, b, c, d)))
                     continue;
-                
+
                 if (!total.TryAdd((a, b, c, d), price))
                     total[(a, b, c, d)] += price;
             }
         }
-        
+
         return total.Values.Max().ToString();
     }
 

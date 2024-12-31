@@ -45,9 +45,10 @@ public static class NumberExtensions
 
     public static TNumber Concat<TNumber>(this TNumber a, TNumber b)
         where TNumber : IBinaryInteger<TNumber>
-        => a * TNumber.CreateChecked(System.Math.Pow(10d, System.Math.Floor(System.Math.Log10(double.CreateChecked(b))) + 1)) + b;
+        => a * TNumber.CreateChecked(System.Math.Pow(10d,
+            System.Math.Floor(System.Math.Log10(double.CreateChecked(b))) + 1)) + b;
 
     public static int CountDigits<TNumber>(this TNumber number)
         where TNumber : IBinaryInteger<TNumber>
-        => (int)System.Math.Floor(System.Math.Log10(double.CreateChecked(number))) + 1;
+        => (int) System.Math.Floor(System.Math.Log10(double.CreateChecked(number))) + 1;
 }

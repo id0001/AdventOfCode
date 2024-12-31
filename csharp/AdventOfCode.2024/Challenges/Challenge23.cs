@@ -39,28 +39,23 @@ public class Challenge23(IInputReader inputReader)
         return string.Join(",", graph.EnumerateCliques().OrderByDescending(c => c.Count).First().Order());
     }
 
-    private static IEnumerable<string[]> EnumerateCyclesOf3(IEnumerable<string[]> edges, UndirectedGraph<string, int> graph)
+    private static IEnumerable<string[]> EnumerateCyclesOf3(IEnumerable<string[]> edges,
+        UndirectedGraph<string, int> graph)
     {
         var visited = new HashSet<(string, string, string)>();
         foreach (var edge in edges)
-        {
-            foreach (var c0 in graph.AdjacentEdges(edge[1]).Keys)
+        foreach (var c0 in graph.AdjacentEdges(edge[1]).Keys)
+        foreach (var c1 in graph.AdjacentEdges(c0).Keys)
+            if (c1 == edge[0])
             {
-                foreach (var c1 in graph.AdjacentEdges(c0).Keys)
-                {
-                    if (c1 == edge[0])
-                    {
-                        var v = new[] { edge[0], edge[1], c0 }.Order().ToArray();
-                        var key = (v[0], v[1], v[2]);
-                        if (visited.Contains(key))
-                            continue;
+                var v = new[] {edge[0], edge[1], c0}.Order().ToArray();
+                var key = (v[0], v[1], v[2]);
+                if (visited.Contains(key))
+                    continue;
 
-                        visited.Add(key);
-                        yield return v;
-                    }
-                }
+                visited.Add(key);
+                yield return v;
             }
-        }
     }
 
     private static string[] ParseLine(string line) => line.SplitBy("-").ToArray();

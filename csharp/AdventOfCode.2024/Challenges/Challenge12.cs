@@ -26,7 +26,7 @@ public class Challenge12(IInputReader inputReader)
 
     private static int CountCornerVertices(ISet<Point2> points, Point2 p)
     {
-        int corners = 0;
+        var corners = 0;
         if (HasTopLeftCorner(points, p))
             corners++;
 
@@ -42,33 +42,37 @@ public class Challenge12(IInputReader inputReader)
         return corners;
     }
 
-    private static bool HasTopLeftCorner(ISet<Point2> points, Point2 p) => (points.Contains(p.Up), points.Contains(p.Left)) switch
-    {
-        (false, false) => true,
-        (true, true) when !points.Contains(p.Up.Left) => true,
-        _ => false
-    };
+    private static bool HasTopLeftCorner(ISet<Point2> points, Point2 p) =>
+        (points.Contains(p.Up), points.Contains(p.Left)) switch
+        {
+            (false, false) => true,
+            (true, true) when !points.Contains(p.Up.Left) => true,
+            _ => false
+        };
 
-    private static bool HasTopRightCorner(ISet<Point2> points, Point2 p) => (points.Contains(p.Up), points.Contains(p.Right)) switch
-    {
-        (false, false) => true,
-        (true, true) when !points.Contains(p.Up.Right) => true,
-        _ => false
-    };
+    private static bool HasTopRightCorner(ISet<Point2> points, Point2 p) =>
+        (points.Contains(p.Up), points.Contains(p.Right)) switch
+        {
+            (false, false) => true,
+            (true, true) when !points.Contains(p.Up.Right) => true,
+            _ => false
+        };
 
-    private static bool HasDownLeftCorner(ISet<Point2> points, Point2 p) => (points.Contains(p.Down), points.Contains(p.Left)) switch
-    {
-        (false, false) => true,
-        (true, true) when !points.Contains(p.Down.Left) => true,
-        _ => false
-    };
+    private static bool HasDownLeftCorner(ISet<Point2> points, Point2 p) =>
+        (points.Contains(p.Down), points.Contains(p.Left)) switch
+        {
+            (false, false) => true,
+            (true, true) when !points.Contains(p.Down.Left) => true,
+            _ => false
+        };
 
-    private static bool HasDownRightCorner(ISet<Point2> points, Point2 p) => (points.Contains(p.Down), points.Contains(p.Right)) switch
-    {
-        (false, false) => true,
-        (true, true) when !points.Contains(p.Down.Right) => true,
-        _ => false
-    };
+    private static bool HasDownRightCorner(ISet<Point2> points, Point2 p) =>
+        (points.Contains(p.Down), points.Contains(p.Right)) switch
+        {
+            (false, false) => true,
+            (true, true) when !points.Contains(p.Down.Right) => true,
+            _ => false
+        };
 
     private static IList<ISet<Point2>> GetRegions(char[,] grid)
     {

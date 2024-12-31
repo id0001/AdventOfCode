@@ -33,9 +33,10 @@ public class Challenge05(IInputReader inputReader)
 
     private static bool IsCorrect(SortRule[] rules, int[] items)
     {
-        for (int i = 0; i < items.Length; i++)
+        for (var i = 0; i < items.Length; i++)
         {
-            if (rules.Where(r => r.After == items[i]).IntersectBy(items[(i + 1)..], r => r.Before).Any())
+            var i1 = i;
+            if (rules.Where(r => r.After == items[i1]).IntersectBy(items[(i + 1)..], r => r.Before).Any())
                 return false;
         }
 
@@ -62,5 +63,4 @@ public class Challenge05(IInputReader inputReader)
             return sortRules.Any(rule => rule.Before == y && rule.After == x) ? 1 : -1;
         }
     }
-
 }

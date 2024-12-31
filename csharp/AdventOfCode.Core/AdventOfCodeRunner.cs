@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -135,7 +134,7 @@ public class AdventOfCodeRunner
     {
         var benchmark = ShouldBenchmark();
 
-        if(!await DownloadInputIfNotExistsAsync(_year, day, _config!))
+        if (!await DownloadInputIfNotExistsAsync(_year, day, _config!))
             return;
 
         var setupMethod = GetSetup(type);
@@ -264,7 +263,7 @@ public class AdventOfCodeRunner
         AppDomain.CurrentDomain
             .GetAssemblies()
             .SelectMany(GetLoadableTypes)
-            .Select(t => new { Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>() })
+            .Select(t => new {Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>()})
             .FirstOrDefault(x => x.Challenge is not null && x.Challenge.Day == day)?
             .Type;
 
@@ -272,7 +271,7 @@ public class AdventOfCodeRunner
     {
         return AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(GetLoadableTypes)
-            .Select(t => new { Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>() })
+            .Select(t => new {Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>()})
             .Where(x => x.Challenge is not null)
             .OrderByDescending(x => x.Challenge!.Day)
             .Select(x => (x.Challenge!.Day, x.Type))
@@ -283,7 +282,7 @@ public class AdventOfCodeRunner
     {
         return AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(GetLoadableTypes)
-            .Select(t => new { Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>() })
+            .Select(t => new {Type = t, Challenge = t.GetCustomAttribute<ChallengeAttribute>()})
             .Where(x => x.Challenge is not null)
             .OrderBy(x => x.Challenge!.Day)
             .Select(x => (x.Challenge!.Day, x.Type));
@@ -306,7 +305,7 @@ public class AdventOfCodeRunner
 
     private static object? CreateInstance(Type type)
     {
-        var ctor = type.GetConstructor(new[] { typeof(IInputReader) });
+        var ctor = type.GetConstructor(new[] {typeof(IInputReader)});
         return ctor is not null ? Activator.CreateInstance(type, new InputReader()) : Activator.CreateInstance(type);
     }
 
@@ -332,7 +331,7 @@ public class AdventOfCodeRunner
         if (result is Task<string?> task)
             return await task;
 
-        return (string?)result;
+        return (string?) result;
     }
 
     private static async Task<Config?> LoadConfigAsync()
@@ -353,10 +352,8 @@ public class AdventOfCodeRunner
 
     private static async Task<Config?> GetOrCreateConfigAsync()
     {
-        var path = GetConfigFilePath();
-
         var config = await LoadConfigAsync();
-        if (string.IsNullOrEmpty(config?.SessionToken) || string.IsNullOrEmpty(config?.Email))
+        if (string.IsNullOrEmpty(config?.SessionToken) || string.IsNullOrEmpty(config.Email))
             config = await CreateConfigAsync();
 
         return config;
@@ -376,7 +373,7 @@ public class AdventOfCodeRunner
 
         Console.Clear();
 
-        var config = new Config { SessionToken = token!, Email = email! };
+        var config = new Config {SessionToken = token!, Email = email!};
         await SaveConfigAsync(config);
         return config;
     }

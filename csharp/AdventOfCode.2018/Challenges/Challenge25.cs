@@ -26,5 +26,6 @@ public class Challenge25(IInputReader inputReader)
         return graph.ConnectedComponents().Count().ToString();
     }
 
-    private static Point4 ParseLine(string line) => line.SplitBy(",").As<int>().Into(coords => new Point4(coords[0], coords[1], coords[2], coords[3]));
+    private static Point4 ParseLine(string line) => line.SplitBy(",").As<int>()
+        .Into(coords => new Point4(coords[0], coords[1], coords[2], coords[3]));
 }

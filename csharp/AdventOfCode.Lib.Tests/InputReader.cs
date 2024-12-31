@@ -32,7 +32,7 @@ public static class InputReader
             {
                 if (buffer[i] == separator)
                 {
-                    yield return (T)Convert.ChangeType(sb.ToString(), typeof(T));
+                    yield return (T) Convert.ChangeType(sb.ToString(), typeof(T));
                     sb.Clear();
                     continue;
                 }
@@ -42,7 +42,7 @@ public static class InputReader
         }
 
         if (sb.Length > 0)
-            yield return (T)Convert.ChangeType(sb.ToString(), typeof(T));
+            yield return (T) Convert.ChangeType(sb.ToString(), typeof(T));
     }
 
     private static string GetPath(string filename) => Path.Combine("TestData", filename);

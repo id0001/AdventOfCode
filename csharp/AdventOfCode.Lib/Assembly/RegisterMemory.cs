@@ -9,7 +9,8 @@ public interface IRegisterMemory<TKey, TValue>
 
 public interface IStringRegisterMemory<TValue> : IRegisterMemory<string, TValue>;
 
-public class RegisterMemory<TKey, TValue, TProgram>(IList<TProgram> program) : IMemory<TProgram>, IRegisterMemory<TKey, TValue>
+public class RegisterMemory<TKey, TValue, TProgram>(IList<TProgram> program)
+    : IMemory<TProgram>, IRegisterMemory<TKey, TValue>
     where TKey : notnull
     where TValue : IParsable<TValue>
 {

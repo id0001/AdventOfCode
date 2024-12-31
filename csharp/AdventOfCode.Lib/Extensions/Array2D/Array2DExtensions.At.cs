@@ -1,7 +1,6 @@
-﻿namespace AdventOfCode.Lib
+﻿namespace AdventOfCode.Lib;
+
+public static partial class Array2DExtensions
 {
-    public static partial class Array2DExtensions
-    {
-        public static T At<T>(this T[,] source, Point2 pos) => source[pos.Y, pos.X];
-    }
+    public static T At<T>(this T[,] source, Point2 pos) => source[pos.Y, pos.X];
 }

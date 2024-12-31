@@ -12,14 +12,18 @@ public class Challenge04(IInputReader inputReader)
     {
         var grid = await inputReader.ReadGridAsync(4);
 
-        string match = "XMAS";
-        string matchReverse = "SAMX";
+        var match = "XMAS";
+        var matchReverse = "SAMX";
 
-        int count = 0;
-        count += grid.EnumerateRows().Sum(row => row.Windowed(4).Count(r => r.SequenceEqual(match) || r.SequenceEqual(matchReverse)));
-        count += grid.EnumerateColumns().Sum(col => col.Windowed(4).Count(r => r.SequenceEqual(match) || r.SequenceEqual(matchReverse)));
-        count += grid.EnumerateDownLeftDiagonals().Sum(diagonal => diagonal.Windowed(4).Count(r => r.SequenceEqual(match) || r.SequenceEqual(matchReverse)));
-        count += grid.EnumerateDownRightDiagonals().Sum(diagonal => diagonal.Windowed(4).Count(r => r.SequenceEqual(match) || r.SequenceEqual(matchReverse)));
+        var count = 0;
+        count += grid.EnumerateRows().Sum(row =>
+            row.Windowed(4).Count(r => r.SequenceEqual(match) || r.SequenceEqual(matchReverse)));
+        count += grid.EnumerateColumns().Sum(col =>
+            col.Windowed(4).Count(r => r.SequenceEqual(match) || r.SequenceEqual(matchReverse)));
+        count += grid.EnumerateDownLeftDiagonals().Sum(diagonal =>
+            diagonal.Windowed(4).Count(r => r.SequenceEqual(match) || r.SequenceEqual(matchReverse)));
+        count += grid.EnumerateDownRightDiagonals().Sum(diagonal =>
+            diagonal.Windowed(4).Count(r => r.SequenceEqual(match) || r.SequenceEqual(matchReverse)));
         return count.ToString();
     }
 

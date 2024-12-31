@@ -5,7 +5,7 @@ using AdventOfCode.Lib;
 namespace AdventOfCode2024.Challenges;
 
 [Challenge(3)]
-public partial class Challenge03(IInputReader inputReader)
+public class Challenge03(IInputReader inputReader)
 {
     [Part1]
     public async Task<string> Part1Async()
@@ -24,8 +24,8 @@ public partial class Challenge03(IInputReader inputReader)
         {
             ("do()", _) => (acc.Sum, true),
             ("don't()", _) => (acc.Sum, false),
-            (_, true)  => (acc.Sum + match.Values.Product(), true),
-            (_, false) => (acc.Sum, false),
+            (_, true) => (acc.Sum + match.Values.Product(), true),
+            (_, false) => (acc.Sum, false)
         });
 
         return sum.ToString();

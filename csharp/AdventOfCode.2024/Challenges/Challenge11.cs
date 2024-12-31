@@ -47,7 +47,7 @@ public class Challenge11(IInputReader inputReader)
             return cache[(number, remaining)];
         }
 
-        long divisor = (long)Math.Pow(10, digits / 2);
+        var divisor = (long) Math.Pow(10, Math.Floor(digits / 2d));
         var n1 = Blink(number / divisor, remaining - 1, cache);
         var n2 = Blink(number % divisor, remaining - 1, cache);
         cache.TryAdd((number, remaining), n1 + n2);

@@ -8,18 +8,18 @@ namespace AdventOfCode2024.Challenges;
 public class Challenge02(IInputReader inputReader)
 {
     [Part1]
-    public async Task<string> Part1Async() 
+    public async Task<string> Part1Async()
         => (await inputReader
-            .ParseLinesAsync(2, ParseLine)
-            .Where(x => IsSafe(x, false))
-            .CountAsync())
+                .ParseLinesAsync(2, ParseLine)
+                .Where(x => IsSafe(x))
+                .CountAsync())
             .ToString();
 
     [Part2]
     public async Task<string> Part2Async() => (await inputReader
-        .ParseLinesAsync(2, ParseLine)
-        .Where(x => IsSafe(x, true))
-        .CountAsync())
+            .ParseLinesAsync(2, ParseLine)
+            .Where(x => IsSafe(x, true))
+            .CountAsync())
         .ToString();
 
     private static bool IsSafe(int[] reports, bool tolerance = false)
@@ -38,8 +38,8 @@ public class Challenge02(IInputReader inputReader)
         return true;
     }
 
-    private static bool IsAnySafe(int[] reports) 
-        => reports.Select((_,i) => RemoveAt(i, reports)).Any(x => IsSafe(x));
+    private static bool IsAnySafe(int[] reports)
+        => reports.Select((_, i) => RemoveAt(i, reports)).Any(x => IsSafe(x));
 
     private static int[] RemoveAt(int idx, int[] reports) => reports.Where((_, i) => i != idx).ToArray();
 
